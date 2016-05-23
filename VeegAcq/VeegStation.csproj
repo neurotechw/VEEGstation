@@ -111,6 +111,7 @@
     </Compile>
     <Compile Include="Util.cs" />
     <Compile Include="VideoFileInfo.cs" />
+    <Compile Include="μvcmToolStripMenuItem.cs" />
     <EmbeddedResource Include="PlaybackForm.resx">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
     </EmbeddedResource>

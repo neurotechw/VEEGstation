@@ -36,6 +36,8 @@ namespace VeegStation
         private IVideoPlayer _player;
         private IMedia _media;
 
+        private int _Sensivity;
+
         public PlaybackForm(NationFileInfo EegFile)
         {
             InitializeComponent();
@@ -43,6 +45,7 @@ namespace VeegStation
             pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
 
             _Page = 0;
+            _Sensivity = 100;
             try
             {
                 _nfi = EegFile;
@@ -89,6 +92,7 @@ namespace VeegStation
         {
             DateTime begin = DateTime.Now;
             SeriesCollection col = chartWave.Series;
+            double rate = Convert.ToDouble(_Sensivity) / 100D;
             chartWave.SuspendLayout();
             foreach (int sIdx in Enumerable.Range(0, 20))
             {
@@ -96,11 +100,12 @@ namespace VeegStation
             }
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
-                col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG + 50);
+                col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);
                 foreach (int sIdx in Enumerable.Range(0, 19))
                 {
                     double val = _packets[tIdx].EEG[sIdx];
                     val /= 20;
+                    val /= rate;
                     val += (2000 - 100 * sIdx - 50);
                     col[sIdx].Points.AddXY(tIdx / 128.0, val);
                 }
@@ -524,6 +529,26 @@ namespace VeegStation
         private void panelVideo_Click(object sender, EventArgs e)
         {
             MessageBox.Show("********");
+        }
+
+        /// <summary>
+        /// 灵敏度点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void μvcmToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string num = sender.ToString().Substring(0,sender.ToString().Length-5);
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            foreach (ToolStripMenuItem i in this.sensitivityToolStripMenuItem.DropDownItems)
+            {
+                i.Checked = false;
+            }
+            item.Checked = true;
+            _Sensivity = int.Parse(num);
+            ShowData();
+            //MessageBox.Show(num);
         }
     }
 }
