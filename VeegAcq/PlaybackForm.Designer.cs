@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlaybackForm));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine5 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine1 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnPlay = new System.Windows.Forms.ToolStripButton();
             this.btnPause = new System.Windows.Forms.ToolStripButton();
@@ -89,20 +89,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.格式ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sensitivityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_10 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_20 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_30 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_50 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_70 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_100 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_150 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_200 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_300 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_500 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_700 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_1000 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_2000 = new System.Windows.Forms.ToolStripMenuItem();
-            this.μvcmToolStripMenuItem_5000 = new System.Windows.Forms.ToolStripMenuItem();
+            this.timeStandartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
             this.PationInfoPanel.SuspendLayout();
@@ -192,21 +179,21 @@
             // pationInfoToolStripMenuItem
             // 
             this.pationInfoToolStripMenuItem.Name = "pationInfoToolStripMenuItem";
-            this.pationInfoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pationInfoToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.pationInfoToolStripMenuItem.Text = "病人属性";
             this.pationInfoToolStripMenuItem.Click += new System.EventHandler(this.pationInfoToolStripMenuItem_Click);
             // 
             // detectionInfoToolStripMenuItem
             // 
             this.detectionInfoToolStripMenuItem.Name = "detectionInfoToolStripMenuItem";
-            this.detectionInfoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.detectionInfoToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.detectionInfoToolStripMenuItem.Text = "检查属性";
             this.detectionInfoToolStripMenuItem.Click += new System.EventHandler(this.detectionInfoToolStripMenuItem_Click);
             // 
             // hideingToolStripMenuItem
             // 
             this.hideingToolStripMenuItem.Name = "hideingToolStripMenuItem";
-            this.hideingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hideingToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.hideingToolStripMenuItem.Text = "隐藏";
             this.hideingToolStripMenuItem.Click += new System.EventHandler(this.hideingToolStripMenuItem_Click);
             // 
@@ -234,42 +221,42 @@
             this.chartWave.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea5.AxisX.LabelStyle.Interval = 1D;
-            chartArea5.AxisX.LabelStyle.IntervalOffset = 0D;
-            chartArea5.AxisX.MajorGrid.Interval = 1D;
-            chartArea5.AxisX.MajorGrid.IntervalOffset = 1D;
-            chartArea5.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
-            chartArea5.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea5.AxisX.MajorTickMark.Interval = 1D;
-            chartArea5.AxisX.MajorTickMark.IntervalOffset = 0D;
-            chartArea5.AxisX.Maximum = 8D;
-            chartArea5.AxisX.Minimum = 0D;
-            stripLine5.BorderColor = System.Drawing.Color.Orange;
-            stripLine5.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            stripLine5.StripWidth = 0.01D;
-            chartArea5.AxisX.StripLines.Add(stripLine5);
-            chartArea5.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
-            chartArea5.AxisY.IsInterlaced = true;
-            chartArea5.AxisY.LabelStyle.Enabled = false;
-            chartArea5.AxisY.MajorGrid.Interval = 100D;
-            chartArea5.AxisY.MajorGrid.IntervalOffset = 0D;
-            chartArea5.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
-            chartArea5.AxisY.MajorTickMark.Interval = 100D;
-            chartArea5.AxisY.MajorTickMark.IntervalOffset = 0D;
-            chartArea5.AxisY.Maximum = 2000D;
-            chartArea5.AxisY.Minimum = 0D;
-            chartArea5.Name = "mainArea";
-            this.chartWave.ChartAreas.Add(chartArea5);
-            legend5.Enabled = false;
-            legend5.Name = "Legend1";
-            this.chartWave.Legends.Add(legend5);
+            chartArea1.AxisX.LabelStyle.Interval = 1D;
+            chartArea1.AxisX.LabelStyle.IntervalOffset = 0D;
+            chartArea1.AxisX.MajorGrid.Interval = 1D;
+            chartArea1.AxisX.MajorGrid.IntervalOffset = 1D;
+            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
+            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea1.AxisX.MajorTickMark.Interval = 1D;
+            chartArea1.AxisX.MajorTickMark.IntervalOffset = 0D;
+            //chartArea1.AxisX.Maximum = 8D;
+            chartArea1.AxisX.Minimum = 0D;
+            stripLine1.BorderColor = System.Drawing.Color.Orange;
+            stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            stripLine1.StripWidth = 0.01D;
+            chartArea1.AxisX.StripLines.Add(stripLine1);
+            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
+            chartArea1.AxisY.IsInterlaced = true;
+            chartArea1.AxisY.LabelStyle.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Interval = 100D;
+            chartArea1.AxisY.MajorGrid.IntervalOffset = 0D;
+            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
+            chartArea1.AxisY.MajorTickMark.Interval = 100D;
+            chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
+            chartArea1.AxisY.Maximum = 2000D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.Name = "mainArea";
+            this.chartWave.ChartAreas.Add(chartArea1);
+            legend1.Enabled = false;
+            legend1.Name = "Legend1";
+            this.chartWave.Legends.Add(legend1);
             this.chartWave.Location = new System.Drawing.Point(12, 49);
             this.chartWave.Name = "chartWave";
-            series5.ChartArea = "mainArea";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series5.Legend = "Legend1";
-            series5.Name = "Series1";
-            this.chartWave.Series.Add(series5);
+            series1.ChartArea = "mainArea";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chartWave.Series.Add(series1);
             this.chartWave.Size = new System.Drawing.Size(752, 508);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
@@ -673,131 +660,24 @@
             // 格式ToolStripMenuItem
             // 
             this.格式ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sensitivityToolStripMenuItem});
+            this.sensitivityToolStripMenuItem,
+            this.timeStandartToolStripMenuItem});
             this.格式ToolStripMenuItem.Name = "格式ToolStripMenuItem";
             this.格式ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.R)));
             this.格式ToolStripMenuItem.Size = new System.Drawing.Size(60, 21);
             this.格式ToolStripMenuItem.Text = "格式(R)";
             // 
-            // 灵敏度ToolStripMenuItem
-            // μvcmToolStripMenuItem
-            this.sensitivityToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.μvcmToolStripMenuItem_10,
-            this.μvcmToolStripMenuItem_20,
-            this.μvcmToolStripMenuItem_30,
-            this.μvcmToolStripMenuItem_50,
-            this.μvcmToolStripMenuItem_70,
-            this.μvcmToolStripMenuItem_100,
-            this.μvcmToolStripMenuItem_150,
-            this.μvcmToolStripMenuItem_200,
-            this.μvcmToolStripMenuItem_300,
-            this.μvcmToolStripMenuItem_500,
-            this.μvcmToolStripMenuItem_700,
-            this.μvcmToolStripMenuItem_1000,
-            this.μvcmToolStripMenuItem_2000,
-            this.μvcmToolStripMenuItem_5000});
-            this.sensitivityToolStripMenuItem.Name = "灵敏度ToolStripMenuItem";
+            // sensitivityToolStripMenuItem
+            // 
+            this.sensitivityToolStripMenuItem.Name = "sensitivityToolStripMenuItem";
             this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.sensitivityToolStripMenuItem.Text = "灵敏度";
             // 
-            // μvcmToolStripMenuItem_10
+            // timeStandartToolStripMenuItem
             // 
-            this.μvcmToolStripMenuItem_10.Name = "μvcmToolStripMenuItem_10";
-            this.μvcmToolStripMenuItem_10.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_10.Text = "10μv/cm";
-            this.μvcmToolStripMenuItem_10.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_20
-            // 
-            this.μvcmToolStripMenuItem_20.Name = "μvcmToolStripMenuItem_20";
-            this.μvcmToolStripMenuItem_20.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_20.Text = "20μv/cm";
-            this.μvcmToolStripMenuItem_20.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_30
-            // 
-            this.μvcmToolStripMenuItem_30.Name = "μvcmToolStripMenuItem_30";
-            this.μvcmToolStripMenuItem_30.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_30.Text = "30μv/cm";
-            this.μvcmToolStripMenuItem_30.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_50
-            // 
-            this.μvcmToolStripMenuItem_50.Name = "μvcmToolStripMenuItem_50";
-            this.μvcmToolStripMenuItem_50.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_50.Text = "50μv/cm";
-            this.μvcmToolStripMenuItem_50.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_70
-            // 
-            this.μvcmToolStripMenuItem_70.Name = "μvcmToolStripMenuItem_70";
-            this.μvcmToolStripMenuItem_70.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_70.Text = "70μv/cm";
-            this.μvcmToolStripMenuItem_70.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_100
-            // 
-            this.μvcmToolStripMenuItem_100.Name = "μvcmToolStripMenuItem_100";
-            this.μvcmToolStripMenuItem_100.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_100.Text = "100μv/cm";
-            this.μvcmToolStripMenuItem_100.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            this.μvcmToolStripMenuItem_100.Checked = true;
-            // 
-            // μvcmToolStripMenuItem_150
-            // 
-            this.μvcmToolStripMenuItem_150.Name = "μvcmToolStripMenuItem_150";
-            this.μvcmToolStripMenuItem_150.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_150.Text = "150μv/cm";
-            this.μvcmToolStripMenuItem_150.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_200
-            // 
-            this.μvcmToolStripMenuItem_200.Name = "μvcmToolStripMenuItem_200";
-            this.μvcmToolStripMenuItem_200.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_200.Text = "200μv/cm";
-            this.μvcmToolStripMenuItem_200.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_300
-            // 
-            this.μvcmToolStripMenuItem_300.Name = "μvcmToolStripMenuItem_300";
-            this.μvcmToolStripMenuItem_300.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_300.Text = "300μv/cm";
-            this.μvcmToolStripMenuItem_300.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_500
-            // 
-            this.μvcmToolStripMenuItem_500.Name = "μvcmToolStripMenuItem_500";
-            this.μvcmToolStripMenuItem_500.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_500.Text = "500μv/cm";
-            this.μvcmToolStripMenuItem_500.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_700
-            // 
-            this.μvcmToolStripMenuItem_700.Name = "μvcmToolStripMenuItem_700";
-            this.μvcmToolStripMenuItem_700.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_700.Text = "700μv/cm";
-            this.μvcmToolStripMenuItem_700.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_1000
-            // 
-            this.μvcmToolStripMenuItem_1000.Name = "μvcmToolStripMenuItem_1000";
-            this.μvcmToolStripMenuItem_1000.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_1000.Text = "1000μv/cm";
-            this.μvcmToolStripMenuItem_1000.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_2000
-            // 
-            this.μvcmToolStripMenuItem_2000.Name = "μvcmToolStripMenuItem_2000";
-            this.μvcmToolStripMenuItem_2000.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_2000.Text = "2000μv/cm";
-            this.μvcmToolStripMenuItem_2000.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
-            // 
-            // μvcmToolStripMenuItem_5000
-            // 
-            this.μvcmToolStripMenuItem_5000.Name = "μvcmToolStripMenuItem_5000";
-            this.μvcmToolStripMenuItem_5000.Size = new System.Drawing.Size(152, 22);
-            this.μvcmToolStripMenuItem_5000.Text = "5000μv/cm";
-            this.μvcmToolStripMenuItem_5000.Click += new System.EventHandler(this.μvcmToolStripMenuItem_Click);
+            this.timeStandartToolStripMenuItem.Name = "timeStandartToolStripMenuItem";
+            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.timeStandartToolStripMenuItem.Text = "时间基准";
             // 
             // PlaybackForm
             // 
@@ -897,20 +777,21 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 格式ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sensitivityToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_10;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_20;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_30;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_50;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_70;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_100;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_150;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_200;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_300;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_500;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_700;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_1000;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_2000;
-        private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_5000;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_10;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_20;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_30;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_50;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_70;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_100;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_150;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_200;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_300;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_500;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_700;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_1000;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_2000;
+        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_5000;
+        private System.Windows.Forms.ToolStripMenuItem timeStandartToolStripMenuItem;
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

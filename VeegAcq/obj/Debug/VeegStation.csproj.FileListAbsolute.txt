@@ -34,8 +34,6 @@ D:\工作\妞诺\工程\医院软件\VeegStationSource\VeegStationSource\VeegAcq
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\bin\Debug\VeegStation.exe.config
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\Interop.Shell32.dll
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.csproj.ResolveComReference.cache
-D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.exe
-D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.pdb
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\bin\Debug\VeegStation.exe
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\bin\Debug\VeegStation.pdb
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\bin\Debug\nVLC.dll
@@ -46,3 +44,5 @@ D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.Stati
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.Properties.Resources.resources
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.RecordingForm.resources
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.csproj.GenerateResource.Cache
+D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.exe
+D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.pdb

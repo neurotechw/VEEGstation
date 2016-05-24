@@ -24,7 +24,7 @@ namespace VeegStation
         NatFileInfo natfileinfo;
         PationInfo pationinfo;
 
-        private const int WINDOW_SECONDS = 10;
+        private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         private NationFileInfo _nfi = null;
 
         private List<EegPacket> _packets = new List<EegPacket>();
@@ -36,16 +36,21 @@ namespace VeegStation
         private IVideoPlayer _player;
         private IMedia _media;
 
-        private int _Sensivity;
+        private int[] _sensitivityArray = { 10, 20, 30, 50, 70, 100, 150, 200, 300, 500, 700, 1000, 2000, 5000 };                       //灵敏度的选择范围 -- by lxl
+        private int _Sensitivity;                                                                                                      //当前灵敏度的取值 -- by lxl
+        private int[] _timeStandardArray = { 6, 10, 15, 30, 60, 100, 300 };                                                            //时间基准选择范围 -- by lxl
+        private int _timeStandard;                                                                                                     //当前选择时间基准 -- by lxl
 
         public PlaybackForm(NationFileInfo EegFile)
         {
             InitializeComponent();
+            _Sensitivity = 100;
+            _timeStandard = 30;
+            initMenuItems();
             natfileinfo = new NatFileInfo(EegFile.NedFullName);
             pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
 
             _Page = 0;
-            _Sensivity = 100;
             try
             {
                 _nfi = EegFile;
@@ -60,7 +65,7 @@ namespace VeegStation
             {
                 return;
             }
-            int loadRec = WINDOW_SECONDS * _nfi.SampleRate;
+            int loadRec = WINDOW_SECONDS * _nfi.SampleRate;                           
             DateTime begin = DateTime.Now;
             FileStream fs = new FileStream(_nfi.NedFullName, FileMode.Open, FileAccess.Read);
             fs.Seek(0x200, SeekOrigin.Begin);
@@ -85,17 +90,18 @@ namespace VeegStation
             fs.Close();
             fs.Dispose();
             DateTime end = DateTime.Now;
-            Debug.WriteLine(string.Format("Read a window of data {0} records in {0} seconds", _packets.Count, (end - begin).TotalSeconds));
+            Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", _packets.Count, (end - begin).TotalSeconds));
         }
 
         private void ShowData()
         {
             DateTime begin = DateTime.Now;
             SeriesCollection col = chartWave.Series;
-            double rate = Convert.ToDouble(_Sensivity) / 100D;
+            double rate = Convert.ToDouble(_Sensitivity) / 100D;                                          //灵敏度比例 -- by lxl
             chartWave.SuspendLayout();
             foreach (int sIdx in Enumerable.Range(0, 20))
             {
+                int a = col[sIdx].Points.Count;
                 col[sIdx].Points.Clear();
             }
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
@@ -546,9 +552,68 @@ namespace VeegStation
                 i.Checked = false;
             }
             item.Checked = true;
-            _Sensivity = int.Parse(num);
+            _Sensitivity = int.Parse(num);
             ShowData();
-            //MessageBox.Show(num);
+        }
+
+        /// <summary>
+        /// 时间基准菜单选项点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timerStandartMenuItem_Click(object sender, EventArgs e)
+        {
+            string num = sender.ToString().Substring(0, sender.ToString().Length - 6);
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            foreach (ToolStripMenuItem i in this.timeStandartToolStripMenuItem.DropDownItems)
+            {
+                i.Checked = false;
+            }
+            item.Checked = true;
+            _timeStandard = int.Parse(num);
+            MessageBox.Show(_timeStandard.ToString());
+            //WINDOW_SECONDS = (int)(10 * 30D / Convert.ToDouble(_timeStandard));
+            //chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
+            setWindowSeconds((int)(10 * 30D / Convert.ToDouble(_timeStandard)));
+            LoadData(_Page);
+            ShowData();
+        }
+
+        private void setWindowSeconds(int wins)
+        {
+            WINDOW_SECONDS = wins;
+            chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
+        }
+
+        /// <summary>
+        /// 初始化时间基准与灵敏度的选项
+        /// -- by lxl
+        /// </summary>
+        private void initMenuItems()
+        {
+            foreach (int t in _timeStandardArray)
+            {
+                System.Windows.Forms.ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Name = "timeStandardMenuItem" + t;
+                item.Size = new Size(140, 22);
+                item.Text = t + "mm/sec";
+                item.Click += new EventHandler(this.timerStandartMenuItem_Click);
+                if (t == _timeStandard)
+                    item.Checked = true;
+                this.timeStandartToolStripMenuItem.DropDownItems.Add(item);
+            }
+            foreach (int s in _sensitivityArray)
+            {
+                System.Windows.Forms.ToolStripMenuItem item = new ToolStripMenuItem();
+                item.Name = "vcmToolStripMenuItem_100" + s;
+                item.Size = new Size(140, 22);
+                item.Text = s + "μv/cm";
+                item.Click += new EventHandler(this.μvcmToolStripMenuItem_Click);
+                if (s == _Sensitivity)
+                    item.Checked = true;
+                this.sensitivityToolStripMenuItem.DropDownItems.Add(item);
+            }
         }
     }
 }
