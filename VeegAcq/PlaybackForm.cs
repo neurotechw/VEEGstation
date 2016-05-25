@@ -41,7 +41,11 @@ namespace VeegStation
         private int[] _timeStandardArray = { 6, 10, 15, 30, 60, 100, 300 };                                                            //时间基准选择范围 -- by lxl
         private int _timeStandard;                                                                                                     //当前选择时间基准 -- by lxl
         private int _intervalY;                                                                                                        //当前设置单位后Y轴的间隔 -- by lxl
-        private CalibrateForm calibForm;                                                                                               //校准窗口
+        private CalibrateForm calibForm;                                                                                               //校准Y轴窗口            -- by lxl
+        private calibrateXForm calibXForm;                                                                                             //校验X轴窗口            -- by lxl
+        private double _pageWidth = 0;                                                                                                 //图表x轴的宽度(像素点个数)  -- by lxl
+        private double _totalMM;                                                                                                    //图表宽度,单位为毫米        -- by lxl
+        private int _pixelPerCM;                                                                                                    //一厘米有多少个像素         -- by lxl
 
         public PlaybackForm(NationFileInfo EegFile)
         {
@@ -49,7 +53,8 @@ namespace VeegStation
             InitializeComponent();
             updateAxisYMaximum();
             _Sensitivity = 100;
-            _timeStandard = 30; 
+            _timeStandard = 30;
+            _pixelPerCM = 20;
             initMenuItems();
             natfileinfo = new NatFileInfo(EegFile.NedFullName);
             pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
@@ -577,10 +582,8 @@ namespace VeegStation
             }
             item.Checked = true;
             _timeStandard = int.Parse(num);
-            //MessageBox.Show(_timeStandard.ToString());
-            //WINDOW_SECONDS = (int)(10 * 30D / Convert.ToDouble(_timeStandard));
-            //chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
-            setWindowSeconds((int)(10 * 30D / Convert.ToDouble(_timeStandard)));
+            //setWindowSeconds((int)(10 * 30D / Convert.ToDouble(_timeStandard)));
+            updateWindowSeconds();
             LoadData(_Page);
             ShowData();
         }
@@ -590,10 +593,10 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         /// <param name="wins"></param>
-        private void setWindowSeconds(int wins)
+        private void updateWindowSeconds()//int wins)
         {
-            WINDOW_SECONDS = wins;
-            chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
+            WINDOW_SECONDS = (int)(_totalMM / _timeStandard + 0.99);            //保证取的数据不小于当前窗口应该显示的数据,因为window_seconds为int，而秒数可能为小数
+            chartWave.ChartAreas[0].AxisX.Maximum = _totalMM / _timeStandard;
             int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
             if (_Page >= maxPage)
                 _Page = maxPage;
@@ -666,6 +669,41 @@ namespace VeegStation
             this.chartWave.ChartAreas[0].AxisY.Maximum = 20 * _intervalY;
             this.chartWave.ChartAreas[0].AxisY.MajorGrid.Interval = _intervalY;
             this.chartWave.ChartAreas[0].AxisY.MajorTickMark.Interval = _intervalY;
+            double a = chartWave.Width;
+        }
+
+        /// <summary>
+        /// X轴校准点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void calibrateXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (calibXForm == null)
+                calibXForm = new calibrateXForm(this);
+            calibXForm.Show();
+            calibXForm.BringToFront();
+        }
+
+        /// <summary>
+        /// X轴校准函数
+        /// </summary>
+        /// <param name="width">所测量的一格长度所得的像素宽度</param>
+        public void calibrateX(int width)
+        {
+            _pixelPerCM = width;
+            _totalMM = _pageWidth / width * 10;
+            //double seconds = _totalMM / _timeStandard;
+            updateWindowSeconds();
+        }
+
+        private void chartPaint(object sender, PaintEventArgs e)
+        {
+            if (_pageWidth == 0)
+            {
+                _pageWidth = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisX.Maximum) - this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(0);
+                _totalMM = _pageWidth / _pixelPerCM * 10;
+            }
         }
     }
 }

@@ -92,6 +92,7 @@ namespace VeegStation
             this.timeStandartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calibrateXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
             this.PationInfoPanel.SuspendLayout();
@@ -238,17 +239,17 @@ namespace VeegStation
             chartArea1.AxisY.InterlacedColor = System.Drawing.Color.DarkRed;
             chartArea1.AxisY.IsInterlaced = true;
             chartArea1.AxisY.LabelStyle.Enabled = false;
-            //chartArea1.AxisY.MajorGrid.Interval = _intervalY;//100D;
             chartArea1.AxisY.MajorGrid.IntervalOffset = 0D;
             chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
-            //chartArea1.AxisY.MajorTickMark.Interval = _intervalY;//100D;
             chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
-            //chartArea1.AxisY.Maximum = 20 * _intervalY;//2000D;
             chartArea1.AxisY.Minimum = 0D;
             chartArea1.Name = "mainArea";
             this.chartWave.ChartAreas.Add(chartArea1);
             legend1.Enabled = false;
             legend1.Name = "Legend1";
+            legend1.Position.Auto = false;
+            legend1.Position.Height = 100F;
+            legend1.Position.Width = 100F;
             this.chartWave.Legends.Add(legend1);
             this.chartWave.Location = new System.Drawing.Point(12, 63);
             this.chartWave.Name = "chartWave";
@@ -260,6 +261,7 @@ namespace VeegStation
             this.chartWave.Size = new System.Drawing.Size(752, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
+            this.chartWave.Paint += new System.Windows.Forms.PaintEventHandler(this.chartPaint);
             // 
             // timer
             // 
@@ -683,7 +685,8 @@ namespace VeegStation
             // calibrateToolStripMenuItem
             // 
             this.calibrateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.calibrateYToolStripMenuItem});
+            this.calibrateYToolStripMenuItem,
+            this.calibrateXToolStripMenuItem});
             this.calibrateToolStripMenuItem.Name = "calibrateToolStripMenuItem";
             this.calibrateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.C)));
             this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(60, 21);
@@ -692,9 +695,16 @@ namespace VeegStation
             // calibrateYToolStripMenuItem
             // 
             this.calibrateYToolStripMenuItem.Name = "calibrateYToolStripMenuItem";
-            this.calibrateYToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.calibrateYToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.calibrateYToolStripMenuItem.Text = "Y轴校准";
             this.calibrateYToolStripMenuItem.Click += new System.EventHandler(this.calibrateYToolStripMenuItem_Click);
+            // 
+            // calibrateXToolStripMenuItem
+            // 
+            this.calibrateXToolStripMenuItem.Name = "calibrateXToolStripMenuItem";
+            this.calibrateXToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.calibrateXToolStripMenuItem.Text = "X轴校准";
+            this.calibrateXToolStripMenuItem.Click += new System.EventHandler(this.calibrateXToolStripMenuItem_Click);
             // 
             // PlaybackForm
             // 
@@ -797,6 +807,7 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripMenuItem timeStandartToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateYToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem calibrateXToolStripMenuItem;
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }
