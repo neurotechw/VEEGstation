@@ -55,6 +55,7 @@ namespace VeegStation
        public   string     KeShi;
        public   string     FilePath;
     }
+
     //标志的结构
     public class EEGFMT
     {
@@ -74,8 +75,8 @@ namespace VeegStation
         public string Name;
         public short Flag;
         public string Note;
-        public string szSetting;                              //脑电盒支持的最高配置如P41
-        public string szNote;                               //最高配置的含义
+        public string szSetting;                                //脑电盒支持的最高配置如P41
+        public string szNote;                                   //最高配置的含义
 
         public MONTAGE(int num)
         {
