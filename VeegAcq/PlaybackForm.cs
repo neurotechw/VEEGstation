@@ -572,7 +572,7 @@ namespace VeegStation
             }
             item.Checked = true;
             _timeStandard = int.Parse(num);
-            MessageBox.Show(_timeStandard.ToString());
+            //MessageBox.Show(_timeStandard.ToString());
             //WINDOW_SECONDS = (int)(10 * 30D / Convert.ToDouble(_timeStandard));
             //chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
             setWindowSeconds((int)(10 * 30D / Convert.ToDouble(_timeStandard)));
@@ -584,6 +584,10 @@ namespace VeegStation
         {
             WINDOW_SECONDS = wins;
             chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
+            int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
+            if (_Page >= maxPage)
+                _Page = maxPage;
+                
         }
 
         /// <summary>

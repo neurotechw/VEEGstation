@@ -99,7 +99,6 @@
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnPlay,
             this.btnPause,
@@ -108,7 +107,7 @@
             this.btnPrev,
             this.btnNext,
             this.InformationTSSSBt});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 557);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 25);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(942, 25);
             this.toolStrip1.TabIndex = 0;
@@ -199,7 +198,7 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 535);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 560);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(942, 22);
             this.statusStrip1.TabIndex = 1;
@@ -229,7 +228,6 @@
             chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
             chartArea1.AxisX.MajorTickMark.Interval = 1D;
             chartArea1.AxisX.MajorTickMark.IntervalOffset = 0D;
-            //chartArea1.AxisX.Maximum = 8D;
             chartArea1.AxisX.Minimum = 0D;
             stripLine1.BorderColor = System.Drawing.Color.Orange;
             stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
@@ -269,7 +267,7 @@
             // 
             this.hsProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.hsProgress.Location = new System.Drawing.Point(12, 29);
+            this.hsProgress.Location = new System.Drawing.Point(9, 48);
             this.hsProgress.Name = "hsProgress";
             this.hsProgress.Size = new System.Drawing.Size(752, 17);
             this.hsProgress.TabIndex = 4;
@@ -670,13 +668,13 @@
             // sensitivityToolStripMenuItem
             // 
             this.sensitivityToolStripMenuItem.Name = "sensitivityToolStripMenuItem";
-            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.sensitivityToolStripMenuItem.Text = "灵敏度";
             // 
             // timeStandartToolStripMenuItem
             // 
             this.timeStandartToolStripMenuItem.Name = "timeStandartToolStripMenuItem";
-            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.timeStandartToolStripMenuItem.Text = "时间基准";
             // 
             // PlaybackForm
@@ -684,6 +682,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(942, 582);
+            this.Controls.Add(this.hsProgress);
             this.Controls.Add(this.panelVideo);
             this.Controls.Add(this.PationInfoPanel);
             this.Controls.Add(this.DetectionInfoPanel);
@@ -693,7 +692,6 @@
             this.Controls.Add(this.btn_enlarge);
             this.Controls.Add(this.panel_prev);
             this.Controls.Add(this.panel_next);
-            this.Controls.Add(this.hsProgress);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
