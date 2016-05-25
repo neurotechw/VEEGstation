@@ -1,4 +1,4 @@
-﻿namespace VeegStation
+namespace VeegStation
 {
     partial class PlaybackForm
     {
@@ -99,6 +99,8 @@
             this.btn_accelerate = new System.Windows.Forms.Button();
             this.btn_decelerate = new System.Windows.Forms.Button();
             this.btn_hide = new System.Windows.Forms.Button();
+            this.calibrateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calibrateYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
@@ -299,29 +301,29 @@
             stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             stripLine1.StripWidth = 0.0001D;
             chartArea1.AxisX.StripLines.Add(stripLine1);
-            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
+            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.DarkRed;
             chartArea1.AxisY.IsInterlaced = true;
             chartArea1.AxisY.LabelStyle.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Interval = 100D;
+            //chartArea1.AxisY.MajorGrid.Interval = _intervalY;//100D;
             chartArea1.AxisY.MajorGrid.IntervalOffset = 0D;
             chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisY.MajorTickMark.Interval = 100D;
+            //chartArea1.AxisY.MajorTickMark.Interval = _intervalY;//100D;
             chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
-            chartArea1.AxisY.Maximum = 2000D;
+            //chartArea1.AxisY.Maximum = 20 * _intervalY;//2000D;
             chartArea1.AxisY.Minimum = 0D;
             chartArea1.Name = "mainArea";
             this.chartWave.ChartAreas.Add(chartArea1);
             legend1.Enabled = false;
             legend1.Name = "Legend1";
             this.chartWave.Legends.Add(legend1);
-            this.chartWave.Location = new System.Drawing.Point(12, 49);
+            this.chartWave.Location = new System.Drawing.Point(12, 63);
             this.chartWave.Name = "chartWave";
             series1.ChartArea = "mainArea";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             series1.Legend = "Legend1";
             series1.Name = "Series1";
             this.chartWave.Series.Add(series1);
-            this.chartWave.Size = new System.Drawing.Size(752, 508);
+            this.chartWave.Size = new System.Drawing.Size(752, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
             // 
@@ -715,7 +717,8 @@
             // 
             this.menuStrip1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.格式ToolStripMenuItem});
+            this.格式ToolStripMenuItem,
+            this.calibrateToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(942, 24);
@@ -776,6 +779,21 @@
             this.btn_hide.Text = "隐藏";
             this.btn_hide.UseVisualStyleBackColor = true;
             this.btn_hide.Click += new System.EventHandler(this.btn_hide_Click);
+            // calibrateToolStripMenuItem
+            // 
+            this.calibrateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.calibrateYToolStripMenuItem});
+            this.calibrateToolStripMenuItem.Name = "calibrateToolStripMenuItem";
+            this.calibrateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.C)));
+            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(60, 21);
+            this.calibrateToolStripMenuItem.Text = "校准(C)";
+            // 
+            // calibrateYToolStripMenuItem
+            // 
+            this.calibrateYToolStripMenuItem.Name = "calibrateYToolStripMenuItem";
+            this.calibrateYToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
+            this.calibrateYToolStripMenuItem.Text = "Y轴校准";
+            this.calibrateYToolStripMenuItem.Click += new System.EventHandler(this.calibrateYToolStripMenuItem_Click);
             // 
             // PlaybackForm
             // 
@@ -880,20 +898,6 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 格式ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sensitivityToolStripMenuItem;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_10;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_20;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_30;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_50;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_70;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_100;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_150;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_200;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_300;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_500;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_700;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_1000;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_2000;
-        //private System.Windows.Forms.ToolStripMenuItem μvcmToolStripMenuItem_5000;
         private System.Windows.Forms.ToolStripMenuItem timeStandartToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStriplabel_abtime;
         private System.Windows.Forms.ToolStripStatusLabel displayStartTime;
@@ -904,6 +908,8 @@
         private System.Windows.Forms.Button btn_accelerate;
         private System.Windows.Forms.Button btn_decelerate;
         private System.Windows.Forms.Button btn_hide;
+        private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem calibrateYToolStripMenuItem;
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }
