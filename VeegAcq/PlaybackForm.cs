@@ -23,9 +23,14 @@ namespace VeegStation
         //////////////////////////////
         NatFileInfo natfileinfo;
         PationInfo pationinfo;
-
+        DateTime dt;
+        DateTime dt_relativetime;
+        DateTime dt_totaltime;
+        float speed = 1.0f;
+        public static int i = 9;
+        private VideoForm video;
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
-        private NationFileInfo _nfi = null;
+        public NationFileInfo _nfi = null;
 
         private List<EegPacket> _packets = new List<EegPacket>();
 
@@ -49,7 +54,6 @@ namespace VeegStation
             initMenuItems();
             natfileinfo = new NatFileInfo(EegFile.NedFullName);
             pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
-
             _Page = 0;
             try
             {
@@ -129,6 +133,16 @@ namespace VeegStation
                 return;
             }
 
+            int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
+            hsProgress.Maximum = maxPage-1;
+            hsProgress.Minimum = 0;
+            dt_relativetime=DateTime.Parse("2016-05-23  00:00:00");
+            dt_totaltime = DateTime.Parse("2016-05-23 00:00:00");
+            dt = _nfi.StartTime;
+            displayStartTime.Text = dt.ToLongTimeString().ToString();
+            dt_totaltime = dt_totaltime.AddSeconds(_nfi.Duration.TotalSeconds);
+            displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
+            displayTotalTime.Text = dt_totaltime.ToLongTimeString().ToString();
             chartWave.Series.Clear();
             foreach (int idx in Enumerable.Range(0, 20))
             {
@@ -145,13 +159,10 @@ namespace VeegStation
                 LoadData(0);
                 ShowData();
             }
-
             IMediaPlayerFactory factory = new MediaPlayerFactory();
             _player = factory.CreatePlayer<IVideoPlayer>();
             _player.WindowHandle = panelVideo.Handle;
-            //     _player.WindowHandle=pictureBox1.Handle;
             _player.AspectRatio = AspectRatioMode.Mode2; // fill?
-
             if (_nfi.HasVideo)
             {
                 _media = factory.CreateMedia<IMediaFromFile>(_nfi.VideoFullName);
@@ -162,6 +173,9 @@ namespace VeegStation
                 //_player.Play();
                 _player.Pause();
             }
+            video = new VideoForm(_nfi);
+            video.Show();
+            video.Hide();
         }
 
         private void PagePrev()
@@ -204,9 +218,10 @@ namespace VeegStation
 
 
 
-        private void SetTimeLine()
+        public void SetTimeLine()
         {
-            chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _CurrentOffset - _Page * chartWave.ChartAreas[0].AxisX.Maximum;////////添加需要拖动的一些位置进行
+    //        chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _CurrentOffset - _Page * chartWave.ChartAreas[0].AxisX.Maximum;////////添加需要拖动的一些位置进行
+	          chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset += 0.1*speed;
         }
         private void SyncVideo()
         {
@@ -225,7 +240,7 @@ namespace VeegStation
             //_player.Play();
             //_player.Pause();
             set_BtnEnable();
-            hsProgerss_Video.Value = 0;
+        //    hsProgerss_Video.Value = 0;
         }
 
         private void btnNext_Click(object sender, EventArgs e)
@@ -238,49 +253,64 @@ namespace VeegStation
             //_player.Play();
             // _player.Pause();
             set_BtnEnable();
-            hsProgerss_Video.Value = 0;
+        //    hsProgerss_Video.Value = 0;
         }
 
-        private void timer_Tick(object sender, EventArgs e)
+        public void timer_Tick(object sender, EventArgs e)
         {
             DateTime now = DateTime.Now;
-            _CurrentOffset += (now - _LastTime.Value).TotalSeconds;
+            _CurrentOffset += (now - _LastTime.Value).TotalSeconds*speed;
             _LastTime = now;
-            if (_CurrentOffset > _nfi.Duration.TotalSeconds)/////////////////
+            if (_CurrentOffset > _nfi.Duration.TotalSeconds+0.3)/////////////////
             {
                 Pause();
                 _CurrentOffset = 0;
                 _Page = 0;
                 _LastTime = null;
             }
-
-            if (_CurrentOffset > (_Page + 1) * chartWave.ChartAreas[0].AxisX.Maximum)
-            {
-                PageNext();
-                hsProgerss_Video.Value = 0;////////////////////添加用于更新进度条使用
-            }
             else
-            {
-                if (hsProgerss_Video.Maximum == hsProgerss_Video.Value)
+             {
+                //          if (_CurrentOffset > (_Page + 1) * chartWave.ChartAreas[0].AxisX.Maximum)
+                if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= chartWave.ChartAreas[0].AxisX.Maximum)
                 {
-                    timer.Enabled = false;
-                    //   hsProgress.Value = 0;
+                    PageNext();
+                    //           hsProgerss_Video.Value = 0;////////////////////添加用于更新进度条使用
+                    hsProgress.Value += 1;
+                    chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
                 }
+
                 else
                 {
-                    // 如果最大值减去每次滚动的1，最后剩下的不足1，就加上剩下的
-                    if (hsProgerss_Video.Maximum - hsProgerss_Video.Value < 1)
-                        hsProgerss_Video.Value += hsProgerss_Video.Maximum - hsProgerss_Video.Value;
-                    else
-                        hsProgerss_Video.Value += 1;
+                    /*            if (hsProgerss_Video.Maximum == hsProgerss_Video.Value)
+                                {
+                                    timer.Enabled = false;
+                                }
+                                else
+                                {
+                                    // 如果最大值减去每次滚动的1，最后剩下的不足1，就加上剩下的
+                                    if (hsProgerss_Video.Maximum - hsProgerss_Video.Value < 1)
+                                        hsProgerss_Video.Value += hsProgerss_Video.Maximum - hsProgerss_Video.Value;
+                                    else
+                                        hsProgerss_Video.Value += 1;
+                                }   
+                     * */
+                    SetTimeLine();
+                    dt = dt.AddSeconds(0.1 * speed);
+                    displayStartTime.Text = dt.ToLongTimeString().ToString();
+                    dt_relativetime = dt_relativetime.AddSeconds(0.1 * speed);
+                    displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
                 }
-                //        SetTimeLine_2();
-                SetTimeLine();
             }
+            if (dt_relativetime.Second >= _nfi.Duration.TotalSeconds)
+            {
+                chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _nfi.Duration.TotalSeconds - _Page * chartWave.ChartAreas[0].AxisX.Maximum;
+                timer.Enabled = false;
+            }
+
 
         }
 
-        private void Play()
+        public void Play()
         {
             if (!_LastTime.HasValue)
             {
@@ -303,7 +333,7 @@ namespace VeegStation
             btnPause.Enabled = true;
         }
 
-        private void Pause()
+        public void Pause()
         {
             timer.Enabled = false;
             _LastTime = null;
@@ -316,14 +346,17 @@ namespace VeegStation
             btnPlay.Enabled = true;
         }
 
-        private void btnPlay_Click(object sender, EventArgs e)
+        public void btnPlay_Click(object sender, EventArgs e)
         {
             Play();
+            video.Play();
+         //   video.Hide();  
         }
 
-        private void btnPause_Click(object sender, EventArgs e)
+        public void btnPause_Click(object sender, EventArgs e)
         {
             Pause();
+            video.Pause();
         }
 
         //private void hsProgress_ValueChanged(object sender, EventArgs e)
@@ -347,9 +380,10 @@ namespace VeegStation
 
         private void set_hsScrollBarValue()
         {
-            int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
-            int value = (int)((float)(_Page + 1) / (float)maxPage * 91 + 0.5);
-            hsProgress.Value = value;
+      //      int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
+     //       int value = (int)((float)(_Page + 1) / (float)maxPage * 91 + 0.5);
+
+       //     hsProgress.Value = value;
         }
 
         private void hsProgress_MouseCaptureChanged(object sender, EventArgs e)
@@ -357,7 +391,6 @@ namespace VeegStation
             Debug.WriteLine(string.Format("Scroll mouse cap changed {0}", e));
             Pause();
             set_BtnEnable();
-            hsProgerss_Video.Value = 0;
         }
 
         private void panel_next_click(object sender, EventArgs e)
@@ -422,18 +455,13 @@ namespace VeegStation
             else
                 _CurrentOffset = 0;
         }
-        private void SetTimeLine_2()
+ /*       private void SetTimeLine_2()
         {
             chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = hsProgerss_Video.Value * 0.1;
         }
+*/
         private void hsProgerss_Video_Scroll(object sender, ScrollEventArgs e)
         {
-            timer.Enabled = false;
-            PagePrev_2();
-            _player.Time = (long)(_CurrentOffset * 1000 + hsProgerss_Video.Value * 100);
-            _CurrentOffset = _CurrentOffset + hsProgerss_Video.Value * 0.1;
-            SetTimeLine();
-            Pause();
         }
 
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
@@ -518,7 +546,8 @@ namespace VeegStation
             if (_Page < (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate))
             {
                 int max = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
-                _Page = (int)((float)hsProgress.Value / 91.0f * (max - 1) + 0.5);
+    //            _Page = (int)((float)hsProgress.Value / 91.0f * (max - 1) + 0.5);
+					_Page=hsProgress.Value;
                 _CurrentOffset = _Page * chartWave.ChartAreas[0].AxisX.Maximum;
                 LoadData(_Page);
                 ShowData();
@@ -617,6 +646,36 @@ namespace VeegStation
                 if (s == _Sensitivity)
                     item.Checked = true;
                 this.sensitivityToolStripMenuItem.DropDownItems.Add(item);
+            }
+        }
+
+        private void btn_accelerate_Click(object sender, EventArgs e)
+        {
+            _player.PlaybackRate = _player.PlaybackRate * 2;
+            speed = _player.PlaybackRate;
+        }
+
+        private void btn_decelerate_Click(object sender, EventArgs e)
+        {
+            _player.PlaybackRate = _player.PlaybackRate / 2;
+            speed = _player.PlaybackRate;
+        }
+
+        private void btn_hide_Click(object sender, EventArgs e)
+        {
+            if (panelVideo.Visible == true)
+            {
+                btn_hide.Text = "显示";
+                panelVideo.Visible = false;
+                panelVideo.Enabled = false;
+                video.Show();
+            }
+            else
+            {
+                btn_hide.Text = "隐藏";
+                panelVideo.Visible = true;
+                panelVideo.Enabled = true;
+                video.Hide();
             }
         }
     }
