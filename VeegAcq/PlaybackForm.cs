@@ -40,12 +40,16 @@ namespace VeegStation
         private int _Sensitivity;                                                                                                      //当前灵敏度的取值 -- by lxl
         private int[] _timeStandardArray = { 6, 10, 15, 30, 60, 100, 300 };                                                            //时间基准选择范围 -- by lxl
         private int _timeStandard;                                                                                                     //当前选择时间基准 -- by lxl
+        private int _intervalY;                                                                                                        //当前设置单位后Y轴的间隔 -- by lxl
+        private CalibrateForm calibForm;                                                                                               //校准窗口
 
         public PlaybackForm(NationFileInfo EegFile)
         {
+            _intervalY = 100;
             InitializeComponent();
+            updateAxisYMaximum();
             _Sensitivity = 100;
-            _timeStandard = 30;
+            _timeStandard = 30; 
             initMenuItems();
             natfileinfo = new NatFileInfo(EegFile.NedFullName);
             pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
@@ -112,7 +116,8 @@ namespace VeegStation
                     double val = _packets[tIdx].EEG[sIdx];
                     val /= 20;
                     val /= rate;
-                    val += (2000 - 100 * sIdx - 50);
+                    //val += (2000 - 100 * sIdx - 50);
+                    val += chartWave.ChartAreas[0].AxisY.Maximum - _intervalY * sIdx - _intervalY / 2;
                     col[sIdx].Points.AddXY(tIdx / 128.0, val);
                 }
             }
@@ -580,6 +585,11 @@ namespace VeegStation
             ShowData();
         }
 
+        /// <summary>
+        /// 设置一页有多少秒
+        /// -- by lxl
+        /// </summary>
+        /// <param name="wins"></param>
         private void setWindowSeconds(int wins)
         {
             WINDOW_SECONDS = wins;
@@ -618,6 +628,44 @@ namespace VeegStation
                     item.Checked = true;
                 this.sensitivityToolStripMenuItem.DropDownItems.Add(item);
             }
+        }
+
+        /// <summary>
+        /// Y轴校准点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void calibrateYToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (calibForm == null)
+                calibForm = new CalibrateForm(this);
+            this.calibForm.Show();
+            this.calibForm.BringToFront();
+        }
+
+        /// <summary>
+        /// Y轴校准
+        /// -- by lxl
+        /// </summary>
+        /// <param name="size">单位为毫米</param>
+        public void calibrateY(int size)
+        {
+            chartWave.SuspendLayout();
+            _intervalY = size / 2;                                      //即size * 10 / 20 ，每格的宽度
+            updateAxisYMaximum();
+            ShowData();
+        }
+
+        /// <summary>
+        /// 更新Y轴的显示最大值
+        /// -- by lxl
+        /// </summary>
+        private void updateAxisYMaximum()
+        {
+            this.chartWave.ChartAreas[0].AxisY.Maximum = 20 * _intervalY;
+            this.chartWave.ChartAreas[0].AxisY.MajorGrid.Interval = _intervalY;
+            this.chartWave.ChartAreas[0].AxisY.MajorTickMark.Interval = _intervalY;
         }
     }
 }

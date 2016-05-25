@@ -46,3 +46,4 @@ D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.Recor
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.csproj.GenerateResource.Cache
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.exe
 D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.pdb
+D:\Works\VeegStationSource\VeegStationSource\VeegAcq\obj\Debug\VeegStation.CalibrateForm.resources
