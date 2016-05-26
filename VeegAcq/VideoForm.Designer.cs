@@ -29,73 +29,104 @@
         private void InitializeComponent()
         {
             this.panel_Mvideo = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.kryptonbtn_close = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-            this.kryptonbtnpause = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-            this.kryptonbtnplay = new ComponentFactory.Krypton.Toolkit.KryptonButton();
             this.pictureBox_Video = new System.Windows.Forms.PictureBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btn_decelerate = new System.Windows.Forms.Button();
+            this.btn_accelerate = new System.Windows.Forms.Button();
+            this.btn_close = new System.Windows.Forms.Button();
+            this.btn_pause = new System.Windows.Forms.Button();
+            this.btn_play = new System.Windows.Forms.Button();
             this.panel_Mvideo.SuspendLayout();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Video)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel_Mvideo
             // 
             this.panel_Mvideo.Controls.Add(this.pictureBox_Video);
-            this.panel_Mvideo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_Mvideo.Location = new System.Drawing.Point(0, 0);
             this.panel_Mvideo.Name = "panel_Mvideo";
-            this.panel_Mvideo.Size = new System.Drawing.Size(547, 540);
+            this.panel_Mvideo.Size = new System.Drawing.Size(547, 543);
             this.panel_Mvideo.TabIndex = 0;
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.kryptonbtn_close);
-            this.panel1.Controls.Add(this.kryptonbtnpause);
-            this.panel1.Controls.Add(this.kryptonbtnplay);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 540);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(547, 35);
-            this.panel1.TabIndex = 1;
-            // 
-            // kryptonbtn_close
-            // 
-            this.kryptonbtn_close.Location = new System.Drawing.Point(196, 7);
-            this.kryptonbtn_close.Name = "kryptonbtn_close";
-            this.kryptonbtn_close.Size = new System.Drawing.Size(90, 25);
-            this.kryptonbtn_close.TabIndex = 2;
-            this.kryptonbtn_close.Values.Text = "关闭";
-            this.kryptonbtn_close.Click += new System.EventHandler(this.kryptonbtn_close_Click);
-            // 
-            // kryptonbtnpause
-            // 
-            this.kryptonbtnpause.Location = new System.Drawing.Point(100, 6);
-            this.kryptonbtnpause.Name = "kryptonbtnpause";
-            this.kryptonbtnpause.Size = new System.Drawing.Size(90, 25);
-            this.kryptonbtnpause.TabIndex = 1;
-            this.kryptonbtnpause.Values.Text = "暂停";
-            this.kryptonbtnpause.Click += new System.EventHandler(this.kryptonbtnpause_Click);
-            // 
-            // kryptonbtnplay
-            // 
-            this.kryptonbtnplay.Location = new System.Drawing.Point(3, 7);
-            this.kryptonbtnplay.Name = "kryptonbtnplay";
-            this.kryptonbtnplay.Size = new System.Drawing.Size(90, 25);
-            this.kryptonbtnplay.TabIndex = 0;
-            this.kryptonbtnplay.Values.Text = "播放";
-            this.kryptonbtnplay.Click += new System.EventHandler(this.kryptonbtnplay_Click);
+            this.panel_Mvideo.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel_Mvideo_MouseClick);
+            this.panel_Mvideo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel_Mvideo_MouseDown);
+            this.panel_Mvideo.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel_Mvideo_MouseMove);
             // 
             // pictureBox_Video
             // 
-            this.pictureBox_Video.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox_Video.Location = new System.Drawing.Point(0, 94);
             this.pictureBox_Video.Name = "pictureBox_Video";
-            this.pictureBox_Video.Size = new System.Drawing.Size(547, 541);
+            this.pictureBox_Video.Size = new System.Drawing.Size(547, 270);
             this.pictureBox_Video.TabIndex = 0;
             this.pictureBox_Video.TabStop = false;
             this.pictureBox_Video.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Video_Paint);
             this.pictureBox_Video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_Video_MouseDown);
             this.pictureBox_Video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_Video_MouseMove);
+            // 
+            // panel1
+            // 
+            this.panel1.AutoSize = true;
+            this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel1.Controls.Add(this.btn_decelerate);
+            this.panel1.Controls.Add(this.btn_accelerate);
+            this.panel1.Controls.Add(this.btn_close);
+            this.panel1.Controls.Add(this.btn_pause);
+            this.panel1.Controls.Add(this.btn_play);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 542);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(547, 33);
+            this.panel1.TabIndex = 1;
+            // 
+            // btn_decelerate
+            // 
+            this.btn_decelerate.Location = new System.Drawing.Point(439, 3);
+            this.btn_decelerate.Name = "btn_decelerate";
+            this.btn_decelerate.Size = new System.Drawing.Size(75, 23);
+            this.btn_decelerate.TabIndex = 7;
+            this.btn_decelerate.Text = "减速";
+            this.btn_decelerate.UseVisualStyleBackColor = true;
+            this.btn_decelerate.Click += new System.EventHandler(this.btn_decelerate_Click);
+            // 
+            // btn_accelerate
+            // 
+            this.btn_accelerate.Location = new System.Drawing.Point(324, 4);
+            this.btn_accelerate.Name = "btn_accelerate";
+            this.btn_accelerate.Size = new System.Drawing.Size(75, 23);
+            this.btn_accelerate.TabIndex = 6;
+            this.btn_accelerate.Text = "加速";
+            this.btn_accelerate.UseVisualStyleBackColor = true;
+            this.btn_accelerate.Click += new System.EventHandler(this.btn_accelerate_Click);
+            // 
+            // btn_close
+            // 
+            this.btn_close.Location = new System.Drawing.Point(209, 5);
+            this.btn_close.Name = "btn_close";
+            this.btn_close.Size = new System.Drawing.Size(75, 23);
+            this.btn_close.TabIndex = 5;
+            this.btn_close.Text = "关闭";
+            this.btn_close.UseVisualStyleBackColor = true;
+            this.btn_close.Click += new System.EventHandler(this.btn_close_Click);
+            // 
+            // btn_pause
+            // 
+            this.btn_pause.Location = new System.Drawing.Point(103, 6);
+            this.btn_pause.Name = "btn_pause";
+            this.btn_pause.Size = new System.Drawing.Size(75, 23);
+            this.btn_pause.TabIndex = 4;
+            this.btn_pause.Text = "暂停";
+            this.btn_pause.UseVisualStyleBackColor = true;
+            this.btn_pause.Click += new System.EventHandler(this.btn_pause_Click);
+            // 
+            // btn_play
+            // 
+            this.btn_play.Location = new System.Drawing.Point(3, 7);
+            this.btn_play.Name = "btn_play";
+            this.btn_play.Size = new System.Drawing.Size(75, 23);
+            this.btn_play.TabIndex = 3;
+            this.btn_play.Text = "播放";
+            this.btn_play.UseVisualStyleBackColor = true;
+            this.btn_play.Click += new System.EventHandler(this.btn_play_Click);
             // 
             // VideoForm
             // 
@@ -106,11 +137,13 @@
             this.Controls.Add(this.panel1);
             this.Name = "VideoForm";
             this.Text = "VideoForm";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.VideoForm_Load_1);
             this.panel_Mvideo.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Video)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -118,9 +151,11 @@
 
         private System.Windows.Forms.Panel panel_Mvideo;
         private System.Windows.Forms.Panel panel1;
-        private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonbtnplay;
-        private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonbtnpause;
-        private ComponentFactory.Krypton.Toolkit.KryptonButton kryptonbtn_close;
         private System.Windows.Forms.PictureBox pictureBox_Video;
+        private System.Windows.Forms.Button btn_play;
+        private System.Windows.Forms.Button btn_close;
+        private System.Windows.Forms.Button btn_pause;
+        private System.Windows.Forms.Button btn_decelerate;
+        private System.Windows.Forms.Button btn_accelerate;
     }
 }
