@@ -28,43 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.confirmButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.valueBox = new System.Windows.Forms.NumericUpDown();
+            this.linePanel = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.valueBox)).BeginInit();
             this.SuspendLayout();
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(101, 15);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 21);
-            this.textBox1.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(30, 18);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 12);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "图表的高度";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(207, 18);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 12);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "毫米";
             // 
             // confirmButton
             // 
-            this.confirmButton.Location = new System.Drawing.Point(60, 43);
+            this.confirmButton.Location = new System.Drawing.Point(33, 197);
             this.confirmButton.Name = "confirmButton";
-            this.confirmButton.Size = new System.Drawing.Size(62, 23);
+            this.confirmButton.Size = new System.Drawing.Size(75, 23);
             this.confirmButton.TabIndex = 3;
             this.confirmButton.Text = "确定";
             this.confirmButton.UseVisualStyleBackColor = true;
@@ -72,27 +48,58 @@
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(139, 42);
+            this.cancelButton.Location = new System.Drawing.Point(129, 197);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(62, 23);
+            this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 4;
             this.cancelButton.Text = "取消";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(51, 69);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(203, 12);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "调整线段长度，直到其长度正好为1CM";
+            // 
+            // valueBox
+            // 
+            this.valueBox.Location = new System.Drawing.Point(51, 27);
+            this.valueBox.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.valueBox.Name = "valueBox";
+            this.valueBox.Size = new System.Drawing.Size(120, 21);
+            this.valueBox.TabIndex = 5;
+            this.valueBox.ValueChanged += new System.EventHandler(this.valueChanged);
+            // 
+            // linePanel
+            // 
+            this.linePanel.Location = new System.Drawing.Point(51, 117);
+            this.linePanel.Name = "linePanel";
+            this.linePanel.Size = new System.Drawing.Size(263, 40);
+            this.linePanel.TabIndex = 6;
+            this.linePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.draw);
+            // 
             // CalibrateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(264, 78);
+            this.ClientSize = new System.Drawing.Size(318, 232);
             this.ControlBox = false;
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.valueBox);
+            this.Controls.Add(this.linePanel);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.confirmButton);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
             this.Name = "CalibrateForm";
-            this.Text = "CalibrateForm";
+            this.Text = "Y轴校准";
+            ((System.ComponentModel.ISupportInitialize)(this.valueBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -100,10 +107,10 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button confirmButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown valueBox;
+        private System.Windows.Forms.Panel linePanel;
     }
 }

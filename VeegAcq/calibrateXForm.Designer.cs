@@ -40,13 +40,18 @@
             // 
             this.linePanel.Location = new System.Drawing.Point(51, 117);
             this.linePanel.Name = "linePanel";
-            this.linePanel.Size = new System.Drawing.Size(142, 40);
+            this.linePanel.Size = new System.Drawing.Size(265, 40);
             this.linePanel.TabIndex = 0;
             this.linePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.draw);
             // 
             // valueBox
             // 
             this.valueBox.Location = new System.Drawing.Point(51, 27);
+            this.valueBox.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
             this.valueBox.Name = "valueBox";
             this.valueBox.Size = new System.Drawing.Size(120, 21);
             this.valueBox.TabIndex = 0;
@@ -75,7 +80,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(49, 69);
+            this.label1.Location = new System.Drawing.Point(51, 69);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(203, 12);
             this.label1.TabIndex = 2;
@@ -92,7 +97,7 @@
             this.Controls.Add(this.valueBox);
             this.Controls.Add(this.linePanel);
             this.Name = "calibrateXForm";
-            this.Text = "calibrateXForm";
+            this.Text = "X轴校准";
             ((System.ComponentModel.ISupportInitialize)(this.valueBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

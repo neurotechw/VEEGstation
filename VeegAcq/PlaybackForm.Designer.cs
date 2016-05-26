@@ -236,12 +236,15 @@ namespace VeegStation
             stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             stripLine1.StripWidth = 0.01D;
             chartArea1.AxisX.StripLines.Add(stripLine1);
-            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.DarkRed;
+            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
             chartArea1.AxisY.IsInterlaced = true;
             chartArea1.AxisY.LabelStyle.Enabled = false;
             chartArea1.AxisY.MajorGrid.IntervalOffset = 0D;
+            chartArea1.AxisY.MajorGrid.Interval = 100D;
             chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
             chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
+            chartArea1.AxisY.MajorTickMark.Interval = 100D;
+            chartArea1.AxisY.Maximum = 2000D;
             chartArea1.AxisY.Minimum = 0D;
             chartArea1.Name = "mainArea";
             this.chartWave.ChartAreas.Add(chartArea1);
@@ -673,13 +676,13 @@ namespace VeegStation
             // sensitivityToolStripMenuItem
             // 
             this.sensitivityToolStripMenuItem.Name = "sensitivityToolStripMenuItem";
-            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.sensitivityToolStripMenuItem.Text = "灵敏度";
             // 
             // timeStandartToolStripMenuItem
             // 
             this.timeStandartToolStripMenuItem.Name = "timeStandartToolStripMenuItem";
-            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.timeStandartToolStripMenuItem.Text = "时间基准";
             // 
             // calibrateToolStripMenuItem
