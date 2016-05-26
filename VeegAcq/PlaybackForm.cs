@@ -182,7 +182,7 @@ namespace VeegStation
                 }
             }
             chartWave.ResumeLayout();
-            labelPage.Text = (_Page + 1).ToString() + "/" + ((_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate)).ToString();
+            labelPage.Text = (_Page + 1).ToString() + "/" + ((_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * _nfi.SampleRate)).ToString();//(WINDOW_SECONDS * _nfi.SampleRate)).ToString();
             DateTime end = DateTime.Now;
             Debug.WriteLine(string.Format("Show a window of data in {0} seconds", (end - begin).TotalSeconds));
         }
@@ -580,9 +580,9 @@ namespace VeegStation
 
         private void hsProgress_ValueChanged(object sender, ScrollEventArgs e)
         {
-            if (_Page < (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate))
+            if (_Page < (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * _nfi.SampleRate))
             {
-                int max = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
+                int max = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * _nfi.SampleRate);
                 _Page = (int)((float)hsProgress.Value / 91.0f * (max - 1) + 0.5);
                 _CurrentOffset = _Page * chartWave.ChartAreas[0].AxisX.Maximum;
                 LoadData(_Page);
@@ -651,7 +651,7 @@ namespace VeegStation
         {
             WINDOW_SECONDS = (int)(_X_totalMM / _timeStandard + 0.99);            //保证取的数据不小于当前窗口应该显示的数据,因为window_seconds为int，而秒数可能为小数
             chartWave.ChartAreas[0].AxisX.Maximum = _X_totalMM / _timeStandard;
-            int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
+            int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * _nfi.SampleRate);
             if (_Page >= maxPage)
                 _Page = maxPage;
                 
