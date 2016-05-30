@@ -632,12 +632,14 @@ namespace VeegStation
             item.Checked = true;
             _timeStandard = int.Parse(num);
             setAxisXMaximum(_X_totalMM / _timeStandard);
+            _isChangingBoardShow = true;                        //让画图函数重新计算一下当前的_xMaximum是多少
             LoadData(_Page);
             ShowData();
         }
 
         /// <summary>
         /// 设置可显示的X轴最大值
+        /// -- by lxl
         /// </summary>
         /// <param name="max"></param>
         private void setXMaximum(double max)
@@ -647,7 +649,8 @@ namespace VeegStation
         }
         
         /// <summary>
-        /// 实时更新页面数量与滑块
+        /// 实时更新页面数量与滑块位置
+        /// -- by lxl
         /// </summary>
         private void updatePage()
         {
@@ -679,14 +682,11 @@ namespace VeegStation
         /// <param name="wins"></param>
         private void updateWindowSeconds()//int wins)
         {
-            //chartWave.ChartAreas[0].AxisX.Maximum = _X_totalMM / _timeStandard;
             WINDOW_SECONDS = (int)Math.Ceiling(chartWave.ChartAreas[0].AxisX.Maximum);            //保证取的数据不小于当前窗口应该显示的数据,因为window_seconds为int，而秒数可能为小数
-            _maxPage = (_nfi.SampleCount - _nfi.SampleRate + ((WINDOW_SECONDS - 1) * _nfi.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * _nfi.SampleRate);
-            hsProgress.Maximum = _maxPage;
-            if (_Page >= _maxPage - 1)
-                _Page = _maxPage - 1;
-            //LoadData(_Page);
-            //ShowData();
+            //_maxPage = (_nfi.SampleCount - _nfi.SampleRate + ((WINDOW_SECONDS - 1) * _nfi.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * _nfi.SampleRate);
+            //hsProgress.Maximum = _maxPage;
+            //if (_Page >= _maxPage - 1)
+            //    _Page = _maxPage - 1;
         }
 
         /// <summary>
@@ -867,7 +867,8 @@ namespace VeegStation
                     //double chartw = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisX.Maximum); //-this.boardPanel.Width + this.Width;
                     //double x = this.boardPanel.Location.X;
                     //double chartWidth = this.Width - this.boardPanel.Width;
-                    _xMaximum = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(this.boardPanel.Location.X);
+                    //_xMaximum = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(this.boardPanel.Location.X);
+                    setXMaximum(this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(this.boardPanel.Location.X));
                     updatePage();
                     //setAxisXMaximum(this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(this.boardPanel.Location.X));
                 }
@@ -876,7 +877,8 @@ namespace VeegStation
                     //setAxisXMaximum(_X_totalMM / _timeStandard);
                     //LoadData(_Page);
                     //ShowData();
-                    _xMaximum = this.chartWave.ChartAreas[0].AxisX.Maximum;
+                    //_xMaximum = this.chartWave.ChartAreas[0].AxisX.Maximum;
+                    setXMaximum(this.chartWave.ChartAreas[0].AxisX.Maximum);
                     updatePage();
                 }
                 _isChangingBoardShow = false;
