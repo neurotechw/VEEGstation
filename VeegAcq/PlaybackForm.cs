@@ -802,25 +802,24 @@ namespace VeegStation
             Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
             Pen dotPen = new Pen(Color.Red, 2);
             dotPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-            if (_pageWidth == 0)
+            if (_pageWidth == 0)                            //计算图表的宽与高          -- by lxl
             {
                 _pageWidth = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisX.Maximum) - this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(0);
                 _X_totalMM = _pageWidth / _pixelPerMM;
-                //this.chartWave.ChartAreas[0].AxisX.Maximum = _X_totalMM / _timeStandard;
                 setAxisXMaximum(_X_totalMM / _timeStandard);
                 LoadData(_currentSeconds);
                 ShowData();
                 _pageHeight = Math.Abs(this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisY.Maximum) - this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0));
                 _Y_totalMM = _pageHeight / _pixelPerMM;
             }
-            while (_eventsQueue.Count > 0)
+            while (_eventsQueue.Count > 0)                  //画事件                   -- by lxl
             {
                 drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(_eventsQueue.Dequeue());
                 e.Graphics.FillRectangle(rectBrush, new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 e.Graphics.DrawString("病人事件", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
                 e.Graphics.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
-            if (_isChangingBoardShow)
+            if (_isChangingBoardShow)                       //计算面板显示与否的宽度    -- by lxl
             {
                 if (_isBoardShow)
                 {
@@ -832,6 +831,10 @@ namespace VeegStation
                 }
                 _isChangingBoardShow = false;
             }
+            double time1Pos=this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble((int)Math.Floor(_xMaximum) / 2));
+            //double time2Pos
+            e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos, 40, 80, 15));
+            e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2 * 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos * 2, 40, 80, 15));
         }
 
         /// <summary>

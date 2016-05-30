@@ -281,6 +281,7 @@ namespace VeegStation
             this.chartWave.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            chartArea1.AxisX.LabelStyle.Enabled = false;
             chartArea1.AxisX.LabelStyle.Interval = 1D;
             chartArea1.AxisX.LabelStyle.IntervalOffset = 0D;
             chartArea1.AxisX.MajorGrid.Interval = 1D;
