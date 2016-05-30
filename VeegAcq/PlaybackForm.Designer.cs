@@ -38,7 +38,6 @@ namespace VeegStation
             this.btnPlay = new System.Windows.Forms.ToolStripButton();
             this.btnPause = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.labelPage = new System.Windows.Forms.ToolStripLabel();
             this.btnPrev = new System.Windows.Forms.ToolStripButton();
             this.btnNext = new System.Windows.Forms.ToolStripButton();
             this.InformationTSSSBt = new System.Windows.Forms.ToolStripDropDownButton();
@@ -118,7 +117,6 @@ namespace VeegStation
             this.btnPlay,
             this.btnPause,
             this.toolStripSeparator1,
-            this.labelPage,
             this.btnPrev,
             this.btnNext,
             this.InformationTSSSBt});
@@ -151,13 +149,6 @@ namespace VeegStation
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
-            // labelPage
-            // 
-            this.labelPage.AutoSize = false;
-            this.labelPage.Name = "labelPage";
-            this.labelPage.Size = new System.Drawing.Size(77, 22);
-            this.labelPage.Text = "####/####";
             // 
             // btnPrev
             // 
@@ -858,10 +849,8 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnNext;
         private System.Windows.Forms.ToolStripButton btnPrev;
-        private System.Windows.Forms.ToolStripLabel labelPage;
+        //private System.Windows.Forms.ToolStripLabel labelPage;
         private System.Windows.Forms.HScrollBar hsProgress;
-        //private System.Windows.Forms.Panel panel_next;
-        //private System.Windows.Forms.Panel panel_prev;
         private System.Windows.Forms.Button btn_enlarge;
         private System.Windows.Forms.Button btn_shrink;
 
