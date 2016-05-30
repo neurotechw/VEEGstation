@@ -89,6 +89,12 @@
     <Compile Include="CalibrateForm.Designer.cs">
       <DependentUpon>CalibrateForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="calibrateXForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="calibrateXForm.Designer.cs">
+      <DependentUpon>calibrateXForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataFunc.cs" />
     <Compile Include="Datastructcs.cs" />
     <Compile Include="EegPacket.cs" />
@@ -127,6 +133,9 @@
     <Compile Include="μvcmToolStripMenuItem.cs" />
     <EmbeddedResource Include="CalibrateForm.resx">
       <DependentUpon>CalibrateForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="calibrateXForm.resx">
+      <DependentUpon>calibrateXForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PlaybackForm.resx">
       <DependentUpon>PlaybackForm.cs</DependentUpon>

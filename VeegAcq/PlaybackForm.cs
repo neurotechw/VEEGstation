@@ -23,38 +23,134 @@ namespace VeegStation
         //////////////////////////////
         NatFileInfo natfileinfo;
         PationInfo pationinfo;
-        DateTime dt;                                                    //绝对时间
-        DateTime dt_relativetime;                                  //相对时间
-        DateTime dt_totaltime;                                      //总时间
+        /// <summary>
+        /// 绝对时间
+        /// wsp
+        /// </summary>
+        DateTime dt;        
+        /// <summary>
+        /// 相对时间
+        /// wsp
+        /// </summary>                                   
+        DateTime dt_relativetime;      
+        /// <summary>
+        /// 总时间
+        /// wsp
+        /// </summary>                  
+        DateTime dt_totaltime;   
+        /// <summary>
+        /// 调整视频速率时，脑电播放速率也要同步
+        /// wsp
+        /// </summary>                          
         public float speed = 1.0f;
-        public static int i = 9;
+        /// <summary>
+        /// 与弹出的视频面板进行数据和状态传递
+        /// wsp
+        /// </summary>
         private VideoForm video;
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         public NationFileInfo _nfi = null;
         int maxPage;
         private List<EegPacket> _packets = new List<EegPacket>();
-
+        /// <summary>
+        /// 事件队列
+        /// -- by lxl
+        /// </summary>
+        private Queue<double> _eventsQueue = new Queue<double>();
         private int _Page;
+        private int _maxPage;                   
         private DateTime? _LastTime = null;
         private double _CurrentOffset;
 
         public IVideoPlayer _player;
         private IMedia _media;
 
-        private int[] _sensitivityArray = { 10, 20, 30, 50, 70, 100, 150, 200, 300, 500, 700, 1000, 2000, 5000 };                       //灵敏度的选择范围 -- by lxl
-        private int _Sensitivity;                                                                                                      //当前灵敏度的取值 -- by lxl
-        private int[] _timeStandardArray = { 6, 10, 15, 30, 60, 100, 300 };                                                            //时间基准选择范围 -- by lxl
-        private int _timeStandard;                                                                                                     //当前选择时间基准 -- by lxl
-        private int _intervalY;                                                                                                        //当前设置单位后Y轴的间隔 -- by lxl
-        private CalibrateForm calibForm;                                                                                               //校准窗口
-
+        /// <summary>
+        /// 灵敏度的选择范围 
+        /// -- by lxl
+        /// </summary>
+        private int[] _sensitivityArray = { 10, 20, 30, 50, 70, 100, 150, 200, 300, 500, 700, 1000, 2000, 5000 };        
+        /// <summary>
+        /// 当前灵敏度的取值 
+        /// -- by lxl
+        /// </summary>
+        private int _Sensitivity;                                                                                                      
+        /// <summary>
+        /// 时间基准选择范围 
+        /// -- by lxl
+        /// </summary>
+        private int[] _timeStandardArray = { 6, 10, 15, 30, 60, 100, 300 };                                                            
+        /// <summary>
+        /// 当前选择时间基准,毫米每秒  
+        /// -- by lxl
+        /// </summary>
+        private int _timeStandard;                                                                                                          
+        /// <summary>
+        /// 校准Y轴窗口            
+        /// - by lxl
+        /// </summary>
+        private CalibrateForm calibForm;                                                                                               
+        /// <summary>
+        /// 校验X轴窗口            
+        /// -- by lxl
+        /// </summary>
+        private calibrateXForm calibXForm;                                                                                            
+        /// <summary>
+        /// 屏幕的宽度,单位为像素点
+        /// -- by lxl
+        /// </summary>
+        private double _pageWidth = 0;
+        /// <summary>
+        /// 屏幕的高度,单位为像素点
+        /// -- by lxl
+        /// </summary>
+        private double _pageHeight = 0;
+        /// <summary>
+        /// 图表宽度,单位为毫米        
+        /// -- by lxl
+        /// </summary>
+        private double _X_totalMM;
+        /// <summary>
+        /// 图标高度，单位为毫米
+        /// -- by lxl
+        /// </summary>
+        private double _Y_totalMM;
+        /// <summary>
+        /// 一毫米有多少个像素         
+        /// -- by lxl
+        /// </summary>
+        private double _pixelPerMM;
+        /// <summary>
+        /// 坐标数据显示的比例，用于校准屏幕宽度时用
+        /// -- by lxl
+        /// </summary>
+        private double _rate_that_ensure_1_cm;
+        /// <summary>
+        /// 判断面板此时是否显示
+        /// -- by lxl
+        /// </summary>
+        private bool _isBoardShow;
+        /// <summary>
+        /// X轴当前的最大值为多少
+        /// -- by lxl
+        /// </summary>
+        private double _xMaximum;
+        /// <summary>
+        /// 标识此时是否刚更换面板显示状态，防止不停调用画图函数里的计算
+        /// -- by lxl
+        /// </summary>
+        private bool _isChangingBoardShow;            
         public PlaybackForm(NationFileInfo EegFile)
         {
-            _intervalY = 100;
             InitializeComponent();
-            updateAxisYMaximum();
             _Sensitivity = 100;
-            _timeStandard = 30; 
+            _isBoardShow = true;
+            this.boardToolStripMenuItem.Checked = _isBoardShow;
+            this.boardPanel.Visible = _isBoardShow;
+            _timeStandard = 30;
+            _pixelPerMM = 3.8;
+            _rate_that_ensure_1_cm = 1;
+            _isChangingBoardShow = true;
             initMenuItems();
             natfileinfo = new NatFileInfo(EegFile.NedFullName);
             pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
@@ -78,7 +174,7 @@ namespace VeegStation
             DateTime begin = DateTime.Now;
             FileStream fs = new FileStream(_nfi.NedFullName, FileMode.Open, FileAccess.Read);
             fs.Seek(0x200, SeekOrigin.Begin);
-            fs.Seek(0x6c * Offset * loadRec, SeekOrigin.Current);
+            fs.Seek(0x6c * Offset * (loadRec - _nfi.SampleRate * (WINDOW_SECONDS-(int)Math.Ceiling(_xMaximum) + 1)), SeekOrigin.Current);
             byte[] buf = new byte[0x6c];
             _packets.Clear();
             foreach (int x in Enumerable.Range(0, loadRec))
@@ -115,19 +211,20 @@ namespace VeegStation
             }
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
+                if (tIdx % 127 == 0) _eventsQueue.Enqueue(tIdx / 128D);
                 col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);
                 foreach (int sIdx in Enumerable.Range(0, 19))
                 {
                     double val = _packets[tIdx].EEG[sIdx];
                     val /= 20;
-                    val /= rate;
-                    //val += (2000 - 100 * sIdx - 50);
-                    val += chartWave.ChartAreas[0].AxisY.Maximum - _intervalY * sIdx - _intervalY / 2;
+                    val /= rate;                                //根据灵敏度调整 -- by lxl
+                    val *= _rate_that_ensure_1_cm;              //根据所校准的单位调整-- by lxl
+                    val += (2000 - 100 * sIdx - 50);
                     col[sIdx].Points.AddXY(tIdx / 128.0, val);
                 }
             }
             chartWave.ResumeLayout();
-            labelPage.Text = (_Page + 1).ToString() + "/" + ((_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate)).ToString();
+            labelPage.Text = (_Page + 1).ToString() + "/" + _maxPage.ToString();
             DateTime end = DateTime.Now;
             Debug.WriteLine(string.Format("Show a window of data in {0} seconds", (end - begin).TotalSeconds));
         }
@@ -157,13 +254,13 @@ namespace VeegStation
                 //ser.Color = Color.Black;
                 chartWave.Series.Add(ser);
             }
-            chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
+            //chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
             //hsProgress.
-            if (_nfi != null)
-            {
-                LoadData(0);
-                ShowData();
-            }
+            //if (_nfi != null)
+            //{
+            //    LoadData(0);
+            //    ShowData();
+            //}
             IMediaPlayerFactory factory = new MediaPlayerFactory();
             _player = factory.CreatePlayer<IVideoPlayer>();
             _player.WindowHandle = panelVideo.Handle;
@@ -188,7 +285,7 @@ namespace VeegStation
             if (_Page > 0)
             {
                 _Page -= 1;
-               _CurrentOffset = _Page * chartWave.ChartAreas[0].AxisX.Maximum;
+                _CurrentOffset = _Page *_xMaximum;
                 changed();
                 LoadData(_Page);
                 ShowData();
@@ -202,7 +299,7 @@ namespace VeegStation
             if (_Page <maxPage)
             {
                 _Page += 1;
-               _CurrentOffset = _Page * chartWave.ChartAreas[0].AxisX.Maximum;
+               _CurrentOffset = _Page * _xMaximum;
                 LoadData(_Page);
                 ShowData();
                 set_hsScrollBarValue();
@@ -268,14 +365,14 @@ namespace VeegStation
             else
              {
                 //          if (_CurrentOffset > (_Page + 1) * chartWave.ChartAreas[0].AxisX.Maximum)
-                if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= chartWave.ChartAreas[0].AxisX.Maximum)
+                 if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _xMaximum)
                 {
                     PageNext();
                     hsProgress.Value=_Page;
                 }
                 else
                 {             
-                    SetTimeLine();
+                    SetTimeLine();          
                     dt = dt.AddSeconds(0.1 * speed);
                     displayStartTime.Text = dt.ToLongTimeString().ToString();
                     dt_relativetime = dt_relativetime.AddSeconds(0.1 * speed);
@@ -340,29 +437,8 @@ namespace VeegStation
             video.Pause();
         }
 
-        //private void hsProgress_ValueChanged(object sender, EventArgs e)
-        //{
-        //    if (_Page < (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate))
-        //    {
-        //        int max = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
-        //        _Page = (int)((float)hsProgress.Value / 92.0f * max + 0.5 );
-        //        _CurrentOffset = _Page * chartWave.ChartAreas[0].AxisX.Maximum;
-        //        LoadData(_Page);
-        //        ShowData();
-        //        set_BtnEnable();
-        //        //_startTimeInPage = DateTime.Now;
-        //    }
-        //    Debug.WriteLine(string.Format("Scroll changed to {0}", hsProgress.Value));
-        //    SetTimeLine();
-        //    SyncVideo();
-        //    //_player.Play();
-        //    //_player.Pause();
-        //}
-
         private void set_hsScrollBarValue()
         {
-      //      int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
-     //       int value = (int)((float)(_Page + 1) / (float)maxPage * 91 + 0.5);
             chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
     //        hsProgress.Value = _Page;
        //     hsProgress.Value = value;
@@ -372,7 +448,16 @@ namespace VeegStation
         {
             Debug.WriteLine(string.Format("Scroll mouse cap changed {0}", e));
             Pause();
-            set_BtnEnable();
+            //set_BtnEnable();
+            if (_Page != hsProgress.Value)
+            {
+                _Page = hsProgress.Value;
+                changed();
+                LoadData(_Page);
+                ShowData();
+                set_BtnEnable();
+                SyncVideo();
+            }
         }
 
         private void panel_next_click(object sender, EventArgs e)
@@ -392,23 +477,23 @@ namespace VeegStation
                 btnPrev.Enabled = false;
                 btnNext.Enabled= true;
                 // panel_prev.Cursor = System.Windows.Forms.Cursors.Default;
-                panel_prev.Visible = false;
+                //panel_prev.Visible = false;
                 return;
             }
-            else if ((_Page + 1) >= ((_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate)))
+            else if ((_Page + 1) >= _maxPage)
             {
                 btnPrev.Enabled = true;
                 btnNext.Enabled = false;
                 //panel_next.Cursor = System.Windows.Forms.Cursors.Default;
-                panel_next.Visible = false;
+                //panel_next.Visible = false;
                 return;
             }
             btnPrev.Enabled = true;
             btnNext.Enabled = true;
             //panel_next.Cursor = System.Windows.Forms.Cursors.Hand;
             //panel_prev.Cursor = System.Windows.Forms.Cursors.Hand;
-            panel_next.Visible = true;
-            panel_prev.Visible = true;
+            //panel_next.Visible = true;
+            //panel_prev.Visible = true;
         }
 
         private void btn_enlarge_Click(object sender, EventArgs e)
@@ -426,7 +511,6 @@ namespace VeegStation
             }
             else MessageBox.Show("已经缩小到最小");
         }
-
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_PationInfoPanel(pationinfo);
@@ -504,7 +588,6 @@ namespace VeegStation
             _pt = System.Windows.Forms.Control.MousePosition;
         }
         #endregion
-
         private void hsProgress_ValueChanged(object sender, ScrollEventArgs e)
         {
             if (_Page < maxPage)
@@ -567,27 +650,73 @@ namespace VeegStation
             }
             item.Checked = true;
             _timeStandard = int.Parse(num);
-            //MessageBox.Show(_timeStandard.ToString());
-            //WINDOW_SECONDS = (int)(10 * 30D / Convert.ToDouble(_timeStandard));
-            //chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
-            setWindowSeconds((int)(10 * 30D / Convert.ToDouble(_timeStandard)));
-            GetHsprogressMax();
+            setAxisXMaximum(_X_totalMM / _timeStandard);
             LoadData(_Page);
             ShowData();
         }
 
         /// <summary>
+        /// 设置可显示的X轴最大值
+        /// </summary>
+        /// <param name="max"></param>
+        private void setXMaximum(double max)
+        {
+            _xMaximum=max;
+            updatePage();
+        }
+        
+        /// <summary>
+        /// 实时更新页面数量与滑块
+        /// </summary>
+        private void updatePage()
+        {
+            bool lastpage;
+            if (_Page == _maxPage - 1)
+                lastpage = true;
+            else
+                lastpage = false;
+            _maxPage = (_nfi.SampleCount - _nfi.SampleRate + ((int)(Math.Ceiling(_xMaximum) - 1) * _nfi.SampleRate) - 1) / (((int)(Math.Ceiling(_xMaximum) - 1) * _nfi.SampleRate));
+            labelPage.Text = (_Page + 1).ToString() + "/" + _maxPage.ToString();
+            hsProgress.Maximum = _maxPage;
+            if (_Page >= _maxPage - 1)
+            {
+                _Page = _maxPage - 1;
+                LoadData(_Page);
+                ShowData();
+            }
+            if (lastpage)
+            {
+                _Page = _maxPage - 1;
+                this.hsProgress.Value = _Page;
+                labelPage.Text = (_Page + 1).ToString() + "/" + _maxPage.ToString();
+            }
+        }
+        /// <summary>
         /// 设置一页有多少秒
         /// -- by lxl
         /// </summary>
         /// <param name="wins"></param>
-        private void setWindowSeconds(int wins)
+        private void updateWindowSeconds()//int wins)
         {
-            WINDOW_SECONDS = wins;
-            chartWave.ChartAreas[0].AxisX.Maximum = WINDOW_SECONDS;
-            int maxPage = (_nfi.SampleCount + (WINDOW_SECONDS * _nfi.SampleRate) - 1) / (WINDOW_SECONDS * _nfi.SampleRate);
-            if (_Page >= maxPage)
-                _Page = maxPage;             
+            //chartWave.ChartAreas[0].AxisX.Maximum = _X_totalMM / _timeStandard;
+            WINDOW_SECONDS = (int)Math.Ceiling(chartWave.ChartAreas[0].AxisX.Maximum);            //保证取的数据不小于当前窗口应该显示的数据,因为window_seconds为int，而秒数可能为小数
+            _maxPage = (_nfi.SampleCount - _nfi.SampleRate + ((WINDOW_SECONDS - 1) * _nfi.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * _nfi.SampleRate);
+            hsProgress.Maximum = _maxPage;
+            if (_Page >= _maxPage - 1)
+                _Page = _maxPage - 1;
+            //LoadData(_Page);
+            //ShowData();
+        }
+
+        /// <summary>
+        /// 设置X轴最大值
+        /// -- by lxl
+        /// </summary>
+        /// <param name="max"></param>
+        private void setAxisXMaximum(double max)
+        {
+            chartWave.ChartAreas[0].AxisX.Maximum = max;
+            updateWindowSeconds();
         }
         #region 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；  ----wsp
         private void changed()
@@ -601,7 +730,6 @@ namespace VeegStation
             displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
         }
         #endregion
-
         /// <summary>
         /// 初始化时间基准与灵敏度的选项
         /// -- by lxl
@@ -673,8 +801,7 @@ namespace VeegStation
                 panelVideo.Visible = true;
                 video.Hide();
             }
-        }
-        
+        }      
         #region 进度条最大值
         private void  GetHsprogressMax()
         {
@@ -700,30 +827,110 @@ namespace VeegStation
                 calibForm = new CalibrateForm(this);
             this.calibForm.Show();
             this.calibForm.BringToFront();
-        }
-
+        }      
         /// <summary>
         /// Y轴校准
         /// -- by lxl
         /// </summary>
-        /// <param name="size">单位为毫米</param>
-        public void calibrateY(int size)
+        /// <param name="height">一厘米多少像素点</param>
+        public void calibrateY(double height)
         {
-            chartWave.SuspendLayout();
-            _intervalY = size / 2;                                      //即size * 10 / 20 ，每格的宽度
-            updateAxisYMaximum();
+            //_intervalY = height / 2;                                      //即size * 10 / 20 ，每格的宽度
+            _pixelPerMM = height / 10D;
+            _Y_totalMM = _pageHeight / _pixelPerMM;
+            double mmPerGrid = _Y_totalMM / 20;
+            _rate_that_ensure_1_cm = 10 / mmPerGrid;
             ShowData();
         }
-
         /// <summary>
-        /// 更新Y轴的显示最大值
-        /// -- by lxl
+        /// X轴校准点击事件
         /// </summary>
-        private void updateAxisYMaximum()
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void calibrateXToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.chartWave.ChartAreas[0].AxisY.Maximum = 20 * _intervalY;
-            this.chartWave.ChartAreas[0].AxisY.MajorGrid.Interval = _intervalY;
-            this.chartWave.ChartAreas[0].AxisY.MajorTickMark.Interval = _intervalY;
+            if (calibXForm == null)
+                calibXForm = new calibrateXForm(this);
+            calibXForm.Show();
+            calibXForm.BringToFront();
+        }
+        /// <summary>
+        /// X轴校准函数
+        /// </summary>
+        /// <param name="width">一厘米多少个像素点</param>
+        public void calibrateX(double width)
+        {
+            _pixelPerMM = width / 10D;
+            _X_totalMM = _pageWidth / _pixelPerMM;
+            setAxisXMaximum(_X_totalMM / _timeStandard);
+            LoadData(_Page);
+            ShowData();
+        }
+        /// <summary>
+        /// chart的重绘函数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chartPaint(object sender, PaintEventArgs e)
+        {
+            double drawPosition;
+            SolidBrush rectBrush = new SolidBrush(Color.FromArgb(200, Color.Red));
+            SolidBrush strBrush = new SolidBrush(Color.White);
+            Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
+            Pen dotPen = new Pen(Color.Red, 2);
+            dotPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
+            if (_pageWidth == 0)
+            {
+                _pageWidth = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisX.Maximum) - this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(0);
+                _X_totalMM = _pageWidth / _pixelPerMM;
+                //this.chartWave.ChartAreas[0].AxisX.Maximum = _X_totalMM / _timeStandard;
+                setAxisXMaximum(_X_totalMM / _timeStandard);
+                LoadData(_Page);
+                ShowData();
+                _pageHeight = Math.Abs(this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisY.Maximum) - this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0));
+                _Y_totalMM = _pageHeight / _pixelPerMM;
+            }
+            while (_eventsQueue.Count > 0)
+            {
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(_eventsQueue.Dequeue());
+                e.Graphics.FillRectangle(rectBrush, new Rectangle((int)drawPosition - 40, 5, 80, 15));
+                e.Graphics.DrawString("病人事件", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
+                e.Graphics.DrawLine(dotPen,new Point((int)drawPosition,5),new Point((int)drawPosition,(int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
+            }
+            if (_isChangingBoardShow)
+            {
+                if (_isBoardShow)
+                {
+                    //double chartw = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisX.Maximum); //-this.boardPanel.Width + this.Width;
+                    //double x = this.boardPanel.Location.X;
+                    //double chartWidth = this.Width - this.boardPanel.Width;
+                    _xMaximum = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(this.boardPanel.Location.X);
+                    updatePage();
+                    //setAxisXMaximum(this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(this.boardPanel.Location.X));
+                }
+                else
+                {
+                    //setAxisXMaximum(_X_totalMM / _timeStandard);
+                    //LoadData(_Page);
+                    //ShowData();
+                    _xMaximum = this.chartWave.ChartAreas[0].AxisX.Maximum;
+                    updatePage();
+                }
+                _isChangingBoardShow = false;
+            }
+        }
+        /// <summary>
+        /// 面板点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void boardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _isBoardShow = !_isBoardShow;
+            this.boardPanel.Visible = _isBoardShow;
+            this.boardToolStripMenuItem.Checked = _isBoardShow;
+            _isChangingBoardShow = true;
+            this.chartWave.Invalidate();
         }
     }
 }

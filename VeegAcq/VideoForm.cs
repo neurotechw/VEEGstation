@@ -51,6 +51,8 @@ namespace VeegStation
         public void Play()
         {
             player.Play();
+            //player.CropGeometry.CropArea.Location = new Point(100,500);
+            player.Delay=1000;
         }
         public void Pause()
         {

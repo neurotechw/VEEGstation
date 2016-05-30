@@ -134,7 +134,6 @@
             this.Controls.Add(this.panel1);
             this.Name = "VideoForm";
             this.Text = "VideoForm";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.VideoForm_Load_1);
             this.panel_Mvideo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Video)).EndInit();
