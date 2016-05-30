@@ -57,7 +57,6 @@ namespace VeegStation
             this.hsProgress = new System.Windows.Forms.HScrollBar();
             this.btn_enlarge = new System.Windows.Forms.Button();
             this.btn_shrink = new System.Windows.Forms.Button();
-            this.hsProgerss_Video = new System.Windows.Forms.HScrollBar();
             this.PationInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.DetectionInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.Hiding = new System.Windows.Forms.ToolStripMenuItem();
@@ -108,6 +107,7 @@ namespace VeegStation
             this.PationInfoPanel.SuspendLayout();
             this.DetectionInfoPanel.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.boardPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -365,16 +365,6 @@ namespace VeegStation
             this.btn_shrink.Text = "缩小";
             this.btn_shrink.UseVisualStyleBackColor = true;
             this.btn_shrink.Click += new System.EventHandler(this.btn_shrink_Click);
-            // 
-            // hsProgerss_Video
-            // 
-            this.hsProgerss_Video.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hsProgerss_Video.Location = new System.Drawing.Point(12, 539);
-            this.hsProgerss_Video.Name = "hsProgerss_Video";
-            this.hsProgerss_Video.Size = new System.Drawing.Size(743, 17);
-            this.hsProgerss_Video.TabIndex = 8;
-            this.hsProgerss_Video.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hsProgerss_Video_Scroll);
             // 
             // PationInfo
             // 
@@ -788,9 +778,9 @@ namespace VeegStation
             // btn_hide
             // 
             this.btn_hide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_hide.Location = new System.Drawing.Point(20, 236);
+            this.btn_hide.Location = new System.Drawing.Point(20, 195);
             this.btn_hide.Name = "btn_hide";
-            this.btn_hide.Size = new System.Drawing.Size(75, 23);
+            this.btn_hide.Size = new System.Drawing.Size(160, 23);
             this.btn_hide.TabIndex = 12;
             this.btn_hide.Text = "隐藏";
             this.btn_hide.UseVisualStyleBackColor = true;
@@ -800,16 +790,14 @@ namespace VeegStation
             // 
             this.boardPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.boardPanel.Location = new System.Drawing.Point(742, 60);
-            this.boardPanel.Name = "boardPanel";
+            this.boardPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.boardPanel.Controls.Add(this.btn_hide);
             this.boardPanel.Controls.Add(this.btn_decelerate);
             this.boardPanel.Controls.Add(this.btn_accelerate);
             this.boardPanel.Controls.Add(this.panelVideo);
-            this.boardPanel.Controls.Add(this.btn_shrink);
-            this.boardPanel.Controls.Add(this.btn_enlarge);
+            this.boardPanel.Location = new System.Drawing.Point(742, 60);
+            this.boardPanel.Name = "boardPanel";
             this.boardPanel.Size = new System.Drawing.Size(200, 499);
-            this.boardPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.boardPanel.TabIndex = 13;
             // 
             // PlaybackForm
@@ -822,7 +810,8 @@ namespace VeegStation
             this.Controls.Add(this.PationInfoPanel);
             this.Controls.Add(this.DetectionInfoPanel);
             this.Controls.Add(this.chartWave);
-            this.Controls.Add(this.hsProgerss_Video);
+            this.Controls.Add(this.btn_shrink);
+            this.Controls.Add(this.btn_enlarge);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -844,6 +833,7 @@ namespace VeegStation
             this.DetectionInfoPanel.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.boardPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -864,7 +854,6 @@ namespace VeegStation
         private System.Windows.Forms.HScrollBar hsProgress;
         private System.Windows.Forms.Button btn_enlarge;
         private System.Windows.Forms.Button btn_shrink;
-        private System.Windows.Forms.HScrollBar hsProgerss_Video;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
         private System.Windows.Forms.ToolStripMenuItem PationInfo;

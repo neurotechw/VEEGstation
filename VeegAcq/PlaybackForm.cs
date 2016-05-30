@@ -23,22 +23,43 @@ namespace VeegStation
         //////////////////////////////
         NatFileInfo natfileinfo;
         PationInfo pationinfo;
-        DateTime dt;                                                    //绝对时间
-        DateTime dt_relativetime;                                  //相对时间
-        DateTime dt_totaltime;                                      //总时间
+        /// <summary>
+        /// 绝对时间
+        /// wsp
+        /// </summary>
+        DateTime dt;        
+        /// <summary>
+        /// 相对时间
+        /// wsp
+        /// </summary>                                   
+        DateTime dt_relativetime;      
+        /// <summary>
+        /// 总时间
+        /// wsp
+        /// </summary>                  
+        DateTime dt_totaltime;   
+        /// <summary>
+        /// 调整视频速率时，脑电播放速率也要同步
+        /// wsp
+        /// </summary>                          
         public float speed = 1.0f;
-        public static int i = 9;
+        /// <summary>
+        /// 与弹出的视频面板进行数据和状态传递
+        /// wsp
+        /// </summary>
         private VideoForm video;
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         public NationFileInfo _nfi = null;
-
+        int maxPage;
         private List<EegPacket> _packets = new List<EegPacket>();
         /// <summary>
         /// 事件队列
         /// -- by lxl
         /// </summary>
         private Queue<double> _eventsQueue = new Queue<double>();
-
+        private int _Page;
+        private int _maxPage;
+        public double b;
         //private int _Page;
         private int _totalSeconds;                   
         private DateTime? _LastTime = null;
@@ -147,6 +168,7 @@ namespace VeegStation
             }
             catch
             { }
+            GetHsprogressMax();
             _totalSeconds = EegFile.SampleCount / EegFile.SampleRate;
             hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
         }
@@ -227,6 +249,9 @@ namespace VeegStation
             dt_totaltime = DateTime.Parse("2016-05-23 00:00:00");
             dt = _nfi.StartTime;
             displayStartTime.Text = dt.ToLongTimeString().ToString();
+            if ((int)_nfi.Duration.TotalSeconds < _nfi.Duration.TotalSeconds)
+            dt_totaltime = dt_totaltime.AddSeconds(_nfi.Duration.TotalSeconds+1);
+            else
             dt_totaltime = dt_totaltime.AddSeconds(_nfi.Duration.TotalSeconds);
             displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
             displayTotalTime.Text = dt_totaltime.ToLongTimeString().ToString();
@@ -277,15 +302,14 @@ namespace VeegStation
 
         private void PageNext()
         {
-            _currentSeconds += (int)(Math.Floor(_xMaximum));
-            if (_currentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
-                _currentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
-            LoadData(_currentSeconds);
-            ShowData();
-            set_hsScrollBarValue();
+                _currentSeconds += (int)(Math.Floor(_xMaximum));
+                if (_currentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
+                    _currentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
+                LoadData(_currentSeconds);
+                ShowData();
+                set_hsScrollBarValue();
+              
         }
-
-
         public void SetTimeLine()
         {
     //        chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _CurrentOffset - _Page * chartWave.ChartAreas[0].AxisX.Maximum;////////添加需要拖动的一些位置进行
@@ -303,84 +327,72 @@ namespace VeegStation
             //timer.Enabled = false;
             Pause();
             PagePrev();
-            SetTimeLine();///////////////////////////////////////////修改为_2
+            _player.Time = _Page * WINDOW_SECONDS * 1000;
+            video.player.Time = _Page * WINDOW_SECONDS * 1000;
+ //           SetTimeLine();///////////////////////////////////////////修改为_2
             SyncVideo();
             //_player.Play();
             //_player.Pause();
             update_BtnEnable();
-        //    hsProgerss_Video.Value = 0;
         }
 
         private void btnNext_Click(object sender, EventArgs e)
-        {
-            //timer.Enabled = false;                       
+        {                
             Pause();
-            PageNext();/////////////////PageNext()修改为PageNext_2();
-            SetTimeLine();/////////////////////修改为_2
+            PageNext();
+            changed();
+            _player.Time = _currentSeconds * 1000;
+            video.player.Time =_currentSeconds * 1000;
             SyncVideo();
-            //_player.Play();
-            // _player.Pause();
             update_BtnEnable();
-        //    hsProgerss_Video.Value = 0;
         }
-
+        /// <summary>
+        /// Time 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void timer_Tick(object sender, EventArgs e)
         {
           DateTime now = DateTime.Now;
            _CurrentOffset += (now - _LastTime.Value).TotalSeconds*speed;
             _LastTime = now;
-            if (_CurrentOffset > _nfi.Duration.TotalSeconds+0.3)/////////////////
-     //       if (_Page*WINDOW_SECONDS+chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset > _nfi.Duration.TotalSeconds)/////////////////
+     //       if (_CurrentOffset > _nfi.Duration.TotalSeconds+0.3)/////////////////
+             if (_currentSeconds+chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)/////////////////
             {
                 Pause();
                 _CurrentOffset = 0;
                 _LastTime = null;
-                btnPlay.Enabled = false;
-                btnPause.Enabled = false;
                 video.player.Pause();
                 btnPrev.Enabled = true;
                 btnNext.Enabled = false;
+                video.btn_play.Enabled = false;
+                video.btn_pause.Enabled = false;
             }
             else
              {
                 //          if (_CurrentOffset > (_Page + 1) * chartWave.ChartAreas[0].AxisX.Maximum)
-                if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= chartWave.ChartAreas[0].AxisX.Maximum)
+                 if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _xMaximum)
                 {
                     PageNext();
-                    //           hsProgerss_Video.Value = 0;////////////////////添加用于更新进度条使用
-                    hsProgress.Value += 1;
-                    chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
                 }
-
                 else
-                {
-                    /*            if (hsProgerss_Video.Maximum == hsProgerss_Video.Value)
-                                {
-                                    timer.Enabled = false;
-                                }
-                                else
-                                {
-                                    // 如果最大值减去每次滚动的1，最后剩下的不足1，就加上剩下的
-                                    if (hsProgerss_Video.Maximum - hsProgerss_Video.Value < 1)
-                                        hsProgerss_Video.Value += hsProgerss_Video.Maximum - hsProgerss_Video.Value;
-                                    else
-                                        hsProgerss_Video.Value += 1;
-                                }   
-                     * */
-                    SetTimeLine();
+                {             
+                    SetTimeLine();          
                     dt = dt.AddSeconds(0.1 * speed);
+                    DateTime a = DateTime.Parse("2016-05-23  00:00:00");
                     displayStartTime.Text = dt.ToLongTimeString().ToString();
                     dt_relativetime = dt_relativetime.AddSeconds(0.1 * speed);
+                    b = (dt_relativetime - a).TotalSeconds;
                     displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
                 }
             }
-            if (dt_relativetime.Second >= _nfi.Duration.TotalSeconds)
-            {
-                //chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _nfi.Duration.TotalSeconds - +_Page * chartWave.ChartAreas[0].AxisX.Maximum;
-                timer.Enabled = false;
-            }
-
-
+            //为了保证最后的那条线画在正确的位置，所以相对时间和画的那条线最后需要特殊处理一下
+            //wsp
+             if (_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)
+             {
+                chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _nfi.Duration.TotalSeconds - _currentSeconds;
+                 displayRecordingTime.Text = dt_totaltime.ToLongTimeString().ToString();
+             }
         }
 
         public void Play()
@@ -434,7 +446,7 @@ namespace VeegStation
 
         private void set_hsScrollBarValue()
         {
-            chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
+            chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = b-_currentSeconds;
             hsProgress.Value = _currentSeconds;
         }
 
@@ -500,11 +512,6 @@ namespace VeegStation
             }
             else MessageBox.Show("已经缩小到最小");
         }
-
-        private void hsProgerss_Video_Scroll(object sender, ScrollEventArgs e)
-        {
-        }
-
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_PationInfoPanel(pationinfo);
@@ -545,7 +552,7 @@ namespace VeegStation
             this.DetectionRemarksTextBt.Text = _pationinfo.Diagnosis;
             this.FilePathTextBt.Text = _pationinfo.FilePath;
         }
-
+        #region  拖动移动病人属性和检查属性   
         Point pt;
         private void PationInfoPanel_MouseMove(object sender, MouseEventArgs e)
         {
@@ -581,7 +588,27 @@ namespace VeegStation
         {
             _pt = System.Windows.Forms.Control.MousePosition;
         }
-
+        #endregion
+        private void hsProgress_ValueChanged(object sender, ScrollEventArgs e)
+        {
+            if (_Page < maxPage)
+            {
+			    _Page=hsProgress.Value;
+                changed();
+                LoadData(_Page);
+                ShowData();
+                chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
+            }
+            Debug.WriteLine(string.Format("Scroll changed to {0}", hsProgress.Value));
+//            SetTimeLine();
+//            SyncVideo();
+            _player.Time = _Page * WINDOW_SECONDS * 1000;
+            video.player.Time = _Page * WINDOW_SECONDS * 1000;
+            video.btn_play.Enabled = true;
+           // _player.
+            //_player.Play();
+            //_player.Pause();
+        }
 
         private void panelVideo_Click(object sender, EventArgs e)
         {
@@ -660,19 +687,18 @@ namespace VeegStation
             chartWave.ChartAreas[0].AxisX.Maximum = max;
             updateWindowSeconds();
         }
-        #region 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；
+        #region 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；  ----wsp
         private void changed()
         {
             //_CurrentOffset = _Page * chartWave.ChartAreas[0].AxisX.Maximum;
             dt = _nfi.StartTime;
             dt_relativetime = DateTime.Parse("2016-05-23  00:00:00");
-            //dt = dt.AddSeconds(_Page * WINDOW_SECONDS + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+            dt = dt.AddSeconds(_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
             displayStartTime.Text = dt.ToLongTimeString().ToString();
-            //dt_relativetime = dt_relativetime.AddSeconds(_Page * WINDOW_SECONDS + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+            dt_relativetime = dt_relativetime.AddSeconds(_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
             displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
         }
         #endregion
-
         /// <summary>
         /// 初始化时间基准与灵敏度的选项
         /// -- by lxl
@@ -702,23 +728,34 @@ namespace VeegStation
                 this.sensitivityToolStripMenuItem.DropDownItems.Add(item);
             }
         }
-        #region 视频加速------wsp
+       /// <summary>
+       /// 视频加速
+       /// wsp
+       /// </summary>
+       /// <param name="sender"></param>
+       /// <param name="e"></param>
         private void btn_accelerate_Click(object sender, EventArgs e)
         {
             _player.PlaybackRate = _player.PlaybackRate * 2;
             speed = _player.PlaybackRate;
             video.player.PlaybackRate = _player.PlaybackRate;
         }
-        #endregion
-        #region 视频减速----wsp
+        /// <summary>
+        /// 视频减速
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_decelerate_Click(object sender, EventArgs e)
         {
             _player.PlaybackRate = _player.PlaybackRate / 2;
             speed = _player.PlaybackRate;
             video.player.PlaybackRate = _player.PlaybackRate;
         }
-        #endregion
-        #region    弹出视频面板----wsp
+        /// <summary>
+        /// 视频面板弹出按键设置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_hide_Click(object sender, EventArgs e)
         {
             if (panelVideo.Visible == true)
@@ -733,6 +770,18 @@ namespace VeegStation
                 panelVideo.Visible = true;
                 video.Hide();
             }
+        }      
+        #region 进度条最大值
+        private void  GetHsprogressMax()
+        {
+            SecPerPage();
+            hsProgress.Maximum = maxPage;
+        }
+        #endregion
+        #region 数据有多少页
+        private void SecPerPage()
+        {
+            maxPage = (_nfi.SampleCount + ((int)(10 * 30D / Convert.ToDouble(_timeStandard)) * _nfi.SampleRate) - 1) / ((int)(10 * 30D / Convert.ToDouble(_timeStandard)) * _nfi.SampleRate);
         }
         #endregion
         /// <summary>
@@ -747,8 +796,7 @@ namespace VeegStation
                 calibForm = new CalibrateForm(this);
             this.calibForm.Show();
             this.calibForm.BringToFront();
-        }
-        
+        }      
         /// <summary>
         /// Y轴校准
         /// -- by lxl
@@ -762,7 +810,6 @@ namespace VeegStation
             _rate_that_ensure_1_cm = 10 / mmPerGrid;
             ShowData();
         }
-
         /// <summary>
         /// X轴校准点击事件
         /// </summary>
@@ -775,7 +822,6 @@ namespace VeegStation
             calibXForm.Show();
             calibXForm.BringToFront();
         }
-
         /// <summary>
         /// X轴校准函数
         /// </summary>
@@ -788,7 +834,6 @@ namespace VeegStation
             LoadData(_currentSeconds);
             ShowData();
         }
-
         /// <summary>
         /// chart的重绘函数
         /// </summary>
@@ -836,7 +881,6 @@ namespace VeegStation
             e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos, 40, 80, 15));
             e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2 * 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos * 2, 40, 80, 15));
         }
-
         /// <summary>
         /// 面板点击事件
         /// </summary>
