@@ -44,7 +44,8 @@ namespace VeegStation
             {
                 _media = factory.CreateMedia<IMediaFromFile>(playback._nfi.VideoFullName);
                 player.Open(_media);
-                player.Time = (long)playback._nfi.VideoOffset * 1000;
+           //     player.Time = (long)playback._nfi.VideoOffset * 1000;
+                player.Time = playback._currentSeconds * 1000;
                 player.Pause();
             }
         }
@@ -60,6 +61,10 @@ namespace VeegStation
         }
         private void btn_play_Click(object sender, EventArgs e)
         {
+            if (playback._currentSeconds + playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= playback._nfi.Duration.TotalSeconds)
+                player.Time = (long)playback._nfi.VideoOffset * 1000;
+            if (playback._currentSeconds == 0)
+                player.Time = (long)playback._nfi.VideoOffset * 1000;
             if (!playback._player.IsPlaying)
             {
                Play();

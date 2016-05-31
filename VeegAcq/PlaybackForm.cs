@@ -147,7 +147,7 @@ namespace VeegStation
         /// 当前图表的开头为第几秒
         /// -- by lxl
         /// </summary>
-        private int _currentSeconds;
+        public int _currentSeconds;
         public PlaybackForm(NationFileInfo EegFile)
         {
             InitializeComponent();
@@ -282,11 +282,10 @@ namespace VeegStation
                 Debug.WriteLine(_player.IsSeekable);
                 Debug.WriteLine(_player.Length);
                 _player.Time = (long)_nfi.VideoOffset * 1000;
-                //_player.Play();
-                _player.Pause();
+               // _player.Play();
+               _player.Pause();
             }
             video = new VideoForm(this);
-            video.Show();
             video.Hide();
         }
 
@@ -327,12 +326,9 @@ namespace VeegStation
             //timer.Enabled = false;
             Pause();
             PagePrev();
-            _player.Time = _Page * WINDOW_SECONDS * 1000;
-            video.player.Time = _Page * WINDOW_SECONDS * 1000;
- //           SetTimeLine();///////////////////////////////////////////修改为_2
+            _player.Time = _currentSeconds * 1000;
+            video.player.Time = _currentSeconds * 1000;
             SyncVideo();
-            //_player.Play();
-            //_player.Pause();
             update_BtnEnable();
         }
 
@@ -365,7 +361,7 @@ namespace VeegStation
                 video.player.Pause();
                 btnPrev.Enabled = true;
                 btnNext.Enabled = false;
-                video.btn_play.Enabled = false;
+                video.btn_play.Enabled = true;
                 video.btn_pause.Enabled = false;
             }
             else
@@ -405,9 +401,15 @@ namespace VeegStation
             if (_nfi.HasVideo)
             {
                 // TODO:
-                //_player.Time = (long)(_nfi.VideoOffset * 1000);
+               // _player.Time = (long)(_nfi.VideoOffset * 1000);
+                if (_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)
+                {
+                    clear();
+                } 
                 if (!_player.IsPlaying)
                     _player.Play();
+                if (_currentSeconds == 0)
+                    _player.Time = (long)_nfi.VideoOffset * 1000;
             }
             else
             {
@@ -890,6 +892,22 @@ namespace VeegStation
             this.boardToolStripMenuItem.Checked = _isBoardShow;
             _isChangingBoardShow = true;
             this.chartWave.Invalidate();
+        }
+        /// <summary>
+        /// 重头播放，对数据进行初始化处理
+        /// wsp
+        /// </summary>
+        private void clear()
+        {
+            chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0.0;
+            _currentSeconds = 0;
+            dt_relativetime = DateTime.Parse("2016-05-23  00:00:00");
+            dt_totaltime = DateTime.Parse("2016-05-23 00:00:00");
+            _player.Time = (long)_nfi.VideoOffset * 1000;
+            dt = _nfi.StartTime;
+            hsProgress.Value = 0;
+            LoadData(_currentSeconds);
+            ShowData();
         }
     }
 }
