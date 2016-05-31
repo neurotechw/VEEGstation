@@ -850,7 +850,6 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnNext;
         private System.Windows.Forms.ToolStripButton btnPrev;
-        //private System.Windows.Forms.ToolStripLabel labelPage;
         private System.Windows.Forms.HScrollBar hsProgress;
         private System.Windows.Forms.Button btn_enlarge;
         private System.Windows.Forms.Button btn_shrink;

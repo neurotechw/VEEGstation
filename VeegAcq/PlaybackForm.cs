@@ -82,7 +82,7 @@ namespace VeegStation
         /// 时间基准选择范围 
         /// -- by lxl
         /// </summary>
-        private int[] _timeStandardArray = { 6, 10, 15, 30, 60, 100, 300 };                                                            
+        private int[] _timeStandardArray = { 6, 10, 15, 30, 60, 100, 200 };                                                            
         /// <summary>
         /// 当前选择时间基准,毫米每秒  
         /// -- by lxl
@@ -876,10 +876,17 @@ namespace VeegStation
                 }
                 _isChangingBoardShow = false;
             }
-            double time1Pos=this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble((int)Math.Floor(_xMaximum) / 2));
-            //double time2Pos
-            e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos, 40, 80, 15));
-            e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2 * 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos * 2, 40, 80, 15));
+            //画图表上的秒数
+            double time1Pos=this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition((int)Math.Floor(_xMaximum) / 2);
+            if (_xMaximum >= 2)
+            {
+                e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos, 25, 80, 15));
+                e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2 * 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos * 2, 25, 80, 15));
+            }
+            else
+            {
+                e.Graphics.DrawString((_currentSeconds + 1).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)(this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(1)), 25, 80, 15));
+            }
         }
         /// <summary>
         /// 面板点击事件
