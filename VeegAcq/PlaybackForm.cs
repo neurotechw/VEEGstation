@@ -881,7 +881,7 @@ namespace VeegStation
             SolidBrush rectBrush = new SolidBrush(Color.FromArgb(200, Color.Red));
             SolidBrush strBrush = new SolidBrush(Color.White);
             Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
-            Pen dotPen = new Pen(Color.Red, 2);
+            Pen dotPen = new Pen(Color.Red, 2);            //虚线画笔     
             dotPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
             if (_pageWidth == 0)                            //计算图表的宽与高          -- by lxl
             {
@@ -904,7 +904,7 @@ namespace VeegStation
             {
                 if (_isBoardShow)
                 {
-                    setXMaximum(this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(this.boardPanel.Location.X));
+                    setXMaximum(this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(this.chartWave.Width-this.boardPanel.Width));
                 }
                 else
                 {
@@ -924,6 +924,25 @@ namespace VeegStation
                 e.Graphics.DrawString((_currentSeconds + 1).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)(this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(1)), 25, 80, 15));
             }
         }
+
+        /// <summary>
+        /// labelPanel的重绘函数,若要更新label则需调用labelPanel.Invalidate()函数
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void drawLabelPanel(object sender, PaintEventArgs e)
+        {
+            SolidBrush strBrush = new SolidBrush(Color.Black);
+            Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Regular);
+            double topSigPos = this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(2000D - 2000D / _signalNum / 2);
+            double intervalPos = this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(2000D - 2000D / _signalNum / 2 * 3) - topSigPos;
+            foreach (int i in Enumerable.Range(_currentTopSignal,_signalNum))
+            {
+                e.Graphics.DrawString((i+1).ToString(), strFont, strBrush, new RectangleF(0, (int)(topSigPos + (i - _currentTopSignal) * intervalPos), this.labelPanel.Width, 15));
+            }
+        }
+
         /// <summary>
         /// 面板点击事件
         /// -- by lxl
@@ -944,7 +963,7 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 信道显示点击事件
+        /// 通道数目显示点击事件
         /// -- by lxl
         /// </summary>
         /// <param name="sender"></param>
@@ -968,6 +987,7 @@ namespace VeegStation
             else
                 setVScrollVisible(false);
             this.vScroll.LargeChange = _signalNum + 1;
+            this.labelPanel.Invalidate();
         }
         /// <summary>
         /// 设置竖直滚动条是否可用
@@ -992,6 +1012,7 @@ namespace VeegStation
             {
                 this._currentTopSignal = this.vScroll.Value;
                 ShowData();
+                this.labelPanel.Invalidate();
             }
         }
     }
