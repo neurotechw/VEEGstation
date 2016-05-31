@@ -27,9 +27,10 @@ namespace VeegStation
      //       _nfi = EegFile;
             playback = playbackform;
             this.ControlBox = false;
+            this.pictureBox_Video.MouseWheel += new MouseEventHandler(pictureBox_Video_MouseWheel);
         }
         private void VideoForm_Load_1(object sender, EventArgs e)
-        {
+        {    
             if (playback._nfi == null)
             {
                 Close();
@@ -44,13 +45,14 @@ namespace VeegStation
             {
                 _media = factory.CreateMedia<IMediaFromFile>(playback._nfi.VideoFullName);
                 player.Open(_media);
-           //     player.Time = (long)playback._nfi.VideoOffset * 1000;
-                player.Time = playback._currentSeconds * 1000;
+                player.Time = (long)playback._nfi.VideoOffset * 1000;
                 player.Pause();
             }
         }
         public void Play()
         {
+            if (playback._currentSeconds == 0)
+                player.Time = (long)playback._nfi.VideoOffset * 1000;
             player.Play();
             //player.CropGeometry.CropArea.Location = new Point(100,500);
            // player.Delay=1000;
@@ -62,8 +64,6 @@ namespace VeegStation
         private void btn_play_Click(object sender, EventArgs e)
         {
             if (playback._currentSeconds + playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= playback._nfi.Duration.TotalSeconds)
-                player.Time = (long)playback._nfi.VideoOffset * 1000;
-            if (playback._currentSeconds == 0)
                 player.Time = (long)playback._nfi.VideoOffset * 1000;
             if (!playback._player.IsPlaying)
             {
@@ -135,6 +135,14 @@ namespace VeegStation
                 else
                     MessageBox.Show("缩小到最小化", "提示");
             }
+        }
+        private void pictureBox_Video_MouseWheel(object sender, MouseEventArgs e)
+        {
+            //this.pictureBox_Video.Width += e.Delta;
+            //this.pictureBox_Video.Height += e.Delta;
+            this.Width += e.Delta;
+            this.Height += e.Delta;
+            MessageBox.Show("滚动了滑轮","提示");
         }
     }
 }

@@ -286,6 +286,7 @@ namespace VeegStation
                _player.Pause();
             }
             video = new VideoForm(this);
+            video.Show();
             video.Hide();
         }
 
@@ -437,6 +438,8 @@ namespace VeegStation
         {
             Play();
             video.Play();
+            if (_currentSeconds == 0)
+            video.player.Time = (long)_nfi.VideoOffset * 1000;
          //   video.Hide();  
         }
 
@@ -604,8 +607,8 @@ namespace VeegStation
             Debug.WriteLine(string.Format("Scroll changed to {0}", hsProgress.Value));
 //            SetTimeLine();
 //            SyncVideo();
-            _player.Time = _Page * WINDOW_SECONDS * 1000;
-            video.player.Time = _Page * WINDOW_SECONDS * 1000;
+            _player.Time = _currentSeconds * 1000;
+            video.player.Time = _currentSeconds * 1000;
             video.btn_play.Enabled = true;
            // _player.
             //_player.Play();
