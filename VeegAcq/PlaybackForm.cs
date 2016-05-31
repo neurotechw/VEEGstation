@@ -87,7 +87,17 @@ namespace VeegStation
         /// 当前选择时间基准,毫米每秒  
         /// -- by lxl
         /// </summary>
-        private int _timeStandard;                                                                                                          
+        private int _timeStandard;
+        /// <summary>
+        /// 信道显示选择范围
+        /// -- by lxl
+        /// </summary>
+        private int[] _signalNumArray = { 1, 2, 4, 8, 16, 20 };
+        /// <summary>
+        /// 当前显示的信道数据
+        /// -- by lxl
+        /// </summary>
+        private int _signalNum;                                                                                      
         /// <summary>
         /// 校准Y轴窗口            
         /// - by lxl
@@ -159,6 +169,7 @@ namespace VeegStation
             _pixelPerMM = 3.8;
             _rate_that_ensure_1_cm = 1;
             _isChangingBoardShow = true;
+            _signalNum = 20;
             initMenuItems();
             natfileinfo = new NatFileInfo(EegFile.NedFullName);
             pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
@@ -213,6 +224,7 @@ namespace VeegStation
             DateTime begin = DateTime.Now;
             SeriesCollection col = chartWave.Series;
             double rate = Convert.ToDouble(_Sensitivity) / 100D;                                          //灵敏度比例 -- by lxl
+            double interval = 2000D / _signalNum;
             chartWave.SuspendLayout();
             foreach (int sIdx in Enumerable.Range(0, 20))
             {
@@ -222,14 +234,16 @@ namespace VeegStation
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
                 if (tIdx % 127 == 0) _eventsQueue.Enqueue(tIdx / 128D);
-                col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);
-                foreach (int sIdx in Enumerable.Range(0, 19))
+                //col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);
+                col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + (2000D - interval * 19 - interval / 2));
+                foreach (int sIdx in Enumerable.Range(0, _signalNum - 1))
                 {
                     double val = _packets[tIdx].EEG[sIdx];
                     val /= 20;
                     val /= rate;                                //根据灵敏度调整 -- by lxl
                     val *= _rate_that_ensure_1_cm;              //根据所校准的单位调整-- by lxl
-                    val += (2000 - 100 * sIdx - 50);
+                    //val += (2000 - 100 * sIdx - 50);
+                    val += (2000D - interval * sIdx - interval / 2);
                     col[sIdx].Points.AddXY(tIdx / 128.0, val);
                 }
             }
@@ -705,10 +719,11 @@ namespace VeegStation
         /// </summary>
         private void initMenuItems()
         {
+            System.Windows.Forms.ToolStripMenuItem item ;//= new ToolStripMenuItem();
             foreach (int t in _timeStandardArray)
             {
-                System.Windows.Forms.ToolStripMenuItem item = new ToolStripMenuItem();
-                item.Name = "timeStandardMenuItem" + t;
+                item = new ToolStripMenuItem();
+                item.Name = "timeStandardMenuItem_" + t;
                 item.Size = new Size(140, 22);
                 item.Text = t + "mm/sec";
                 item.Click += new EventHandler(this.timerStandartMenuItem_Click);
@@ -718,14 +733,25 @@ namespace VeegStation
             }
             foreach (int s in _sensitivityArray)
             {
-                System.Windows.Forms.ToolStripMenuItem item = new ToolStripMenuItem();
-                item.Name = "vcmToolStripMenuItem_100" + s;
+                item = new ToolStripMenuItem();
+                item.Name = "vcmToolStripMenuItem_" + s;
                 item.Size = new Size(140, 22);
                 item.Text = s + "μv/cm";
                 item.Click += new EventHandler(this.μvcmToolStripMenuItem_Click);
                 if (s == _Sensitivity)
                     item.Checked = true;
                 this.sensitivityToolStripMenuItem.DropDownItems.Add(item);
+            }
+            foreach (int si in _signalNumArray)
+            {
+                item = new ToolStripMenuItem();
+                item.Name = "signalToolStripMenuItem_" + si;
+                item.Size = new Size(140, 22);
+                item.Text = si.ToString();
+                item.Click += new EventHandler(this.signalToolStripMenuItem_Click);
+                if (si == _signalNum)
+                    item.Checked = true;
+                this.signalToolStripMenuItem.DropDownItems.Add(item);
             }
         }
        /// <summary>
@@ -890,6 +916,7 @@ namespace VeegStation
         }
         /// <summary>
         /// 面板点击事件
+        /// -- by lxl
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -900,6 +927,26 @@ namespace VeegStation
             this.boardToolStripMenuItem.Checked = _isBoardShow;
             _isChangingBoardShow = true;
             this.chartWave.Invalidate();
+        }
+
+        /// <summary>
+        /// 信道显示点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void signalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            foreach (ToolStripMenuItem i in this.signalToolStripMenuItem.DropDownItems)
+            {
+                i.Checked = false;
+            }
+            item.Checked = true;
+            _signalNum = int.Parse(sender.ToString());
+            this.chartWave.ChartAreas[0].AxisY.MajorGrid.Interval = 2000D / _signalNum;
+            this.chartWave.ChartAreas[0].AxisY.MajorTickMark.Interval = 2000D / _signalNum;
+            ShowData();
         }
     }
 }

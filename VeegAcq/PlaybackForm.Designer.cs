@@ -92,6 +92,7 @@ namespace VeegStation
             this.格式ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sensitivityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timeStandartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.signalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -695,7 +696,8 @@ namespace VeegStation
             // 
             this.格式ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sensitivityToolStripMenuItem,
-            this.timeStandartToolStripMenuItem});
+            this.timeStandartToolStripMenuItem,
+            this.signalToolStripMenuItem});
             this.格式ToolStripMenuItem.Name = "格式ToolStripMenuItem";
             this.格式ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.R)));
             this.格式ToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
@@ -712,6 +714,12 @@ namespace VeegStation
             this.timeStandartToolStripMenuItem.Name = "timeStandartToolStripMenuItem";
             this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.timeStandartToolStripMenuItem.Text = "时间基准";
+            //
+            //signalToolStripMenuItem
+            //
+            this.signalToolStripMenuItem.Name = "signalToolStripMenuItem";
+            this.signalToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.signalToolStripMenuItem.Text = "显示通道";
             // 
             // calibrateToolStripMenuItem
             // 
@@ -895,6 +903,7 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripMenuItem 格式ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sensitivityToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem timeStandartToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem signalToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStriplabel_abtime;
         private System.Windows.Forms.ToolStripStatusLabel displayStartTime;
         private System.Windows.Forms.ToolStripStatusLabel toolStriplabel_retime;
