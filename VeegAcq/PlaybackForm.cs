@@ -60,7 +60,6 @@ namespace VeegStation
         private int _Page;
         private int _maxPage;
         public double b;
-        //private int _Page;
         private int _totalSeconds;                   
         private DateTime? _LastTime = null;
         private double _CurrentOffset;
@@ -97,7 +96,12 @@ namespace VeegStation
         /// 当前显示的信道数据
         /// -- by lxl
         /// </summary>
-        private int _signalNum;                                                                                      
+        private int _signalNum;
+        /// <summary>
+        /// 当前显示的最上面的信道,当选择显示的通道小鱼20时拖动滑动条时需要用到
+        /// -- by lxl
+        /// </summary>
+        private int _currentTopSignal;                                                                            
         /// <summary>
         /// 校准Y轴窗口            
         /// - by lxl
@@ -170,6 +174,8 @@ namespace VeegStation
             _rate_that_ensure_1_cm = 1;
             _isChangingBoardShow = true;
             _signalNum = 20;
+            _currentTopSignal = 0;
+            setVScrollVisible(false);
             initMenuItems();
             natfileinfo = new NatFileInfo(EegFile.NedFullName);
             pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
@@ -235,15 +241,19 @@ namespace VeegStation
             {
                 if (tIdx % 127 == 0) _eventsQueue.Enqueue(tIdx / 128D);
                 //col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);
-                col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + (2000D - interval * 19 - interval / 2));
-                foreach (int sIdx in Enumerable.Range(0, _signalNum - 1))
+                foreach (int sIdx in Enumerable.Range(_currentTopSignal, _signalNum))
                 {
+                    if (sIdx == 19)
+                    {
+                        col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + (2000D - interval * (19 - _currentTopSignal) - interval / 2));
+                        continue;
+                    }
                     double val = _packets[tIdx].EEG[sIdx];
                     val /= 20;
                     val /= rate;                                //根据灵敏度调整 -- by lxl
                     val *= _rate_that_ensure_1_cm;              //根据所校准的单位调整-- by lxl
                     //val += (2000 - 100 * sIdx - 50);
-                    val += (2000D - interval * sIdx - interval / 2);
+                    val += (2000D - interval * (sIdx - _currentTopSignal) - interval / 2);
                     col[sIdx].Points.AddXY(tIdx / 128.0, val);
                 }
             }
@@ -926,6 +936,10 @@ namespace VeegStation
             this.boardPanel.Visible = _isBoardShow;
             this.boardToolStripMenuItem.Checked = _isBoardShow;
             _isChangingBoardShow = true;
+            if (_isBoardShow)
+                this.vScroll.Location = new Point(this.boardPanel.Location.X - this.vScroll.Width, this.vScroll.Location.Y);
+            else
+                this.vScroll.Location = new Point(this.chartWave.Location.X + this.chartWave.Width - this.vScroll.Width, this.vScroll.Location.Y);
             this.chartWave.Invalidate();
         }
 
@@ -946,7 +960,39 @@ namespace VeegStation
             _signalNum = int.Parse(sender.ToString());
             this.chartWave.ChartAreas[0].AxisY.MajorGrid.Interval = 2000D / _signalNum;
             this.chartWave.ChartAreas[0].AxisY.MajorTickMark.Interval = 2000D / _signalNum;
+            if (_currentTopSignal + _signalNum > 20)
+                _currentTopSignal = 20 - _signalNum;
             ShowData();
+            if (_signalNum < 20)
+                setVScrollVisible(true);
+            else
+                setVScrollVisible(false);
+            this.vScroll.LargeChange = _signalNum + 1;
+        }
+        /// <summary>
+        /// 设置竖直滚动条是否可用
+        /// -- by lxl
+        /// </summary>
+        /// <param name="flag"></param>
+        private void setVScrollVisible(bool flag)
+        {
+            this.vScroll.Visible = flag;
+        }
+
+        /// <summary>
+        /// 竖直滚动条滚动事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void vScrollBar_mouseCapture(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(this.vScroll.Value);
+            if (this._currentTopSignal != this.vScroll.Value)
+            {
+                this._currentTopSignal = this.vScroll.Value;
+                ShowData();
+            }
         }
     }
 }
