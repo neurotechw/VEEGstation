@@ -51,11 +51,9 @@ namespace VeegStation
         }
         public void Play()
         {
-            if (playback._currentSeconds == 0)
-                player.Time = (long)playback._nfi.VideoOffset * 1000;
             player.Play();
-            //player.CropGeometry.CropArea.Location = new Point(100,500);
-           // player.Delay=1000;
+            if (playback._currentSeconds == 0&&playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset==0)
+                player.Time = (long)playback._nfi.VideoOffset * 1000;
         }
         public void Pause()
         {
@@ -123,7 +121,7 @@ namespace VeegStation
         {
             if (e.Button == MouseButtons.Left && e.Clicks == 1)
             {
-                if (player.VideoScale < 1.5f)
+                if (player.VideoScale < 1.0f)
                     player.VideoScale += 0.5f;
                 else
                     MessageBox.Show("放大到最大化","提示");
