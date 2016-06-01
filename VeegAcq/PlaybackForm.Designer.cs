@@ -30,10 +30,10 @@ namespace VeegStation
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlaybackForm));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine1 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine2 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnPlay = new System.Windows.Forms.ToolStripButton();
             this.btnPause = new System.Windows.Forms.ToolStripButton();
@@ -55,8 +55,6 @@ namespace VeegStation
             this.chartWave = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.hsProgress = new System.Windows.Forms.HScrollBar();
-            this.btn_enlarge = new System.Windows.Forms.Button();
-            this.btn_shrink = new System.Windows.Forms.Button();
             this.PationInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.DetectionInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.Hiding = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,6 +90,7 @@ namespace VeegStation
             this.格式ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sensitivityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timeStandartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.signalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.calibrateXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,6 +100,8 @@ namespace VeegStation
             this.btn_decelerate = new System.Windows.Forms.Button();
             this.btn_hide = new System.Windows.Forms.Button();
             this.boardPanel = new System.Windows.Forms.Panel();
+            this.vScroll = new System.Windows.Forms.VScrollBar();
+            this.labelPanel = new System.Windows.Forms.Panel();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
@@ -281,49 +282,51 @@ namespace VeegStation
             this.chartWave.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.AxisX.LabelStyle.Interval = 1D;
-            chartArea1.AxisX.LabelStyle.IntervalOffset = 0D;
-            chartArea1.AxisX.MajorGrid.Interval = 1D;
-            chartArea1.AxisX.MajorGrid.IntervalOffset = 1D;
-            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
-            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea1.AxisX.MajorTickMark.Interval = 1D;
-            chartArea1.AxisX.MajorTickMark.IntervalOffset = 0D;
-            chartArea1.AxisX.Minimum = 0D;
-            stripLine1.BorderColor = System.Drawing.Color.Black;
-            stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            stripLine1.StripWidth = 0.0001D;
-            chartArea1.AxisX.StripLines.Add(stripLine1);
-            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
-            chartArea1.AxisY.IsInterlaced = true;
-            chartArea1.AxisY.LabelStyle.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Interval = 100D;
-            chartArea1.AxisY.MajorGrid.IntervalOffset = 0D;
-            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisY.MajorTickMark.Interval = 100D;
-            chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
-            chartArea1.AxisY.Maximum = 2000D;
-            chartArea1.AxisY.Minimum = 0D;
-            chartArea1.Name = "mainArea";
-            chartArea1.Position.Auto = false;
-            chartArea1.Position.Height = 94F;
-            chartArea1.Position.Width = 100F;
-            chartArea1.Position.Y = 3F;
-            this.chartWave.ChartAreas.Add(chartArea1);
-            legend1.Enabled = false;
-            legend1.Name = "Legend1";
-            legend1.Position.Auto = false;
-            legend1.Position.Height = 100F;
-            legend1.Position.Width = 100F;
-            this.chartWave.Legends.Add(legend1);
-            this.chartWave.Location = new System.Drawing.Point(12, 63);
+            chartArea2.AxisX.LabelStyle.Enabled = false;
+            chartArea2.AxisX.LabelStyle.Interval = 1D;
+            chartArea2.AxisX.LabelStyle.IntervalOffset = 0D;
+            chartArea2.AxisX.MajorGrid.Interval = 1D;
+            chartArea2.AxisX.MajorGrid.IntervalOffset = 1D;
+            chartArea2.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
+            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea2.AxisX.MajorTickMark.Interval = 1D;
+            chartArea2.AxisX.MajorTickMark.IntervalOffset = 0D;
+            chartArea2.AxisX.Minimum = 0D;
+            stripLine2.BorderColor = System.Drawing.Color.Black;
+            stripLine2.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            stripLine2.StripWidth = 0.0001D;
+            chartArea2.AxisX.StripLines.Add(stripLine2);
+            chartArea2.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
+            chartArea2.AxisY.IsInterlaced = true;
+            chartArea2.AxisY.LabelStyle.Enabled = false;
+            chartArea2.AxisY.MajorGrid.Interval = 100D;
+            chartArea2.AxisY.MajorGrid.IntervalOffset = 0D;
+            chartArea2.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
+            chartArea2.AxisY.MajorTickMark.Enabled = false;
+            chartArea2.AxisY.MajorTickMark.Interval = 100D;
+            chartArea2.AxisY.MajorTickMark.IntervalOffset = 0D;
+            chartArea2.AxisY.Maximum = 2000D;
+            chartArea2.AxisY.Minimum = 0D;
+            chartArea2.Name = "mainArea";
+            chartArea2.Position.Auto = false;
+            chartArea2.Position.Height = 94F;
+            chartArea2.Position.Width = 100F;
+            chartArea2.Position.Y = 3F;
+            this.chartWave.ChartAreas.Add(chartArea2);
+            legend2.Enabled = false;
+            legend2.Name = "Legend1";
+            legend2.Position.Auto = false;
+            legend2.Position.Height = 100F;
+            legend2.Position.Width = 100F;
+            this.chartWave.Legends.Add(legend2);
+            this.chartWave.Location = new System.Drawing.Point(62, 63);
             this.chartWave.Name = "chartWave";
-            series1.ChartArea = "mainArea";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chartWave.Series.Add(series1);
-            this.chartWave.Size = new System.Drawing.Size(930, 494);
+            series2.ChartArea = "mainArea";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chartWave.Series.Add(series2);
+            this.chartWave.Size = new System.Drawing.Size(880, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
             this.chartWave.Paint += new System.Windows.Forms.PaintEventHandler(this.chartPaint);
@@ -342,28 +345,6 @@ namespace VeegStation
             this.hsProgress.Size = new System.Drawing.Size(933, 17);
             this.hsProgress.TabIndex = 4;
             this.hsProgress.MouseCaptureChanged += new System.EventHandler(this.hsProgress_MouseCaptureChanged);
-            // 
-            // btn_enlarge
-            // 
-            this.btn_enlarge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_enlarge.Location = new System.Drawing.Point(20, 193);
-            this.btn_enlarge.Name = "btn_enlarge";
-            this.btn_enlarge.Size = new System.Drawing.Size(75, 23);
-            this.btn_enlarge.TabIndex = 6;
-            this.btn_enlarge.Text = "放大";
-            this.btn_enlarge.UseVisualStyleBackColor = true;
-            this.btn_enlarge.Click += new System.EventHandler(this.btn_enlarge_Click);
-            // 
-            // btn_shrink
-            // 
-            this.btn_shrink.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_shrink.Location = new System.Drawing.Point(105, 193);
-            this.btn_shrink.Name = "btn_shrink";
-            this.btn_shrink.Size = new System.Drawing.Size(75, 23);
-            this.btn_shrink.TabIndex = 7;
-            this.btn_shrink.Text = "缩小";
-            this.btn_shrink.UseVisualStyleBackColor = true;
-            this.btn_shrink.Click += new System.EventHandler(this.btn_shrink_Click);
             // 
             // PationInfo
             // 
@@ -694,7 +675,8 @@ namespace VeegStation
             // 
             this.格式ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sensitivityToolStripMenuItem,
-            this.timeStandartToolStripMenuItem});
+            this.timeStandartToolStripMenuItem,
+            this.signalToolStripMenuItem});
             this.格式ToolStripMenuItem.Name = "格式ToolStripMenuItem";
             this.格式ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.R)));
             this.格式ToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
@@ -711,6 +693,12 @@ namespace VeegStation
             this.timeStandartToolStripMenuItem.Name = "timeStandartToolStripMenuItem";
             this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.timeStandartToolStripMenuItem.Text = "时间基准";
+            // 
+            // signalToolStripMenuItem
+            // 
+            this.signalToolStripMenuItem.Name = "signalToolStripMenuItem";
+            this.signalToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.signalToolStripMenuItem.Text = "显示通道";
             // 
             // calibrateToolStripMenuItem
             // 
@@ -789,6 +777,7 @@ namespace VeegStation
             // 
             this.boardPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.boardPanel.BackColor = System.Drawing.Color.White;
             this.boardPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.boardPanel.Controls.Add(this.btn_hide);
             this.boardPanel.Controls.Add(this.btn_decelerate);
@@ -799,18 +788,40 @@ namespace VeegStation
             this.boardPanel.Size = new System.Drawing.Size(200, 499);
             this.boardPanel.TabIndex = 13;
             // 
+            // vScroll
+            // 
+            this.vScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.vScroll.Location = new System.Drawing.Point(725, 65);
+            this.vScroll.Maximum = 20;
+            this.vScroll.Name = "vScroll";
+            this.vScroll.Size = new System.Drawing.Size(17, 492);
+            this.vScroll.TabIndex = 14;
+            this.vScroll.MouseCaptureChanged += new System.EventHandler(this.vScrollBar_mouseCapture);
+            // 
+            // labelPanel
+            // 
+            this.labelPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelPanel.Location = new System.Drawing.Point(0, 63);
+            //this.labelPanel.BackColor = System.Drawing.Color.Red;
+            this.labelPanel.Name = "labelPanel";
+            this.labelPanel.Size = new System.Drawing.Size(62, 494);
+            this.labelPanel.TabIndex = 15;
+            this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.drawLabelPanel);
+            // 
             // PlaybackForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(942, 582);
+            this.Controls.Add(this.vScroll);
             this.Controls.Add(this.hsProgress);
             this.Controls.Add(this.boardPanel);
             this.Controls.Add(this.PationInfoPanel);
             this.Controls.Add(this.DetectionInfoPanel);
             this.Controls.Add(this.chartWave);
-            this.Controls.Add(this.btn_shrink);
-            this.Controls.Add(this.btn_enlarge);
+            this.Controls.Add(this.labelPanel);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -849,10 +860,7 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton btnNext;
         private System.Windows.Forms.ToolStripButton btnPrev;
-        //private System.Windows.Forms.ToolStripLabel labelPage;
         private System.Windows.Forms.HScrollBar hsProgress;
-        private System.Windows.Forms.Button btn_enlarge;
-        private System.Windows.Forms.Button btn_shrink;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
         private System.Windows.Forms.ToolStripMenuItem PationInfo;
@@ -895,6 +903,7 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripMenuItem 格式ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sensitivityToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem timeStandartToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem signalToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStriplabel_abtime;
         private System.Windows.Forms.ToolStripStatusLabel displayStartTime;
         private System.Windows.Forms.ToolStripStatusLabel toolStriplabel_retime;
@@ -910,6 +919,8 @@ namespace VeegStation
         private System.Windows.Forms.Panel boardPanel;
         private System.Windows.Forms.ToolStripMenuItem interfaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem boardToolStripMenuItem;
+        private System.Windows.Forms.VScrollBar vScroll;
+        private System.Windows.Forms.Panel labelPanel;
         //////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }
