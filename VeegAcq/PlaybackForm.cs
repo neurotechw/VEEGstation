@@ -409,10 +409,16 @@ namespace VeegStation
             }
             //为了保证最后的那条线画在正确的位置，所以相对时间和画的那条线最后需要特殊处理一下
             //wsp
-             if (_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)
+             if (_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset > _nfi.Duration.TotalSeconds)
              {
                  chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _nfi.Duration.TotalSeconds - _currentSeconds;
-                 displayRecordingTime.Text = dt_totaltime.ToLongTimeString().ToString();
+                 DateTime dt_totaltime1;
+                 dt_totaltime1 = DateTime.Parse("2016-05-23 00:00:00");
+                 if ((int)_nfi.Duration.TotalSeconds < _nfi.Duration.TotalSeconds)
+                     dt_totaltime1 = dt_totaltime1.AddSeconds(_nfi.Duration.TotalSeconds + 1);
+                 else
+                     dt_totaltime1 = dt_totaltime1.AddSeconds(_nfi.Duration.TotalSeconds);
+                 displayRecordingTime.Text = dt_totaltime1.ToLongTimeString().ToString();
              }
         }
 
@@ -462,7 +468,7 @@ namespace VeegStation
             } 
             Play();
             video.Play();
-            if (_currentSeconds == 0)
+            if (_currentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
             video.player.Time = (long)_nfi.VideoOffset * 1000;
          //   video.Hide();  
         }
