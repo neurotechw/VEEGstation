@@ -54,6 +54,10 @@ namespace VeegStation
             player.Play();
             if (playback._currentSeconds == 0&&playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset==0)
                 player.Time = (long)playback._nfi.VideoOffset * 1000;
+            if (playback._currentSeconds != 0 && playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                player.Time = (long)playback._nfi.VideoOffset * 1000 + playback._currentSeconds * 1000;
+            if (playback._currentSeconds != 0 && playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset != 0)
+                player.Time = (long)playback._nfi.VideoOffset * 1000 + playback._currentSeconds * 1000 + (long)playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
         }
         public void Pause()
         {

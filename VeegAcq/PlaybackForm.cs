@@ -323,6 +323,15 @@ namespace VeegStation
             ShowData();
             set_hsScrollBarValue();
         }
+        private void PagePrev_2()
+        {
+            _currentSeconds -= (int)(Math.Floor(_xMaximum));
+            if (_currentSeconds <= 0)
+                _currentSeconds = 0;
+            LoadData(_currentSeconds);
+            ShowData();
+            set_hsScrollBarValue_Next();
+        }
 
         private void PageNext()
         {
@@ -331,8 +340,19 @@ namespace VeegStation
                     _currentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
                 LoadData(_currentSeconds);
                 ShowData();
-                set_hsScrollBarValue();
-              
+                set_hsScrollBarValue();              
+        }
+        /// <summary>
+        /// 点击下一页时所用的
+        /// </summary>
+        private void PageNext_2()
+        {
+            _currentSeconds += (int)(Math.Floor(_xMaximum));
+            if (_currentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
+                _currentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
+            LoadData(_currentSeconds);
+            ShowData();
+            set_hsScrollBarValue_Next();     
         }
         public void SetTimeLine()
         {
@@ -350,22 +370,26 @@ namespace VeegStation
         {
             //timer.Enabled = false;
             Pause();
-            PagePrev();
-            _player.Time = _currentSeconds * 1000;
-            video.player.Time = _currentSeconds * 1000;
-            SyncVideo();
+//            PagePrev();
+            PagePrev_2();
+            changed();
+            _player.Time = _currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+            video.player.Time = _currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+            //           SyncVideo();
             update_BtnEnable();
         }
 
         private void btnNext_Click(object sender, EventArgs e)
         {                
             Pause();
-            PageNext();
+  //          PageNext();
+            PageNext_2();
             changed();
-            _player.Time = _currentSeconds * 1000;
-            video.player.Time =_currentSeconds * 1000;
-            SyncVideo();
+            _player.Time = _currentSeconds * 1000+(long)_nfi.VideoOffset*1000+(long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset*1000;
+            video.player.Time = _currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+ //           SyncVideo();
             update_BtnEnable();
+
         }
         /// <summary>
         /// Time 
@@ -377,7 +401,6 @@ namespace VeegStation
           DateTime now = DateTime.Now;
            _CurrentOffset += (now - _LastTime.Value).TotalSeconds*speed;
             _LastTime = now;
-     //       if (_CurrentOffset > _nfi.Duration.TotalSeconds+0.3)/////////////////
              if (_currentSeconds+chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)/////////////////
             {
                 Pause();
@@ -391,14 +414,13 @@ namespace VeegStation
             }
             else
              {
-                //          if (_CurrentOffset > (_Page + 1) * chartWave.ChartAreas[0].AxisX.Maximum)
                  if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _xMaximum)
                 {
                     PageNext();
                 }
                 else
                 {             
-                    SetTimeLine();          
+                    SetTimeLine();
                     dt = dt.AddSeconds(0.1 * speed);
                     DateTime a = DateTime.Parse("2016-05-23  00:00:00");
                     displayStartTime.Text = dt.ToLongTimeString().ToString();
@@ -419,6 +441,7 @@ namespace VeegStation
                  else
                      dt_totaltime1 = dt_totaltime1.AddSeconds(_nfi.Duration.TotalSeconds);
                  displayRecordingTime.Text = dt_totaltime1.ToLongTimeString().ToString();
+               //  _player.Time=(long)(_nfi.Duration.TotalSeconds*1000+_nfi.VideoOffset*1000);
              }
         }
 
@@ -433,10 +456,18 @@ namespace VeegStation
             {
                 // TODO:
                // _player.Time = (long)(_nfi.VideoOffset * 1000);
+                if (_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)
+                {
+                    clear();
+                } 
                 if (!_player.IsPlaying)
-                    _player.Play();
-                if (_currentSeconds == 0&&chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset==0)
-                    _player.Time = (long)_nfi.VideoOffset * 1000;
+                    _player.Play();         
+                //if (_currentSeconds == 0&&chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset==0)
+                //    _player.Time = (long)_nfi.VideoOffset * 1000;
+                //if (_currentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                //    _player.Time = (long)_nfi.VideoOffset * 1000 + _currentSeconds * 1000;
+                //if (_currentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset != 0)
+                    _player.Time = (long)(_nfi.VideoOffset * 1000 + _currentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000);
             }
             else
             {
@@ -462,14 +493,12 @@ namespace VeegStation
 
         public void btnPlay_Click(object sender, EventArgs e)
         {
-            if (_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)
-            {
-                clear();
-            } 
             Play();
             video.Play();
             if (_currentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
             video.player.Time = (long)_nfi.VideoOffset * 1000;
+            if(_currentSeconds!=0&&chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+            video.player.Time = (long)_nfi.VideoOffset * 1000 + _currentSeconds * 1000;
          //   video.Hide();  
         }
 
@@ -481,10 +510,22 @@ namespace VeegStation
 
         private void set_hsScrollBarValue()
         {
-            chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = b-_currentSeconds;
+ //           if (b - _currentSeconds >= 0&&b-_currentSeconds<_xMaximum)
+                chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = b - _currentSeconds;
+//            else
+//            {
+//                chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
+//                _player.Time = _currentSeconds * 1000+(long)_nfi.VideoOffset*1000;
+//            }
             hsProgress.Value = _currentSeconds;
         }
 
+
+        private void set_hsScrollBarValue_Next()
+        {
+            chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
+            hsProgress.Value = _currentSeconds;
+        }
         private void hsProgress_MouseCaptureChanged(object sender, EventArgs e)
         {
             Debug.WriteLine(string.Format("Scroll mouse cap changed {0}", e));
@@ -496,7 +537,8 @@ namespace VeegStation
                 LoadData(_currentSeconds);
                 ShowData();
                 update_BtnEnable();
-                SyncVideo();
+                _player.Time = _currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+   //             SyncVideo();
             }
         }
 
@@ -982,7 +1024,8 @@ namespace VeegStation
             _currentSeconds = 0;
             dt_relativetime = DateTime.Parse("2016-05-23  00:00:00");
             dt_totaltime = DateTime.Parse("2016-05-23 00:00:00");
-            _player.Time = (long)_nfi.VideoOffset * 1000;
+//            _player.Time = (long)_nfi.VideoOffset * 1000;
+            _player.Time =0;
             dt = _nfi.StartTime;
             hsProgress.Value = 0;
             LoadData(_currentSeconds);
@@ -1040,6 +1083,15 @@ namespace VeegStation
                 ShowData();
                 this.labelPanel.Invalidate();
             }
+        }
+        /// <summary>
+        /// 当回放Form关闭时，弹出视频Form也要关闭
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlaybackForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            video.Close();
         }
     }
 }
