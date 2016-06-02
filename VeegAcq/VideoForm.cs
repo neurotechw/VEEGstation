@@ -52,12 +52,7 @@ namespace VeegStation
         public void Play()
         {
             player.Play();
-            if (playback._currentSeconds == 0&&playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset==0)
-                player.Time = (long)playback._nfi.VideoOffset * 1000;
-            if (playback._currentSeconds != 0 && playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                player.Time = (long)playback._nfi.VideoOffset * 1000 + playback._currentSeconds * 1000;
-            if (playback._currentSeconds != 0 && playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset != 0)
-                player.Time = (long)playback._nfi.VideoOffset * 1000 + playback._currentSeconds * 1000 + (long)playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+            player.Time = (long)playback._nfi.VideoOffset * 1000 + playback._currentSeconds * 1000 + (long)playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
         }
         public void Pause()
         {
@@ -65,8 +60,11 @@ namespace VeegStation
         }
         private void btn_play_Click(object sender, EventArgs e)
         {
-            if (playback._currentSeconds + playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= playback._nfi.Duration.TotalSeconds)
-                player.Time = (long)playback._nfi.VideoOffset * 1000;
+//            if (playback._currentSeconds + playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= playback._nfi.Duration.TotalSeconds)
+            if (playback._CurrentOffset >= playback._nfi.Duration.TotalSeconds)
+            {
+                playback.clear();
+            }
             if (!playback._player.IsPlaying)
             {
                Play();

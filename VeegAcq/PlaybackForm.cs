@@ -62,7 +62,7 @@ namespace VeegStation
         public double b;
         private int _totalSeconds;                   
         private DateTime? _LastTime = null;
-        private double _CurrentOffset;
+        public double _CurrentOffset;
 
         public IVideoPlayer _player;
         private IMedia _media;
@@ -357,7 +357,8 @@ namespace VeegStation
         public void SetTimeLine()
         {
     //        chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _CurrentOffset - _Page * chartWave.ChartAreas[0].AxisX.Maximum;////////添加需要拖动的一些位置进行
-	          chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset += 0.1*speed;
+	//          chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset += 0.1*speed;
+            chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = (_CurrentOffset - _currentSeconds);
         }
         private void SyncVideo()
         {
@@ -400,11 +401,13 @@ namespace VeegStation
         {
           DateTime now = DateTime.Now;
            _CurrentOffset += (now - _LastTime.Value).TotalSeconds*speed;
+           double l = (now - _LastTime.Value).TotalSeconds * speed;
             _LastTime = now;
-             if (_currentSeconds+chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)/////////////////
+ //            if (_currentSeconds+chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _nfi.Duration.TotalSeconds)/////////////////
+            if(_CurrentOffset>=_nfi.Duration.TotalSeconds)
             {
                 Pause();
-                _CurrentOffset = 0;
+            //    _CurrentOffset = 0;
                 _LastTime = null;
                 video.player.Pause();
                 btnPrev.Enabled = true;
@@ -414,24 +417,27 @@ namespace VeegStation
             }
             else
              {
-                 if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _xMaximum)
+                if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= _xMaximum)
                 {
                     PageNext();
                 }
                 else
                 {             
                     SetTimeLine();
-                    dt = dt.AddSeconds(0.1 * speed);
+     //               dt = dt.AddSeconds(0.1 * speed);
+                    dt = dt.AddSeconds(l);
                     DateTime a = DateTime.Parse("2016-05-23  00:00:00");
                     displayStartTime.Text = dt.ToLongTimeString().ToString();
-                    dt_relativetime = dt_relativetime.AddSeconds(0.1 * speed);
+     //               dt_relativetime = dt_relativetime.AddSeconds(0.1 * speed);
+                    dt_relativetime = dt_relativetime.AddSeconds(l);
                     b = (dt_relativetime - a).TotalSeconds;
                     displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
                 }
             }
             //为了保证最后的那条线画在正确的位置，所以相对时间和画的那条线最后需要特殊处理一下
             //wsp
-             if (_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset > _nfi.Duration.TotalSeconds)
+   //          if (_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset > _nfi.Duration.TotalSeconds)
+            if (_CurrentOffset >= _nfi.Duration.TotalSeconds)
              {
                  chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _nfi.Duration.TotalSeconds - _currentSeconds;
                  DateTime dt_totaltime1;
@@ -441,7 +447,7 @@ namespace VeegStation
                  else
                      dt_totaltime1 = dt_totaltime1.AddSeconds(_nfi.Duration.TotalSeconds);
                  displayRecordingTime.Text = dt_totaltime1.ToLongTimeString().ToString();
-               //  _player.Time=(long)(_nfi.Duration.TotalSeconds*1000+_nfi.VideoOffset*1000);
+                 _player.Time=(long)(_nfi.Duration.TotalSeconds*1000+_nfi.VideoOffset*1000);
              }
         }
 
@@ -1018,13 +1024,14 @@ namespace VeegStation
         /// 重头播放，对数据进行初始化处理
         /// wsp
         /// </summary>
-        private void clear()
+        public void clear()
         {
             chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0.0;
             _currentSeconds = 0;
             dt_relativetime = DateTime.Parse("2016-05-23  00:00:00");
             dt_totaltime = DateTime.Parse("2016-05-23 00:00:00");
 //            _player.Time = (long)_nfi.VideoOffset * 1000;
+            _CurrentOffset = 0;
             _player.Time =0;
             dt = _nfi.StartTime;
             hsProgress.Value = 0;
