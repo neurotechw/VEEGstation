@@ -21,8 +21,9 @@ namespace VeegStation
     public partial class PlaybackForm : Form
     {
         //////////////////////////////
-        NatFileInfo natfileinfo;
-        PationInfo pationinfo;
+        //NatFileInfo natfileinfo;
+        //PationInfo pationinfo;
+               
         DateTime dt;                                                    //绝对时间
         DateTime dt_relativetime;                                  //相对时间
         DateTime dt_totaltime;                                      //总时间
@@ -30,7 +31,9 @@ namespace VeegStation
         public static int i = 9;
         private VideoForm video;
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
-        public NationFileInfo _nfi = null;
+        public NationFile _nfi = null;  // 诺诚头文件  --by zt
+        private int sampleRate;  //采样率 --by zt
+        private int numberOfSamples; //总点数 --by zt
 
         private List<EegPacket> _packets = new List<EegPacket>();
         /// <summary>
@@ -123,7 +126,7 @@ namespace VeegStation
         /// </summary>
         private bool _isChangingBoardShow;            
 
-        public PlaybackForm(NationFileInfo EegFile)
+        public PlaybackForm(NationFile EegFile)
         {
             InitializeComponent();
             _Sensitivity = 100;
@@ -135,8 +138,9 @@ namespace VeegStation
             _rate_that_ensure_1_cm = 1;
             _isChangingBoardShow = true;
             initMenuItems();
-            natfileinfo = new NatFileInfo(EegFile.NedFullName);
-            pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
+            
+            //natfileinfo = new NatFile(EegFile.NedFullName);
+            //pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
             _Page = 0;
             try
             {
@@ -144,7 +148,10 @@ namespace VeegStation
             }
             catch
             { }
-            _maxPage = (EegFile.SampleCount - EegFile.SampleRate + ((WINDOW_SECONDS - 1) * EegFile.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * EegFile.SampleRate);
+            //_maxPage = (EegFile.SampleCount - EegFile.SampleRate + ((WINDOW_SECONDS - 1) * EegFile.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * EegFile.SampleRate);
+            sampleRate = EegFile.NatInfo.Freq; // --by zt
+            numberOfSamples = EegFile.NumberOfSamples; // --by zt
+            _maxPage = (numberOfSamples - sampleRate + ((WINDOW_SECONDS - 1) * sampleRate) - 1) / ((WINDOW_SECONDS - 1) * sampleRate);  //  --by zt 
             hsProgress.Maximum =  _maxPage;// +hsProgress.LargeChange - 2; 
         }
 
@@ -154,32 +161,82 @@ namespace VeegStation
             {
                 return;
             }
-            int loadRec = WINDOW_SECONDS * _nfi.SampleRate;                           
+            int loadRec = WINDOW_SECONDS * sampleRate;                           
             DateTime begin = DateTime.Now;
-            FileStream fs = new FileStream(_nfi.NedFullName, FileMode.Open, FileAccess.Read);
-            fs.Seek(0x200, SeekOrigin.Begin);
-            fs.Seek(0x6c * Offset * (loadRec - _nfi.SampleRate * (WINDOW_SECONDS-(int)Math.Ceiling(_xMaximum) + 1)), SeekOrigin.Current);
-            byte[] buf = new byte[0x6c];
+            //加载8导数据
+            Parse8LeadsData(Offset, loadRec);
+            //FileStream fs = new FileStream(_nfi.NedFullName, FileMode.Open, FileAccess.Read);
+            //fs.Seek(0x200, SeekOrigin.Begin);//为什么从512开始？  --by zt
+            //fs.Seek(0x6c * Offset * (loadRec - _nfi.SampleRate * (WINDOW_SECONDS-(int)Math.Ceiling(_xMaximum) + 1)), SeekOrigin.Current);//为什么要取108个字节
+            //byte[] buf = new byte[0x6c];
+            //_packets.Clear();
+            //foreach (int x in Enumerable.Range(0, loadRec))
+            //{
+            //    if (fs.Read(buf, 0, 0x6c) < 0x6c)
+            //    {
+            //        break;
+            //    }
+            //    StringBuilder sb = new StringBuilder();
+            //    foreach (byte b in buf) 
+            //    {
+            //        sb.Append(b.ToString("X2"));
+            //    }
+            //    double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));//心电数据，为什么要转化为short   --by zt
+            //    List<double> eeg = new List<double>();
+            //    foreach (int off in Enumerable.Range(0, 19))
+            //    {
+            //        eeg.Add(Util.RawToSignal((short)(buf[28 + 2 * off] | (buf[29 + 2 * off] << 8))));
+            //    }
+            //    EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
+            //    _packets.Add(pkt);
+            //}
+            //fs.Close();
+            //fs.Dispose();
+            DateTime end = DateTime.Now;
+            Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", _packets.Count, (end - begin).TotalSeconds));
+        }
+
+        public void Parse8LeadsData(int Offset, int loadRec) 
+        {
+            FileStream fs = new FileStream(_nfi.NedFileName, FileMode.Open, FileAccess.Read);
+            fs.Seek(0x200, SeekOrigin.Begin);//从512开始  --by zt
+            //取26个字节
+            int byteOfPerData = 0x1A;
+            int numberOfData= 8;
+            fs.Seek(byteOfPerData * Offset * (loadRec - sampleRate * (WINDOW_SECONDS - (int)Math.Ceiling(_xMaximum) + 1)), SeekOrigin.Current);//  --by zt
+            byte[] buf = new byte[byteOfPerData];
             _packets.Clear();
             foreach (int x in Enumerable.Range(0, loadRec))
             {
-                if (fs.Read(buf, 0, 0x6c) < 0x6c)
+                if (fs.Read(buf, 0, byteOfPerData) < byteOfPerData)
                 {
                     break;
                 }
-                double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));
-                List<double> eeg = new List<double>();
-                foreach (int off in Enumerable.Range(0, 19))
+                //测试代码 by zt
+                StringBuilder sb = new StringBuilder();
+                foreach (byte b in buf)
                 {
-                    eeg.Add(Util.RawToSignal((short)(buf[28 + 2 * off] | (buf[29 + 2 * off] << 8))));
+                    sb.Append(b.ToString("X2"));
+                }
+                //8导没有心电
+                //double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));//心电数据，为什么要转化为short   --by zt
+                double ekg = 0;
+                List<double> eeg = new List<double>();
+                //加载脑电数据
+                foreach (int off in Enumerable.Range(0, numberOfData))
+                {
+                    eeg.Add(Util.RawToSignal((short)(buf[6 + 2 * off] | (buf[7 + 2 * off] << 8))));
+                }
+                //其余的用0补全
+                for (int i = numberOfData; i < 19; i++)
+                {
+                    eeg.Add(0);
                 }
                 EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
                 _packets.Add(pkt);
             }
             fs.Close();
             fs.Dispose();
-            DateTime end = DateTime.Now;
-            Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", _packets.Count, (end - begin).TotalSeconds));
         }
 
         private void ShowData()
@@ -196,7 +253,7 @@ namespace VeegStation
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
                 if (tIdx % 127 == 0) _eventsQueue.Enqueue(tIdx / 128D);
-                col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);
+                col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);//最后一个通道为心电数据  --by zt
                 foreach (int sIdx in Enumerable.Range(0, 19))
                 {
                     double val = _packets[tIdx].EEG[sIdx];
@@ -221,7 +278,7 @@ namespace VeegStation
             }
             dt_relativetime=DateTime.Parse("2016-05-23  00:00:00");
             dt_totaltime = DateTime.Parse("2016-05-23 00:00:00");
-            dt = _nfi.StartTime;
+            dt = _nfi.StartDateTime;  //  -- by zt
             displayStartTime.Text = dt.ToLongTimeString().ToString();
             dt_totaltime = dt_totaltime.AddSeconds(_nfi.Duration.TotalSeconds);
             displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
@@ -513,16 +570,17 @@ namespace VeegStation
         {
         }
 
+        #region 跟病人有关的信息 待修改
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Set_PationInfoPanel(pationinfo);
+            Set_PationInfoPanel(_nfi.PatInfo);   //  --by zt
             this.PationInfoPanel.Visible = true;
             this.DetectionInfoPanel.Visible = false;
         }
 
         private void detectionInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Set_DetectionInfoPanel(natfileinfo, pationinfo);
+            Set_DetectionInfoPanel(_nfi.PatInfo);  //  --by zt
             this.PationInfoPanel.Visible = false;
             this.DetectionInfoPanel.Visible = true;
         }
@@ -533,26 +591,28 @@ namespace VeegStation
             this.DetectionInfoPanel.Visible = false;
         }
 
-        private void Set_PationInfoPanel(PationInfo _pationinfo)
+        private void Set_PationInfoPanel(PatInfo patientinfo)
         {
-            this.PatNameTextBt.Text = _pationinfo.Name;
-            this.PatGenderCB.Text = _pationinfo.Gender;
-            this.PatIDTextBt.Text = _pationinfo.ID;
-            this.PatAgeTextBt.Text = _pationinfo.Age;
-            this.SingleHandAdvanCB.Text = _pationinfo.Handedness;
+            this.PatNameTextBt.Text = patientinfo.Name;
+            this.PatGenderCB.Text = patientinfo.Gender;
+            this.PatIDTextBt.Text = patientinfo.ID;
+            this.PatAgeTextBt.Text = patientinfo.Age;
+            this.SingleHandAdvanCB.Text = patientinfo.Handedness;
         }
 
-        private void Set_DetectionInfoPanel(NatFileInfo _nationfileinfo, PationInfo _pationinfo)
+        private void Set_DetectionInfoPanel(PatInfo patientinfo)
         {
-            this.DetectionTextBt.Text = _pationinfo.ID;
-            this.RequesterTextBt.Text = _pationinfo.Name;
-            this.TechnicianTextBt.Text = _pationinfo.ResidentDoctor;
-            this.PhysicianTextBT.Text = _pationinfo.OperateDoctor;
-            this.PationStateTextBt.Text = _pationinfo.State;
-            this.PharmacyTextBt.Text = _pationinfo.Medicine;
-            this.DetectionRemarksTextBt.Text = _pationinfo.Diagnosis;
-            this.FilePathTextBt.Text = _pationinfo.FilePath;
+            this.DetectionTextBt.Text = patientinfo.ID;
+            this.RequesterTextBt.Text = patientinfo.Name;
+            this.TechnicianTextBt.Text = patientinfo.ResidentDoctor;
+            this.PhysicianTextBT.Text = patientinfo.OperateDoctor;
+            this.PationStateTextBt.Text = patientinfo.State;
+            this.PharmacyTextBt.Text = patientinfo.Medicine;
+            this.DetectionRemarksTextBt.Text = patientinfo.Diagnosis;
+            //this.FilePathTextBt.Text = _pationinfo.FilePath;
         }
+
+        #endregion
 
         Point pt;
         private void PationInfoPanel_MouseMove(object sender, MouseEventArgs e)
@@ -656,7 +716,7 @@ namespace VeegStation
                 lastpage = true;
             else
                 lastpage = false;
-            _maxPage = (_nfi.SampleCount - _nfi.SampleRate + ((int)(Math.Ceiling(_xMaximum) - 1) * _nfi.SampleRate) - 1) / (((int)(Math.Ceiling(_xMaximum) - 1) * _nfi.SampleRate));
+            _maxPage = (numberOfSamples - sampleRate + ((int)(Math.Ceiling(_xMaximum) - 1) * sampleRate) - 1) / (((int)(Math.Ceiling(_xMaximum) - 1) * sampleRate)); // --by zt
             labelPage.Text = (_Page + 1).ToString() + "/" + _maxPage.ToString();
             hsProgress.Maximum = _maxPage;
             if (_Page >= _maxPage - 1)
@@ -681,7 +741,7 @@ namespace VeegStation
         {
             //chartWave.ChartAreas[0].AxisX.Maximum = _X_totalMM / _timeStandard;
             WINDOW_SECONDS = (int)Math.Ceiling(chartWave.ChartAreas[0].AxisX.Maximum);            //保证取的数据不小于当前窗口应该显示的数据,因为window_seconds为int，而秒数可能为小数
-            _maxPage = (_nfi.SampleCount - _nfi.SampleRate + ((WINDOW_SECONDS - 1) * _nfi.SampleRate) - 1) / ((WINDOW_SECONDS - 1) * _nfi.SampleRate);
+            _maxPage = (numberOfSamples - sampleRate + ((WINDOW_SECONDS - 1) * sampleRate) - 1) / ((WINDOW_SECONDS - 1) * sampleRate); // --by zt
             hsProgress.Maximum = _maxPage;
             if (_Page >= _maxPage - 1)
                 _Page = _maxPage - 1;
@@ -703,7 +763,7 @@ namespace VeegStation
         private void changed()
         {
             _CurrentOffset = _Page * chartWave.ChartAreas[0].AxisX.Maximum;
-            dt = _nfi.StartTime;
+            dt = _nfi.StartDateTime; // --by zt
             dt_relativetime = DateTime.Parse("2016-05-23  00:00:00");
             dt = dt.AddSeconds(_Page * WINDOW_SECONDS + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
             displayStartTime.Text = dt.ToLongTimeString().ToString();
@@ -853,13 +913,14 @@ namespace VeegStation
                 _pageHeight = Math.Abs(this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisY.Maximum) - this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0));
                 _Y_totalMM = _pageHeight / _pixelPerMM;
             }
-            while (_eventsQueue.Count > 0)
-            {
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(_eventsQueue.Dequeue());
-                e.Graphics.FillRectangle(rectBrush, new Rectangle((int)drawPosition - 40, 5, 80, 15));
-                e.Graphics.DrawString("病人事件", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
-                e.Graphics.DrawLine(dotPen,new Point((int)drawPosition,5),new Point((int)drawPosition,(int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
-            }
+            //先注释掉病人事件  --by zt
+            //while (_eventsQueue.Count > 0)
+            //{
+            //    drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(_eventsQueue.Dequeue());
+            //    e.Graphics.FillRectangle(rectBrush, new Rectangle((int)drawPosition - 40, 5, 80, 15));
+            //    e.Graphics.DrawString("病人事件", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
+            //    e.Graphics.DrawLine(dotPen,new Point((int)drawPosition,5),new Point((int)drawPosition,(int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
+            //}
             if (_isChangingBoardShow)
             {
                 if (_isBoardShow)

@@ -7,6 +7,9 @@ using System.Text;
 
 namespace VeegStation
 {
+    /// <summary>
+    /// xu
+    /// </summary>
     public class NationFileInfo
     {
         private string _SerialNo;
@@ -67,6 +70,7 @@ namespace VeegStation
             prrFile.Close();
             prrFile.Dispose();
 
+            //病人信息解析
             FileStream natFile = new FileStream(natFileName, FileMode.Open);
             natFile.Seek(0x90, SeekOrigin.Begin);
             while (true)
