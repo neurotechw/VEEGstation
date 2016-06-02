@@ -84,7 +84,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(203, 12);
             this.label1.TabIndex = 2;
-            this.label1.Text = "调整线段长度，直到其长度正好为1CM";
+            this.label1.Text = "调整线段长度，直到其长度正好为5CM";
             // 
             // calibrateXForm
             // 

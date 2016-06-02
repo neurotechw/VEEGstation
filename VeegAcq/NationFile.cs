@@ -270,9 +270,5 @@ namespace VeegStation
             }
         }
 
-
-        
-
-        
     }
 }

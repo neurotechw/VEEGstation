@@ -11,6 +11,7 @@ namespace VeegStation
     /// </summary>
     public class NatInfo
     {
+        #region 声明域和变量
         /// <summary>
         /// "VE"
         /// </summary>
@@ -150,6 +151,8 @@ namespace VeegStation
             set { _ByteConfigType = value; }
         }
         private byte[] _Remain = new byte[88];		//保留字节
+
+        #endregion
 
         //定义每个内容占的字节
         public static int FixedLength_Sign = 2;

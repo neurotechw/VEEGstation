@@ -59,9 +59,6 @@
             this.pictureBox_Video.Size = new System.Drawing.Size(547, 270);
             this.pictureBox_Video.TabIndex = 0;
             this.pictureBox_Video.TabStop = false;
-            this.pictureBox_Video.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Video_Paint);
-            this.pictureBox_Video.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox_Video_MouseDown);
-            this.pictureBox_Video.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox_Video_MouseMove);
             // 
             // panel1
             // 
@@ -137,7 +134,6 @@
             this.Controls.Add(this.panel1);
             this.Name = "VideoForm";
             this.Text = "VideoForm";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.VideoForm_Load_1);
             this.panel_Mvideo.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Video)).EndInit();
@@ -152,9 +148,9 @@
         private System.Windows.Forms.Panel panel_Mvideo;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.PictureBox pictureBox_Video;
-        private System.Windows.Forms.Button btn_play;
+        public System.Windows.Forms.Button btn_play;
         private System.Windows.Forms.Button btn_close;
-        private System.Windows.Forms.Button btn_pause;
+        public System.Windows.Forms.Button btn_pause;
         private System.Windows.Forms.Button btn_decelerate;
         private System.Windows.Forms.Button btn_accelerate;
     }
