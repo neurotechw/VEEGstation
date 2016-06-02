@@ -313,7 +313,6 @@ namespace VeegStation
             video.Show();
             video.Hide();
         }
-
         private void PagePrev()
         {
             _currentSeconds -= (int)(Math.Floor(_xMaximum));
@@ -323,16 +322,19 @@ namespace VeegStation
             ShowData();
             set_hsScrollBarValue();
         }
+        /// <summary>
+        /// 点击上一页时所用，与从头播放分开来写
+        /// </summary>
         private void PagePrev_2()
         {
             _currentSeconds -= (int)(Math.Floor(_xMaximum));
             if (_currentSeconds <= 0)
                 _currentSeconds = 0;
+            _CurrentOffset = _currentSeconds;
             LoadData(_currentSeconds);
             ShowData();
             set_hsScrollBarValue_Next();
         }
-
         private void PageNext()
         {
                 _currentSeconds += (int)(Math.Floor(_xMaximum));
@@ -343,13 +345,15 @@ namespace VeegStation
                 set_hsScrollBarValue();              
         }
         /// <summary>
-        /// 点击下一页时所用的
+        /// 点击下一页时所用
+        /// wsp
         /// </summary>
         private void PageNext_2()
         {
             _currentSeconds += (int)(Math.Floor(_xMaximum));
             if (_currentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
                 _currentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
+            _CurrentOffset = _currentSeconds;
             LoadData(_currentSeconds);
             ShowData();
             set_hsScrollBarValue_Next();     
@@ -393,7 +397,7 @@ namespace VeegStation
 
         }
         /// <summary>
-        /// Time 
+        /// Time事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -441,16 +445,28 @@ namespace VeegStation
              {
                  chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _nfi.Duration.TotalSeconds - _currentSeconds;
                  DateTime dt_totaltime1;
+                 DateTime dt_begin1;
+                 dt_begin1 = _nfi.StartTime;
                  dt_totaltime1 = DateTime.Parse("2016-05-23 00:00:00");
                  if ((int)_nfi.Duration.TotalSeconds < _nfi.Duration.TotalSeconds)
+                 {
                      dt_totaltime1 = dt_totaltime1.AddSeconds(_nfi.Duration.TotalSeconds + 1);
+                     dt_begin1 = dt_begin1.AddSeconds(_nfi.Duration.TotalSeconds + 1);
+                 }
                  else
+                 {
                      dt_totaltime1 = dt_totaltime1.AddSeconds(_nfi.Duration.TotalSeconds);
+                     dt_begin1 = dt_begin1.AddSeconds(_nfi.Duration.TotalSeconds);
+                 }
+                 displayStartTime.Text = dt_begin1.ToLongTimeString().ToString();
                  displayRecordingTime.Text = dt_totaltime1.ToLongTimeString().ToString();
-                 _player.Time=(long)(_nfi.Duration.TotalSeconds*1000+_nfi.VideoOffset*1000);
+             //    _player.Time=(long)(_nfi.Duration.TotalSeconds*1000+_nfi.VideoOffset*1000);
              }
         }
-
+        /// <summary>
+        /// 播放事件
+        /// wsp
+        /// </summary>
         public void Play()
         {
             if (!_LastTime.HasValue)
@@ -483,7 +499,10 @@ namespace VeegStation
             btnPlay.Enabled = false;
             btnPause.Enabled = true;
         }
-
+        /// <summary>
+        /// 暂停事件
+        ///wsp
+        /// </summary>
         public void Pause()
         {
             timer.Enabled = false;
@@ -513,7 +532,10 @@ namespace VeegStation
             Pause();
             video.Pause();
         }
-
+        /// <summary>
+        /// 仿造尼高利，下一页数据加载时从整数部分加载，画线则是从上一页的_xMaximum开始；
+        /// wsp
+        /// </summary>
         private void set_hsScrollBarValue()
         {
  //           if (b - _currentSeconds >= 0&&b-_currentSeconds<_xMaximum)
@@ -525,8 +547,9 @@ namespace VeegStation
 //            }
             hsProgress.Value = _currentSeconds;
         }
-
-
+        /// <summary>
+        /// 点击pagenext或者pageprev时，画线偏移量要变化；
+        /// </summary>
         private void set_hsScrollBarValue_Next()
         {
             chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
@@ -540,6 +563,7 @@ namespace VeegStation
             {
                 _currentSeconds = hsProgress.Value;
                 changed();
+                _CurrentOffset = _currentSeconds;
                 LoadData(_currentSeconds);
                 ShowData();
                 update_BtnEnable();
@@ -578,22 +602,6 @@ namespace VeegStation
             }
             btnPrev.Enabled = true;
             btnNext.Enabled = true;
-        }
-
-        private void btn_enlarge_Click(object sender, EventArgs e)
-        {
-            if (_player.VideoScale <= 2.0f)
-                _player.VideoScale += 0.5f;
-            else MessageBox.Show("已放大到最大化");
-        }
-
-        private void btn_shrink_Click(object sender, EventArgs e)
-        {
-            if (_player.VideoScale >= 0)
-            {
-                _player.VideoScale -= 0.5f;
-            }
-            else MessageBox.Show("已经缩小到最小");
         }
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -635,7 +643,9 @@ namespace VeegStation
             this.DetectionRemarksTextBt.Text = _pationinfo.Diagnosis;
             this.FilePathTextBt.Text = _pationinfo.FilePath;
         }
-        #region  拖动移动病人属性和检查属性   
+        /// <summary>
+        ///  拖动移动病人属性和检查属性   
+        /// </summary>
         Point pt;
         private void PationInfoPanel_MouseMove(object sender, MouseEventArgs e)
         {
@@ -653,7 +663,6 @@ namespace VeegStation
         {
             pt = System.Windows.Forms.Control.MousePosition;
         }
-
         Point _pt;
         private void DetectionInfoPanel_MouseMove(object sender, MouseEventArgs e)
         {
@@ -666,12 +675,10 @@ namespace VeegStation
                 _pt = System.Windows.Forms.Control.MousePosition;
             }
         }
-
         private void DetectionInfoPanel_MouseDown(object sender, MouseEventArgs e)
         {
             _pt = System.Windows.Forms.Control.MousePosition;
         }
-        #endregion
         private void hsProgress_ValueChanged(object sender, ScrollEventArgs e)
         {
             if (_Page < maxPage)
@@ -770,10 +777,12 @@ namespace VeegStation
             chartWave.ChartAreas[0].AxisX.Maximum = max;
             updateWindowSeconds();
         }
-        #region 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；  ----wsp
+        /// <summary>
+        /// 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；
+        /// wsp
+        /// </summary>
         private void changed()
         {
-            //_CurrentOffset = _Page * chartWave.ChartAreas[0].AxisX.Maximum;
             dt = _nfi.StartTime;
             dt_relativetime = DateTime.Parse("2016-05-23  00:00:00");
             dt = dt.AddSeconds(_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
@@ -781,7 +790,6 @@ namespace VeegStation
             dt_relativetime = dt_relativetime.AddSeconds(_currentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
             displayRecordingTime.Text = dt_relativetime.ToLongTimeString().ToString();
         }
-        #endregion
         /// <summary>
         /// 初始化时间基准与灵敏度的选项
         /// -- by lxl
@@ -1022,7 +1030,7 @@ namespace VeegStation
         }
         /// <summary>
         /// 重头播放，对数据进行初始化处理
-        /// wsp
+        /// --wsp
         /// </summary>
         public void clear()
         {
