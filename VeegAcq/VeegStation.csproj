@@ -97,6 +97,7 @@
     <Compile Include="DataFunc.cs" />
     <Compile Include="Datastructcs.cs" />
     <Compile Include="EegPacket.cs" />
+    <Compile Include="eventStruct.cs" />
     <Compile Include="NatFileInfo.cs" />
     <Compile Include="PationInfo.cs" />
     <Compile Include="PlaybackForm.cs">
@@ -104,6 +105,12 @@
     </Compile>
     <Compile Include="PlaybackForm.Designer.cs">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="predefineEventsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="predefineEventsForm.Designer.cs">
+      <DependentUpon>predefineEventsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StationForm.cs">
       <SubType>Form</SubType>
@@ -139,6 +146,9 @@
     <EmbeddedResource Include="PlaybackForm.resx">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="predefineEventsForm.resx">
+      <DependentUpon>predefineEventsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StationForm.resx">
       <DependentUpon>StationForm.cs</DependentUpon>

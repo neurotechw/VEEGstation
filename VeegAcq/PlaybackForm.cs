@@ -56,7 +56,8 @@ namespace VeegStation
         /// 事件队列
         /// -- by lxl
         /// </summary>
-        private Queue<double> _eventsQueue = new Queue<double>();
+        private List<preDefineEvent> _preDEventsList = new List<preDefineEvent>();
+        private List<customEvent> _customEventList = new List<customEvent>();
         private int _Page;
         private int _maxPage;
         public double b;
@@ -162,6 +163,41 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         private int _currentSeconds;
+        /// <summary>
+        /// 预定义事件窗口
+        /// -- by lxl
+        /// </summary>
+        private predefineEventsForm pdEventForm;
+        /// <summary>
+        /// 现在是否在添加事件
+        /// -- by lxl
+        /// </summary>
+        private bool _isAddingEvent;
+        /// <summary>
+        /// 现在的鼠标所在的位于X轴的坐标点,添加事件时用
+        /// -- by lxl
+        /// </summary>
+        private double _mouseValueNow;
+        /// <summary>
+        /// 所添加的预定义事件的名字
+        /// -- by lxl
+        /// </summary>
+        private preDefineEvent.pdEvents _addedEventName_preD;
+        /// <summary>
+        /// 所添加的自定义事件名字
+        /// -- by lxl
+        /// </summary>
+        private string _addedEventName_custom;
+        /// <summary>
+        /// 判断现在是在添加什么事件，true为custom，false为preDefine
+        /// -- by lxl
+        /// </summary>
+        private bool _isAddingPreDefineEvent;
+        /// <summary>
+        /// 添加事件时的所选事件的COLOR
+        /// -- by lxl
+        /// </summary>
+        private Color _addEventColor;
         public PlaybackForm(NationFileInfo EegFile)
         {
             InitializeComponent();
@@ -175,6 +211,7 @@ namespace VeegStation
             _isChangingBoardShow = true;
             _signalNum = 20;
             _currentTopSignal = 0;
+            _isAddingEvent = false;
             setVScrollVisible(false);
             initMenuItems();
             natfileinfo = new NatFileInfo(EegFile.NedFullName);
@@ -239,7 +276,7 @@ namespace VeegStation
             }
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
-                if (tIdx % 127 == 0) _eventsQueue.Enqueue(tIdx / 128D);
+                if (tIdx % 127 == 0) _preDEventsList.Add(new preDefineEvent(preDefineEvent.pdEvents.eyesOpen, tIdx));
                 //col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);
                 foreach (int sIdx in Enumerable.Range(_currentTopSignal, _signalNum))
                 {
@@ -878,7 +915,7 @@ namespace VeegStation
         private void chartPaint(object sender, PaintEventArgs e)
         {
             double drawPosition;
-            SolidBrush rectBrush = new SolidBrush(Color.FromArgb(200, Color.Red));
+            //SolidBrush rectBrush = new SolidBrush(Color.FromArgb(200, Color.Red));
             SolidBrush strBrush = new SolidBrush(Color.White);
             Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
             Pen dotPen = new Pen(Color.Red, 2);            //虚线画笔     
@@ -893,11 +930,17 @@ namespace VeegStation
                 _pageHeight = Math.Abs(this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisY.Maximum) - this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0));
                 _Y_totalMM = _pageHeight / _pixelPerMM;
             }
-            while (_eventsQueue.Count > 0)                  //画事件                   -- by lxl
+            foreach(preDefineEvent p in _preDEventsList)                  //画事件                   -- by lxl
             {
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(_eventsQueue.Dequeue());
-                e.Graphics.FillRectangle(rectBrush, new Rectangle((int)drawPosition - 40, 5, 80, 15));
-                e.Graphics.DrawString("病人事件", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
+                dotPen.Color = p.Color;
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.PointPosition / _nfi.SampleRate);
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(200, p.Color)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
+                switch (p.Event) {
+                    case preDefineEvent.pdEvents.eyesOpen: e.Graphics.DrawString("睁眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case preDefineEvent.pdEvents.eyesClose: e.Graphics.DrawString("闭眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case preDefineEvent.pdEvents.deepBreath: e.Graphics.DrawString("深呼吸", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case preDefineEvent.pdEvents.calibrate: e.Graphics.DrawString("定标", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+            }
                 e.Graphics.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
             if (_isChangingBoardShow)                       //计算面板显示与否的宽度    -- by lxl
@@ -911,6 +954,11 @@ namespace VeegStation
                     setXMaximum(this.chartWave.ChartAreas[0].AxisX.Maximum);
                 }
                 _isChangingBoardShow = false;
+            }
+            if (_isAddingEvent)
+            {
+                e.Graphics.DrawLine(Pens.Red, new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
+                _mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X);
             }
             //画图表上的秒数
             double time1Pos=this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition((int)Math.Floor(_xMaximum) / 2);
@@ -1013,6 +1061,129 @@ namespace VeegStation
                 this._currentTopSignal = this.vScroll.Value;
                 ShowData();
                 this.labelPanel.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// 事件点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void events_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem a = (ToolStripMenuItem)sender;
+            if (a.Name.Substring(0, 2) == "pr")
+            {
+                if (pdEventForm == null)
+                    pdEventForm = new predefineEventsForm(this);
+                pdEventForm.Show();
+                pdEventForm.initList();
+            }
+            else 
+            {
+                MessageBox.Show("cu");
+            }
+        }
+        /// <summary>
+        /// 获得事件列表
+        /// -- by lxl
+        /// </summary>
+        /// <returns></returns>
+        public List<preDefineEvent> getEventList()
+        {
+            return _preDEventsList;
+        }
+
+        /// <summary>
+        /// 获取采样频率
+        /// </summary>
+        /// <returns></returns>
+        public double getSampleRate()
+        {
+            return _nfi.SampleRate;
+        }
+
+        /// <summary>
+        /// 获取文件开始时间
+        /// -- by lxl
+        /// </summary>
+        /// <returns></returns>
+        public DateTime getStartTime()
+        {
+            return DateTime.Now;
+        }
+
+        /// <summary>
+        /// 开始添加事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="flag">true为预定义事件，false为自定义事件</param>
+        public void startAddEvents(bool flag,Color clr,object name)
+        {
+            _addEventColor = clr;
+            _isAddingPreDefineEvent = flag;
+            _isAddingEvent = true;
+            if (flag)
+                _addedEventName_preD = (preDefineEvent.pdEvents)name;
+            else
+                _addedEventName_custom = (string)name;
+        }
+
+        /// <summary>
+        /// 鼠标在chart上的移动事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void mouseMoveOnChart(object sender, MouseEventArgs e)
+        {
+            if (_isAddingEvent)
+            {
+                System.Diagnostics.Debug.WriteLine(Control.MousePosition);
+                this.chartWave.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// form的重绘事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void formPaint(object sender, PaintEventArgs e)
+        {
+            if (_isAddingEvent)
+            {
+                System.Diagnostics.Debug.WriteLine("in it");
+                //e.Graphics.DrawLine(Pens.Red, new Point(Control.MousePosition.X, this.chartWave.Location.Y), new Point(Control.MousePosition.X, this.chartWave.Location.Y + this.chartWave.Height));
+                Graphics.FromHwnd(chartWave.Handle).DrawLine(Pens.Red, new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
+            }
+        }
+
+        /// <summary>
+        /// chart上的点击事件，只有在添加事件时才有用
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chartwave_Click(object sender, EventArgs e)
+        {
+            if (_isAddingEvent)
+            {
+                if (((MouseEventArgs)e).Button == MouseButtons.Left)
+                {
+                    if (_isAddingPreDefineEvent)
+                    {
+                        _preDEventsList.Add(new preDefineEvent(_addedEventName_preD, _mouseValueNow));
+                        pdEventForm.updateListView();
+                    }
+                    else
+                    {
+                        _customEventList.Add(new customEvent(_addedEventName_custom, _mouseValueNow, _addEventColor));
+                    }
+                }
+                _isAddingEvent = !_isAddingEvent;
             }
         }
     }

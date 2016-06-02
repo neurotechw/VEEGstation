@@ -118,7 +118,7 @@ namespace VeegStation
                 lvi.SubItems.Add(nfi.SerialNo);
                 lvi.SubItems.Add(nfi.Patient);
                 TimeSpan ts = nfi.Duration;
-                string tsText = (ts.Days * 24 + ts.Hours).ToString() + ts.ToString(@"\:mm\:ss");
+                string tsText = (ts.Days * 24 + ts.Hours).ToString() + ts.ToString(@"\:mm\:ss");    
                 lvi.SubItems.Add(tsText);
                 lvi.SubItems.Add(dt);
                 lvFiles.Items.Add(lvi);
