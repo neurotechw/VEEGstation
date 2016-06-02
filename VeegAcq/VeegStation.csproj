@@ -99,6 +99,9 @@
     <Compile Include="EegPacket.cs" />
     <Compile Include="eventStruct.cs" />
     <Compile Include="NatFileInfo.cs" />
+    <Compile Include="NatInfo.cs" />
+    <Compile Include="NationFile.cs" />
+    <Compile Include="PatInfo.cs" />
     <Compile Include="PationInfo.cs" />
     <Compile Include="PlaybackForm.cs">
       <SubType>Form</SubType>

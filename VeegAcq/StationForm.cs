@@ -21,7 +21,7 @@ namespace VeegStation
     public partial class StationForm : Form
     {
         private List<VideoFileInfo> _videoFiles = new List<VideoFileInfo>();
-        private List<NationFileInfo> _eegFiles = new List<NationFileInfo>();
+        private List<NationFile> _eegFiles = new List<NationFile>();
 
         private IVideoPlayer _player;
         private IMedia _media;
@@ -97,33 +97,61 @@ namespace VeegStation
             lvFiles.Items.Clear();
             foreach (var sub in diTop.EnumerateDirectories())
             {
-                foreach (var file in sub.EnumerateFiles("*.NED"))
+                //foreach (var file in sub.EnumerateFiles("*.NED"))
+                //{
+                //    try
+                //    {
+                //        NationFileInfo nfi = new NationFileInfo(file.FullName);
+                //        _eegFiles.Add(nfi);
+                //     }
+                //    catch
+                //    {
+                //    }
+                //}
+
+                foreach (var file in sub.EnumerateFiles("*.NAT"))
                 {
                     try
                     {
-                        NationFileInfo nfi = new NationFileInfo(file.FullName);
-                        _eegFiles.Add(nfi);
-                     }
+                        NationFile nationFile = new NationFile();
+                        nationFile.ReadNationFile(file.FullName);
+                        nationFile.CheckHasVideo();
+                        _eegFiles.Add(nationFile);
+                    }
                     catch
                     {
                     }
                 }
             }
-            _eegFiles.Sort(new NationFileInfoComparer());
-            foreach (NationFileInfo nfi in _eegFiles)
+            //按照开始时间比较
+            _eegFiles.Sort(new NationFileComparer());
+            //_eegFiles.Sort(new NationFileInfoComparer());
+            //foreach (NationFile nfi in _eegFiles)
+            //{
+            //    string dt = nfi.StartTime.ToString("s").Replace('T', ' ');
+            //    string marker = nfi.HasVideo ? "V" : "";
+            //    ListViewItem lvi = new ListViewItem(marker);
+            //    lvi.SubItems.Add(nfi.SerialNo);
+            //    lvi.SubItems.Add(nfi.Patient);
+            //    TimeSpan ts = nfi.Duration;
+            //    string tsText = (ts.Days * 24 + ts.Hours).ToString() + ts.ToString(@"\:mm\:ss");
+            //    lvi.SubItems.Add(tsText);
+            //    lvi.SubItems.Add(dt);
+            //    lvFiles.Items.Add(lvi);
+            //}
+            foreach (NationFile nfi in _eegFiles)
             {
-                string dt = nfi.StartTime.ToString("s").Replace('T', ' ');
+                string dt = nfi.StartDateTime.ToString("s").Replace('T', ' ');
                 string marker = nfi.HasVideo ? "V" : "";
                 ListViewItem lvi = new ListViewItem(marker);
-                lvi.SubItems.Add(nfi.SerialNo);
-                lvi.SubItems.Add(nfi.Patient);
+                lvi.SubItems.Add(nfi.PatInfo.ID);
+                lvi.SubItems.Add(nfi.PatInfo.Name);
                 TimeSpan ts = nfi.Duration;
                 string tsText = (ts.Days * 24 + ts.Hours).ToString() + ts.ToString(@"\:mm\:ss");    
                 lvi.SubItems.Add(tsText);
                 lvi.SubItems.Add(dt);
                 lvFiles.Items.Add(lvi);
             }
-
 
             lvFiles.EndUpdate();
 
@@ -268,15 +296,15 @@ namespace VeegStation
             
             int idxFile = lvFiles.SelectedIndices[0];
             int idxVideo = lvVideoFiles.SelectedIndices[0];
-            NationFileInfo nfi = _eegFiles[idxFile];
+            NationFile nfi = _eegFiles[idxFile];
             VideoFileInfo vfi = _videoFiles[idxVideo];
             //xcg
             string vfidate = vfi.StartTime.ToString("yyyy:MM:dd");
             string nfidate = nfi.StartTime.ToString("yyyy:MM:dd");
             if (string.Equals(vfidate,nfidate))
             {
-                bool videoStartLate = vfi.StartTime > nfi.StartTime;
-                bool videoStopBefore = (vfi.StartTime + vfi.Duration) < (nfi.StartTime + nfi.Duration);
+                bool videoStartLate = vfi.StartTime > nfi.StartDateTime;
+                bool videoStopBefore = (vfi.StartTime + vfi.Duration) < (nfi.StartDateTime + nfi.Duration);
                 List<string> msg = new List<string>();
                  if (videoStartLate)
                 {
@@ -292,11 +320,11 @@ namespace VeegStation
                     return;
                 }
                 if (MessageBox.Show(
-                        string.Format("要关联脑电[{0}:{1}]和视频[{2}]吗？", nfi.SerialNo, nfi.Patient, vfi.StartTime.ToString("s").Replace('T', ' ')),
+                        string.Format("要关联脑电[{0}:{1}]和视频[{2}]吗？", nfi.PatInfo.ID, nfi.PatInfo.Name, vfi.StartTime.ToString("s").Replace('T', ' ')),
                         "关联视频", MessageBoxButtons.YesNo)
                          == System.Windows.Forms.DialogResult.Yes)
                 {
-                    File.Move(vfi.FileFullName, DefaultConfig.AssociatedVideoPath + @"\" + nfi.SerialNo + "_" + ((int)(nfi.StartTime - vfi.StartTime).TotalMilliseconds).ToString() + ".MP4");
+                    File.Move(vfi.FileFullName, DefaultConfig.AssociatedVideoPath + @"\" + nfi.PatInfo.ID + "_" + ((int)(nfi.StartDateTime - vfi.StartTime).TotalMilliseconds).ToString() + ".MP4");
                     RefreshFiles();
                 }
             }

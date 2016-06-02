@@ -860,6 +860,7 @@ namespace VeegStation
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "脑电视频回放";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PlaybackForm_FormClosed);
             this.Load += new System.EventHandler(this.PlaybackForm_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.formPaint);
             this.toolStrip1.ResumeLayout(false);
@@ -884,7 +885,7 @@ namespace VeegStation
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.Panel panelVideo;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chartWave;
+        public System.Windows.Forms.DataVisualization.Charting.Chart chartWave;
         public System.Windows.Forms.Timer timer;
         private System.Windows.Forms.ToolStripButton btnPause;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;

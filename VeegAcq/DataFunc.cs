@@ -7,6 +7,9 @@ using System.Text;
 
 namespace VeegStation
 {
+    /// <summary>
+    /// xcg
+    /// </summary>
       public class DataFunc
     {
         public byte[] DataReadFun(FileStream natFile, int length)
