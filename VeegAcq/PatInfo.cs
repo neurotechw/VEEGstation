@@ -207,10 +207,10 @@ namespace VeegStation
 
         #region 定义每个内容占的字节
         public static int FixedLength_PAT = 5;
-        //空6格
+        //空7格
         public static int FixedLength_Name = 21;
-        public static int FixedLength_Gender = 5;
-        public static int FixedLength_ID = 21;
+        public static int FixedLength_Gender = 3; //5
+        public static int FixedLength_ID = 23; //21
         public static int FixedLength_Age = 13;
         public static int FixedLength_Handedness = 21;
         public static int FixedLength_State = 21;
