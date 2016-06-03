@@ -8,15 +8,20 @@ namespace VeegStation
 {
     public class preDefineEvent
     {
+        public static Color eyesOpenColor = Color.Pink;
+        public static Color eyesCloseColor = Color.Yellow;
+        public static Color deepBreathColor = Color.Green;
+        public static Color calibrateColor = Color.Blue;
+
         public preDefineEvent(pdEvents e,double pos)
         {
             _event = e; _pos = pos;
             switch (e)
             {
-                case pdEvents.eyesOpen: _color = Color.Pink; break;
-                case pdEvents.eyesClose: _color = Color.Yellow; break;
-                case pdEvents.deepBreath: _color = Color.Green; break;
-                case pdEvents.calibrate: _color = Color.Blue; break;
+                case pdEvents.eyesOpen: _color = eyesOpenColor; break;
+                case pdEvents.eyesClose: _color = eyesCloseColor; break;
+                case pdEvents.deepBreath: _color = deepBreathColor; break;
+                case pdEvents.calibrate: _color = calibrateColor; break;
             }
         }
 

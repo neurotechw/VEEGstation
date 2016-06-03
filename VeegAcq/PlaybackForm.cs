@@ -1096,8 +1096,8 @@ namespace VeegStation
             }
             if (_isAddingEvent)
             {
-                e.Graphics.DrawLine(Pens.Red, new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
-                _mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X);
+                e.Graphics.DrawLine(new Pen(_addEventColor), new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
+                _mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X) * sampleRate;
             }
             //画图表上的秒数
             double time1Pos=this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition((int)Math.Floor(_xMaximum) / 2);
@@ -1232,6 +1232,7 @@ namespace VeegStation
                 if (pdEventForm == null)
                     pdEventForm = new predefineEventsForm(this);
                 pdEventForm.Show();
+                pdEventForm.BringToFront();
                 pdEventForm.initList();
             }
             else 
@@ -1330,7 +1331,7 @@ namespace VeegStation
                     if (_isAddingPreDefineEvent)
                     {
                         _preDEventsList.Add(new preDefineEvent(_addedEventName_preD, _mouseValueNow));
-                        pdEventForm.updateListView();
+                        pdEventForm.updateListView(true);
                     }
                     else
                     {
@@ -1338,6 +1339,26 @@ namespace VeegStation
                     }
                 }
                 _isAddingEvent = !_isAddingEvent;
+                this.chartWave.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// 删除指定索引的事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="flag">是否是预定义事件</param>
+        /// <param name="index">索引</param>
+        public void removeEvent(bool flag,int index)
+        {
+            if (flag)
+            {
+                _preDEventsList.RemoveAt(index);
+                pdEventForm.updateListView(false);
+            }
+            else 
+            {
+                _customEventList.RemoveAt(index);
             }
         }
         /// <summary>
