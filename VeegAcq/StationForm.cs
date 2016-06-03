@@ -299,10 +299,10 @@ namespace VeegStation
             NationFile nfi = _eegFiles[idxFile];
             VideoFileInfo vfi = _videoFiles[idxVideo];
             //xcg
-            string vfidate = vfi.StartTime.ToString("yyyy:MM:dd");
-            string nfidate = nfi.StartDateTime.ToString("yyyy:MM:dd");
-            if (string.Equals(vfidate,nfidate))
-            {
+            //string vfidate = vfi.StartTime.ToString("yyyy:MM:dd");
+            //string nfidate = nfi.StartDateTime.ToString("yyyy:MM:dd");
+            //if (string.Equals(vfidate,nfidate))
+            //{
                 bool videoStartLate = vfi.StartTime > nfi.StartDateTime;
                 bool videoStopBefore = (vfi.StartTime + vfi.Duration) < (nfi.StartDateTime + nfi.Duration);
                 List<string> msg = new List<string>();
@@ -327,12 +327,12 @@ namespace VeegStation
                     File.Move(vfi.FileFullName, DefaultConfig.AssociatedVideoPath + @"\" + nfi.PatInfo.ID + "_" + ((int)(nfi.StartDateTime - vfi.StartTime).TotalMilliseconds).ToString() + ".MP4");
                     RefreshFiles();
                 }
-            }
-            //xcg
-            else
-            {
-                MessageBox.Show("视频和脑电数据的记录日期不一样，无法进行关联！","错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            //}
+            ////xcg
+            //else
+            //{
+            //    MessageBox.Show("视频和脑电数据的记录日期不一样，无法进行关联！","错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
         }
 
         private void RefreshFiles()
