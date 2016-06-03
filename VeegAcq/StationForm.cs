@@ -300,7 +300,7 @@ namespace VeegStation
             VideoFileInfo vfi = _videoFiles[idxVideo];
             //xcg
             string vfidate = vfi.StartTime.ToString("yyyy:MM:dd");
-            string nfidate = nfi.StartTime.ToString("yyyy:MM:dd");
+            string nfidate = nfi.StartDateTime.ToString("yyyy:MM:dd");
             if (string.Equals(vfidate,nfidate))
             {
                 bool videoStartLate = vfi.StartTime > nfi.StartDateTime;
