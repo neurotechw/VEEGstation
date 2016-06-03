@@ -82,6 +82,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="addCustomEventForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="addCustomEventForm.Designer.cs">
+      <DependentUpon>addCustomEventForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="CalibrateForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,6 +99,12 @@
     </Compile>
     <Compile Include="calibrateXForm.Designer.cs">
       <DependentUpon>calibrateXForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="customEventForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="customEventForm.Designer.cs">
+      <DependentUpon>customEventForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DataFunc.cs" />
     <Compile Include="Datastructcs.cs" />
@@ -140,11 +152,17 @@
       <DependentUpon>VideoForm.cs</DependentUpon>
     </Compile>
     <Compile Include="μvcmToolStripMenuItem.cs" />
+    <EmbeddedResource Include="addCustomEventForm.resx">
+      <DependentUpon>addCustomEventForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="CalibrateForm.resx">
       <DependentUpon>CalibrateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="calibrateXForm.resx">
       <DependentUpon>calibrateXForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="customEventForm.resx">
+      <DependentUpon>customEventForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PlaybackForm.resx">
       <DependentUpon>PlaybackForm.cs</DependentUpon>

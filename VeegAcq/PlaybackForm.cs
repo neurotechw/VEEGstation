@@ -141,10 +141,10 @@ namespace VeegStation
         /// </summary>
         private double _pixelPerMM;
         /// <summary>
-        /// 坐标数据显示的比例，用于校准屏幕宽度时用
+        /// 纵轴一格多少毫米
         /// -- by lxl
         /// </summary>
-        private double _rate_that_ensure_1_cm;
+        private double _mmPerYGrid;
         /// <summary>
         /// 判断面板此时是否显示
         /// -- by lxl
@@ -175,6 +175,11 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         private predefineEventsForm pdEventForm;
+        /// <summary>
+        /// 自定义事件窗口
+        /// -- by lxl
+        /// </summary>
+        private customEventForm customEventForm;
         /// <summary>
         /// 现在是否在添加事件
         /// -- by lxl
@@ -214,7 +219,7 @@ namespace VeegStation
             this.boardPanel.Visible = _isBoardShow;
             _timeStandard = 30;
             _pixelPerMM = 3.8;
-            _rate_that_ensure_1_cm = 1;
+            _mmPerYGrid = 1;
             _isChangingBoardShow = true;
             _signalNum = 20;
             _currentTopSignal = 0;
@@ -329,7 +334,7 @@ namespace VeegStation
         {
             DateTime begin = DateTime.Now;
             SeriesCollection col = chartWave.Series;
-            double rate = Convert.ToDouble(_Sensitivity) / 100D;                                          //灵敏度比例 -- by lxl
+            //double rate = Convert.ToDouble(_Sensitivity) / 100D;                                          //灵敏度比例 -- by lxl
             double interval = 2000D / _signalNum;
             chartWave.SuspendLayout();
             foreach (int sIdx in Enumerable.Range(0, 20))
@@ -339,20 +344,20 @@ namespace VeegStation
             }
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
-                if (tIdx % 127 == 0) _preDEventsList.Add(new preDefineEvent(preDefineEvent.pdEvents.eyesOpen, tIdx));
+                //if (tIdx % 127 == 0) _preDEventsList.Add(new preDefineEvent(preDefineEvent.pdEvents.eyesOpen, tIdx));
+                if (tIdx % 127 == 0) _customEventList.Add(new customEvent("你好", tIdx, Color.Blue));
                 //col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + 50);
                 foreach (int sIdx in Enumerable.Range(_currentTopSignal, _signalNum))
 
                 {
                     if (sIdx == 19)
                     {
-                        col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG / rate + (2000D - interval * (19 - _currentTopSignal) - interval / 2));
+                        col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG * interval * 10 / _Sensitivity / _mmPerYGrid + (2000D - interval * (19 - _currentTopSignal) - interval / 2));
                         continue;
                     }
                     double val = _packets[tIdx].EEG[sIdx];
                     val /= 20;
-                    val /= rate;                                //根据灵敏度调整 -- by lxl
-                    val *= _rate_that_ensure_1_cm;              //根据所校准的单位调整-- by lxl
+                    val = val * interval * 10 / _Sensitivity / _mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                     //val += (2000 - 100 * sIdx - 50);
                     val += (2000D - interval * (sIdx - _currentTopSignal) - interval / 2);
                     col[sIdx].Points.AddXY(tIdx / 128.0, val);
@@ -1018,8 +1023,8 @@ namespace VeegStation
         {
             _pixelPerMM = height / 10D;
             _Y_totalMM = _pageHeight / _pixelPerMM;
-            double mmPerGrid = _Y_totalMM / 20;
-            _rate_that_ensure_1_cm = 10 / mmPerGrid;
+            //double mmPerGrid = _Y_totalMM / 20;
+            _mmPerYGrid = _Y_totalMM / 20;
             ShowData();
         }
         /// <summary>
@@ -1053,12 +1058,6 @@ namespace VeegStation
         /// <param name="e"></param>
         private void chartPaint(object sender, PaintEventArgs e)
         {
-            double drawPosition;
-            //SolidBrush rectBrush = new SolidBrush(Color.FromArgb(200, Color.Red));
-            SolidBrush strBrush = new SolidBrush(Color.White);
-            Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
-            Pen dotPen = new Pen(Color.Red, 2);            //虚线画笔     
-            dotPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
             if (_pageWidth == 0)                            //计算图表的宽与高          -- by lxl
             {
                 _pageWidth = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisX.Maximum) - this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(0);
@@ -1069,19 +1068,7 @@ namespace VeegStation
                 _pageHeight = Math.Abs(this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisY.Maximum) - this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0));
                 _Y_totalMM = _pageHeight / _pixelPerMM;
             }
-            foreach(preDefineEvent p in _preDEventsList)                  //画事件                   -- by lxl
-            {
-                dotPen.Color = p.Color;
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.PointPosition / sampleRate);
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(200, p.Color)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
-                switch (p.Event) {
-                    case preDefineEvent.pdEvents.eyesOpen: e.Graphics.DrawString("睁眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case preDefineEvent.pdEvents.eyesClose: e.Graphics.DrawString("闭眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case preDefineEvent.pdEvents.deepBreath: e.Graphics.DrawString("深呼吸", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case preDefineEvent.pdEvents.calibrate: e.Graphics.DrawString("定标", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-            }
-                e.Graphics.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
-            }
+            drawEvents(e.Graphics);
             if (_isChangingBoardShow)                       //计算面板显示与否的宽度    -- by lxl
             {
                 if (_isBoardShow)
@@ -1103,15 +1090,50 @@ namespace VeegStation
             double time1Pos=this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition((int)Math.Floor(_xMaximum) / 2);
             if (_xMaximum >= 2)
             {
-                e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos, 25, 80, 15));
-                e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2 * 2).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)time1Pos * 2, 25, 80, 15));
+                e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)time1Pos, 25, 80, 15));
+                e.Graphics.DrawString((_currentSeconds + (int)Math.Floor(_xMaximum) / 2 * 2).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)time1Pos * 2, 25, 80, 15));
             }
             else
             {
-                e.Graphics.DrawString((_currentSeconds + 1).ToString(), strFont, new SolidBrush(Color.Black), new RectangleF((int)(this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(1)), 25, 80, 15));
+                e.Graphics.DrawString((_currentSeconds + 1).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)(this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(1)), 25, 80, 15));
             }
         }
 
+        /// <summary>
+        /// 画事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="g">画笔</param>
+        private void drawEvents(Graphics g)
+        {
+            Pen dotPen = new Pen(Color.Red, 2);            //虚线画笔    
+            dotPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot; 
+            SolidBrush strBrush = new SolidBrush(Color.White);
+            Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
+            double drawPosition;
+            foreach (preDefineEvent p in _preDEventsList)                  //画预定义事件                   -- by lxl
+            {
+                dotPen.Color = p.Color;
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.PointPosition / sampleRate);
+                g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.Color)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
+                switch (p.Event)
+                {
+                    case preDefineEvent.pdEvents.eyesOpen: g.DrawString("睁眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case preDefineEvent.pdEvents.eyesClose: g.DrawString("闭眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case preDefineEvent.pdEvents.deepBreath: g.DrawString("深呼吸", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case preDefineEvent.pdEvents.calibrate: g.DrawString("定标", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                }
+                g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
+            }
+            foreach (customEvent p in _customEventList)                  //画自定义事件                   -- by lxl
+            {
+                dotPen.Color = p.Color;
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.PointPosition / sampleRate);
+                g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.Color)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
+                g.DrawString(p.Event, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
+                g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
+            }
+        }
         /// <summary>
         /// labelPanel的重绘函数,若要更新label则需调用labelPanel.Invalidate()函数
         /// -- by lxl
@@ -1238,16 +1260,31 @@ namespace VeegStation
             else 
             {
                 MessageBox.Show("cu");
+                if (customEventForm == null)
+                    customEventForm = new customEventForm(this);
+                customEventForm.Show();
+                customEventForm.BringToFront();
+                customEventForm.initList();
             }
         }
         /// <summary>
         /// 获得事件列表
         /// -- by lxl
         /// </summary>
-        /// <returns></returns>
-        public List<preDefineEvent> getEventList()
+        /// <returns>预定义事件列表</returns>
+        public List<preDefineEvent> getPreEventList()
         {
             return _preDEventsList;
+        }
+
+        /// <summary>
+        /// 获得自定义事件列表
+        /// -- by lxl
+        /// </summary>
+        /// <returns>自定义事件列表</returns>
+        public List<customEvent> getCustomEventList()
+        {
+            return _customEventList;
         }
 
         /// <summary>
@@ -1266,7 +1303,7 @@ namespace VeegStation
         /// <returns></returns>
         public DateTime getStartTime()
         {
-            return DateTime.Now;
+            return _nfi.StartDateTime;
         }
 
         /// <summary>
@@ -1274,6 +1311,8 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         /// <param name="flag">true为预定义事件，false为自定义事件</param>
+        /// <param name="clr">事件颜色</param>
+        /// <param name="name">事件名称</param>
         public void startAddEvents(bool flag,Color clr,object name)
         {
             _addEventColor = clr;
@@ -1336,6 +1375,7 @@ namespace VeegStation
                     else
                     {
                         _customEventList.Add(new customEvent(_addedEventName_custom, _mouseValueNow, _addEventColor));
+                        customEventForm.updateListView(true);
                     }
                 }
                 _isAddingEvent = !_isAddingEvent;
@@ -1359,7 +1399,9 @@ namespace VeegStation
             else 
             {
                 _customEventList.RemoveAt(index);
+                customEventForm.updateListView(false);
             }
+            this.chartWave.Invalidate();
         }
         /// <summary>
         /// 当回放Form关闭时，弹出视频Form也要关闭

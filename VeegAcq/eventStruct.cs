@@ -68,25 +68,25 @@ namespace VeegStation
     {
         public customEvent(string name,double pos,Color clr)
         {
-            _name = name; _pos = pos; _color = clr;
+            _event = name; _pos = pos; _color = clr;
         }
         private Color _color;
         private double _pos;
-        private string _name;
+        private string _event;
         /// <summary>
         /// 颜色
         /// -- by lxl
         /// </summary>
         public Color Color
         {
-            get { return Color; }
-            set { Color = value; }
+            get { return _color; }
+            set { _color = value; }
         }
         /// <summary>
         /// 事件所在的点的位置
         /// -- by lxl
         /// </summary>
-        public double PointPostion
+        public double PointPosition
         {
             get { return _pos; }
             set { _pos = value; }
@@ -95,10 +95,12 @@ namespace VeegStation
         /// 自定义事件的名字
         /// -- by lxl
         /// </summary>
-        public string Name
+        public string Event
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _event; }
+            set { _event = value; }
         }
     }
+
+    //public class 
 }

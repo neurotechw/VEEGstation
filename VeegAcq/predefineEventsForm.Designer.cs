@@ -55,7 +55,7 @@
             this.eventList.HideSelection = false;
             this.eventList.Location = new System.Drawing.Point(12, 43);
             this.eventList.Name = "eventList";
-            this.eventList.Size = new System.Drawing.Size(158, 259);
+            this.eventList.Size = new System.Drawing.Size(191, 259);
             this.eventList.TabIndex = 0;
             this.eventList.UseCompatibleStateImageBehavior = false;
             this.eventList.View = System.Windows.Forms.View.Details;
@@ -74,7 +74,7 @@
             // 
             // addEvent
             // 
-            this.addEvent.Location = new System.Drawing.Point(176, 43);
+            this.addEvent.Location = new System.Drawing.Point(239, 43);
             this.addEvent.Name = "addEvent";
             this.addEvent.Size = new System.Drawing.Size(75, 23);
             this.addEvent.TabIndex = 1;
@@ -84,7 +84,8 @@
             // 
             // btn_Quit
             // 
-            this.btn_Quit.Location = new System.Drawing.Point(176, 123);
+            this.btn_Quit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btn_Quit.Location = new System.Drawing.Point(239, 123);
             this.btn_Quit.Name = "btn_Quit";
             this.btn_Quit.Size = new System.Drawing.Size(75, 23);
             this.btn_Quit.TabIndex = 2;
@@ -98,7 +99,7 @@
             this.nameGroup.Controls.Add(this.deepBreath);
             this.nameGroup.Controls.Add(this.eyesClose);
             this.nameGroup.Controls.Add(this.eyesOpen);
-            this.nameGroup.Location = new System.Drawing.Point(257, 43);
+            this.nameGroup.Location = new System.Drawing.Point(320, 43);
             this.nameGroup.Name = "nameGroup";
             this.nameGroup.Size = new System.Drawing.Size(84, 193);
             this.nameGroup.TabIndex = 3;
@@ -155,7 +156,7 @@
             // 
             // deleteEvent
             // 
-            this.deleteEvent.Location = new System.Drawing.Point(176, 83);
+            this.deleteEvent.Location = new System.Drawing.Point(239, 83);
             this.deleteEvent.Name = "deleteEvent";
             this.deleteEvent.Size = new System.Drawing.Size(75, 23);
             this.deleteEvent.TabIndex = 4;
@@ -167,15 +168,18 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(353, 405);
+            this.CancelButton = this.btn_Quit;
+            this.ClientSize = new System.Drawing.Size(436, 405);
             this.ControlBox = false;
             this.Controls.Add(this.deleteEvent);
             this.Controls.Add(this.nameGroup);
             this.Controls.Add(this.btn_Quit);
             this.Controls.Add(this.addEvent);
             this.Controls.Add(this.eventList);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "predefineEventsForm";
             this.Text = "预定义事件";
+            this.TopMost = true;
             this.nameGroup.ResumeLayout(false);
             this.nameGroup.PerformLayout();
             this.ResumeLayout(false);

@@ -27,7 +27,7 @@ namespace VeegStation
             int index = 1;
             eventList.BeginUpdate();
             eventList.Items.Clear();
-            foreach (preDefineEvent p in pbForm.getEventList())
+            foreach (preDefineEvent p in pbForm.getPreEventList())
             {
                 switch (p.Event)
                 {
@@ -78,7 +78,7 @@ namespace VeegStation
             if (isAdded)
             {
                 string name;
-                switch (pbForm.getEventList()[pbForm.getEventList().Count - 1].Event)
+                switch (pbForm.getPreEventList()[pbForm.getPreEventList().Count - 1].Event)
                 {
                     case preDefineEvent.pdEvents.eyesOpen: name = "睁眼"; break;
                     case preDefineEvent.pdEvents.eyesClose: name = "闭眼"; break;
@@ -87,13 +87,13 @@ namespace VeegStation
                     default: name = ""; break;
                 }
                 ListViewItem li = new ListViewItem(name);
-                li.SubItems.Add(pbForm.getStartTime().AddSeconds((int)(pbForm.getEventList()[pbForm.getEventList().Count - 1].PointPosition / pbForm.getSampleRate())).ToLongTimeString());
-                li.SubItems.Add(pbForm.getEventList().Count.ToString());
+                li.SubItems.Add(pbForm.getStartTime().AddSeconds((int)(pbForm.getPreEventList()[pbForm.getPreEventList().Count - 1].PointPosition / pbForm.getSampleRate())).ToLongTimeString());
+                li.SubItems.Add(pbForm.getPreEventList().Count.ToString());
                 eventList.Items.Add(li);
             }
             else
             {
-                for (int i = eventList.SelectedIndices[0]; i <= pbForm.getEventList().Count; i++)
+                for (int i = eventList.SelectedIndices[0]; i <= pbForm.getPreEventList().Count; i++)
                 {
                     eventList.Items[i].SubItems[2].Text = (int.Parse(eventList.Items[i].SubItems[2].Text) - 1).ToString();
                 }
