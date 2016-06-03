@@ -260,94 +260,94 @@ namespace VeegStation
             int fileIndex = 0;
 
             //PAT
-            byte[] pat = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_PAT);
+            byte[] pat = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_PAT);
             string PAT = Encoding.GetEncoding(936).GetString(pat).Trim();
             fileIndex += FixedLength_PAT;
             fileIndex += 7;
             if (PAT.Equals("[PAT]")) 
             {
                 //姓名
-                byte[] name = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_Name);
+                byte[] name = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Name);
                 this._Name = Encoding.GetEncoding(936).GetString(name).Trim();
                 fileIndex += FixedLength_Name;
 
                 //性别
-                byte[] gender = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_Gender);
+                byte[] gender = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Gender);
                 this._Gender = Encoding.GetEncoding(936).GetString(gender).Trim();
                 fileIndex += FixedLength_Gender;
 
                 //ID
-                byte[] id = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_ID);
+                byte[] id = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_ID);
                 this._ID = Encoding.GetEncoding(936).GetString(id).Trim();
                 fileIndex += FixedLength_ID;
 
                 //年龄
-                byte[] age = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_Age);
+                byte[] age = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Age);
                 this._Age = Encoding.GetEncoding(936).GetString(age).Trim();
                 fileIndex += FixedLength_Age;
 
                 //左右利
-                byte[] handedness = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_Handedness);
+                byte[] handedness = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Handedness);
                 this._Handedness = Encoding.GetEncoding(936).GetString(handedness).Trim();
                 fileIndex += FixedLength_Handedness;
 
                 //状态
-                byte[] state = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_State);
+                byte[] state = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_State);
                 this._State = Encoding.GetEncoding(936).GetString(state).Trim();
                 fileIndex += FixedLength_State;
 
                 //申请医生
-                byte[] residentDoctor = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_ResidentDoctor);
+                byte[] residentDoctor = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_ResidentDoctor);
                 this._ResidentDoctor = Encoding.GetEncoding(936).GetString(residentDoctor).Trim();
                 fileIndex += FixedLength_ResidentDoctor;
 
                 //门诊号
-                byte[] outPatient = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_OutPatient);
+                byte[] outPatient = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_OutPatient);
                 this._OutPatient = Encoding.GetEncoding(936).GetString(outPatient).Trim();
                 fileIndex += FixedLength_OutPatient;
 
                 //住院号
-                byte[] admissionNumber = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_AdmissionNumber);
+                byte[] admissionNumber = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_AdmissionNumber);
                 this._AdmissionNumber = Encoding.GetEncoding(936).GetString(admissionNumber).Trim();
                 fileIndex += FixedLength_AdmissionNumber;
 
                 //操作医生
-                byte[] operateDoctor = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_OperateDoctor);
+                byte[] operateDoctor = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_OperateDoctor);
                 this._OperateDoctor = Encoding.GetEncoding(936).GetString(operateDoctor).Trim();
                 fileIndex += FixedLength_OperateDoctor;
 
                 //诊断
-                byte[] diagnosis = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_Diagnosis);
+                byte[] diagnosis = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Diagnosis);
                 this._Diagnosis = Encoding.GetEncoding(936).GetString(diagnosis).Trim();
                 fileIndex += FixedLength_Diagnosis;
 
                 //病史
-                byte[] history = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_History);
+                byte[] history = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_History);
                 this._History = Encoding.GetEncoding(936).GetString(history).Trim();
                 fileIndex += FixedLength_History;
                 
                 //用药
-                byte[] medicine = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_Medicine);
+                byte[] medicine = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Medicine);
                 this._Medicine = Encoding.GetEncoding(936).GetString(medicine).Trim();
                 fileIndex += FixedLength_Medicine;
 
                 //备注
-                byte[] note = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_Note);
+                byte[] note = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Note);
                 this._Note = Encoding.GetEncoding(936).GetString(note).Trim();
                 fileIndex += FixedLength_Note;
 
                 //病区
-                byte[] bingqu = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_BingQu);
+                byte[] bingqu = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_BingQu);
                 this._BingQu = Encoding.GetEncoding(936).GetString(bingqu).Trim();
                 fileIndex += FixedLength_BingQu;
 
                 //床号
-                byte[] chuanghao = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_ChuangHao);
+                byte[] chuanghao = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_ChuangHao);
                 this._ChuangHao = Encoding.GetEncoding(936).GetString(chuanghao).Trim();
                 fileIndex += FixedLength_ChuangHao;
 
                 //科室
-                byte[] keshi = getFixedLengthByteArrayFromPationInfo(patientInfo, fileIndex, FixedLength_KeShi);
+                byte[] keshi = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_KeShi);
                 this._KeShi = Encoding.GetEncoding(936).GetString(keshi).Trim();
                 fileIndex += FixedLength_KeShi;
             }
@@ -367,21 +367,6 @@ namespace VeegStation
                 return Source;
             return Source.Substring(0, index);
         }
-
-        /// <summary>
-        /// 获得对应长度的字符数组
-        /// </summary>
-        /// <param name="pationInfo"></param>
-        /// <param name="startPoint"></param>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        private byte[] getFixedLengthByteArrayFromPationInfo(byte[] pationInfo, int startPoint, int length)
-        {
-            byte[] ch = new byte[length];
-            Array.Copy(pationInfo, startPoint, ch, 0, length);
-            return ch;
-        }
-
 
     }
 }

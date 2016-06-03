@@ -51,6 +51,10 @@ namespace VeegStation
         public NationFile _nfi = null;  // 诺诚头文件  --by zt
         private int sampleRate;  //采样率 --by zt
         private int numberOfSamples; //总点数 --by zt
+        private int byteOfPerData;   //每个数据块占用的字节数  --by zt
+        private int numberOfPerData; //数据块中脑电数据占用的字节数   --by zt
+        private int indexOfData;     //数据的起始位置
+        List<double> testList = new List<double>();  //测数值,调试用  --by zt
 
         int maxPage;
         private List<EegPacket> _packets = new List<EegPacket>();
@@ -249,39 +253,117 @@ namespace VeegStation
             }
             int loadRec = WINDOW_SECONDS * sampleRate;                           
             DateTime begin = DateTime.Now;
-            //加载8导数据
-            Parse8LeadsData(Offset, loadRec);
-            //FileStream fs = new FileStream(_nfi.NedFullName, FileMode.Open, FileAccess.Read);
-            //fs.Seek(0x200, SeekOrigin.Begin);//为什么从512开始？  --by zt
-            //fs.Seek(0x6c * Offset * (loadRec - _nfi.SampleRate * (WINDOW_SECONDS-(int)Math.Ceiling(_xMaximum) + 1)), SeekOrigin.Current);//为什么要取108个字节
-            //byte[] buf = new byte[0x6c];
-            //_packets.Clear();
-            //foreach (int x in Enumerable.Range(0, loadRec))
-            //{
-            //    if (fs.Read(buf, 0, 0x6c) < 0x6c)
-            //    {
-            //        break;
-            //    }
-            //    StringBuilder sb = new StringBuilder();
-            //    foreach (byte b in buf) 
-            //    {
-            //        sb.Append(b.ToString("X2"));
-            //    }
-            //    double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));//心电数据，为什么要转化为short   --by zt
-            //    List<double> eeg = new List<double>();
-            //    foreach (int off in Enumerable.Range(0, 19))
-            //    {
-            //        eeg.Add(Util.RawToSignal((short)(buf[28 + 2 * off] | (buf[29 + 2 * off] << 8))));
-            //    }
-            //    EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
-            //    _packets.Add(pkt);
-            //}
-            //fs.Close();
-            //fs.Dispose();
+            #region 加载数据
+            switch( _nfi.Montage.SzSetting) 
+            {
+                case "P10":                 //8导脑电
+                    byteOfPerData = 26;
+                    numberOfPerData = 8;
+                    indexOfData = 6;
+                    break;
+                case "P11":                 //8导脑电+多参数
+                    byteOfPerData = 48;
+                    numberOfPerData = 8;
+                    indexOfData = 28;
+                    break;
+                case "P20":                 //16导脑电
+                    byteOfPerData = 46;
+                    numberOfPerData = 16;
+                    indexOfData = 6;
+                    break;
+                case "P21":                 //16导脑电+多参数
+                    byteOfPerData = 68;
+                    numberOfPerData = 16;
+                    indexOfData = 28;
+                    break;
+                case "P30":                 //24导脑电
+                    byteOfPerData = 86;
+                    numberOfPerData = 19;
+                    indexOfData = 6;
+                    break;
+                case "P40":                 //32导脑电
+                    byteOfPerData = 86;
+                    numberOfPerData = 19;
+                    indexOfData = 6;
+                    break;
+                case "P41":                 //32导脑电+多参数
+                    byteOfPerData = 108;
+                    numberOfPerData = 19;
+                    indexOfData = 28;
+                    break;
+                default:
+                    break;
+            }
+            
+            ParseData(byteOfPerData, numberOfPerData, indexOfData, Offset, loadRec);
+            #endregion
+            
             DateTime end = DateTime.Now;
             Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", _packets.Count, (end - begin).TotalSeconds));
         }
 
+        /// <summary>
+        /// 解析数据，按秒数加载  --by zt
+        /// </summary>
+        /// <param name="byteOfPerData"></param>
+        /// <param name="numberOfPerData"></param>
+        /// <param name="indexOfData"></param>
+        /// <param name="Offset"></param>
+        /// <param name="loadRec"></param>
+        public void ParseData(int byteOfPerData, int numberOfPerData, int indexOfData, int Offset, int loadRec) 
+        {
+            FileStream fs = new FileStream(_nfi.NedFileName, FileMode.Open, FileAccess.Read);
+            fs.Seek(0x200, SeekOrigin.Begin);//从512开始  --by zt
+            fs.Seek(byteOfPerData * Offset * (loadRec - sampleRate * (WINDOW_SECONDS - (int)Math.Ceiling(_xMaximum) + 1)), SeekOrigin.Current);//  --by zt
+            byte[] buf = new byte[byteOfPerData];
+            _packets.Clear();
+            testList.Clear();
+            
+            foreach (int x in Enumerable.Range(0, loadRec))
+            {
+                if (fs.Read(buf, 0, byteOfPerData) < byteOfPerData)
+                {
+                    break;
+                }
+                ////测试代码 by zt
+                //StringBuilder sb = new StringBuilder();
+                //foreach (byte b in buf)
+                //{
+                //    sb.Append(b.ToString("X2"));
+                //}
+                //8导没有心电
+                //double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));//心电数据，为什么要转化为short   --by zt
+                double ekg = 0;
+                List<double> eeg = new List<double>();
+                
+                //加载脑电数据
+                foreach (int off in Enumerable.Range(0, numberOfPerData))
+                {
+                    eeg.Add(Util.RawToSignal((short)(buf[indexOfData + 2 * off] | (buf[indexOfData+1 + 2 * off] << 8))));
+                    if (off == 1) 
+                    {
+                        testList.Add(eeg[off]);
+                        //Console.WriteLine(eeg[1]);
+                    }
+                }
+                //其余的用0补全
+                for (int i = numberOfPerData; i < 19; i++)
+                {
+                    eeg.Add(0);
+                }
+                EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
+                _packets.Add(pkt);
+            }
+            Console.WriteLine("最大值 {0}，最小值 {1}",testList.Max(),testList.Min());  //测试用到  --by zt
+            fs.Close();
+            fs.Dispose();
+        }
+
+        /// <summary>
+        /// 解析8导联数据  --by zt
+        /// </summary>
+        /// <param name="Offset"></param>
+        /// <param name="loadRec"></param>
         public void Parse8LeadsData(int Offset, int loadRec) 
         {
             FileStream fs = new FileStream(_nfi.NedFileName, FileMode.Open, FileAccess.Read);
@@ -704,8 +786,7 @@ namespace VeegStation
             btnNext.Enabled = true;
         }
 
-        #region 跟病人有关的信息 待修改
-
+        #region 跟病人有关的信息
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_PationInfoPanel(_nfi.PatInfo);   //  --by zt
@@ -746,8 +827,6 @@ namespace VeegStation
             this.DetectionRemarksTextBt.Text = patientinfo.Diagnosis;
             //this.FilePathTextBt.Text = _pationinfo.FilePath;
         }
-
-
         #endregion
 
         /// <summary>

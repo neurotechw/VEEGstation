@@ -98,6 +98,7 @@
     <Compile Include="Datastructcs.cs" />
     <Compile Include="EegPacket.cs" />
     <Compile Include="eventStruct.cs" />
+    <Compile Include="Montage.cs" />
     <Compile Include="NatFileInfo.cs" />
     <Compile Include="NatInfo.cs" />
     <Compile Include="NationFile.cs" />
