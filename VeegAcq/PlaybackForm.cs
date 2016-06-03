@@ -15,11 +15,13 @@ using Declarations;
 using Declarations.Players;
 using Declarations.Media;
 using Implementation;
+using System.Collections;
 
 namespace VeegStation
 {
     public partial class PlaybackForm : Form
-    { 
+    {
+        #region 声明属性
         /// <summary>
         /// 绝对时间
         /// wsp
@@ -55,6 +57,20 @@ namespace VeegStation
         private int numberOfPerData; //数据块中脑电数据占用的字节数   --by zt
         private int indexOfData;     //数据的起始位置
         List<double> testList = new List<double>();  //测数值,调试用  --by zt
+        public ArrayList myLeadSource;
+        
+        //public ArrayList defaultLeadArrayList = new ArrayList();
+        //    string[] leadname = new string[19] { "FP1", "FP2", "F3", "F4", "F7", "F8", "C3", "C4", "T3", "T4", "P3", "P4", "T5", "T6", "O1","O2","Fz", "Cz", "Pz" };
+        //    for (int i = 0; i < 19;i++ )
+        //        defaultLeadSource.Add(i+1, leadname[i]);            
+        //    for (int i = 0; i < 19; i++)
+        //    {
+        //        if (leadname[i] != "")
+        //             defaultLeadArrayList.Add(leadname[i] + "-GND");
+        //    } 
+        
+        //public ArrayList leadSource = new ArrayList() { "1","2"};
+
 
         int maxPage;
         private List<EegPacket> _packets = new List<EegPacket>();
@@ -209,6 +225,8 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         private Color _addEventColor;
+        #endregion
+
         public PlaybackForm(NationFile EegFile)
         {
             InitializeComponent();
@@ -243,8 +261,10 @@ namespace VeegStation
             GetHsprogressMax();
             _totalSeconds = (int)EegFile.Duration.TotalSeconds; // 修改 --by zt
             hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
+            this.myLeadSource = EegFile.Montage.LeadSource;
         }
 
+        
         private void LoadData(int Offset)
         {
             if (_nfi == null)
@@ -333,7 +353,7 @@ namespace VeegStation
                 //}
                 //8导没有心电
                 //double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));//心电数据，为什么要转化为short   --by zt
-                double ekg = 0;
+                double ekg = 0;//不知道心电数据，暂时为0
                 List<double> eeg = new List<double>();
                 
                 //加载脑电数据
@@ -354,7 +374,7 @@ namespace VeegStation
                 EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
                 _packets.Add(pkt);
             }
-            Console.WriteLine("最大值 {0}，最小值 {1}",testList.Max(),testList.Min());  //测试用到  --by zt
+            //Console.WriteLine("最大值 {0}，最小值 {1}",testList.Max(),testList.Min());  //测试用到  --by zt
             fs.Close();
             fs.Dispose();
         }

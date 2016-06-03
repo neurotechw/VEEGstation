@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -125,6 +126,17 @@ namespace VeegStation
             get { return _szNote; }
             set { _szNote = value; }
         }
+
+        /// <summary>
+        /// 导联源
+        /// </summary>
+        private ArrayList _LeadSource;
+
+        public ArrayList LeadSource
+        {
+            get { return _LeadSource; }
+            set { _LeadSource = value; }
+        }
         #endregion
 
         #region 定义每个内容占的字节
@@ -181,6 +193,36 @@ namespace VeegStation
                 //最高配置的含义
                 byte[] szNoteBuf = Util.getFixedLengthByteArray(montageInfo, fileIndex, FixedLength_SzNote);
                 this._szNote = Encoding.GetEncoding(936).GetString(szNoteBuf).Trim();
+
+                //定义导联源
+                switch (this._szSetting)
+                {
+                    case "P10":                 //8导脑电
+                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "T3", "T4", "C3", "C4", "O1", "O2", "A1", "A2" };
+                        break;
+                    case "P11":                 //8导脑电+多参数
+                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "T3", "T4", "C3", "C4", "O1", "O2", "A1", "A2" };
+                        break;
+                    case "P20":                 //16导脑电
+                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Sp1", "Sp2", "A1", "A2" };
+                        break;
+                    case "P21":                 //16导脑电+多参数
+                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Cz", "Pz", "A1", "A2" };
+                        break;
+                    case "P30":                 //24导脑电
+                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Fz", "Cz", "Pz", "Oz", "Cp3", "Cp4", "Po3", "Po4", "A1", "A2" };
+                        break;
+                    case "P40":                 //32导脑电
+                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "AF3", "AF4", "Fc3",
+                                                             "Fc4", "Cp3", "Cp4", "Po3", "Po4", "FT7", "FT8", "Cp7", "Cp8", "Fz", "Cz", "Pz", "Oz", "Sp1", "Sp2", "A1", "A2" };                                
+                        break;
+                    case "P41":                 //32导脑电+多参数
+                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "AF3", "AF4", "Fc3",
+                                                             "Fc4", "Cp3", "Cp4", "Po3", "Po4", "FT7", "FT8", "Cp7", "Cp8", "Fz", "Cz", "Pz", "Oz", "Sp1", "Sp2", "A1", "A2" };                          
+                        break;
+                    default:
+                        break;
+                }
 
                 Debug.WriteLine(string.Format("MontageInfo {0},{1}", this._szSetting,this._szNote));
             }
