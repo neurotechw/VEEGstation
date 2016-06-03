@@ -165,6 +165,11 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         private int _currentSeconds;
+        public int CurrentSeconds
+        {
+            get { return _currentSeconds; }
+            set { _currentSeconds = value; }
+        }
         /// <summary>
         /// 预定义事件窗口
         /// -- by lxl
@@ -1343,6 +1348,18 @@ namespace VeegStation
         private void PlaybackForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             video.Close();
+        }
+
+        /// <summary>
+        /// 图表大小改变触发事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chartSizeChanged(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("sizechanged"+DateTime.Now);
+            this.labelPanel.Invalidate();
         }
     }
 }

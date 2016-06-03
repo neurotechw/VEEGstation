@@ -52,7 +52,7 @@ namespace VeegStation
         public void Play()
         {
             player.Play();
-            player.Time = (long)playback._nfi.VideoOffset * 1000 + playback._currentSeconds * 1000 + (long)playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+            player.Time = (long)playback._nfi.VideoOffset * 1000 + playback.CurrentSeconds * 1000 + (long)playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
         }
         public void Pause()
         {

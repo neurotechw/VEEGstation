@@ -332,6 +332,7 @@ namespace VeegStation
             this.chartWave.Size = new System.Drawing.Size(880, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
+            this.chartWave.ClientSizeChanged += new System.EventHandler(this.chartSizeChanged);
             this.chartWave.Click += new System.EventHandler(this.chartwave_Click);
             this.chartWave.Paint += new System.Windows.Forms.PaintEventHandler(this.chartPaint);
             this.chartWave.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mouseMoveOnChart);
