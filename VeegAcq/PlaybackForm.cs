@@ -58,7 +58,6 @@ namespace VeegStation
         /// </summary>
         private Queue<double> _eventsQueue = new Queue<double>();
         private int _Page;
-        private int _maxPage;
         public double b;
         private int _totalSeconds;                   
         private DateTime? _LastTime = null;
@@ -839,9 +838,19 @@ namespace VeegStation
        /// <param name="e"></param>
         private void btn_accelerate_Click(object sender, EventArgs e)
         {
-            _player.PlaybackRate = _player.PlaybackRate * 2;
-            speed = _player.PlaybackRate;
-            video.player.PlaybackRate = _player.PlaybackRate;
+            if (speed <= 4)
+            {
+                btn_accelerate.Enabled = true;
+                _player.PlaybackRate = _player.PlaybackRate * 2;
+                speed = _player.PlaybackRate;
+                video.player.PlaybackRate = _player.PlaybackRate;
+                video.btn_accelerate.Enabled = true;
+            }
+            else
+            {
+                btn_accelerate.Enabled = false;
+                video.btn_accelerate.Enabled = false;
+            }
         }
         /// <summary>
         /// 视频减速
@@ -850,9 +859,20 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btn_decelerate_Click(object sender, EventArgs e)
         {
-            _player.PlaybackRate = _player.PlaybackRate / 2;
-            speed = _player.PlaybackRate;
-            video.player.PlaybackRate = _player.PlaybackRate;
+            if (speed >= 0.5)
+            {
+                btn_accelerate.Enabled = true;
+                btn_decelerate.Enabled = true;
+                _player.PlaybackRate = _player.PlaybackRate / 2;
+                speed = _player.PlaybackRate;
+                video.player.PlaybackRate = _player.PlaybackRate;
+                video.btn_decelerate.Enabled = true;
+            }
+            else
+            {
+                btn_decelerate.Enabled = false;
+                video.btn_decelerate.Enabled = false;
+            }
         }
         /// <summary>
         /// 视频面板弹出按键设置

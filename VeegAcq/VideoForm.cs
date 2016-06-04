@@ -20,6 +20,10 @@ namespace VeegStation
         public IVideoPlayer player;
         public IMedia _media;
         PlaybackForm playback;
+        Point[] ArrPoint = new Point[4];
+        int scale=1;
+        int x, y;
+        int width, height;
   //      public NationFileInfo _nfi = null;
         public VideoForm(PlaybackForm playbackform)
         {
@@ -27,7 +31,6 @@ namespace VeegStation
      //       _nfi = EegFile;
             playback = playbackform;
             this.ControlBox = false;
-            this.pictureBox_Video.MouseWheel += new MouseEventHandler(pictureBox_Video_MouseWheel);
         }
         private void VideoForm_Load_1(object sender, EventArgs e)
         {    
@@ -38,16 +41,20 @@ namespace VeegStation
             }
             IMediaPlayerFactory factory = new MediaPlayerFactory();
             player = factory.CreatePlayer<IVideoPlayer>();
-        //    player.WindowHandle = panel_Mvideo.Handle;
             player.WindowHandle = pictureBox_Video.Handle;
-            player.AspectRatio = AspectRatioMode.Mode2; // fill?
+            player.AspectRatio = AspectRatioMode.Mode1; // fill?
             if (playback._nfi.HasVideo)
             {
                 _media = factory.CreateMedia<IMediaFromFile>(playback._nfi.VideoFullName);
                 player.Open(_media);
-                player.Time = (long)playback._nfi.VideoOffset * 1000;
-                player.Pause();
-            }
+                player.Pause();       
+             }
+             x = this.pictureBox_Video.Location.X;
+             y = this.pictureBox_Video.Location.Y;
+             width = this.pictureBox_Video.Width;
+             height = this.pictureBox_Video.Height;
+             //btn_accelerate.Enabled = playback.btn_accelerate.Enabled;
+             //btn_decelerate.Enabled = playback.btn_decelerate.Enabled;
         }
         public void Play()
         {
@@ -60,7 +67,6 @@ namespace VeegStation
         }
         private void btn_play_Click(object sender, EventArgs e)
         {
-//            if (playback._currentSeconds + playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= playback._nfi.Duration.TotalSeconds)
             if (playback._CurrentOffset >= playback._nfi.Duration.TotalSeconds)
             {
                 playback.clear();
@@ -91,20 +97,69 @@ namespace VeegStation
 
         private void btn_accelerate_Click(object sender, EventArgs e)
         {
-            player.PlaybackRate = player.PlaybackRate * 2;
-            playback._player.PlaybackRate = player.PlaybackRate;
-            playback.speed = player.PlaybackRate;
+            if (playback.speed <= 4)
+            {
+                btn_decelerate.Enabled = true;
+                btn_accelerate.Enabled = true;
+                player.PlaybackRate = player.PlaybackRate * 2;
+                playback._player.PlaybackRate = player.PlaybackRate;
+                playback.speed = player.PlaybackRate;
+                playback.btn_decelerate.Enabled = true;
+                playback.btn_accelerate.Enabled = true;
+            }
+            else
+            {
+                btn_accelerate.Enabled = false;
+                playback.btn_accelerate.Enabled = false;
+            }
+        }
+        int i = 0;
+        private void pictureBox1_MouseClick_1(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+               // if
+                //if (i != 0) 
+                //{
+                //    this.pictureBox_Video.Location = new Point(x, y);
+                //}
+                //       double l = Math.Sqrt(Math.Pow(System.Windows.Forms.Control.MousePosition.X - this.pictureBox_Video.Location.X, 2) + Math.Pow(System.Windows.Forms.Control.MousePosition.Y - this.pictureBox_Video.Location.Y, 2));
+                Point pt = new Point(scale * (this.pictureBox_Video.Location.X - e.Location.X), scale * (this.pictureBox_Video.Location.Y - e.Location.Y));
+                //     pictureBox_Video.Width += (this.pictureBox_Video.Location.X + Height - e.Location.X) * scale +(this.pictureBox_Video.Location.X) * scale);
+                pictureBox_Video.Location = pt;
+                pictureBox_Video.Height *=2;
+                pictureBox_Video.Width *=2;
+            }
+            if (e.Button == MouseButtons.Right)
+            {            
+                    Point pt = new Point(x, y);
+                    //     pictureBox_Video.Width += (this.pictureBox_Video.Location.X + Height - e.Location.X) * scale +(this.pictureBox_Video.Location.X) * scale);
+                    pictureBox_Video.Location = pt;
+                    pictureBox_Video.Height = height;
+                    pictureBox_Video.Width = width;
+            }
         }
 
-        private void btn_decelerate_Click(object sender, EventArgs e)
+        private void btn_decelerate_Click_1(object sender, EventArgs e)
         {
-            player.PlaybackRate = player.PlaybackRate / 2;
-            playback._player.PlaybackRate = player.PlaybackRate;
-            playback.speed = player.PlaybackRate;
-           // player.Position = 100;
+            if (playback.speed >= 0.5)
+            {
+                btn_accelerate.Enabled = true;
+                btn_decelerate.Enabled = true;
+                player.PlaybackRate = player.PlaybackRate / 2;
+                playback._player.PlaybackRate = player.PlaybackRate;
+                playback.speed = player.PlaybackRate;
+                playback.btn_accelerate.Enabled = true;
+                playback.btn_decelerate.Enabled = true;
+            }
+            else
+            {
+                btn_decelerate.Enabled = false;
+                playback.btn_decelerate.Enabled = false;
+            }
         }
         Point pt;
-        private void panel_Mvideo_MouseMove(object sender, MouseEventArgs e)
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle)
             {
@@ -114,35 +169,10 @@ namespace VeegStation
                 pt = System.Windows.Forms.Control.MousePosition;
             }
         }
-        private void panel_Mvideo_MouseDown(object sender, MouseEventArgs e)
-        {
-           pt = System.Windows.Forms.Control.MousePosition;
-        }
 
-        private void panel_Mvideo_MouseClick(object sender, MouseEventArgs e)
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && e.Clicks == 1)
-            {
-                if (player.VideoScale < 1.0f)
-                    player.VideoScale += 0.5f;
-                else
-                    MessageBox.Show("放大到最大化","提示");
-            }
-            else if (e.Button == MouseButtons.Right && e.Clicks == 1)
-            {
-                if (player.VideoScale > 0.0f)
-                    player.VideoScale -= 0.5f;
-                else
-                    MessageBox.Show("缩小到最小化", "提示");
-            }
-        }
-        private void pictureBox_Video_MouseWheel(object sender, MouseEventArgs e)
-        {
-            //this.pictureBox_Video.Width += e.Delta;
-            //this.pictureBox_Video.Height += e.Delta;
-            this.Width += e.Delta;
-            this.Height += e.Delta;
-            MessageBox.Show("滚动了滑轮","提示");
+            pt = System.Windows.Forms.Control.MousePosition;
         }
     }
 }

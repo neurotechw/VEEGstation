@@ -378,7 +378,7 @@ namespace VeegStation
             this.PationInfoPanel.Controls.Add(this.PatNameTextBt);
             this.PationInfoPanel.Controls.Add(this.PatIDL);
             this.PationInfoPanel.Controls.Add(this.PatIDTextBt);
-            this.PationInfoPanel.Location = new System.Drawing.Point(76, 63);
+            this.PationInfoPanel.Location = new System.Drawing.Point(362, 67);
             this.PationInfoPanel.Name = "PationInfoPanel";
             this.PationInfoPanel.Size = new System.Drawing.Size(264, 145);
             this.PationInfoPanel.TabIndex = 1;
@@ -910,8 +910,8 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripStatusLabel displayRecordingTime;
         private System.Windows.Forms.ToolStripStatusLabel toolStriplabel_totaltime;
         private System.Windows.Forms.ToolStripStatusLabel displayTotalTime;
-        private System.Windows.Forms.Button btn_accelerate;
-        private System.Windows.Forms.Button btn_decelerate;
+        public System.Windows.Forms.Button btn_accelerate;
+        public System.Windows.Forms.Button btn_decelerate;
         private System.Windows.Forms.Button btn_hide;
         private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateYToolStripMenuItem;
