@@ -153,10 +153,10 @@ namespace VeegStation
 
         public NationFile()
         {
-            _NatInfo = new NatInfo();
-            _PatInfo = new PatInfo();
-            _EEGFmt = new EEGFmt();
-            _Montage = new Montage(64);
+            //_NatInfo = new NatInfo();
+            //_PatInfo = new PatInfo();
+            //_EEGFmt = new EEGFmt();
+            //_Montage = new Montage(64);
             //事件
         }
         
@@ -192,21 +192,32 @@ namespace VeegStation
         public void ParseNationFile(FileStream file) 
         {
             //解析NAT文件中基本配置
-            byte[] nationInfo = new byte[0x90];
-            file.Read(nationInfo, 0, 0x90);
-            this.NatInfo = new NatInfo(nationInfo);
+            int sizeOfNatInfo =  0x90;
+            byte[] nationInfo = new byte[sizeOfNatInfo];
+            file.Read(nationInfo, 0, sizeOfNatInfo);
+            this._NatInfo = new NatInfo(nationInfo);
 
             //解析病人信息
             int sizeOfPatInfo =  this.NatInfo.EntOff - this.NatInfo.PatOff;
             byte[] patientInfo = new byte[sizeOfPatInfo];
             file.Read(patientInfo, 0, sizeOfPatInfo);
             //sr.Read(patientInfo, this.NatInfo.PatOff, sizeOfPatInfo);//要改
-            this.PatInfo = new PatInfo(patientInfo);
+            this._PatInfo = new PatInfo(patientInfo);
+
+            //解析事件区信息
+            int sizeOfEventInfo = this.NatInfo.MonOff -this.NatInfo.EntOff;
+            byte[] eventInfo = new byte[sizeOfEventInfo];
+            file.Read(eventInfo, 0, sizeOfEventInfo);
+            //解析事件代码，暂时用不到，所以没写
 
             //解析导联区信息
-
+            int sizeOfMonOff = this.NatInfo.CfgOff - this.NatInfo.MonOff;
+            byte[] monInfo = new byte[sizeOfMonOff];
+            file.Read(monInfo, 0, sizeOfMonOff);
+            this._Montage = new Montage(monInfo);  
+            
             //解析数据区信息
-            ParseDateInfo(file);
+            ParseDataInfo(file);
 
         }
 
@@ -214,7 +225,7 @@ namespace VeegStation
         /// 解析数据区信息
         /// </summary>
         /// <param name="sr"></param>
-        public void ParseDateInfo(FileStream file) 
+        public void ParseDataInfo(FileStream file) 
         {
             file.Seek(this.NatInfo.CfgOff, SeekOrigin.Begin);
             byte[] dataNameBuf = new byte[5];

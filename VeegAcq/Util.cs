@@ -18,11 +18,11 @@ namespace VeegStation
 
         public static double RawToSignal(short Raw)
         {
-            return Raw / 7.78125;
+            return Raw / -7.78125;  //数值有点不对
         }
 
         /// <summary>
-        /// 从string类型转换到hex
+        /// 从string类型转换到hex  --by zt
         /// </summary>
         /// <param name="hexString"></param>
         /// <returns></returns>
@@ -34,7 +34,7 @@ namespace VeegStation
             return returnBytes;
         }
         /// <summary>
-        /// FileStream读取字节流
+        /// FileStream读取字节流  --by zt
         /// </summary>
         /// <param name="natFile"></param>
         /// <param name="length"></param>
@@ -47,7 +47,7 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// StreamReader读取字节流
+        /// StreamReader读取字节流  --by zt
         /// </summary>
         /// <param name="streamReader"></param>
         /// <param name="length"></param>
@@ -57,6 +57,20 @@ namespace VeegStation
             byte[] dateDatabuf = new byte[length];
             streamReader.BaseStream.Read(dateDatabuf, 0, length);
             return dateDatabuf;
+        }
+
+        /// <summary>
+        /// 获得相应长度的字节数组  --by zt
+        /// </summary>
+        /// <param name="header"></param>
+        /// <param name="startPoint"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static byte[] getFixedLengthByteArray(byte[] nationInfo, int startPoint, int length)
+        {
+            byte[] ch = new byte[length];
+            Array.Copy(nationInfo, startPoint, ch, 0, length);
+            return ch;
         }
     }
 
