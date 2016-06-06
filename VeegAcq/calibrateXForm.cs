@@ -9,19 +9,34 @@ using System.Windows.Forms;
 
 namespace VeegStation
 {
+    /// <summary>
+    /// 校准X轴的FORM
+    /// -- by lxl
+    /// </summary>
     public partial class calibrateXForm : Form
     {
+        /// <summary>
+        /// 量取的宽度
+        /// </summary>
         private int width;
-        private PlaybackForm pbform;
+        private PlaybackForm myPlayBackform;
+
         public calibrateXForm(PlaybackForm form)
         {
             InitializeComponent();
+
+            //初始化一个默认的VALUE,(以后需要改成从playbackform中读取）
             width = 20;
             this.valueBox.Value = width;
-            this.pbform = form;
+            this.myPlayBackform = form;
         }
 
-        private void draw(object sender, PaintEventArgs e)
+        /// <summary>
+        /// 线段的重绘函数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Draw(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
             g.DrawLine(Pens.Black, new Point(0, 10), new Point(width, 10));
@@ -33,19 +48,37 @@ namespace VeegStation
             g.DrawLine(Pens.Black, new Point(5 * width / 5, 10), new Point(5 * width / 5, 6));
         }
 
+        /// <summary>
+        /// valueBox值改变事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void valueChanged(object sender, EventArgs e)
         {
             width = int.Parse(this.valueBox.Value.ToString());
+
+            //重绘线段，更改线段长度
             this.linePanel.Invalidate();
         }
 
-        private void confirmButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 确认按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnConfirm_Click(object sender, EventArgs e)
         {
-            pbform.calibrateX(width / 5D);
+            //通过量好的长度得出每厘米的像素点，然后配置图表大小，height / 5 = 每一厘米多少像素点
+            myPlayBackform.CalibrateX(width / 5D);
             this.Hide();
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 取消按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Hide();
         }

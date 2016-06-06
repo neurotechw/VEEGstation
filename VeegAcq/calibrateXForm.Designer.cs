@@ -42,7 +42,7 @@
             this.linePanel.Name = "linePanel";
             this.linePanel.Size = new System.Drawing.Size(265, 40);
             this.linePanel.TabIndex = 0;
-            this.linePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.draw);
+            this.linePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.Draw);
             // 
             // valueBox
             // 
@@ -65,7 +65,7 @@
             this.confirmButton.TabIndex = 0;
             this.confirmButton.Text = "确定";
             this.confirmButton.UseVisualStyleBackColor = true;
-            this.confirmButton.Click += new System.EventHandler(this.confirmButton_Click);
+            this.confirmButton.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
             // cancelButton
             // 
@@ -75,7 +75,7 @@
             this.cancelButton.TabIndex = 1;
             this.cancelButton.Text = "取消";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.cancelButton.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // label1
             // 

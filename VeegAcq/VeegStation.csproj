@@ -88,11 +88,11 @@
     <Compile Include="addCustomEventForm.Designer.cs">
       <DependentUpon>addCustomEventForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CalibrateForm.cs">
+    <Compile Include="CalibrateYForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CalibrateForm.Designer.cs">
-      <DependentUpon>CalibrateForm.cs</DependentUpon>
+    <Compile Include="CalibrateYForm.Designer.cs">
+      <DependentUpon>CalibrateYForm.cs</DependentUpon>
     </Compile>
     <Compile Include="calibrateXForm.cs">
       <SubType>Form</SubType>
@@ -116,11 +116,15 @@
     <Compile Include="NationFile.cs" />
     <Compile Include="PatInfo.cs" />
     <Compile Include="PationInfo.cs" />
-    <Compile Include="PlaybackForm.cs" />
+    <Compile Include="PlaybackForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PlaybackForm.Designer.cs">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="predefineEventsForm.cs" />
+    <Compile Include="predefineEventsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="predefineEventsForm.Designer.cs">
       <DependentUpon>predefineEventsForm.cs</DependentUpon>
     </Compile>
@@ -152,8 +156,8 @@
     <EmbeddedResource Include="addCustomEventForm.resx">
       <DependentUpon>addCustomEventForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CalibrateForm.resx">
-      <DependentUpon>CalibrateForm.cs</DependentUpon>
+    <EmbeddedResource Include="CalibrateYForm.resx">
+      <DependentUpon>CalibrateYForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="calibrateXForm.resx">
       <DependentUpon>calibrateXForm.cs</DependentUpon>

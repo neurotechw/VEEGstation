@@ -6,14 +6,18 @@ using System.Drawing;
 
 namespace VeegStation
 {
-    public class preDefineEvent
+    /// <summary>
+    /// 预定义事件类，包含颜色，名称（枚举类，4选1），和点的位置（第几个点）
+    /// -- by lxl
+    /// </summary>
+    public class PreDefineEvent
     {
         public static Color eyesOpenColor = Color.Pink;
         public static Color eyesCloseColor = Color.Yellow;
         public static Color deepBreathColor = Color.Green;
         public static Color calibrateColor = Color.Blue;
 
-        public preDefineEvent(pdEvents e,double pos)
+        public PreDefineEvent(pdEvents e,double pos)
         {
             _event = e; _pos = pos;
             switch (e)
@@ -64,15 +68,20 @@ namespace VeegStation
         }
     }
 
-    public class customEvent
+    /// <summary>
+    /// 自定义事件类，包含颜色，名称（string类型字符串），和点的位置（第几个点）
+    /// -- by lxl
+    /// </summary>
+    public class CustomEvent
     {
-        public customEvent(string name,double pos,Color clr)
+        public CustomEvent(string name,double pos,Color clr)
         {
             _event = name; _pos = pos; _color = clr;
         }
         private Color _color;
         private double _pos;
         private string _event;
+
         /// <summary>
         /// 颜色
         /// -- by lxl

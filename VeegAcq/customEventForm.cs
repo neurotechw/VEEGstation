@@ -9,29 +9,46 @@ using System.Windows.Forms;
 
 namespace VeegStation
 {
-    public partial class customEventForm : Form
+    /// <summary>
+    /// 自定义事件FORM
+    /// -- by lxl
+    /// </summary>
+    public partial class CustomEventForm : Form
     {
-        PlaybackForm pbForm;
-        addCustomEventForm addEventForm;
-        public customEventForm(PlaybackForm form)
+        PlaybackForm myPlaybackForm;
+        addCustomEventForm myAddCustomEventForm;
+
+        public CustomEventForm(PlaybackForm form)
         {
             InitializeComponent();
-            pbForm = form;
+            myPlaybackForm = form;
         }
 
+        /// <summary>
+        /// 初始化列表内显示的内容
+        /// </summary>
         public void initList()
         {
+            //事件显示的编号
             int index = 1;
+
+            //开始更新列表
             eventList.BeginUpdate();
+
+            //先把列表清空
             eventList.Items.Clear();
-            foreach (customEvent p in pbForm.getCustomEventList())
+
+            //从playbackform中读取事件列表，然后将事件添加到列表中
+            foreach (CustomEvent p in myPlaybackForm.GetCustomEventList())
             {
                 ListViewItem li = new ListViewItem(p.Event);
-                li.SubItems.Add(pbForm.getStartTime().AddSeconds((int)(p.PointPosition / pbForm.getSampleRate())).ToLongTimeString());
+                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(p.PointPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
                 index++;
                 eventList.Items.Add(li);
             }
+
+            //结束更新列表
             eventList.EndUpdate();
         }
 
@@ -52,34 +69,42 @@ namespace VeegStation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btn_add_Click(object sender, EventArgs e)
+        private void btnAdd_Click(object sender, EventArgs e)
         {
-            if (addEventForm == null)
-                addEventForm = new addCustomEventForm(this);
-            addEventForm.ShowDialog();
+            if (myAddCustomEventForm == null)
+                myAddCustomEventForm = new addCustomEventForm(this);
+
+            //添加自定义事件的form弹出，并且为关闭前不允许操作该form
+            myAddCustomEventForm.ShowDialog();
         }
 
-        public void startAddEvent(Color clr, string name)
+        /// <summary>
+        /// 开始添加事件
+        /// </summary>
+        /// <param name="clr"></param>
+        /// <param name="name"></param>
+        public void StartAddEvent(Color clr, string name)
         {
-            pbForm.startAddEvents(false, clr, name);
+            myPlaybackForm.StartAddEvents(false, clr, name);
         }
         /// <summary>
         /// 更新listView内容
         /// -- by lxl
         /// </summary>
         /// <param name="isAdded">是添加事件还是删除事件</param>
-        public void updateListView(bool isAdded)
+        public void UpdateListView(bool isAdded)
         {
+            //若是添加事件，则直接将事件添加到后方（日后还需要对事件进行排序后再添加）
             if (isAdded)
             {
-                ListViewItem li = new ListViewItem(pbForm.getCustomEventList()[pbForm.getCustomEventList().Count - 1].Event);
-                li.SubItems.Add(pbForm.getStartTime().AddSeconds((int)(pbForm.getCustomEventList()[pbForm.getCustomEventList().Count - 1].PointPosition / pbForm.getSampleRate())).ToLongTimeString());
-                li.SubItems.Add(pbForm.getCustomEventList().Count.ToString());
+                ListViewItem li = new ListViewItem(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].Event);
+                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].PointPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                li.SubItems.Add(myPlaybackForm.GetCustomEventList().Count.ToString());
                 eventList.Items.Add(li);
             }
-            else
+            else //若是删除事件则直接把事件删除掉，并将所删除事件后的事件序号各加一
             {
-                for (int i = eventList.SelectedIndices[0]; i <= pbForm.getCustomEventList().Count; i++)
+                for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetCustomEventList().Count; i++)
                 {
                     eventList.Items[i].SubItems[2].Text = (int.Parse(eventList.Items[i].SubItems[2].Text) - 1).ToString();
                 }
@@ -87,9 +112,24 @@ namespace VeegStation
             }
         }
 
-        private void btn_delete_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 删除事件按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDelete_Click(object sender, EventArgs e)
         {
-            pbForm.removeEvent(false, eventList.SelectedIndices[0]);
+            myPlaybackForm.RemoveEvent(false, eventList.SelectedIndices[0]);
+        }
+
+        /// <summary>
+        /// 编辑按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btn_edit_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -45,7 +45,7 @@
             this.btn_color.Size = new System.Drawing.Size(25, 25);
             this.btn_color.TabIndex = 0;
             this.btn_color.UseVisualStyleBackColor = true;
-            this.btn_color.Click += new System.EventHandler(this.btn_color_Click);
+            this.btn_color.Click += new System.EventHandler(this.btnColor_Click);
             // 
             // label1
             // 
@@ -81,7 +81,7 @@
             this.btn_confirm.TabIndex = 5;
             this.btn_confirm.Text = "确定";
             this.btn_confirm.UseVisualStyleBackColor = true;
-            this.btn_confirm.Click += new System.EventHandler(this.btn_confirm_Click);
+            this.btn_confirm.Click += new System.EventHandler(this.btnConfirm_Click);
             // 
             // btn_cancel
             // 
@@ -91,7 +91,7 @@
             this.btn_cancel.TabIndex = 6;
             this.btn_cancel.Text = "取消";
             this.btn_cancel.UseVisualStyleBackColor = true;
-            this.btn_cancel.Click += new System.EventHandler(this.btn_cancel_Click);
+            this.btn_cancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // label3
             // 
