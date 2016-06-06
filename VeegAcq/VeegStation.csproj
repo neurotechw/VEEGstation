@@ -152,7 +152,6 @@
     <Compile Include="VideoForm.Designer.cs">
       <DependentUpon>VideoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="μvcmToolStripMenuItem.cs" />
     <EmbeddedResource Include="addCustomEventForm.resx">
       <DependentUpon>addCustomEventForm.cs</DependentUpon>
     </EmbeddedResource>
