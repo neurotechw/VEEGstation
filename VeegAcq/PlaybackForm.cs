@@ -79,7 +79,7 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         private List<preDefineEvent> _preDEventsList = new List<preDefineEvent>();
-        private List<customEvent> _customEventList = new List<customEvent>();
+        private List<CustomEvent> _customEventList = new List<CustomEvent>();
         private int _Page;
         private int _maxPage;
         public double b;
@@ -1433,7 +1433,7 @@ namespace VeegStation
                     }
                     else
                     {
-                        _customEventList.Add(new customEvent(_addedEventName_custom, _mouseValueNow, _addEventColor));
+                        _customEventList.Add(new CustomEvent(_addedEventName_custom, _mouseValueNow, _addEventColor));
                     }
                 }
                 _isAddingEvent = !_isAddingEvent;

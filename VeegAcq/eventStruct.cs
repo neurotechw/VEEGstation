@@ -59,9 +59,9 @@ namespace VeegStation
         }
     }
 
-    public class customEvent
+    public class CustomEvent
     {
-        public customEvent(string name,double pos,Color clr)
+        public CustomEvent(string name,double pos,Color clr)
         {
             _name = name; _pos = pos; _color = clr;
         }
