@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,15 +8,20 @@ namespace VeegStation
 {
     public class preDefineEvent
     {
+        public static Color eyesOpenColor = Color.Pink;
+        public static Color eyesCloseColor = Color.Yellow;
+        public static Color deepBreathColor = Color.Green;
+        public static Color calibrateColor = Color.Blue;
+
         public preDefineEvent(pdEvents e,double pos)
         {
             _event = e; _pos = pos;
             switch (e)
             {
-                case pdEvents.eyesOpen: _color = Color.Pink; break;
-                case pdEvents.eyesClose: _color = Color.Yellow; break;
-                case pdEvents.deepBreath: _color = Color.Green; break;
-                case pdEvents.calibrate: _color = Color.Blue; break;
+                case pdEvents.eyesOpen: _color = eyesOpenColor; break;
+                case pdEvents.eyesClose: _color = eyesCloseColor; break;
+                case pdEvents.deepBreath: _color = deepBreathColor; break;
+                case pdEvents.calibrate: _color = calibrateColor; break;
             }
         }
 
@@ -63,25 +68,25 @@ namespace VeegStation
     {
         public CustomEvent(string name,double pos,Color clr)
         {
-            _name = name; _pos = pos; _color = clr;
+            _event = name; _pos = pos; _color = clr;
         }
         private Color _color;
         private double _pos;
-        private string _name;
+        private string _event;
         /// <summary>
         /// 颜色
         /// -- by lxl
         /// </summary>
         public Color Color
         {
-            get { return Color; }
-            set { Color = value; }
+            get { return _color; }
+            set { _color = value; }
         }
         /// <summary>
         /// 事件所在的点的位置
         /// -- by lxl
         /// </summary>
-        public double PointPostion
+        public double PointPosition
         {
             get { return _pos; }
             set { _pos = value; }
@@ -90,10 +95,10 @@ namespace VeegStation
         /// 自定义事件的名字
         /// -- by lxl
         /// </summary>
-        public string Name
+        public string Event
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _event; }
+            set { _event = value; }
         }
     }
 }
