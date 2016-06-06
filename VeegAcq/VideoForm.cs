@@ -21,7 +21,7 @@ namespace VeegStation
         public IMedia _media;
         PlaybackForm playback;
         Point[] ArrPoint = new Point[4];
-        int scale=1;
+        double scale=0.5;
         int x, y;
         int width, height;
   //      public NationFileInfo _nfi = null;
@@ -32,8 +32,10 @@ namespace VeegStation
             playback = playbackform;
             this.ControlBox = false;
         }
+         Point m_ptCanvas;
         private void VideoForm_Load_1(object sender, EventArgs e)
-        {    
+        {
+            m_ptCanvas = this.pictureBox_Video.Location;
             if (playback._nfi == null)
             {
                 Close();
@@ -41,8 +43,8 @@ namespace VeegStation
             }
             IMediaPlayerFactory factory = new MediaPlayerFactory();
             player = factory.CreatePlayer<IVideoPlayer>();
-            player.WindowHandle =pictureBox_Video.Handle;
-            player.AspectRatio = AspectRatioMode.Mode1; // fill?
+            player.WindowHandle = pictureBox_Video.Handle;
+            player.AspectRatio = AspectRatioMode.Mode2; // fill?
             if (playback._nfi.HasVideo)
             {
                 _media = factory.CreateMedia<IMediaFromFile>(playback._nfi.VideoFullName);
@@ -53,6 +55,8 @@ namespace VeegStation
              y = this.pictureBox_Video.Location.Y;
              width = this.pictureBox_Video.Width;
              height = this.pictureBox_Video.Height;
+             //btn_accelerate.Enabled = playback.btn_accelerate.Enabled;
+             //btn_decelerate.Enabled = playback.btn_decelerate.Enabled;
         }
         public void Play()
         {
@@ -63,6 +67,73 @@ namespace VeegStation
         {
             player.Pause();
         }
+        private void btn_play_Click(object sender, EventArgs e)
+        {
+            if (playback._CurrentOffset >= playback._nfi.Duration.TotalSeconds)
+            {
+                playback.clear();
+            }
+            if (!playback._player.IsPlaying)
+            {
+               Play();
+               playback.Play();
+            }
+            btn_play.Enabled = false;
+            btn_pause.Enabled = true;
+        }
+
+        private void btn_pause_Click(object sender, EventArgs e)
+        {
+            Pause();
+            playback.Pause();
+            btn_pause.Enabled = false;
+            btn_play.Enabled = true;
+        }
+
+        private void btn_close_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            playback.timer.Enabled = false;
+            playback.Pause();
+        }
+
+        private void btn_accelerate_Click(object sender, EventArgs e)
+        {
+            if (playback.speed <= 4)
+            {
+                btn_decelerate.Enabled = true;
+                btn_accelerate.Enabled = true;
+                player.PlaybackRate = player.PlaybackRate * 2;
+                playback._player.PlaybackRate = player.PlaybackRate;
+                playback.speed = player.PlaybackRate;
+                playback.btn_decelerate.Enabled = true;
+                playback.btn_accelerate.Enabled = true;
+            }
+            else
+            {
+                btn_accelerate.Enabled = false;
+                playback.btn_accelerate.Enabled = false;
+            }
+        }
+        private void pictureBox1_MouseClick_1(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Point pt = new Point((int)(scale * (this.pictureBox_Video.Location.X - e.Location.X)), (int)(scale * (this.pictureBox_Video.Location.Y - e.Location.Y)));
+                pictureBox_Video.Location = pt;
+                pictureBox_Video.Height = (int)(pictureBox_Video.Height * 1.4);
+                pictureBox_Video.Width = (int)(pictureBox_Video.Width * 1.4);
+            }
+            if (e.Button == MouseButtons.Right)
+            {            
+                    Point pt = new Point(x, y);
+                    //     pictureBox_Video.Width += (this.pictureBox_Video.Location.X + Height - e.Location.X) * scale +(this.pictureBox_Video.Location.X) * scale);
+                    pictureBox_Video.Location = pt;
+                    pictureBox_Video.Height = height;
+                    pictureBox_Video.Width = width;
+            }
+        }
+
         private void btn_decelerate_Click_1(object sender, EventArgs e)
         {
             if (playback.speed >= 0.5)
@@ -96,100 +167,6 @@ namespace VeegStation
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             pt = System.Windows.Forms.Control.MousePosition;
-        }
-
-        private void btn_decelerate_Click(object sender, EventArgs e)
-        {
-            if (playback.speed >= 0.5)
-            {
-                btn_accelerate.Enabled = true;
-                btn_decelerate.Enabled = true;
-                player.PlaybackRate = player.PlaybackRate / 2;
-                playback._player.PlaybackRate = player.PlaybackRate;
-                playback.speed = player.PlaybackRate;
-                playback.btn_accelerate.Enabled = true;
-                playback.btn_decelerate.Enabled = true;
-            }
-            else
-            {
-                btn_decelerate.Enabled = false;
-                playback.btn_decelerate.Enabled = false;
-            }
-        }
-
-        private void btn_pause_Click_1(object sender, EventArgs e)
-        {
-            Pause();
-            playback.Pause();
-            btn_pause.Enabled = false;
-            btn_play.Enabled = true;
-        }
-
-        private void btn_close_Click_1(object sender, EventArgs e)
-        {
-            this.Hide();
-            playback.timer.Enabled = false;
-            playback.Pause();
-        }
-
-        private void btn_accelerate_Click_1(object sender, EventArgs e)
-        {
-            if (playback.speed <= 4)
-            {
-                btn_decelerate.Enabled = true;
-                btn_accelerate.Enabled = true;
-                player.PlaybackRate = player.PlaybackRate * 2;
-                playback._player.PlaybackRate = player.PlaybackRate;
-                playback.speed = player.PlaybackRate;
-                playback.btn_decelerate.Enabled = true;
-                playback.btn_accelerate.Enabled = true;
-            }
-            else
-            {
-                btn_accelerate.Enabled = false;
-                playback.btn_accelerate.Enabled = false;
-            }
-        }
-
-        private void btn_play_Click_1(object sender, EventArgs e)
-        {
-            if (playback._CurrentOffset >= playback._nfi.Duration.TotalSeconds)
-            {
-                playback.clear();
-            }
-            if (!playback._player.IsPlaying)
-            {
-                Play();
-                playback.Play();
-            }
-            btn_play.Enabled = false;
-            btn_pause.Enabled = true;
-        }
-
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                // if
-                //if (i != 0) 
-                //{
-                //    this.pictureBox_Video.Location = new Point(x, y);
-                //}
-                //       double l = Math.Sqrt(Math.Pow(System.Windows.Forms.Control.MousePosition.X - this.pictureBox_Video.Location.X, 2) + Math.Pow(System.Windows.Forms.Control.MousePosition.Y - this.pictureBox_Video.Location.Y, 2));
-                Point pt = new Point(scale * (this.pictureBox_Video.Location.X - e.Location.X), scale * (this.pictureBox_Video.Location.Y - e.Location.Y));
-                //     pictureBox_Video.Width += (this.pictureBox_Video.Location.X + Height - e.Location.X) * scale +(this.pictureBox_Video.Location.X) * scale);
-                pictureBox_Video.Location = pt;
-                pictureBox_Video.Height *= 2;
-                pictureBox_Video.Width *= 2;
-            }
-            if (e.Button == MouseButtons.Right)
-            {
-                Point pt = new Point(x, y);
-                //     pictureBox_Video.Width += (this.pictureBox_Video.Location.X + Height - e.Location.X) * scale +(this.pictureBox_Video.Location.X) * scale);
-                pictureBox_Video.Location = pt;
-                pictureBox_Video.Height = height;
-                pictureBox_Video.Width = width;
-            }
         }
     }
 }
