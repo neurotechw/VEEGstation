@@ -116,15 +116,11 @@
     <Compile Include="NationFile.cs" />
     <Compile Include="PatInfo.cs" />
     <Compile Include="PationInfo.cs" />
-    <Compile Include="PlaybackForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="PlaybackForm.cs" />
     <Compile Include="PlaybackForm.Designer.cs">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="predefineEventsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="predefineEventsForm.cs" />
     <Compile Include="predefineEventsForm.Designer.cs">
       <DependentUpon>predefineEventsForm.cs</DependentUpon>
     </Compile>

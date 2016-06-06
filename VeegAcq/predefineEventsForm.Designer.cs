@@ -1,4 +1,4 @@
-﻿namespace VeegStation
+namespace VeegStation
  {
      partial class predefineEventsForm
      {
@@ -202,4 +202,3 @@
          private System.Windows.Forms.Button deleteEvent;
      }
  }
-     
