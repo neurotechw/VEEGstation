@@ -13,14 +13,14 @@ namespace VeegStation
     /// 预定义事件FORM
     /// -- by lxl
     /// </summary>
-    public partial class predefineEventsForm : Form
+    public partial class    predefineEventsForm : Form
     {
         PlaybackForm myPlaybackForm;
 
         /// <summary>
         /// 事件名称
         /// </summary>
-        PreDefineEvent.pdEvents eventName;
+        PreDefineEvent.PreDefineEventsName eventName;
 
         /// <summary>
         /// 事件颜色
@@ -55,16 +55,16 @@ namespace VeegStation
             foreach (PreDefineEvent p in myPlaybackForm.GetPreEventList())
             {
                 //由于预定义事件的存储格式为0x4500-ox4503，故不对应ASCII编码，故需要判断
-                switch (p.Event)
+                switch (p.EventName)
                 {
-                    case PreDefineEvent.pdEvents.eyesOpen: name = "睁眼"; break;
-                    case PreDefineEvent.pdEvents.eyesClose: name = "闭眼"; break;
-                    case PreDefineEvent.pdEvents.deepBreath: name = "深呼吸"; break;
-                    case PreDefineEvent.pdEvents.calibrate: name = "定标"; break;
+                    case PreDefineEvent.PreDefineEventsName.eyesOpen: name = "睁眼"; break;
+                    case PreDefineEvent.PreDefineEventsName.eyesClose: name = "闭眼"; break;
+                    case PreDefineEvent.PreDefineEventsName.deepBreath: name = "深呼吸"; break;
+                    case PreDefineEvent.PreDefineEventsName.calibrate: name = "定标"; break;
                     default: name = ""; break;
                 }
                 ListViewItem li = new ListViewItem(name);
-                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(p.PointPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
 
                 //序号递增
@@ -109,16 +109,16 @@ namespace VeegStation
                 string name;
 
                 //由于预定义事件的存储格式为0x4500-ox4503，故不对应ASCII编码，故需要判断
-                switch (myPlaybackForm.GetPreEventList()[myPlaybackForm.GetPreEventList().Count - 1].Event)
+                switch (myPlaybackForm.GetPreEventList()[myPlaybackForm.GetPreEventList().Count - 1].EventName)
                 {
-                    case PreDefineEvent.pdEvents.eyesOpen: name = "睁眼"; break;
-                    case PreDefineEvent.pdEvents.eyesClose: name = "闭眼"; break;
-                    case PreDefineEvent.pdEvents.deepBreath: name = "深呼吸"; break;
-                    case PreDefineEvent.pdEvents.calibrate: name = "定标"; break;
+                    case PreDefineEvent.PreDefineEventsName.eyesOpen: name = "睁眼"; break;
+                    case PreDefineEvent.PreDefineEventsName.eyesClose: name = "闭眼"; break;
+                    case PreDefineEvent.PreDefineEventsName.deepBreath: name = "深呼吸"; break;
+                    case PreDefineEvent.PreDefineEventsName.calibrate: name = "定标"; break;
                     default: name = ""; break;
                 }
                 ListViewItem li = new ListViewItem(name);
-                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(myPlaybackForm.GetPreEventList()[myPlaybackForm.GetPreEventList().Count - 1].PointPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(myPlaybackForm.GetPreEventList()[myPlaybackForm.GetPreEventList().Count - 1].EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(myPlaybackForm.GetPreEventList().Count.ToString());
                 eventList.Items.Add(li);
             }
@@ -149,10 +149,10 @@ namespace VeegStation
             //根据所选择的按钮名称来设置预定义事件名称
             switch (rb.Name)
             {
-                case "eyesOpen": eventName = PreDefineEvent.pdEvents.eyesOpen; eventColor = PreDefineEvent.eyesOpenColor; break;
-                case "eyesClose": eventName = PreDefineEvent.pdEvents.eyesClose; eventColor = PreDefineEvent.eyesCloseColor; break;
-                case "deepBreath": eventName = PreDefineEvent.pdEvents.deepBreath; eventColor = PreDefineEvent.deepBreathColor; break;
-                case "calibrate": eventName = PreDefineEvent.pdEvents.calibrate; eventColor = PreDefineEvent.calibrateColor; break;
+                case "eyesOpen": eventName = PreDefineEvent.PreDefineEventsName.eyesOpen; eventColor = PreDefineEvent.EyesOpenColor; break;
+                case "eyesClose": eventName = PreDefineEvent.PreDefineEventsName.eyesClose; eventColor = PreDefineEvent.EyesCloseColor; break;
+                case "deepBreath": eventName = PreDefineEvent.PreDefineEventsName.deepBreath; eventColor = PreDefineEvent.DeepBreathColor; break;
+                case "calibrate": eventName = PreDefineEvent.PreDefineEventsName.calibrate; eventColor = PreDefineEvent.CalibrateColor; break;
             }
         }
 

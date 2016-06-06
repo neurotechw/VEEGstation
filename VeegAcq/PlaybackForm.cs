@@ -198,7 +198,7 @@ namespace VeegStation
         /// 所添加的预定义事件的名字
         /// -- by lxl
         /// </summary>
-        private PreDefineEvent.pdEvents addedEventNameForPDEvent;
+        private PreDefineEvent.PreDefineEventsName addedEventNameForPDEvent;
         /// <summary>
         /// 所添加的自定义事件名字
         /// -- by lxl
@@ -1229,19 +1229,19 @@ namespace VeegStation
             foreach (PreDefineEvent p in _preDEventsList)                  
             {
                 //只画当前页面能显示的事件
-                if (p.PointPosition / sampleRate < currentSeconds)                 
+                if (p.EventPosition / sampleRate < currentSeconds)                 
                     continue;
-                if (p.PointPosition / sampleRate > currentSeconds + xMaximum)
+                if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
                     break;
-                dotPen.Color = p.Color;
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.PointPosition / sampleRate);
-                g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.Color)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
-                switch (p.Event)
+                dotPen.Color = p.EventColor;
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate);
+                g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
+                switch (p.EventName)
                 {
-                    case PreDefineEvent.pdEvents.eyesOpen: g.DrawString("睁眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.pdEvents.eyesClose: g.DrawString("闭眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.pdEvents.deepBreath: g.DrawString("深呼吸", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.pdEvents.calibrate: g.DrawString("定标", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case PreDefineEvent.PreDefineEventsName.eyesOpen: g.DrawString("睁眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case PreDefineEvent.PreDefineEventsName.eyesClose: g.DrawString("闭眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case PreDefineEvent.PreDefineEventsName.deepBreath: g.DrawString("深呼吸", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
+                    case PreDefineEvent.PreDefineEventsName.calibrate: g.DrawString("定标", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
                 }
                 g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
@@ -1250,14 +1250,14 @@ namespace VeegStation
             foreach (CustomEvent p in _customEventList)                  
             {
                 //只画当前页面能显示的事件
-                if (p.PointPosition / sampleRate < currentSeconds)                 
+                if (p.EventPosition / sampleRate < currentSeconds)                 
                     continue;
-                if (p.PointPosition / sampleRate > currentSeconds + xMaximum)
+                if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
                     break;
-                dotPen.Color = p.Color;
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.PointPosition / sampleRate);
-                g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.Color)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
-                g.DrawString(p.Event, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
+                dotPen.Color = p.EventColor;
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate);
+                g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
+                g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
                 g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
         }
@@ -1464,7 +1464,7 @@ namespace VeegStation
             
             //根据现在是在添加什么事件来确定事件名称
             if (flag)
-                addedEventNameForPDEvent = (PreDefineEvent.pdEvents)name;
+                addedEventNameForPDEvent = (PreDefineEvent.PreDefineEventsName)name;
             else
                 addedEventNameForCustomEvent = (string)name;
         }

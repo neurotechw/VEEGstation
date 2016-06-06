@@ -41,8 +41,8 @@ namespace VeegStation
             //从playbackform中读取事件列表，然后将事件添加到列表中
             foreach (CustomEvent p in myPlaybackForm.GetCustomEventList())
             {
-                ListViewItem li = new ListViewItem(p.Event);
-                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(p.PointPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                ListViewItem li = new ListViewItem(p.EventName);
+                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
                 index++;
                 eventList.Items.Add(li);
@@ -97,8 +97,8 @@ namespace VeegStation
             //若是添加事件，则直接将事件添加到后方（日后还需要对事件进行排序后再添加）
             if (isAdded)
             {
-                ListViewItem li = new ListViewItem(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].Event);
-                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].PointPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                ListViewItem li = new ListViewItem(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventName);
+                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(myPlaybackForm.GetCustomEventList().Count.ToString());
                 eventList.Items.Add(li);
             }
