@@ -15,11 +15,15 @@ using Declarations;
 using Declarations.Players;
 using Declarations.Media;
 using Implementation;
+using System.Collections;
 
 namespace VeegStation
 {
     public partial class PlaybackForm : Form
     {
+
+        #region 声明属性
+
         /// <summary>
         /// 绝对时间
         /// wsp
@@ -55,6 +59,20 @@ namespace VeegStation
         private int numberOfPerData; //数据块中脑电数据占用的字节数   --by zt
         private int indexOfData;     //数据的起始位置
         List<double> testList = new List<double>();  //测数值,调试用  --by zt
+        public ArrayList myLeadSource;
+        
+        //public ArrayList defaultLeadArrayList = new ArrayList();
+        //    string[] leadname = new string[19] { "FP1", "FP2", "F3", "F4", "F7", "F8", "C3", "C4", "T3", "T4", "P3", "P4", "T5", "T6", "O1","O2","Fz", "Cz", "Pz" };
+        //    for (int i = 0; i < 19;i++ )
+        //        defaultLeadSource.Add(i+1, leadname[i]);            
+        //    for (int i = 0; i < 19; i++)
+        //    {
+        //        if (leadname[i] != "")
+        //             defaultLeadArrayList.Add(leadname[i] + "-GND");
+        //    } 
+        
+        //public ArrayList leadSource = new ArrayList() { "1","2"};
+
 
         int maxPage;
         private List<EegPacket> _packets = new List<EegPacket>();
@@ -62,8 +80,8 @@ namespace VeegStation
         /// 事件队列
         /// -- by lxl
         /// </summary>
-        private List<PreDefineEvent> _preDEventsList = new List<PreDefineEvent>();
-        private List<CustomEvent> _customEventList = new List<CustomEvent>();
+        private List<PreDefineEvent> preDEventsList = new List<PreDefineEvent>();
+        private List<CustomEvent> customEventList = new List<CustomEvent>();
         private int _Page;
         private int _maxPage;
         public double b;
@@ -214,6 +232,7 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         private Color addingEventColor;
+        #endregion
         public PlaybackForm(NationFile EegFile)
         {
             InitializeComponent();
@@ -248,8 +267,10 @@ namespace VeegStation
             GetHsprogressMax();
             _totalSeconds = (int)EegFile.Duration.TotalSeconds; // 修改 --by zt
             hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
+            this.myLeadSource = EegFile.Montage.LeadSource;
         }
 
+        
         private void LoadData(int Offset)
         {
             if (_nfi == null)
@@ -338,7 +359,7 @@ namespace VeegStation
                 //}
                 //8导没有心电
                 //double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));//心电数据，为什么要转化为short   --by zt
-                double ekg = 0;
+                double ekg = 0;//不知道心电数据，暂时为0
                 List<double> eeg = new List<double>();
 
                 //加载脑电数据
@@ -359,6 +380,7 @@ namespace VeegStation
                 EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
                 _packets.Add(pkt);
             }
+
             //Console.WriteLine("最大值 {0}，最小值 {1}", testList.Max(), testList.Min());  //测试用到  --by zt
             fs.Close();
             fs.Dispose();
@@ -427,7 +449,7 @@ namespace VeegStation
             {
                 //没有事件先手动填充事件
                 //if (tIdx % 127 == 0) _preDEventsList.Add(new preDefineEvent(preDefineEvent.pdEvents.eyesOpen, tIdx));
-                if (tIdx % 127 == 0) _customEventList.Add(new CustomEvent("你好", tIdx, Color.Blue));
+                if (tIdx % 127 == 0) customEventList.Add(new CustomEvent("你好", tIdx, Color.Blue));
                 foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
                 {
                     if (sIdx == 19)
@@ -1226,7 +1248,7 @@ namespace VeegStation
             double drawPosition;
 
             //画预定义事件                   
-            foreach (PreDefineEvent p in _preDEventsList)                  
+            foreach (PreDefineEvent p in preDEventsList)                  
             {
                 //只画当前页面能显示的事件
                 if (p.EventPosition / sampleRate < currentSeconds)                 
@@ -1247,7 +1269,7 @@ namespace VeegStation
             }
 
             //画自定义事件                  
-            foreach (CustomEvent p in _customEventList)                  
+            foreach (CustomEvent p in customEventList)                  
             {
                 //只画当前页面能显示的事件
                 if (p.EventPosition / sampleRate < currentSeconds)                 
@@ -1412,7 +1434,7 @@ namespace VeegStation
         /// <returns>预定义事件列表</returns>
         public List<PreDefineEvent> GetPreEventList()
         {
-            return _preDEventsList;
+            return preDEventsList;
         }
 
         /// <summary>
@@ -1422,7 +1444,7 @@ namespace VeegStation
         /// <returns>自定义事件列表</returns>
         public List<CustomEvent> GetCustomEventList()
         {
-            return _customEventList;
+            return customEventList;
         }
 
         /// <summary>
@@ -1516,14 +1538,14 @@ namespace VeegStation
                 {
                     if (isAddingPreDefineEvent)
                     {
-                        _preDEventsList.Add(new PreDefineEvent(addedEventNameForPDEvent, mouseValueNow));
+                        preDEventsList.Add(new PreDefineEvent(addedEventNameForPDEvent, mouseValueNow));
 
                         //事件添加后更新添加事件的form里的列表
                         myPreDefineEventFormEventForm.updateListView(true);
                     }
                     else
                     {
-                        _customEventList.Add(new CustomEvent(addedEventNameForCustomEvent, mouseValueNow, addingEventColor));
+                        customEventList.Add(new CustomEvent(addedEventNameForCustomEvent, mouseValueNow, addingEventColor));
 
                         //事件添加后更新添加事件的form里的列表
                         myCustomEventForm.UpdateListView(true);
@@ -1544,14 +1566,14 @@ namespace VeegStation
         {
             if (flag)
             {
-                _preDEventsList.RemoveAt(index);
+                preDEventsList.RemoveAt(index);
 
                 //事件删除后更新添加事件的form里的列表
                 myPreDefineEventFormEventForm.updateListView(false);
             }
             else
             {
-                _customEventList.RemoveAt(index);
+                customEventList.RemoveAt(index);
 
                 //事件删除后更新添加事件的form里的列表
                 myCustomEventForm.UpdateListView(false);
