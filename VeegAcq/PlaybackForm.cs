@@ -359,7 +359,7 @@ namespace VeegStation
                 EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
                 _packets.Add(pkt);
             }
-            Console.WriteLine("最大值 {0}，最小值 {1}", testList.Max(), testList.Min());  //测试用到  --by zt
+            //Console.WriteLine("最大值 {0}，最小值 {1}", testList.Max(), testList.Min());  //测试用到  --by zt
             fs.Close();
             fs.Dispose();
         }
