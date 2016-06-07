@@ -765,7 +765,7 @@ namespace VeegStation
             // btn_hide
             // 
             this.btn_hide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_hide.Location = new System.Drawing.Point(20, 195);
+            this.btn_hide.Location = new System.Drawing.Point(20, 183);
             this.btn_hide.Name = "btn_hide";
             this.btn_hide.Size = new System.Drawing.Size(160, 23);
             this.btn_hide.TabIndex = 12;
