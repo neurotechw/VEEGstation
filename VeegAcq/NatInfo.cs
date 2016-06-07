@@ -304,10 +304,5 @@ namespace VeegStation
             Debug.WriteLine(string.Format("NatInfo {0}", this.StartDate));
 
         }
-
-        
-
-        
-
     }
 }

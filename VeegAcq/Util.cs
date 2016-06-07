@@ -19,6 +19,7 @@ namespace VeegStation
         public static double RawToSignal(short Raw)
         {
             return Raw / -7.78125;  //数值有点不对
+           // return Raw / 1; 
         }
 
         /// <summary>

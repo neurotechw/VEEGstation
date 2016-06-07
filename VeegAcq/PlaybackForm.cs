@@ -890,6 +890,7 @@ namespace VeegStation
         {
             _pt = System.Windows.Forms.Control.MousePosition;
         }
+
         private void hsProgress_ValueChanged(object sender, ScrollEventArgs e)
         {
             if (_Page < maxPage)
