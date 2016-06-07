@@ -524,13 +524,23 @@ namespace VeegStation
             video.Show();
             video.Hide();
         }
+
+        /// <summary>
+        /// 上一页
+        /// </summary>
         private void PagePrev()
         {
+            //图表开头的秒数左移一页 -- by lxl
             currentSeconds -= (int)(Math.Floor(xMaximum));
+
+            //图表开头的秒数不为负 -- by lxl
             if (currentSeconds <= 0)
                 currentSeconds = 0;
+
+            //重新加载与显示数据
             LoadData(currentSeconds);
             ShowData();
+
             set_hsScrollBarValue();
         }
         /// <summary>
@@ -546,13 +556,23 @@ namespace VeegStation
             ShowData();
             set_hsScrollBarValue_Next();
         }
+
+        /// <summary>
+        /// 下一页
+        /// </summary>
         private void PageNext()
         {
+            //图表开头的秒数右移一页 -- by lxl
             currentSeconds += (int)(Math.Floor(xMaximum));
+
+            //图表开头秒数不能大于总秒数减去水平滚动条的largechange+1，（即保证留且仅留两秒的空白提醒用户后面没有数据了） --by lxl
             if (currentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
                 currentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
+
+            //重新加载显示数据
             LoadData(currentSeconds);
             ShowData();
+
             set_hsScrollBarValue();
         }
         /// <summary>
@@ -582,9 +602,14 @@ namespace VeegStation
             //+ hsProgress.Value * 100;//自己添加" + hsProgress.Value*100 "
         }
 
+        /// <summary>
+        /// "上一页"按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnPrev_Click(object sender, EventArgs e)
         {
-            //timer.Enabled = false;
+            //暂停播放
             Pause();
             //            PagePrev();
             PagePrev_2();
@@ -592,11 +617,19 @@ namespace VeegStation
             _player.Time = currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
             video.player.Time = currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
             //           SyncVideo();
+
+            //更新翻页按钮是否可用
             UpdateBtnEnable();
         }
 
+        /// <summary>
+        /// "下一页"按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnNext_Click(object sender, EventArgs e)
         {
+            //暂停播放
             Pause();
             //          PageNext();
             PageNext_2();
@@ -604,6 +637,8 @@ namespace VeegStation
             _player.Time = currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
             video.player.Time = currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
             //           SyncVideo();
+
+            //更新翻页按钮是否可用
             UpdateBtnEnable();
 
         }
@@ -798,16 +833,6 @@ namespace VeegStation
                 _player.Time = currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
                 //             SyncVideo();
             }
-        }
-
-        private void panel_next_click(object sender, EventArgs e)
-        {
-            btnNext_Click(sender, e);
-        }
-
-        private void panel_prev_click(object sender, EventArgs e)
-        {
-            btnPrev_Click(sender, e);
         }
 
         /// <summary>
@@ -1213,7 +1238,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void ChartPaint(object sender, PaintEventArgs e)
         {
-            if (pageWidthInPixel == 0)                            //计算图表的宽与高          -- by lxl
+            //计算图表的宽与高,因为PixelPositionToValue与ValueToPixelPosition只能在重绘函数中调用          -- by lxl
+            if (pageWidthInPixel == 0)                            
             {
                 pageWidthInPixel = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisX.Maximum) - this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(0);
                 pageWidthInMM = pageWidthInPixel / pixelPerMM;
@@ -1223,8 +1249,12 @@ namespace VeegStation
                 pageHeightInPixel = Math.Abs(this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(this.chartWave.ChartAreas[0].AxisY.Maximum) - this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0));
                 pageHeightInMM = pageHeightInPixel / pixelPerMM;
             }
+
+            //画病人事件-- by lxl
             DrawEvents(e.Graphics);
-            if (isChangingBoardShow)                       //计算面板显示与否的宽度    -- by lxl
+
+            //计算面板显示与否的宽度,因为PixelPositionToValue与ValueToPixelPosition只能在重绘函数中调用    -- by lxl 
+            if (isChangingBoardShow)                       
             {
                 if (isBoardShow)
                 {
@@ -1236,21 +1266,36 @@ namespace VeegStation
                 }
                 isChangingBoardShow = false;
             }
+
+            //若正在添加事件，则画一条和所选事件颜色相同的线跟着鼠标走  --by lxl
             if (isAddingEvent)
             {
                 e.Graphics.DrawLine(new Pen(addingEventColor), new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
                 mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X) * sampleRate;
             }
-            //画图表上的秒数
+
+            //画图表上的秒数,time1Pos为当前图表中前二分之一秒的位置
             double time1Pos = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition((int)Math.Floor(xMaximum) / 2);
+            DrawSeconds(time1Pos,e.Graphics);
+        }
+
+        /// <summary>
+        /// 画图表上的秒数
+        /// -- by lxl
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="g"></param>
+        private void DrawSeconds(double pos,Graphics g)
+        {
+            //若多余两秒则只每隔一半画一下    -- by lxl
             if (xMaximum >= 2)
             {
-                e.Graphics.DrawString((currentSeconds + (int)Math.Floor(xMaximum) / 2).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)time1Pos, 25, 80, 15));
-                e.Graphics.DrawString((currentSeconds + (int)Math.Floor(xMaximum) / 2 * 2).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)time1Pos * 2, 25, 80, 15));
+                g.DrawString((currentSeconds + (int)Math.Floor(xMaximum) / 2).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)pos, 25, 80, 15));
+                g.DrawString((currentSeconds + (int)Math.Floor(xMaximum) / 2 * 2).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)pos * 2, 25, 80, 15));
             }
-            else
+            else //若小于两秒则图表中只画一秒 -- by lxl
             {
-                e.Graphics.DrawString((currentSeconds + 1).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)(this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(1)), 25, 80, 15));
+                g.DrawString((currentSeconds + 1).ToString(), new System.Drawing.Font("黑体", 10, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF((int)(this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(1)), 25, 80, 15));
             }
         }
 
@@ -1314,10 +1359,13 @@ namespace VeegStation
         /// <param name="e"></param>
         private void DrawLabelPanel(object sender, PaintEventArgs e)
         {
+            //画图所需变量的定义
             SolidBrush strBrush = new SolidBrush(Color.Black);
             Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Regular);
             double topSigPos = this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(2000D - 2000D / signalNum / 2);
             double intervalPos = this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(2000D - 2000D / signalNum / 2 * 3) - topSigPos;
+
+            //根据信道所在的位置分别画25通道的label
             foreach (int i in Enumerable.Range(currentTopSignal, signalNum))
             {
                 e.Graphics.DrawString((i + 1).ToString(), strFont, strBrush, new RectangleF(0, (int)(topSigPos + (i - currentTopSignal) * intervalPos), this.labelPanel.Width, 15));
@@ -1332,7 +1380,9 @@ namespace VeegStation
         /// <param name="e"></param>
         private void BoardToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //取反isBoardShow，更改当前面板显示状态
             isBoardShow = !isBoardShow;
+
             this.boardPanel.Visible = isBoardShow;
             this.boardToolStripMenuItem.Checked = isBoardShow;
 
@@ -1574,6 +1624,8 @@ namespace VeegStation
                         myCustomEventForm.UpdateListView(true);
                     }
                 }
+
+                //添加完数据后将isAddingEvent变成false
                 isAddingEvent = !isAddingEvent;
                 this.chartWave.Invalidate();
             }
