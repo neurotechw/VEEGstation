@@ -82,11 +82,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalibrateForm.cs">
+    <Compile Include="addCustomEventForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CalibrateForm.Designer.cs">
-      <DependentUpon>CalibrateForm.cs</DependentUpon>
+    <Compile Include="addCustomEventForm.Designer.cs">
+      <DependentUpon>addCustomEventForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CalibrateYForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CalibrateYForm.Designer.cs">
+      <DependentUpon>CalibrateYForm.cs</DependentUpon>
     </Compile>
     <Compile Include="calibrateXForm.cs">
       <SubType>Form</SubType>
@@ -94,16 +100,33 @@
     <Compile Include="calibrateXForm.Designer.cs">
       <DependentUpon>calibrateXForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="customEventForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="customEventForm.Designer.cs">
+      <DependentUpon>customEventForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="DataFunc.cs" />
     <Compile Include="Datastructcs.cs" />
     <Compile Include="EegPacket.cs" />
+    <Compile Include="eventStruct.cs" />
+    <Compile Include="Montage.cs" />
     <Compile Include="NatFileInfo.cs" />
+    <Compile Include="NatInfo.cs" />
+    <Compile Include="NationFile.cs" />
+    <Compile Include="PatInfo.cs" />
     <Compile Include="PationInfo.cs" />
     <Compile Include="PlaybackForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PlaybackForm.Designer.cs">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="predefineEventsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="predefineEventsForm.Designer.cs">
+      <DependentUpon>predefineEventsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="StationForm.cs">
       <SubType>Form</SubType>
@@ -129,16 +152,24 @@
     <Compile Include="VideoForm.Designer.cs">
       <DependentUpon>VideoForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="μvcmToolStripMenuItem.cs" />
-    <EmbeddedResource Include="CalibrateForm.resx">
-      <DependentUpon>CalibrateForm.cs</DependentUpon>
+    <EmbeddedResource Include="addCustomEventForm.resx">
+      <DependentUpon>addCustomEventForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CalibrateYForm.resx">
+      <DependentUpon>CalibrateYForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="calibrateXForm.resx">
       <DependentUpon>calibrateXForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="customEventForm.resx">
+      <DependentUpon>customEventForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PlaybackForm.resx">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="predefineEventsForm.resx">
+      <DependentUpon>predefineEventsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="StationForm.resx">
       <DependentUpon>StationForm.cs</DependentUpon>

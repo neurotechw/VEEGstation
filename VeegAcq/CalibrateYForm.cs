@@ -10,24 +10,21 @@ using System.Windows.Forms;
 namespace VeegStation
 {
     /// <summary>
-    /// 校准X轴的FORM
+    /// Y轴配置FORM
     /// -- by lxl
     /// </summary>
-    public partial class calibrateXForm : Form
+    public partial class CalibrateYForm : Form
     {
-        /// <summary>
-        /// 量取的宽度
-        /// </summary>
-        private int width;
         private PlaybackForm myPlayBackform;
+        private int height;
 
-        public calibrateXForm(PlaybackForm form)
+        public CalibrateYForm(PlaybackForm form)
         {
             InitializeComponent();
 
-            //初始化一个默认的VALUE,(以后需要改成从playbackform中读取）
-            width = 20;
-            this.valueBox.Value = width;
+            ///初始化一个默认的VALUE,(以后需要改成从playbackform中读取）
+            height = 20;
+            this.valueBox.Value = height;
             this.myPlayBackform = form;
         }
 
@@ -39,13 +36,13 @@ namespace VeegStation
         private void Draw(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.DrawLine(Pens.Black, new Point(0, 10), new Point(width, 10));
+            g.DrawLine(Pens.Black, new Point(0, 10), new Point(height, 10));
             g.DrawLine(Pens.Black, new Point(0, 10), new Point(0, 6));
-            g.DrawLine(Pens.Black, new Point(1 * width / 5, 10), new Point(1 * width / 5, 6));
-            g.DrawLine(Pens.Black, new Point(2 * width / 5, 10), new Point(2 * width / 5, 6));
-            g.DrawLine(Pens.Black, new Point(3 * width / 5, 10), new Point(3 * width / 5, 6));
-            g.DrawLine(Pens.Black, new Point(4 * width / 5, 10), new Point(4 * width / 5, 6));
-            g.DrawLine(Pens.Black, new Point(5 * width / 5, 10), new Point(5 * width / 5, 6));
+            g.DrawLine(Pens.Black, new Point(1 * height / 5, 10), new Point(1 * height / 5, 6));
+            g.DrawLine(Pens.Black, new Point(2 * height / 5, 10), new Point(2 * height / 5, 6));
+            g.DrawLine(Pens.Black, new Point(3 * height / 5, 10), new Point(3 * height / 5, 6));
+            g.DrawLine(Pens.Black, new Point(4 * height / 5, 10), new Point(4 * height / 5, 6));
+            g.DrawLine(Pens.Black, new Point(5 * height / 5, 10), new Point(5 * height / 5, 6));
         }
 
         /// <summary>
@@ -53,11 +50,9 @@ namespace VeegStation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void valueChanged(object sender, EventArgs e)
+        private void ValueChanged(object sender, EventArgs e)
         {
-            width = int.Parse(this.valueBox.Value.ToString());
-
-            //重绘线段，更改线段长度
+            height = int.Parse(this.valueBox.Value.ToString());
             this.linePanel.Invalidate();
         }
 
@@ -68,8 +63,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
-            //通过量好的长度得出每厘米的像素点，然后配置图表大小，height / 5 = 每一厘米多少像素点
-            myPlayBackform.CalibrateX(width / 5D);
+            //通过量好的长度得出每厘米的像素点，然后配置图标大小，height / 5 = 每一厘米多少像素点
+            myPlayBackform.CalibrateY(height / 5D);          
             this.Hide();
         }
 

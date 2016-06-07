@@ -6,115 +6,89 @@ using System.Threading.Tasks;
 
 namespace VeegStation
 {
-    public class NatInfo
+    
+
+    /// <summary>
+    /// 标志类
+    /// </summary>
+    public class EEGFmt
     {
-        public  string          Sign;     // "VE"		
-        public  string          Version;		    //版本号		
-        public  DateTime    Date;			//操作时间
-        public  int                Freq;			//每秒采集点数
-        public  byte             BrainNumber;		//脑电导数	
-        public  byte             HeartNumber;		//心电导数	
-        public  string             EegType;
-
-        public  int                PatOff;		//病人信息区位置
-        public  int                EntOff;		//事件区位置
-        public  int                MonOff;		//导练设置区位置
-        public  int                CfgOff;		//状态区位置	
-        public  int                DatOff;		//数据区位置
-
-        public  byte             RespNumber;		//呼吸选择
-        public  byte             FlashNumber;		//闪光选择
-        public  byte            Operate;
-        public  string          Flag;
-        public  bool            bIsHaveVideo;           //是否有视频
-        public  int               nRowsOfData;            // 一帧数据的大小
-        public  byte             byteConfigType;         //  配置信息：b0 b1 b2 b3 b4 b5 b6 b7
-        public  byte[]          Remain = new byte[88];		//保留字节
-    }
-
-    public class PatInfo                       
-    {
-	   public   string    Name; // 姓名
-       public   string    Gender;	// 性别
-       public   string    ID;		// 检查号
-	   public   string    Age;	        // 病人年龄
-       public   string    Handedness;	// 左右利
-       public   string    State;	// 状态
-       public   string    ResidentDoctor;	// 申请医师
-	   public   string    Type;	// 检查类型
-	   public   string    MengZhen ;	// 门诊号
-	   public   string    ZhuYuan;	// 住院号
-       public   string    OperateDoctor; //操作医生
-	   public   string    Diagnosis;// 诊断
-	   public   string    History;	// 既往病史
-	   public   string    Medicine;	// 用药
-	   public   string    Archives;       // 归档
-	   public   string    Note;      // 备注
-	   public   string    BingQu ;   
-	   public   string    ChuangHao;
-       public   string     KeShi;
-       public   string     FilePath;
-    }
-
-    //标志的结构
-    public class EEGFMT
-    {
+        //标志名
         public string Name;//标志
+
+        //偏移量
         public int Off;
     };
 
-    //导联配置结构
-    public class MONTAGE
-    {
-        public byte MontageMode;                                         //Montage mode
-        public byte MontageRoutes;                                       //Electrorode number
-        public string[] FirstName;                                               //相对导名
-        public string[] SecondName;                                         //基导名
-        public string[] FirstID;                                                    //相对导ID
-        public string[] SecondID;                                               //基导名ID
-        public string Name;
-        public short Flag;
-        public string Note;
-        public string szSetting;                                //脑电盒支持的最高配置如P41
-        public string szNote;                                   //最高配置的含义
 
-        public MONTAGE(int num)
-        {
-            FirstName = new string[num];
-            SecondName = new string[num];
-            FirstID = new string[num];
-            SecondID = new string[num];
-        }
-    }
-    public class COLORREF
+    /// <summary>
+    ///事件颜色
+    /// </summary>
+    public class EventColor
     {
-        public COLORREF(byte red, byte green, byte blue)
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="red">红色</param>
+        /// <param name="green">绿色</param>
+        /// <param name="blue">蓝色</param>
+        public EventColor(byte red, byte green, byte blue)
         {
+            //设置红色
             R = red;
+
+            //设置绿色
             G = green;
+
+            //设置蓝色
             B = blue;
         }
+
+        //声明红色变量
         public byte R;
+
+        //声明绿色变量
         public byte G;
+
+        //声明蓝色变量
         public byte B;
     }
 
-    //短事件
-    public class EVENTHEAD
+    /// <summary>
+    /// 事件头类
+    /// </summary>
+    public class EventHead
     {
+        //事件标识
         public string Sign;
-        public int Number;                  //事件数目
+
+        //事件数目
+        public int Number;                 
     };
 
-    //结构EVENT
-    public class EVENT
+   /// <summary>
+   /// 事件类
+   /// </summary>
+    public class Event
     {
-        public EVENT(string name, COLORREF color)
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="color"></param>
+        public Event(string name, EventColor color)
         {
+            //设置姓名
             Name = name;
+
+            //设置颜色
             Color = color;
         }
+
+        //声明存储事件名变量
         public string Name;
-        public COLORREF Color;
+
+        //声明存储事件颜色变量
+        public EventColor Color;
     } ;
 }

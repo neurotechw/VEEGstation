@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,23 +21,35 @@ namespace VeegStation
     /// </summary>
     public partial class VideoForm : Form
     {
-        //定义播放器
+        /// <summary>
+        /// 定义播放器
+        /// </summary>
         public IVideoPlayer Player;
 
-        //定义视频media
+        /// <summary>
+        /// 定义视频media
+        /// </summary>
         public IMedia Media;
 
-        //定义回放Form
+        /// <summary>
+        /// 定义回放Form
+        /// </summary>
         PlaybackForm playBack;
 
-        //定义视频点击放大缩小比例
+        /// <summary>
+        /// 定义视频点击放大缩小比例
+        /// </summary>
         double scale=0.5;
 
-        //定义pictureBox的X，Y位置
+        /// <summary>
+        /// 定义pictureBox的X，Y位置
+        /// </summary>
         int x;
         int y;
 
-        //定义pictureBox的宽度，高度
+        /// <summary>
+        /// 定义pictureBox的宽度，高度
+        /// </summary>
         int width;
         int height;
 
