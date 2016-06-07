@@ -1497,7 +1497,7 @@ namespace VeegStation
                     myCustomEventForm = new CustomEventForm(this);
                 myCustomEventForm.Show();
                 myCustomEventForm.BringToFront();
-                myCustomEventForm.initList();
+                myCustomEventForm.InitList();
             }
         }
         /// <summary>
@@ -1520,6 +1520,18 @@ namespace VeegStation
             return customEventList;
         }
 
+        /// <summary>
+        /// 编辑事件指定位置的事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="index">索引</param>
+        /// <param name="name">名称</param>
+        /// <param name="clr">颜色</param>
+        public void editCustomEvent(int index, string name, Color clr)
+        {
+            this.customEventList[index].EventName = name;
+            this.customEventList[index].EventColor = clr;
+        }
         /// <summary>
         /// 获取采样频率
         /// -- by lxl

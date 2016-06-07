@@ -27,7 +27,7 @@ namespace VeegStation
         /// <summary>
         /// 初始化列表内显示的内容
         /// </summary>
-        public void initList()
+        public void InitList()
         {
             //事件显示的编号
             int index = 1;
@@ -42,10 +42,16 @@ namespace VeegStation
             foreach (CustomEvent p in myPlaybackForm.GetCustomEventList())
             {
                 ListViewItem li = new ListViewItem(p.EventName);
+
+                //允许更改item的颜色
+                li.UseItemStyleForSubItems = false;
+
                 li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
+                li.SubItems.Add("");
                 index++;
                 eventList.Items.Add(li);
+                this.eventList.Items[index-2].SubItems[3].BackColor = p.EventColor;
             }
 
             //结束更新列表
@@ -58,7 +64,7 @@ namespace VeegStation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btn_quit_Click(object sender, EventArgs e)
+        private void Btn_quit_Click(object sender, EventArgs e)
         {
             this.Hide();
         }
@@ -69,10 +75,13 @@ namespace VeegStation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnAdd_Click(object sender, EventArgs e)
+        private void BtnAdd_Click(object sender, EventArgs e)
         {
             if (myAddCustomEventForm == null)
                 myAddCustomEventForm = new addCustomEventForm(this);
+
+            //置状态为添加事件
+            myAddCustomEventForm.IsAddEvent();
 
             //添加自定义事件的form弹出，并且为关闭前不允许操作该form
             myAddCustomEventForm.ShowDialog();
@@ -117,7 +126,7 @@ namespace VeegStation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void BtnDelete_Click(object sender, EventArgs e)
         {
             myPlaybackForm.RemoveEvent(false, eventList.SelectedIndices[0]);
         }
@@ -127,9 +136,35 @@ namespace VeegStation
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btn_edit_Click(object sender, EventArgs e)
+        private void BtnEdit_Click(object sender, EventArgs e)
         {
+            if (myAddCustomEventForm == null)
+                myAddCustomEventForm = new addCustomEventForm(this);
 
+            if (this.eventList.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("请选择一个事件进行编辑");
+                return;
+            }
+            //置状态为编辑事件
+            myAddCustomEventForm.IsEditEvent(this.eventList.SelectedItems[0].SubItems[3].BackColor, this.eventList.SelectedItems[0].SubItems[0].Text);
+
+            //添加自定义事件的form弹出，并且为关闭前不允许操作该form
+            myAddCustomEventForm.ShowDialog();
+        }
+
+        /// <summary>
+        /// 编辑事件
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="clr"></param>
+        public void EditEvent(string text, Color clr)
+        {
+            this.eventList.SelectedItems[0].SubItems[0].Text = text;
+            this.eventList.SelectedItems[0].SubItems[3].BackColor = clr;
+
+            //将编辑后的事件保存在时间列表中
+            myPlaybackForm.editCustomEvent(this.eventList.SelectedIndices[0], text, clr);
         }
     }
 }

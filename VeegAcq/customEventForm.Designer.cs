@@ -36,6 +36,7 @@
             this.btn_edit = new System.Windows.Forms.Button();
             this.btn_delete = new System.Windows.Forms.Button();
             this.btn_quit = new System.Windows.Forms.Button();
+            this.color = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // eventList
@@ -43,7 +44,8 @@
             this.eventList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.name,
             this.time,
-            this.num});
+            this.num,
+            this.color});
             this.eventList.FullRowSelect = true;
             this.eventList.GridLines = true;
             this.eventList.Location = new System.Drawing.Point(12, 12);
@@ -73,7 +75,7 @@
             this.btn_add.TabIndex = 1;
             this.btn_add.Text = "增加事件";
             this.btn_add.UseVisualStyleBackColor = true;
-            this.btn_add.Click += new System.EventHandler(this.btnAdd_Click);
+            this.btn_add.Click += new System.EventHandler(this.BtnAdd_Click);
             // 
             // btn_edit
             // 
@@ -83,7 +85,7 @@
             this.btn_edit.TabIndex = 2;
             this.btn_edit.Text = "编辑事件";
             this.btn_edit.UseVisualStyleBackColor = true;
-            this.btn_edit.Click += new System.EventHandler(this.btn_edit_Click);
+            this.btn_edit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // btn_delete
             // 
@@ -93,7 +95,7 @@
             this.btn_delete.TabIndex = 3;
             this.btn_delete.Text = "删除事件";
             this.btn_delete.UseVisualStyleBackColor = true;
-            this.btn_delete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btn_delete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
             // btn_quit
             // 
@@ -104,7 +106,11 @@
             this.btn_quit.TabIndex = 4;
             this.btn_quit.Text = "退出";
             this.btn_quit.UseVisualStyleBackColor = true;
-            this.btn_quit.Click += new System.EventHandler(this.btn_quit_Click);
+            this.btn_quit.Click += new System.EventHandler(this.Btn_quit_Click);
+            // 
+            // color
+            // 
+            this.color.Text = "颜色";
             // 
             // CustomEventForm
             // 
@@ -134,5 +140,6 @@
         private System.Windows.Forms.ColumnHeader name;
         private System.Windows.Forms.ColumnHeader time;
         private System.Windows.Forms.ColumnHeader num;
+        private System.Windows.Forms.ColumnHeader color;
     }
 }

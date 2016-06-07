@@ -17,6 +17,11 @@ namespace VeegStation
     {
         CustomEventForm myCustomEventForm;
 
+        /// <summary>
+        /// 表示现在是在编辑事件还是添加事件
+        /// </summary>
+        private bool addOrEdit;
+
         public addCustomEventForm(CustomEventForm form)
         {
             InitializeComponent();
@@ -42,18 +47,57 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btnConfirm_Click(object sender, EventArgs e)
         {
-            //对所输入的事件描述进行判断
-            if (nameTextBox.Text == "")
+            //如果这个form为添加事件的状态
+            if (addOrEdit)
             {
-                MessageBox.Show("事件描述不能为空");
-                return;
+                //对所输入的事件描述进行判断
+                if (nameTextBox.Text == "")
+                {
+                    MessageBox.Show("事件描述不能为空");
+                    return;
+                }
+
+                //开始添加事件
+                myCustomEventForm.StartAddEvent(colorDialog.Color, nameTextBox.Text);
+
+                //form隐藏
+                this.Hide();
             }
+            else 
+            {
+                //对所输入的事件描述进行判断
+                if (nameTextBox.Text == "")
+                {
+                    MessageBox.Show("事件描述不能为空");
+                    return;
+                }
 
-            //开始添加事件
-            myCustomEventForm.StartAddEvent(colorDialog.Color, nameTextBox.Text);
+                //将编辑后的事件保存
+                myCustomEventForm.EditEvent(nameTextBox.Text, colorDialog.Color);
 
-            //form隐藏
-            this.Hide();
+                //form隐藏
+                this.Hide();
+            }
+        }
+
+        /// <summary>
+        /// 状态置为添加事件
+        /// </summary>
+        public void IsAddEvent()
+        {
+            addOrEdit = true;
+        }
+
+        /// <summary>
+        /// 状态为编辑事件
+        /// </summary>
+        /// <param name="clr">选中事件的颜色</param>
+        /// <param name="text">选中事件的名称</param>
+        public void IsEditEvent(Color clr,string text)
+        {
+            addOrEdit = false;
+            this.btn_color.BackColor = this.colorDialog.Color = clr;
+            this.nameTextBox.Text = text;
         }
         
         /// <summary>
