@@ -350,7 +350,7 @@ namespace VeegStation
             this.hsProgress.Name = "hsProgress";
             this.hsProgress.Size = new System.Drawing.Size(933, 17);
             this.hsProgress.TabIndex = 4;
-            this.hsProgress.MouseCaptureChanged += new System.EventHandler(this.hsProgress_MouseCaptureChanged);
+            this.hsProgress.MouseCaptureChanged += new System.EventHandler(this.HSProgress_MouseCaptureChanged);
             // 
             // PationInfo
             // 

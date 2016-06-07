@@ -271,7 +271,7 @@ namespace VeegStation
         }
 
         
-        private void LoadData(int Offset)
+        private void  LoadData(int Offset)
         {
             if (_nfi == null)
             {
@@ -340,7 +340,10 @@ namespace VeegStation
         {
             FileStream fs = new FileStream(_nfi.NedFileName, FileMode.Open, FileAccess.Read);
             fs.Seek(0x200, SeekOrigin.Begin);//从512开始  --by zt
-            fs.Seek(byteOfPerData * Offset * (loadRec - sampleRate * (WINDOW_SECONDS - (int)Math.Ceiling(xMaximum) + 1)), SeekOrigin.Current);//  --by zt
+
+            //将文件流定位在偏移值为OFFSET秒的位置
+            fs.Seek(byteOfPerData * Offset * sampleRate, SeekOrigin.Current);//  --by lxl
+            //fs.Seek(byteOfPerData * Offset * (loadRec - sampleRate * (WINDOW_SECONDS - (int)Math.Ceiling(xMaximum) + 1)), SeekOrigin.Current);//  --by zt
             byte[] buf = new byte[byteOfPerData];
             _packets.Clear();
             testList.Clear();
@@ -398,7 +401,10 @@ namespace VeegStation
             //取26个字节
             int byteOfPerData = 0x1A;
             int numberOfData = 8;
-            fs.Seek(byteOfPerData * Offset * (loadRec - sampleRate * (WINDOW_SECONDS - (int)Math.Ceiling(xMaximum) + 1)), SeekOrigin.Current);//  --by zt
+
+            //将文件流定位在偏移值为OFFSET秒的位置
+            fs.Seek(byteOfPerData * Offset * sampleRate, SeekOrigin.Current);//  --by lxl
+            //fs.Seek(byteOfPerData * Offset * (loadRec - sampleRate * (WINDOW_SECONDS - (int)Math.Ceiling(xMaximum) + 1)), SeekOrigin.Current);//  --by zt
             byte[] buf = new byte[byteOfPerData];
             _packets.Clear();
             foreach (int x in Enumerable.Range(0, loadRec))
@@ -760,18 +766,35 @@ namespace VeegStation
             chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = 0;
             hsProgress.Value = currentSeconds;
         }
-        private void hsProgress_MouseCaptureChanged(object sender, EventArgs e)
+
+        /// <summary>
+        /// 水平滚动条鼠标状态改变事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HSProgress_MouseCaptureChanged(object sender, EventArgs e)
         {
             Debug.WriteLine(string.Format("Scroll mouse cap changed {0}", e));
+
+            //暂停播放
             Pause();
+            
+            //如果值相同则不进行接下来的运算
             if (currentSeconds != hsProgress.Value)
             {
                 currentSeconds = hsProgress.Value;
                 changed();
                 _CurrentOffset = currentSeconds;
+
+                //重新加载与显示数据
                 LoadData(currentSeconds);
                 ShowData();
+
+                //根据当前的秒数来更新翻页按钮是否可用
                 UpdateBtnEnable();
+
+
                 _player.Time = currentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
                 //             SyncVideo();
             }
