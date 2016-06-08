@@ -17,89 +17,48 @@ namespace VeegStation
         /// <summary>
         /// Montage mode 一般为"[MON]"
         /// </summary>
-        private byte _MontageMode;     
-        public byte MontageMode
-        {
-            get { return _MontageMode; }
-            set { _MontageMode = value; }
-        }
-
+        private byte montageMode;     
+        
         /// <summary>
         /// Electrorode number
         /// </summary>
-        private byte _MontageRoutes;  
-        public byte MontageRoutes
-        {
-            get { return _MontageRoutes; }
-            set { _MontageRoutes = value; }
-        }
-
+        private byte montageRoutes;  
+        
         /// <summary>
         /// 相对导名
         /// </summary>
-        private string[] _FirstName; 
-        public string[] FirstName
-        {
-            get { return _FirstName; }
-            set { _FirstName = value; }
-        }
+        private string[] firstName; 
 
         /// <summary>
         /// 基导名
         /// </summary>
-        private string[] _SecondName; 
-        public string[] SecondName
-        {
-            get { return _SecondName; }
-            set { _SecondName = value; }
-        }
-
+        private string[] secondName; 
+        
         /// <summary>
         /// 相对导ID
         /// </summary>
-        private string[] _FirstID;
-        public string[] FirstID
-        {
-            get { return _FirstID; }
-            set { _FirstID = value; }
-        }
-
+        private string[] firstID;
+        
         /// <summary>
         /// 基导名ID
         /// </summary>
-        private string[] _SecondID; 
-        public string[] SecondID
-        {
-            get { return _SecondID; }
-            set { _SecondID = value; }
-        }
+        private string[] secondID; 
         
         /// <summary>
         /// 导联名称
         /// </summary>
-        private string _Name;
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; }
-        }
-        private short _Flag;
-        public short Flag
-        {
-            get { return _Flag; }
-            set { _Flag = value; }
-        }
-
+        private string name;
+        
+        /// <summary>
+        /// 标识
+        /// </summary>
+        private short flag;
+        
         /// <summary>
         /// 导联备注
         /// </summary>
-        private string _Note;
-        public string Note
-        {
-            get { return _Note; }
-            set { _Note = value; }
-        }
-
+        private string note;
+        
         /// <summary>
         /// 脑电盒支持的最高配置如P41,即导联数目,对应关系如下
         /// P10   8导脑电
@@ -110,33 +69,89 @@ namespace VeegStation
         /// P40   32导脑电
         /// P41   32导脑电+多参数
         /// </summary>
-        private string _szSetting;   
-        public string SzSetting
-        {
-            get { return _szSetting; }
-            set { _szSetting = value; }
-        }
-                                          
-
+        private string szSetting;   
+                            
         /// <summary>
         /// 最高配置的含义 例：8导脑电 
         /// </summary>
-        private string _szNote; 
-        public string SzNote
-        {
-            get { return _szNote; }
-            set { _szNote = value; }
-        }
+        private string szNote; 
 
         /// <summary>
         /// 导联源
         /// </summary>
-        private ArrayList _LeadSource;
+        private ArrayList leadSource;
+        #endregion
+        #region 访问器
+        public byte MontageMode
+        {
+            get { return montageMode; }
+            set { montageMode = value; }
+        }
+
+        public byte MontageRoutes
+        {
+            get { return montageRoutes; }
+            set { montageRoutes = value; }
+        }
+
+        public string[] FirstName
+        {
+            get { return firstName; }
+            set { firstName = value; }
+        }
+
+        public string[] SecondName
+        {
+            get { return secondName; }
+            set { secondName = value; }
+        }
+
+        public string[] FirstID
+        {
+            get { return firstID; }
+            set { firstID = value; }
+        }
+
+        public string[] SecondID
+        {
+            get { return secondID; }
+            set { secondID = value; }
+        }
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public short Flag
+        {
+            get { return flag; }
+            set { flag = value; }
+        }
+
+        public string Note
+        {
+            get { return note; }
+            set { note = value; }
+        }
+
+        public string SzSetting
+        {
+            get { return szSetting; }
+            set { szSetting = value; }
+        }
+
+        public string SzNote
+        {
+            get { return szNote; }
+            set { szNote = value; }
+        }
 
         public ArrayList LeadSource
         {
-            get { return _LeadSource; }
-            set { _LeadSource = value; }
+            get { return leadSource; }
+            set { leadSource = value; }
         }
         #endregion
 
@@ -148,10 +163,10 @@ namespace VeegStation
 
         public Montage(int num)
         {
-            _FirstName = new string[num];
-            _SecondName = new string[num];
-            _FirstID = new string[num];
-            _SecondID = new string[num];
+            firstName = new string[num];
+            secondName = new string[num];
+            firstID = new string[num];
+            secondID = new string[num];
         }
 
         public Montage(byte[] montageInfo) 
@@ -188,44 +203,45 @@ namespace VeegStation
 
                 //脑电盒支持的最高配置
                 byte[] szSettingBuf = Util.getFixedLengthByteArray(montageInfo, fileIndex, FixedLength_SzSetting);
-                this._szSetting = Encoding.GetEncoding(936).GetString(szSettingBuf).Trim();
+                this.szSetting = Encoding.GetEncoding(936).GetString(szSettingBuf).Trim();
                 fileIndex += FixedLength_SzSetting;
 
                 //最高配置的含义
                 byte[] szNoteBuf = Util.getFixedLengthByteArray(montageInfo, fileIndex, FixedLength_SzNote);
-                this._szNote = Encoding.GetEncoding(936).GetString(szNoteBuf).Trim();
+                this.szNote = Encoding.GetEncoding(936).GetString(szNoteBuf).Trim();
 
                 //定义导联源
-                switch (this._szSetting)
+                switch (this.szSetting)
                 {
                     case "P10":                 //8导脑电
-                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "T3", "T4", "C3", "C4", "O1", "O2", "A1", "A2" };
+                        this.leadSource = new ArrayList() { "Fp1", "Fp2", "T3", "T4", "C3", "C4", "O1", "O2", "A1", "A2" };
                         break;
                     case "P11":                 //8导脑电+多参数
-                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "T3", "T4", "C3", "C4", "O1", "O2", "A1", "A2" };
+                        this.leadSource = new ArrayList() { "Fp1", "Fp2", "T3", "T4", "C3", "C4", "O1", "O2", "A1", "A2" };
                         break;
                     case "P20":                 //16导脑电
-                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Sp1", "Sp2", "A1", "A2" };
+                        this.leadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Sp1", "Sp2", "A1", "A2" };
                         break;
                     case "P21":                 //16导脑电+多参数
-                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Cz", "Pz", "A1", "A2" };
+                        this.leadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Cz", "Pz", "A1", "A2" };
                         break;
                     case "P30":                 //24导脑电
-                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Fz", "Cz", "Pz", "Oz", "Cp3", "Cp4", "Po3", "Po4", "A1", "A2" };
+                        this.leadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "Fz", "Cz", "Pz", "Oz", 
+                                                            "Cp3", "Cp4", "Po3", "Po4", "A1", "A2" };
                         break;
                     case "P40":                 //32导脑电
-                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "AF3", "AF4", "Fc3",
-                                                             "Fc4", "Cp3", "Cp4", "Po3", "Po4", "FT7", "FT8", "Cp7", "Cp8", "Fz", "Cz", "Pz", "Oz", "Sp1", "Sp2", "A1", "A2" };                                
+                        this.leadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "AF3", "AF4", "Fc3",
+                                                            "Fc4", "Cp3", "Cp4", "Po3", "Po4", "FT7", "FT8", "Cp7", "Cp8", "Fz", "Cz", "Pz", "Oz", "Sp1", "Sp2", "A1", "A2" };                                
                         break;
                     case "P41":                 //32导脑电+多参数
-                        this._LeadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "AF3", "AF4", "Fc3",
-                                                             "Fc4", "Cp3", "Cp4", "Po3", "Po4", "FT7", "FT8", "Cp7", "Cp8", "Fz", "Cz", "Pz", "Oz", "Sp1", "Sp2", "A1", "A2" };                          
+                        this.leadSource = new ArrayList() { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "AF3", "AF4", "Fc3",
+                                                            "Fc4", "Cp3", "Cp4", "Po3", "Po4", "FT7", "FT8", "Cp7", "Cp8", "Fz", "Cz", "Pz", "Oz", "Sp1", "Sp2", "A1", "A2" };                          
                         break;
                     default:
                         break;
                 }
 
-                Debug.WriteLine(string.Format("MontageInfo {0},{1}", this._szSetting,this._szNote));
+                Debug.WriteLine(string.Format("MontageInfo {0},{1}", this.szSetting,this.szNote));
             }
         }
     }

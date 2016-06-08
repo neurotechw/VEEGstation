@@ -15,194 +15,214 @@ namespace VeegStation
         /// <summary>
         /// 姓名
         /// </summary>
-        private string _Name;
+        private string name;
 
-        public string Name
-        {
-            get { return _Name; }
-            set { _Name = value; }
-        } 
         /// <summary>
         /// 性别
         /// </summary>
-        private string _Gender;
+        private string gender;
 
-        public string Gender
-        {
-            get { return _Gender; }
-            set { _Gender = value; }
-        }	 
         /// <summary>
         /// 检查号
         /// </summary>
-        private string _ID;
+        private string id;
 
-        public string ID
-        {
-            get { return _ID; }
-            set { _ID = value; }
-        }		 
         /// <summary>
         /// 病人年龄
         /// </summary>
-        private string _Age;
+        private string age;
 
-        public string Age
-        {
-            get { return _Age; }
-            set { _Age = value; }
-        }	         
         /// <summary>
         /// 左右利
         /// </summary>
-        private string _Handedness;
+        private string handedness;
 
-        public string Handedness
-        {
-            get { return _Handedness; }
-            set { _Handedness = value; }
-        }	
         /// <summary>
         /// 状态
         /// </summary>
-        private string _State;
+        private string state;
 
-        public string State
-        {
-            get { return _State; }
-            set { _State = value; }
-        }	
         /// <summary>
         /// 申请医师
         /// </summary>
-        private string _ResidentDoctor;
+        private string residentDoctor;
 
-        public string ResidentDoctor
-        {
-            get { return _ResidentDoctor; }
-            set { _ResidentDoctor = value; }
-        }	 
         /// <summary>
         /// 检查类型
         /// </summary>
-        private string _Type;
+        private string type;
 
-        public string Type
-        {
-            get { return _Type; }
-            set { _Type = value; }
-        }	
         /// <summary>
         /// 门诊号
         /// </summary>
-        private string _OutPatient;
+        private string outPatient;
 
-        public string OutPatient
-        {
-            get { return _OutPatient; }
-            set { _OutPatient = value; }
-        }	 
         /// <summary>
         /// 住院号
         /// </summary>
-        private string _AdmissionNumber;
+        private string admissionNumber;
 
-        public string AdmissionNumber
-        {
-            get { return _AdmissionNumber; }
-            set { _AdmissionNumber = value; }
-        }	 
         /// <summary>
         /// 操作医生
         /// </summary>
-        private string _OperateDoctor;
+        private string operateDoctor;
 
-        public string OperateDoctor
-        {
-            get { return _OperateDoctor; }
-            set { _OperateDoctor = value; }
-        } 
         /// <summary>
         /// 诊断
         /// </summary>
-        private string _Diagnosis;
+        private string diagnosis;
 
-        public string Diagnosis
-        {
-            get { return _Diagnosis; }
-            set { _Diagnosis = value; }
-        } 
         /// <summary>
         /// 既往病史
         /// </summary>
-        private string _History;
+        private string history;
 
-        public string History
-        {
-            get { return _History; }
-            set { _History = value; }
-        }	 
         /// <summary>
         /// 用药
         /// </summary>
-        private string _Medicine;
+        private string medicine;
 
-        public string Medicine
-        {
-            get { return _Medicine; }
-            set { _Medicine = value; }
-        }	 
         /// <summary>
         /// 归档
         /// </summary>
-        private string _Archives;
+        private string archives;
 
-        public string Archives
-        {
-            get { return _Archives; }
-            set { _Archives = value; }
-        }        
         /// <summary>
         /// 备注
         /// </summary>
-        private string _Note;
+        private string note;
 
-        public string Note
-        {
-            get { return _Note; }
-            set { _Note = value; }
-        }      
         /// <summary>
         /// 病区
         /// </summary>
-        private string _BingQu;
+        private string bingQu;
 
-        public string BingQu
-        {
-            get { return _BingQu; }
-            set { _BingQu = value; }
-        }
         /// <summary>
         /// 床号
         /// </summary>
-        private string _ChuangHao;
+        private string chuangHao;
 
-        public string ChuangHao
-        {
-            get { return _ChuangHao; }
-            set { _ChuangHao = value; }
-        }
         /// <summary>
         /// 科室
         /// </summary>
-        private string _KeShi;
+        private string keShi;
+        //private string FilePath;
+        #endregion
+
+        #region 访问器
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+        public string Gender
+        {
+            get { return gender; }
+            set { gender = value; }
+        }
+
+        public string ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        public string Age
+        {
+            get { return age; }
+            set { age = value; }
+        }
+
+        public string Handedness
+        {
+            get { return handedness; }
+            set { handedness = value; }
+        }
+
+        public string State
+        {
+            get { return state; }
+            set { state = value; }
+        }
+
+        public string ResidentDoctor
+        {
+            get { return residentDoctor; }
+            set { residentDoctor = value; }
+        }
+
+        public string Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
+
+        public string OutPatient
+        {
+            get { return outPatient; }
+            set { outPatient = value; }
+        }
+
+        public string AdmissionNumber
+        {
+            get { return admissionNumber; }
+            set { admissionNumber = value; }
+        }
+
+        public string OperateDoctor
+        {
+            get { return operateDoctor; }
+            set { operateDoctor = value; }
+        }
+
+        public string Diagnosis
+        {
+            get { return diagnosis; }
+            set { diagnosis = value; }
+        }
+
+        public string History
+        {
+            get { return history; }
+            set { history = value; }
+        }
+
+        public string Medicine
+        {
+            get { return medicine; }
+            set { medicine = value; }
+        }
+
+        public string Archives
+        {
+            get { return archives; }
+            set { archives = value; }
+        }
+
+        public string Note
+        {
+            get { return note; }
+            set { note = value; }
+        }
+
+        public string BingQu
+        {
+            get { return bingQu; }
+            set { bingQu = value; }
+        }
+
+        public string ChuangHao
+        {
+            get { return chuangHao; }
+            set { chuangHao = value; }
+        }
 
         public string KeShi
         {
-            get { return _KeShi; }
-            set { _KeShi = value; }
+            get { return keShi; }
+            set { keShi = value; }
         }
-        //private string FilePath;
         #endregion
 
         #region 定义每个内容占的字节
@@ -246,6 +266,7 @@ namespace VeegStation
 
         public void ParsePatInfo(byte[] patientInfo) 
         {
+            //将null转化为""
             int i = 0;
             foreach (char c in patientInfo)
             {
@@ -255,7 +276,6 @@ namespace VeegStation
                 }
                 i++;
             }
-
 
             int fileIndex = 0;
 
@@ -268,87 +288,87 @@ namespace VeegStation
             {
                 //姓名
                 byte[] name = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Name);
-                this._Name = Encoding.GetEncoding(936).GetString(name).Trim();
+                this.name = Encoding.GetEncoding(936).GetString(name).Trim();
                 fileIndex += FixedLength_Name;
 
                 //性别
                 byte[] gender = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Gender);
-                this._Gender = Encoding.GetEncoding(936).GetString(gender).Trim();
+                this.gender = Encoding.GetEncoding(936).GetString(gender).Trim();
                 fileIndex += FixedLength_Gender;
 
                 //ID
                 byte[] id = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_ID);
-                this._ID = Encoding.GetEncoding(936).GetString(id).Trim();
+                this.id = Encoding.GetEncoding(936).GetString(id).Trim();
                 fileIndex += FixedLength_ID;
 
                 //年龄
                 byte[] age = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Age);
-                this._Age = Encoding.GetEncoding(936).GetString(age).Trim();
+                this.age = Encoding.GetEncoding(936).GetString(age).Trim();
                 fileIndex += FixedLength_Age;
 
                 //左右利
                 byte[] handedness = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Handedness);
-                this._Handedness = Encoding.GetEncoding(936).GetString(handedness).Trim();
+                this.handedness = Encoding.GetEncoding(936).GetString(handedness).Trim();
                 fileIndex += FixedLength_Handedness;
 
                 //状态
                 byte[] state = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_State);
-                this._State = Encoding.GetEncoding(936).GetString(state).Trim();
+                this.state = Encoding.GetEncoding(936).GetString(state).Trim();
                 fileIndex += FixedLength_State;
 
                 //申请医生
                 byte[] residentDoctor = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_ResidentDoctor);
-                this._ResidentDoctor = Encoding.GetEncoding(936).GetString(residentDoctor).Trim();
+                this.residentDoctor = Encoding.GetEncoding(936).GetString(residentDoctor).Trim();
                 fileIndex += FixedLength_ResidentDoctor;
 
                 //门诊号
                 byte[] outPatient = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_OutPatient);
-                this._OutPatient = Encoding.GetEncoding(936).GetString(outPatient).Trim();
+                this.outPatient = Encoding.GetEncoding(936).GetString(outPatient).Trim();
                 fileIndex += FixedLength_OutPatient;
 
                 //住院号
                 byte[] admissionNumber = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_AdmissionNumber);
-                this._AdmissionNumber = Encoding.GetEncoding(936).GetString(admissionNumber).Trim();
+                this.admissionNumber = Encoding.GetEncoding(936).GetString(admissionNumber).Trim();
                 fileIndex += FixedLength_AdmissionNumber;
 
                 //操作医生
                 byte[] operateDoctor = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_OperateDoctor);
-                this._OperateDoctor = Encoding.GetEncoding(936).GetString(operateDoctor).Trim();
+                this.operateDoctor = Encoding.GetEncoding(936).GetString(operateDoctor).Trim();
                 fileIndex += FixedLength_OperateDoctor;
 
                 //诊断
                 byte[] diagnosis = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Diagnosis);
-                this._Diagnosis = Encoding.GetEncoding(936).GetString(diagnosis).Trim();
+                this.diagnosis = Encoding.GetEncoding(936).GetString(diagnosis).Trim();
                 fileIndex += FixedLength_Diagnosis;
 
                 //病史
                 byte[] history = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_History);
-                this._History = Encoding.GetEncoding(936).GetString(history).Trim();
+                this.history = Encoding.GetEncoding(936).GetString(history).Trim();
                 fileIndex += FixedLength_History;
                 
                 //用药
                 byte[] medicine = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Medicine);
-                this._Medicine = Encoding.GetEncoding(936).GetString(medicine).Trim();
+                this.medicine = Encoding.GetEncoding(936).GetString(medicine).Trim();
                 fileIndex += FixedLength_Medicine;
 
                 //备注
                 byte[] note = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Note);
-                this._Note = Encoding.GetEncoding(936).GetString(note).Trim();
+                this.note = Encoding.GetEncoding(936).GetString(note).Trim();
                 fileIndex += FixedLength_Note;
 
                 //病区
                 byte[] bingqu = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_BingQu);
-                this._BingQu = Encoding.GetEncoding(936).GetString(bingqu).Trim();
+                this.bingQu = Encoding.GetEncoding(936).GetString(bingqu).Trim();
                 fileIndex += FixedLength_BingQu;
 
                 //床号
                 byte[] chuanghao = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_ChuangHao);
-                this._ChuangHao = Encoding.GetEncoding(936).GetString(chuanghao).Trim();
+                this.chuangHao = Encoding.GetEncoding(936).GetString(chuanghao).Trim();
                 fileIndex += FixedLength_ChuangHao;
 
                 //科室
                 byte[] keshi = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_KeShi);
-                this._KeShi = Encoding.GetEncoding(936).GetString(keshi).Trim();
+                this.keShi = Encoding.GetEncoding(936).GetString(keshi).Trim();
                 fileIndex += FixedLength_KeShi;
             }
             Debug.WriteLine(string.Format("Patient {0}", this.Name));
@@ -356,7 +376,7 @@ namespace VeegStation
 
 
         /// <summary>
-        /// 消零
+        /// 消零,暂未用到 --by xjg
         /// </summary>
         /// <param name="Source"></param>
         /// <returns></returns>

@@ -64,7 +64,7 @@ namespace VeegStation
         private void VideoForm_Load_1(object sender, EventArgs e)
         {
             m_ptCanvas = this.pictureBox_Video.Location;
-            if (playBack._nfi == null)
+            if (playBack.nfi == null)
             {
                 Close();
                 return;
@@ -80,10 +80,10 @@ namespace VeegStation
 
             //宽高比（4：3，16：9等等）
             Player.AspectRatio = AspectRatioMode.Mode2; 
-            if (playBack._nfi.HasVideo)
+            if (playBack.nfi.HasVideo)
             {
                 //获得media视频文件
-                Media = factory.CreateMedia<IMediaFromFile>(playBack._nfi.VideoFullName);
+                Media = factory.CreateMedia<IMediaFromFile>(playBack.nfi.VideoFullName);
 
                 //打开该文件
                 Player.Open(Media);
@@ -104,7 +104,7 @@ namespace VeegStation
         public void Play()
         {
             Player.Play();
-            Player.Time = (long)playBack._nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + (long)playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+            Player.Time = (long)playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + (long)playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
         }
 
         //暂停函数
@@ -121,7 +121,7 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btn_play_Click(object sender, EventArgs e)
         {
-            if (playBack.CurrentOffset >= playBack._nfi.Duration.TotalSeconds)
+            if (playBack.CurrentOffset >= playBack.nfi.Duration.TotalSeconds)
             {
                 playBack.Clear();
             }
@@ -158,6 +158,7 @@ namespace VeegStation
             this.Hide();
             playBack.timer.Enabled = false;
             playBack.Pause();
+            Player.Pause();
         }
 
         /// <summary>
