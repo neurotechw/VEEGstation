@@ -367,10 +367,11 @@ namespace VeegStation
                 foreach (int off in Enumerable.Range(0, numberOfPerData))
                 {
                     eeg.Add(Util.RawToSignal((short)(buf[indexOfData + 2 * off] | (buf[indexOfData + 1 + 2 * off] << 8))));
-                    if (off == 1)
+                    //测试代码 --by zt
+                    if (off == 0)
                     {
                         testList.Add(eeg[off]);
-                        //Console.WriteLine(eeg[1]);
+                        Console.WriteLine(eeg[off]);
                     }
                 }
                 //其余的用0补全
@@ -460,7 +461,7 @@ namespace VeegStation
                         continue;
                     }
                     double val = _packets[tIdx].EEG[sIdx];
-                    val /= 20;
+                    //val /= 20;   //修改，注释掉  --by zt
                     val = val * interval * 10 / _Sensitivity / _mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                     //val += (2000 - 100 * sIdx - 50);
                     val += (2000D - interval * (sIdx - _currentTopSignal) - interval / 2);
@@ -1533,6 +1534,38 @@ namespace VeegStation
         {
             System.Diagnostics.Debug.WriteLine("sizechanged" + DateTime.Now);
             this.labelPanel.Invalidate();
+        }
+
+        /// <summary>
+        /// 鼠标放上去显示点的值，测试代码，正式版删掉。  --by zt
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chartWave_GetToolTipText(object sender, ToolTipEventArgs e)
+        {
+            switch (e.HitTestResult.ChartElementType)
+            {
+                //鼠标所在位置为数据点
+                case ChartElementType.DataPoint:
+
+                    //获取点的横坐标，第几个点
+                    int i = e.HitTestResult.PointIndex;
+
+                    //点所在的通道
+                    int j = Convert.ToInt32(e.HitTestResult.Series.Name.Split('s')[1])-1;
+
+                    //坐标点
+                    DataPoint dp = e.HitTestResult.Series.Points[i - 1];
+
+                    //还原数值
+                    double interval = 2000D / _signalNum;
+                    double YValue = (dp.YValues[0] - (2000D - interval * (j - _currentTopSignal) - interval / 2));
+                    YValue = YValue * _mmPerYGrid * _Sensitivity / 10 / interval;
+
+                    //显示数值
+                    e.Text = YValue.ToString();
+                    break;
+            }
         }
     }
 }
