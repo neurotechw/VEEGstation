@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,134 +15,257 @@ using Declarations.Media;
 using Implementation;
 namespace VeegStation
 {
+    /// <summary>
+    /// 弹出视频Form
+    /// --by wsp
+    /// </summary>
     public partial class VideoForm : Form
     {
-        public IVideoPlayer player;
-        public IMedia _media;
-        PlaybackForm playback;
-  //      public NationFileInfo _nfi = null;
+        /// <summary>
+        /// 定义播放器
+        /// </summary>
+        public IVideoPlayer Player;
+
+        /// <summary>
+        /// 定义视频media
+        /// </summary>
+        public IMedia Media;
+
+        /// <summary>
+        /// 定义回放Form
+        /// </summary>
+        PlaybackForm playBack;
+
+        /// <summary>
+        /// 定义视频点击放大缩小比例
+        /// </summary>
+        double scale=0.5;
+
+        /// <summary>
+        /// 定义pictureBox的X，Y位置
+        /// </summary>
+        int x;
+        int y;
+
+        /// <summary>
+        /// 定义pictureBox的宽度，高度
+        /// </summary>
+        int width;
+        int height;
+
         public VideoForm(PlaybackForm playbackform)
         {
             InitializeComponent();
-     //       _nfi = EegFile;
-            playback = playbackform;
+            playBack = playbackform;
             this.ControlBox = false;
-            this.pictureBox_Video.MouseWheel += new MouseEventHandler(pictureBox_Video_MouseWheel);
         }
+
+         Point m_ptCanvas;
         private void VideoForm_Load_1(object sender, EventArgs e)
-        {    
-            if (playback._nfi == null)
+        {
+            m_ptCanvas = this.pictureBox_Video.Location;
+            if (playBack.nfi == null)
             {
                 Close();
                 return;
             }
+
             IMediaPlayerFactory factory = new MediaPlayerFactory();
-            player = factory.CreatePlayer<IVideoPlayer>();
-        //    player.WindowHandle = panel_Mvideo.Handle;
-            player.WindowHandle = pictureBox_Video.Handle;
-            player.AspectRatio = AspectRatioMode.Mode2; // fill?
-            if (playback._nfi.HasVideo)
+
+            //创建播放器
+            Player = factory.CreatePlayer<IVideoPlayer>();
+
+            //窗口句柄（在picture_Box上播放视频）
+            Player.WindowHandle = pictureBox_Video.Handle;
+
+            //宽高比（4：3，16：9等等）
+            Player.AspectRatio = AspectRatioMode.Mode2; 
+            if (playBack.nfi.HasVideo)
             {
-                _media = factory.CreateMedia<IMediaFromFile>(playback._nfi.VideoFullName);
-                player.Open(_media);
-                player.Time = (long)playback._nfi.VideoOffset * 1000;
-                player.Pause();
-            }
+                //获得media视频文件
+                Media = factory.CreateMedia<IMediaFromFile>(playBack.nfi.VideoFullName);
+
+                //打开该文件
+                Player.Open(Media);
+
+                Player.Pause();       
+             }
+
+             //获得picturebox的X,Y值，宽，高
+             x = this.pictureBox_Video.Location.X;
+             y = this.pictureBox_Video.Location.Y;
+             width = this.pictureBox_Video.Width;
+             height = this.pictureBox_Video.Height;
         }
+
+        /// <summary>
+        /// 播放函数
+        /// </summary>
         public void Play()
         {
-            player.Play();
-            player.Time = (long)playback._nfi.VideoOffset * 1000 + playback.CurrentSeconds * 1000 + (long)playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+            Player.Play();
+            Player.Time = (long)playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + (long)playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
         }
+
+        //暂停函数
         public void Pause()
         {
-            player.Pause();
+            Player.Pause();
         }
+
+        /// <summary>
+        /// 播放事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_play_Click(object sender, EventArgs e)
         {
-//            if (playback._currentSeconds + playback.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= playback._nfi.Duration.TotalSeconds)
-            if (playback._CurrentOffset >= playback._nfi.Duration.TotalSeconds)
+            if (playBack.CurrentOffset >= playBack.nfi.Duration.TotalSeconds)
             {
-                playback.clear();
+                playBack.Clear();
             }
-            if (!playback._player.IsPlaying)
+            if (!playBack.Player.IsPlaying)
             {
                Play();
-               playback.Play();
+               playBack.Play();
             }
             btn_play.Enabled = false;
             btn_pause.Enabled = true;
         }
 
+        /// <summary>
+        /// 暂停事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_pause_Click(object sender, EventArgs e)
         {
             Pause();
-            playback.Pause();
+            playBack.Pause();
             btn_pause.Enabled = false;
             btn_play.Enabled = true;
         }
 
+        /// <summary>
+        /// 关闭窗口事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_close_Click(object sender, EventArgs e)
         {
+            //这里并不是销毁Form,只是隐藏，否则视频将不与回放Form同步
             this.Hide();
-            playback.timer.Enabled = false;
-            playback.Pause();
+            playBack.timer.Enabled = false;
+            playBack.Pause();
         }
 
+        /// <summary>
+        /// 加速事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btn_accelerate_Click(object sender, EventArgs e)
         {
-            player.PlaybackRate = player.PlaybackRate * 2;
-            playback._player.PlaybackRate = player.PlaybackRate;
-            playback.speed = player.PlaybackRate;
+            //倍速过大，视频花屏，需要设置阈值
+            if (playBack.Speed <= 4)
+            {
+                btn_decelerate.Enabled = true;
+                btn_accelerate.Enabled = true;
+                Player.PlaybackRate = Player.PlaybackRate * 2;
+                playBack.Player.PlaybackRate = Player.PlaybackRate;
+                playBack.Speed = Player.PlaybackRate;
+                playBack.btn_decelerate.Enabled = true;
+                playBack.btn_accelerate.Enabled = true;
+            }
+            else
+            {
+                btn_accelerate.Enabled = false;
+                playBack.btn_accelerate.Enabled = false;
+            }
         }
 
-        private void btn_decelerate_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 鼠标单击事件（鼠标中心点进行放大）
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void pictureBox1_MouseClick_1(object sender, MouseEventArgs e)
         {
-            player.PlaybackRate = player.PlaybackRate / 2;
-            playback._player.PlaybackRate = player.PlaybackRate;
-            playback.speed = player.PlaybackRate;
-           // player.Position = 100;
-        }
-        Point pt;
-        private void panel_Mvideo_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Middle)
+
+            //左键点击是进行放大的
+            if (e.Button == MouseButtons.Left)
             {
+                //不能无限制放大，否则视频画面变得非常模糊
+                if (pictureBox_Video.Height <height *2 && pictureBox_Video.Width <width * 2)
+                {
+                    //相似三角形推导出的数学公式
+                    Point pt = new Point((int)(scale * (this.pictureBox_Video.Location.X - e.Location.X)), (int)(scale * (this.pictureBox_Video.Location.Y - e.Location.Y)));
+                    pictureBox_Video.Location = pt;
+                    pictureBox_Video.Height = (int)(pictureBox_Video.Height * 1.5);
+                    pictureBox_Video.Width = (int)(pictureBox_Video.Width * 1.5);
+                }
+            }
+            if (e.Button == MouseButtons.Right)
+            {            
+                //鼠标右键点击是回到初始状态，之所以不返回上一个状态是因为Location发生了变化，不能保证回到上一个状态不出现大的误差
+                    Point pt = new Point(x, y);
+                    pictureBox_Video.Location = pt;
+                    pictureBox_Video.Height = height;
+                    pictureBox_Video.Width = width;
+            }
+        }
+
+        /// <summary>
+        /// 减速事件
+        ///--by wsp
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btn_decelerate_Click_1(object sender, EventArgs e)
+        {
+            if (playBack.Speed >= 0.5)
+            {
+                btn_accelerate.Enabled = true;
+                btn_decelerate.Enabled = true;
+                Player.PlaybackRate = Player.PlaybackRate / 2;
+                playBack.Player.PlaybackRate = Player.PlaybackRate;
+                playBack.Speed = Player.PlaybackRate;
+                playBack.btn_accelerate.Enabled = true;
+                playBack.btn_decelerate.Enabled = true;
+            }
+            else
+            {
+                btn_decelerate.Enabled = false;
+                playBack.btn_decelerate.Enabled = false;
+            }
+        }
+
+        #region 拖动查看不同视频的部分
+        /// <summary>
+        /// 鼠标拖动事件
+        /// </summary>
+        Point pt;
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                //拖动鼠标左键，计算鼠标的位置和pictureBox_Video位置进行计算
                 int px = System.Windows.Forms.Control.MousePosition.X - pt.X;
                 int py = System.Windows.Forms.Control.MousePosition.Y - pt.Y;
                 pictureBox_Video.Location = new Point(pictureBox_Video.Location.X + px, pictureBox_Video.Location.Y + py);
                 pt = System.Windows.Forms.Control.MousePosition;
             }
         }
-        private void panel_Mvideo_MouseDown(object sender, MouseEventArgs e)
-        {
-           pt = System.Windows.Forms.Control.MousePosition;
-        }
 
-        private void panel_Mvideo_MouseClick(object sender, MouseEventArgs e)
+        /// <summary>
+        /// 鼠标释放事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left && e.Clicks == 1)
-            {
-                if (player.VideoScale < 1.0f)
-                    player.VideoScale += 0.5f;
-                else
-                    MessageBox.Show("放大到最大化","提示");
-            }
-            else if (e.Button == MouseButtons.Right && e.Clicks == 1)
-            {
-                if (player.VideoScale > 0.0f)
-                    player.VideoScale -= 0.5f;
-                else
-                    MessageBox.Show("缩小到最小化", "提示");
-            }
+            pt = System.Windows.Forms.Control.MousePosition;
         }
-        private void pictureBox_Video_MouseWheel(object sender, MouseEventArgs e)
-        {
-            //this.pictureBox_Video.Width += e.Delta;
-            //this.pictureBox_Video.Height += e.Delta;
-            this.Width += e.Delta;
-            this.Height += e.Delta;
-            MessageBox.Show("滚动了滑轮","提示");
-        }
+        #endregion
     }
 }

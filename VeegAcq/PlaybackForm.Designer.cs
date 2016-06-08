@@ -1,3 +1,4 @@
+
 namespace VeegStation
 {
     partial class PlaybackForm
@@ -332,11 +333,10 @@ namespace VeegStation
             this.chartWave.Size = new System.Drawing.Size(880, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
-            this.chartWave.GetToolTipText += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.ToolTipEventArgs>(this.chartWave_GetToolTipText);
-            this.chartWave.ClientSizeChanged += new System.EventHandler(this.chartSizeChanged);
-            this.chartWave.Click += new System.EventHandler(this.chartwave_Click);
-            this.chartWave.Paint += new System.Windows.Forms.PaintEventHandler(this.chartPaint);
-            this.chartWave.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mouseMoveOnChart);
+            this.chartWave.ClientSizeChanged += new System.EventHandler(this.ChartSizeChanged);
+            this.chartWave.Click += new System.EventHandler(this.Chartwave_Click);
+            this.chartWave.Paint += new System.Windows.Forms.PaintEventHandler(this.ChartPaint);
+            this.chartWave.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveOnChart);
             // 
             // timer
             // 
@@ -351,7 +351,7 @@ namespace VeegStation
             this.hsProgress.Name = "hsProgress";
             this.hsProgress.Size = new System.Drawing.Size(933, 17);
             this.hsProgress.TabIndex = 4;
-            this.hsProgress.MouseCaptureChanged += new System.EventHandler(this.hsProgress_MouseCaptureChanged);
+            this.hsProgress.MouseCaptureChanged += new System.EventHandler(this.HSProgress_MouseCaptureChanged);
             // 
             // PationInfo
             // 
@@ -723,14 +723,14 @@ namespace VeegStation
             this.calibrateYToolStripMenuItem.Name = "calibrateYToolStripMenuItem";
             this.calibrateYToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.calibrateYToolStripMenuItem.Text = "Y轴校准";
-            this.calibrateYToolStripMenuItem.Click += new System.EventHandler(this.calibrateYToolStripMenuItem_Click);
+            this.calibrateYToolStripMenuItem.Click += new System.EventHandler(this.CalibrateYToolStripMenuItem_Click);
             // 
             // calibrateXToolStripMenuItem
             // 
             this.calibrateXToolStripMenuItem.Name = "calibrateXToolStripMenuItem";
             this.calibrateXToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.calibrateXToolStripMenuItem.Text = "X轴校准";
-            this.calibrateXToolStripMenuItem.Click += new System.EventHandler(this.calibrateXToolStripMenuItem_Click);
+            this.calibrateXToolStripMenuItem.Click += new System.EventHandler(this.CalibrateXToolStripMenuItem_Click);
             // 
             // interfaceToolStripMenuItem
             // 
@@ -746,7 +746,7 @@ namespace VeegStation
             this.boardToolStripMenuItem.Name = "boardToolStripMenuItem";
             this.boardToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.boardToolStripMenuItem.Text = "面板";
-            this.boardToolStripMenuItem.Click += new System.EventHandler(this.boardToolStripMenuItem_Click);
+            this.boardToolStripMenuItem.Click += new System.EventHandler(this.BoardToolStripMenuItem_Click);
             // 
             // eventToolStripMenuItem
             // 
@@ -763,14 +763,14 @@ namespace VeegStation
             this.predefineEventstoolstripmenuItem.Name = "predefineEventstoolstripmenuItem";
             this.predefineEventstoolstripmenuItem.Size = new System.Drawing.Size(134, 22);
             this.predefineEventstoolstripmenuItem.Text = "预定义事件";
-            this.predefineEventstoolstripmenuItem.Click += new System.EventHandler(this.events_Click);
+            this.predefineEventstoolstripmenuItem.Click += new System.EventHandler(this.Events_Click);
             // 
             // customeEventstoolstripmenuItem
             // 
             this.customeEventstoolstripmenuItem.Name = "customeEventstoolstripmenuItem";
             this.customeEventstoolstripmenuItem.Size = new System.Drawing.Size(134, 22);
             this.customeEventstoolstripmenuItem.Text = "自定义事件";
-            this.customeEventstoolstripmenuItem.Click += new System.EventHandler(this.events_Click);
+            this.customeEventstoolstripmenuItem.Click += new System.EventHandler(this.Events_Click);
             // 
             // btn_accelerate
             // 
@@ -829,7 +829,7 @@ namespace VeegStation
             this.vScroll.Name = "vScroll";
             this.vScroll.Size = new System.Drawing.Size(17, 492);
             this.vScroll.TabIndex = 14;
-            this.vScroll.MouseCaptureChanged += new System.EventHandler(this.vScrollBar_mouseCapture);
+            this.vScroll.MouseCaptureChanged += new System.EventHandler(this.VScrollBar_mouseCapture);
             // 
             // labelPanel
             // 
@@ -839,7 +839,7 @@ namespace VeegStation
             this.labelPanel.Name = "labelPanel";
             this.labelPanel.Size = new System.Drawing.Size(62, 494);
             this.labelPanel.TabIndex = 15;
-            this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.drawLabelPanel);
+            this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawLabelPanel);
             // 
             // PlaybackForm
             // 
@@ -864,7 +864,7 @@ namespace VeegStation
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PlaybackForm_FormClosed);
             this.Load += new System.EventHandler(this.PlaybackForm_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.formPaint);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.FormPaint);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -946,8 +946,8 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripStatusLabel displayRecordingTime;
         private System.Windows.Forms.ToolStripStatusLabel toolStriplabel_totaltime;
         private System.Windows.Forms.ToolStripStatusLabel displayTotalTime;
-        private System.Windows.Forms.Button btn_accelerate;
-        private System.Windows.Forms.Button btn_decelerate;
+        public System.Windows.Forms.Button btn_accelerate;
+        public System.Windows.Forms.Button btn_decelerate;
         private System.Windows.Forms.Button btn_hide;
         private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateYToolStripMenuItem;
@@ -957,6 +957,5 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripMenuItem boardToolStripMenuItem;
         private System.Windows.Forms.VScrollBar vScroll;
         private System.Windows.Forms.Panel labelPanel;
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

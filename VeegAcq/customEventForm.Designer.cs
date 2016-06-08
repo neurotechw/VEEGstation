@@ -1,6 +1,6 @@
 ﻿namespace VeegStation
 {
-    partial class customEventForm
+    partial class CustomEventForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.eventList = new System.Windows.Forms.ListView();
+            this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.num = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btn_add = new System.Windows.Forms.Button();
             this.btn_edit = new System.Windows.Forms.Button();
             this.btn_delete = new System.Windows.Forms.Button();
             this.btn_quit = new System.Windows.Forms.Button();
-            this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.num = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // eventList
@@ -53,45 +53,6 @@
             this.eventList.UseCompatibleStateImageBehavior = false;
             this.eventList.View = System.Windows.Forms.View.Details;
             // 
-            // btn_add
-            // 
-            this.btn_add.Location = new System.Drawing.Point(272, 12);
-            this.btn_add.Name = "btn_add";
-            this.btn_add.Size = new System.Drawing.Size(75, 23);
-            this.btn_add.TabIndex = 1;
-            this.btn_add.Text = "增加事件";
-            this.btn_add.UseVisualStyleBackColor = true;
-            this.btn_add.Click += new System.EventHandler(this.btn_add_Click);
-            // 
-            // btn_edit
-            // 
-            this.btn_edit.Location = new System.Drawing.Point(272, 82);
-            this.btn_edit.Name = "btn_edit";
-            this.btn_edit.Size = new System.Drawing.Size(75, 23);
-            this.btn_edit.TabIndex = 2;
-            this.btn_edit.Text = "编辑事件";
-            this.btn_edit.UseVisualStyleBackColor = true;
-            // 
-            // btn_delete
-            // 
-            this.btn_delete.Location = new System.Drawing.Point(272, 152);
-            this.btn_delete.Name = "btn_delete";
-            this.btn_delete.Size = new System.Drawing.Size(75, 23);
-            this.btn_delete.TabIndex = 3;
-            this.btn_delete.Text = "删除事件";
-            this.btn_delete.UseVisualStyleBackColor = true;
-            this.btn_delete.Click += new System.EventHandler(this.btn_delete_Click);
-            // 
-            // btn_quit
-            // 
-            this.btn_quit.Location = new System.Drawing.Point(272, 222);
-            this.btn_quit.Name = "btn_quit";
-            this.btn_quit.Size = new System.Drawing.Size(75, 23);
-            this.btn_quit.TabIndex = 4;
-            this.btn_quit.Text = "退出";
-            this.btn_quit.UseVisualStyleBackColor = true;
-            this.btn_quit.Click += new System.EventHandler(this.btn_quit_Click);
-            // 
             // name
             // 
             this.name.Text = "事件名称";
@@ -104,7 +65,48 @@
             // 
             this.num.Text = "编号";
             // 
-            // customEventForm
+            // btn_add
+            // 
+            this.btn_add.Location = new System.Drawing.Point(272, 12);
+            this.btn_add.Name = "btn_add";
+            this.btn_add.Size = new System.Drawing.Size(75, 23);
+            this.btn_add.TabIndex = 1;
+            this.btn_add.Text = "增加事件";
+            this.btn_add.UseVisualStyleBackColor = true;
+            this.btn_add.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // btn_edit
+            // 
+            this.btn_edit.Location = new System.Drawing.Point(272, 82);
+            this.btn_edit.Name = "btn_edit";
+            this.btn_edit.Size = new System.Drawing.Size(75, 23);
+            this.btn_edit.TabIndex = 2;
+            this.btn_edit.Text = "编辑事件";
+            this.btn_edit.UseVisualStyleBackColor = true;
+            this.btn_edit.Click += new System.EventHandler(this.btn_edit_Click);
+            // 
+            // btn_delete
+            // 
+            this.btn_delete.Location = new System.Drawing.Point(272, 152);
+            this.btn_delete.Name = "btn_delete";
+            this.btn_delete.Size = new System.Drawing.Size(75, 23);
+            this.btn_delete.TabIndex = 3;
+            this.btn_delete.Text = "删除事件";
+            this.btn_delete.UseVisualStyleBackColor = true;
+            this.btn_delete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // btn_quit
+            // 
+            this.btn_quit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btn_quit.Location = new System.Drawing.Point(272, 222);
+            this.btn_quit.Name = "btn_quit";
+            this.btn_quit.Size = new System.Drawing.Size(75, 23);
+            this.btn_quit.TabIndex = 4;
+            this.btn_quit.Text = "退出";
+            this.btn_quit.UseVisualStyleBackColor = true;
+            this.btn_quit.Click += new System.EventHandler(this.btn_quit_Click);
+            // 
+            // CustomEventForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -116,7 +118,7 @@
             this.Controls.Add(this.btn_edit);
             this.Controls.Add(this.btn_add);
             this.Controls.Add(this.eventList);
-            this.Name = "customEventForm";
+            this.Name = "CustomEventForm";
             this.Text = "自定义事件";
             this.ResumeLayout(false);
 

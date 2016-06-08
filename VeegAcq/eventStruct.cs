@@ -6,99 +6,108 @@ using System.Drawing;
 
 namespace VeegStation
 {
-    public class preDefineEvent
+    /// <summary>
+    /// 预定义事件类，包含颜色，名称（枚举类，4选1），和点的位置（第几个点）
+    /// -- by lxl
+    /// </summary>
+    public class PreDefineEvent
     {
-        public static Color eyesOpenColor = Color.Pink;
-        public static Color eyesCloseColor = Color.Yellow;
-        public static Color deepBreathColor = Color.Green;
-        public static Color calibrateColor = Color.Blue;
+        public static Color EyesOpenColor = Color.Pink;
+        public static Color EyesCloseColor = Color.Yellow;
+        public static Color DeepBreathColor = Color.Green;
+        public static Color CalibrateColor = Color.Blue;
 
-        public preDefineEvent(pdEvents e,double pos)
+        public PreDefineEvent(PreDefineEventsName e,double pos)
         {
-            _event = e; _pos = pos;
+            eventName = e; eventPosition = pos;
             switch (e)
             {
-                case pdEvents.eyesOpen: _color = eyesOpenColor; break;
-                case pdEvents.eyesClose: _color = eyesCloseColor; break;
-                case pdEvents.deepBreath: _color = deepBreathColor; break;
-                case pdEvents.calibrate: _color = calibrateColor; break;
+                case PreDefineEventsName.eyesOpen: eventColor = EyesOpenColor; break;
+                case PreDefineEventsName.eyesClose: eventColor = EyesCloseColor; break;
+                case PreDefineEventsName.deepBreath: eventColor = DeepBreathColor; break;
+                case PreDefineEventsName.calibrate: eventColor = CalibrateColor; break;
             }
         }
 
-        public enum pdEvents
+        public enum PreDefineEventsName
         {
             eyesOpen = 0x4500,
             eyesClose = 0x4501,
             deepBreath = 0x4502,
             calibrate = 0x4503
         };
-        private Color _color;
-        private double _pos;
-        private pdEvents _event;
+        private Color eventColor;
+        private double eventPosition;
+        private PreDefineEventsName eventName;
         /// <summary>
         /// 事件的颜色
         /// -- by lxl
         /// </summary>
-        public Color Color
+        public Color EventColor
         {
-            get { return _color; }
-            set { _color = value; }
+            get { return eventColor; }
+            set { eventColor = value; }
         }
         /// <summary>
         /// 事件所在的点的位置
         /// -- by lxl
         /// </summary>
-        public double PointPosition
+        public double EventPosition
         {
-            get { return _pos; }
-            set { _pos = value; }
+            get { return eventPosition; }
+            set { eventPosition = value; }
         }
         /// <summary>
         /// 预定义事件的描述，值为pdEvents类型
         /// -- by lxl
         /// </summary>
-        public pdEvents Event
+        public PreDefineEventsName EventName
         {
-            get { return _event; }
-            set { _event = value; }
+            get { return eventName; }
+            set { eventName = value; }
         }
     }
 
+    /// <summary>
+    /// 自定义事件类，包含颜色，名称（string类型字符串），和点的位置（第几个点）
+    /// -- by lxl
+    /// </summary>
     public class CustomEvent
     {
         public CustomEvent(string name,double pos,Color clr)
         {
-            _event = name; _pos = pos; _color = clr;
+            eventName = name; eventPosition = pos; eventColor = clr;
         }
-        private Color _color;
-        private double _pos;
-        private string _event;
+        private Color eventColor;
+        private double eventPosition;
+        private string eventName;
+
         /// <summary>
         /// 颜色
         /// -- by lxl
         /// </summary>
-        public Color Color
+        public Color EventColor
         {
-            get { return _color; }
-            set { _color = value; }
+            get { return eventColor; }
+            set { eventColor = value; }
         }
         /// <summary>
         /// 事件所在的点的位置
         /// -- by lxl
         /// </summary>
-        public double PointPosition
+        public double EventPosition
         {
-            get { return _pos; }
-            set { _pos = value; }
+            get { return eventPosition; }
+            set { eventPosition = value; }
         }
         /// <summary>
         /// 自定义事件的名字
         /// -- by lxl
         /// </summary>
-        public string Event
+        public string EventName
         {
-            get { return _event; }
-            set { _event = value; }
+            get { return eventName; }
+            set { eventName = value; }
         }
     }
 }

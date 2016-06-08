@@ -1,6 +1,6 @@
 ﻿namespace VeegStation
 {
-    partial class CalibrateForm
+    partial class CalibrateYForm
     {
         /// <summary>
         /// Required designer variable.
@@ -44,7 +44,7 @@
             this.confirmButton.TabIndex = 3;
             this.confirmButton.Text = "确定";
             this.confirmButton.UseVisualStyleBackColor = true;
-            this.confirmButton.Click += new System.EventHandler(this.confirmButton_Click);
+            this.confirmButton.Click += new System.EventHandler(this.BtnConfirm_Click);
             // 
             // cancelButton
             // 
@@ -54,7 +54,7 @@
             this.cancelButton.TabIndex = 4;
             this.cancelButton.Text = "取消";
             this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.cancelButton.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // label1
             // 
@@ -76,7 +76,7 @@
             this.valueBox.Name = "valueBox";
             this.valueBox.Size = new System.Drawing.Size(120, 21);
             this.valueBox.TabIndex = 5;
-            this.valueBox.ValueChanged += new System.EventHandler(this.valueChanged);
+            this.valueBox.ValueChanged += new System.EventHandler(this.ValueChanged);
             // 
             // linePanel
             // 
@@ -84,7 +84,7 @@
             this.linePanel.Name = "linePanel";
             this.linePanel.Size = new System.Drawing.Size(263, 40);
             this.linePanel.TabIndex = 6;
-            this.linePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.draw);
+            this.linePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.Draw);
             // 
             // CalibrateForm
             // 
