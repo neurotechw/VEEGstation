@@ -110,6 +110,7 @@ namespace VeegStation
         //暂停函数
         public void Pause()
         {
+            if(Player.IsPlaying)
             Player.Pause();
         }
 
@@ -267,5 +268,6 @@ namespace VeegStation
             pt = System.Windows.Forms.Control.MousePosition;
         }
         #endregion
+
     }
 }

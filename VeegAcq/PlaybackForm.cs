@@ -244,7 +244,13 @@ namespace VeegStation
         {
             InitializeComponent();
             sensitivity = 100;
-            isBoardShow = true;
+
+            //根据是否有视频判定面板是否显示--by wsp
+            if (EegFile.HasVideo)
+                isBoardShow = true;
+            else
+                isBoardShow = false;
+
             this.boardToolStripMenuItem.Checked = isBoardShow;
             this.boardPanel.Visible = isBoardShow;
             timeStandard = 30;
@@ -256,9 +262,6 @@ namespace VeegStation
             isAddingEvent = false;
             SetVScrollVisible(false);
             InitMenuItems();
-
-            //natfileinfo = new NatFile(EegFile.NedFullName);
-            //pationinfo = new PationInfo(EegFile.NedFullName, natfileinfo.PatOff);
             _Page = 0;
             try
             {
@@ -640,6 +643,8 @@ namespace VeegStation
         private void btnPrev_Click(object sender, EventArgs e)
         {
             Pause();
+            if (_nfi.HasVideo)
+                video.Pause();
             PagePrev2();
 
             //点击了上一页，进度条，时间要变化
@@ -652,6 +657,7 @@ namespace VeegStation
             //video.Player.Time = CurrentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
             if (_nfi.HasVideo)
                 TimeChange();
+            UpdateBtnEnable();
         }
 
         /// <summary>
@@ -663,6 +669,8 @@ namespace VeegStation
         {
             //暂停播放
             Pause();
+            if (_nfi.HasVideo)
+                video.Pause();
             PageNext2();
 
             //点击了下一页，进度条，时间要变化
@@ -675,6 +683,9 @@ namespace VeegStation
             //video.Player.Time = CurrentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
             if (_nfi.HasVideo)
                 TimeChange();
+            
+            //翻页后，更新按钮状态是否可用
+            UpdateBtnEnable();
         }
 
         #region  Time时间--by wsp
@@ -751,6 +762,7 @@ namespace VeegStation
                  displayStartTime.Text = dt_Begin1.ToLongTimeString().ToString();
                  displayRecordingTime.Text = dt_TotalTime1.ToLongTimeString().ToString();
              }
+            UpdateBtnEnable();
         }
         #endregion
 
@@ -797,7 +809,9 @@ namespace VeegStation
             if (_nfi.HasVideo)
             {
                 if (Player.IsPlaying)
+                {
                     Player.Pause();
+                }
             }
             btnPause.Enabled = false;
             btnPlay.Enabled = true;
@@ -874,16 +888,29 @@ namespace VeegStation
 
             //暂停播放
             Pause();
+            if (_nfi.HasVideo)
+                video.Pause();
             if (CurrentSeconds != hsProgress.Value)
             {
                 CurrentSeconds = hsProgress.Value;
                 Changed();
-                CurrentOffset = CurrentSeconds;
+
+                //为保证拖动进度条之后，竖线位置保持不变--by wsp
+                if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset < _nfi.Duration.TotalSeconds)
+                    CurrentOffset = CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset;
+                else
+                {
+                    CurrentOffset = _nfi.Duration.TotalSeconds;
+                    chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = _nfi.Duration.TotalSeconds - CurrentSeconds;
+                }
                 LoadData(CurrentSeconds);
                 ShowData();
-                if(_nfi.HasVideo)
-                Player.Time = CurrentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
-            }
+
+                //如果有视频，视频也要同步跟随--by wsp
+                if (_nfi.HasVideo)
+                    Player.Time = CurrentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+             }
+            UpdateBtnEnable();
         }
 
         /// <summary>
