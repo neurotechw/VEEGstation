@@ -82,96 +82,102 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="addCustomEventForm.cs">
+    <Compile Include="Control\CommonDataPart.cs" />
+    <Compile Include="Control\ConfigPart.cs" />
+    <Compile Include="Control\VeegControl.cs" />
+    <Compile Include="Form\addCustomEventForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="addCustomEventForm.Designer.cs">
+    <Compile Include="Form\addCustomEventForm.Designer.cs">
       <DependentUpon>addCustomEventForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CalibrateYForm.cs">
+    <Compile Include="Form\CalibrateYForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CalibrateYForm.Designer.cs">
+    <Compile Include="Form\CalibrateYForm.Designer.cs">
       <DependentUpon>CalibrateYForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="calibrateXForm.cs">
+    <Compile Include="Form\calibrateXForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="calibrateXForm.Designer.cs">
+    <Compile Include="Form\calibrateXForm.Designer.cs">
       <DependentUpon>calibrateXForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="customEventForm.cs">
+    <Compile Include="Form\customEventForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="customEventForm.Designer.cs">
+    <Compile Include="Form\customEventForm.Designer.cs">
       <DependentUpon>customEventForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataFunc.cs" />
-    <Compile Include="Datastructcs.cs" />
-    <Compile Include="EegPacket.cs" />
-    <Compile Include="eventStruct.cs" />
-    <Compile Include="Montage.cs" />
-    <Compile Include="NatFileInfo.cs" />
-    <Compile Include="NatInfo.cs" />
-    <Compile Include="NationFile.cs" />
-    <Compile Include="PatInfo.cs" />
-    <Compile Include="PationInfo.cs" />
-    <Compile Include="PlaybackForm.cs">
+    <Compile Include="Module\CommonData.cs" />
+    <Compile Include="Module\DataFunc.cs" />
+    <Compile Include="Module\Datastructcs.cs" />
+    <Compile Include="Module\EegPacket.cs" />
+    <Compile Include="Module\eventStruct.cs" />
+    <Compile Include="Module\Montage.cs" />
+    <Compile Include="Module\NatFileInfo.cs" />
+    <Compile Include="Module\NatInfo.cs" />
+    <Compile Include="Module\NationFile.cs" />
+    <Compile Include="Module\PatInfo.cs" />
+    <Compile Include="Module\PationInfo.cs" />
+    <Compile Include="Form\PlaybackForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PlaybackForm.Designer.cs">
+    <Compile Include="Form\PlaybackForm.Designer.cs">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="predefineEventsForm.cs">
+    <Compile Include="Form\predefineEventsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="predefineEventsForm.Designer.cs">
+    <Compile Include="Form\predefineEventsForm.Designer.cs">
       <DependentUpon>predefineEventsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="StationForm.cs">
+    <Compile Include="Form\StationForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="StationForm.Designer.cs">
+    <Compile Include="Form\StationForm.Designer.cs">
       <DependentUpon>StationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DefaultConfig.cs" />
-    <Compile Include="NationFileInfo.cs" />
+    <Compile Include="Module\DefaultConfig.cs" />
+    <Compile Include="Module\NationFileInfo.cs" />
+    <Compile Include="Module\VeegConfig.cs" />
+    <Compile Include="Module\VeegFileSave.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RecordingForm.cs">
+    <Compile Include="Form\RecordingForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RecordingForm.Designer.cs">
+    <Compile Include="Form\RecordingForm.Designer.cs">
       <DependentUpon>RecordingForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Util.cs" />
-    <Compile Include="VideoFileInfo.cs" />
-    <Compile Include="VideoForm.cs">
+    <Compile Include="Module\Util.cs" />
+    <Compile Include="Module\VideoFileInfo.cs" />
+    <Compile Include="Form\VideoForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="VideoForm.Designer.cs">
+    <Compile Include="Form\VideoForm.Designer.cs">
       <DependentUpon>VideoForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="addCustomEventForm.resx">
+    <EmbeddedResource Include="Form\addCustomEventForm.resx">
       <DependentUpon>addCustomEventForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CalibrateYForm.resx">
+    <EmbeddedResource Include="Form\CalibrateYForm.resx">
       <DependentUpon>CalibrateYForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="calibrateXForm.resx">
+    <EmbeddedResource Include="Form\calibrateXForm.resx">
       <DependentUpon>calibrateXForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="customEventForm.resx">
+    <EmbeddedResource Include="Form\customEventForm.resx">
       <DependentUpon>customEventForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PlaybackForm.resx">
+    <EmbeddedResource Include="Form\PlaybackForm.resx">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="predefineEventsForm.resx">
+    <EmbeddedResource Include="Form\predefineEventsForm.resx">
       <DependentUpon>predefineEventsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="StationForm.resx">
+    <EmbeddedResource Include="Form\StationForm.resx">
       <DependentUpon>StationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -184,10 +190,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="RecordingForm.resx">
+    <EmbeddedResource Include="Form\RecordingForm.resx">
       <DependentUpon>RecordingForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VideoForm.resx">
+    <EmbeddedResource Include="Form\VideoForm.resx">
       <DependentUpon>VideoForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config">
