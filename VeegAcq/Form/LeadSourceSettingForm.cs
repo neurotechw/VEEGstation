@@ -187,10 +187,11 @@ namespace VeegStation
                 default:
                                break;
             }
-
-            //需要改
-            //myLeadSource = controller.GetLeadSource();
-            //defaultLeadSource = controller.GetDefaultLeadSource();
+            
+            //导联源
+            defaultLeadSource = (Hashtable)controller.CommonDataPool.GetLeadSource(text)[0];
+            myLeadSource = (Hashtable) controller.CommonDataPool.GetLeadSource(text)[1];
+          
             //DrawListView();
         }
 
