@@ -19,6 +19,9 @@ using System.Collections;
 
 namespace VeegStation
 {
+    /// <summary>
+    /// 回放文件Form
+    /// </summary>
     public partial class PlaybackForm : Form
     { 
         #region 声明变量
@@ -103,6 +106,12 @@ namespace VeegStation
         /// 导联源  --by zt
         /// </summary>
         public ArrayList myLeadSource;
+
+        /// <summary>
+        /// 导联配置Form  --by zt
+        /// </summary>
+        private LeadConfigForm myLeadConfigForm;
+
         int maxPage;
 
         /// <summary>
@@ -316,6 +325,9 @@ namespace VeegStation
         public PlaybackForm(NationFile EegFile)
         {
             InitializeComponent();
+            //构造导联配置Form实例  --by zt
+            myLeadConfigForm = new LeadConfigForm();
+
             sensitivity = 100;
             isBoardShow = true;
             this.boardToolStripMenuItem.Checked = isBoardShow;
@@ -361,6 +373,7 @@ namespace VeegStation
         public void ReigisterVeegControl(VeegControl control)
         {
             this.controller = control;
+            myLeadConfigForm.ReigisterVeegControl(control);
             InitFromConfig();
         }
 
@@ -1981,6 +1994,13 @@ namespace VeegStation
                     e.Text = YValue.ToString();
                     break;
             }
+        }
+
+        private void 导联设置ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myLeadConfigForm.InitLeadConfig();
+            //myLeadConfigForm.Show();
+            myLeadConfigForm.ShowDialog();
         }
     }
 }

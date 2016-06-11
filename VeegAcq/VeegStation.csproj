@@ -109,6 +109,18 @@
     <Compile Include="Form\customEventForm.Designer.cs">
       <DependentUpon>customEventForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\LeadConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\LeadConfigForm.Designer.cs">
+      <DependentUpon>LeadConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\LeadSourceSettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\LeadSourceSettingForm.Designer.cs">
+      <DependentUpon>LeadSourceSettingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Module\CommonData.cs" />
     <Compile Include="Module\DataFunc.cs" />
     <Compile Include="Module\Datastructcs.cs" />
@@ -169,6 +181,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\customEventForm.resx">
       <DependentUpon>customEventForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\LeadConfigForm.resx">
+      <DependentUpon>LeadConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\LeadSourceSettingForm.resx">
+      <DependentUpon>LeadSourceSettingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\PlaybackForm.resx">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
@@ -246,6 +264,7 @@
   <ItemGroup>
     <Content Include="48X48.ico" />
     <Content Include="Resources\48X48.ico" />
+    <Content Include="Resources\leadPicture.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
