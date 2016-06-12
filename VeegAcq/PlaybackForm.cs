@@ -531,6 +531,9 @@ namespace VeegStation
 
         private void PlaybackForm_Load(object sender, EventArgs e)
         {
+            toolTip1.SetToolTip(btn_accelerate, "加速");
+            toolTip1.SetToolTip(btn_decelerate, "减速");
+            toolTip1.SetToolTip(btn_hide, "隐藏");
             if (nfi == null)
             {
                 Close();
@@ -874,6 +877,8 @@ namespace VeegStation
             if (nfi.HasVideo)
             {
                 video.Play();
+                video.btn_pause.Enabled = true;
+                video.btn_play.Enabled = false;
                 if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
                     video.Player.Time = (long)nfi.VideoOffset * 1000;
                 if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
@@ -889,8 +894,12 @@ namespace VeegStation
         public void btnPause_Click(object sender, EventArgs e)
         {
             Pause();
-            if(nfi.HasVideo)
-            video.Pause();
+            if (nfi.HasVideo)
+            {
+                video.Pause();
+                video.btn_play.Enabled = true;
+                video.btn_pause.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -931,7 +940,6 @@ namespace VeegStation
         private void HSProgress_MouseCaptureChanged(object sender, EventArgs e)
         {
             Debug.WriteLine(string.Format("Scroll mouse cap changed {0}", e));
-
             //暂停播放
             Pause();
             if (nfi.HasVideo)
@@ -953,7 +961,10 @@ namespace VeegStation
                 ShowData();
                 //如果有视频，视频也要同步跟随--by wsp
                 if (nfi.HasVideo)
+                {
                     Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                    video.Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                }
              }
             UpdateBtnEnable();
         }
@@ -1277,7 +1288,9 @@ namespace VeegStation
             {
                 //加速到最大后，加速按钮不可用，减速按钮可用
                 btn_accelerate.Enabled = false;
+                btn_decelerate.Enabled = true;
                 video.btn_accelerate.Enabled = false;
+                video.btn_decelerate.Enabled = true;
             }
         }
 
@@ -1302,12 +1315,15 @@ namespace VeegStation
                 //videoForm的倍速要与该Form倍速保持一致
                 video.Player.PlaybackRate = Player.PlaybackRate;
                 video.btn_decelerate.Enabled = true;
+                video.btn_accelerate.Enabled = true;
             }
             else
             {
                 //加速到最大后，加速按钮不可用，减速按钮可用
                 btn_decelerate.Enabled = false;
+                btn_accelerate.Enabled = true;
                 video.btn_decelerate.Enabled = false;
+                video.btn_accelerate.Enabled = true;
             }
         }
 
@@ -1321,13 +1337,13 @@ namespace VeegStation
         {
             if (panelVideo.Visible == true)
             {
-                btn_hide.Text = "显示";
+                toolTip1.SetToolTip(btn_hide, "显示");
                 panelVideo.Visible = false;
                 video.Show();
             }
             else
             {
-                btn_hide.Text = "隐藏";
+                toolTip1.SetToolTip(btn_hide, "隐藏");
                 panelVideo.Visible = true;
                 video.Hide();
             }
@@ -1971,6 +1987,16 @@ namespace VeegStation
                     e.Text = YValue.ToString();
                     break;
             }
+        }
+
+        private void boardPanel_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics gra = e.Graphics;
+            Pen myPen = Pens.Black;
+            gra.DrawRectangle(myPen, new Rectangle(5, 5, 190, 190));
+            //Graphics gra2 = e.Graphics;
+            //Pen myPen2 = Pens.Black;
+            //gra2.DrawRectangle(myPen2, new Rectangle(5,190,190,730));
         }
     }
 }
