@@ -29,7 +29,10 @@ namespace VeegStation
         /// </summary>
         public Hashtable LeadSources;
 
-        
+        /// <summary>
+        /// 导联配置
+        /// </summary>
+        public Hashtable LeadConfigLists;
         #endregion
 
         #endregion
@@ -37,8 +40,9 @@ namespace VeegStation
         public void SetDefaultConfig()
         {
             #region 导联参数
-            LeadSources = new Hashtable();
             string[] leadSourceNames = new string[7] { "8导脑电", "8导脑电+多参数", "16导脑电", "16导脑电+多参数", "24导脑电", "32导脑电", "32导脑电+多参数" };
+            #region 导联源
+            LeadSources = new Hashtable();
             #region 8导脑电导联源
             ArrayList leadSourceList8 = new ArrayList();
 
@@ -177,7 +181,139 @@ namespace VeegStation
 
             LeadSources.Add(leadSourceNames[6], leadSourceList32P);
             #endregion
+            #endregion
 
+            #region 导联配置
+            LeadConfigLists = new Hashtable();
+
+            //默认导联配置名称
+            string currentLeadConfigName = "默认导联配置";
+            #region 8导脑电导联配置
+            Hashtable leadConfigList8 = new Hashtable();
+
+            //默认导联配置
+            ArrayList defaultLeadConfig8 = new ArrayList();
+            for (int i = 0; i < lead8Names.Length; i++) 
+            {
+                if (lead8Names[i] != "") 
+                {
+                    defaultLeadConfig8.Add(lead8Names[i] + "-REF");
+                }
+            }
+
+            leadConfigList8.Add(currentLeadConfigName, defaultLeadConfig8);
+
+            LeadConfigLists.Add(leadSourceNames[0], leadConfigList8);
+            #endregion
+
+            #region 8导脑电+多参数导联配置
+            Hashtable leadConfigList8P = new Hashtable();
+
+            //默认导联配置
+            ArrayList defaultLeadConfig8P = new ArrayList();
+            for (int i = 0; i < lead8Names.Length; i++)
+            {
+                if (lead8Names[i] != "")
+                {
+                    defaultLeadConfig8P.Add(lead8Names[i] + "-REF");
+                }
+            }
+
+            leadConfigList8P.Add(currentLeadConfigName, defaultLeadConfig8P);
+
+            LeadConfigLists.Add(leadSourceNames[1], leadConfigList8P);
+            #endregion
+
+            #region 16导脑电导联配置
+            Hashtable leadConfigList16 = new Hashtable();
+
+            //默认导联配置
+            ArrayList defaultLeadConfig16 = new ArrayList();
+            for (int i = 0; i < lead16Names.Length; i++)
+            {
+                if (lead16Names[i] != "")
+                {
+                    defaultLeadConfig16.Add(lead16Names[i] + "-REF");
+                }
+            }
+
+            leadConfigList16.Add(currentLeadConfigName, defaultLeadConfig16);
+
+            LeadConfigLists.Add(leadSourceNames[2], leadConfigList16);
+            #endregion
+
+            #region 16导脑电+多参数导联配置
+            Hashtable leadConfigList16P = new Hashtable();
+
+            //默认导联配置
+            ArrayList defaultLeadConfig16P = new ArrayList();
+            for (int i = 0; i < lead16Names.Length; i++)
+            {
+                if (lead16Names[i] != "")
+                {
+                    defaultLeadConfig16P.Add(lead16Names[i] + "-REF");
+                }
+            }
+
+            leadConfigList16P.Add(currentLeadConfigName, defaultLeadConfig16P);
+
+            LeadConfigLists.Add(leadSourceNames[3], leadConfigList16P);
+            #endregion
+
+            #region 24导脑电导联配置
+            Hashtable leadConfigList24 = new Hashtable();
+
+            //默认导联配置
+            ArrayList defaultLeadConfig24 = new ArrayList();
+            for (int i = 0; i < lead24Names.Length; i++)
+            {
+                if (lead24Names[i] != "")
+                {
+                    defaultLeadConfig24.Add(lead24Names[i] + "-REF");
+                }
+            }
+
+            leadConfigList24.Add(currentLeadConfigName, defaultLeadConfig24);
+
+            LeadConfigLists.Add(leadSourceNames[4], leadConfigList24);
+            #endregion
+
+            #region 32导脑电导联配置
+            Hashtable leadConfigList32 = new Hashtable();
+
+            //默认导联配置
+            ArrayList defaultLeadConfig32 = new ArrayList();
+            for (int i = 0; i < lead32Names.Length; i++)
+            {
+                if (lead32Names[i] != "")
+                {
+                    defaultLeadConfig32.Add(lead32Names[i] + "-REF");
+                }
+            }
+
+            leadConfigList32.Add(currentLeadConfigName, defaultLeadConfig32);
+
+            LeadConfigLists.Add(leadSourceNames[5], leadConfigList32);
+            #endregion
+
+            #region 32导脑电+多参数导联配置
+            Hashtable leadConfigList32P = new Hashtable();
+
+            //默认导联配置
+            ArrayList defaultLeadConfig32P = new ArrayList();
+            for (int i = 0; i < lead32Names.Length; i++)
+            {
+                if (lead32Names[i] != "")
+                {
+                    defaultLeadConfig32.Add(lead32Names[i] + "-REF");
+                }
+            }
+
+            leadConfigList32P.Add(currentLeadConfigName, defaultLeadConfig32P);
+
+            LeadConfigLists.Add(leadSourceNames[6], leadConfigList32P);
+            #endregion
+            #endregion
             #endregion
         }
 

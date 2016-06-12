@@ -121,6 +121,12 @@
     <Compile Include="Form\LeadSourceSettingForm.Designer.cs">
       <DependentUpon>LeadSourceSettingForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\LeadAddForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\LeadAddForm.Designer.cs">
+      <DependentUpon>LeadAddForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Module\CommonData.cs" />
     <Compile Include="Module\DataFunc.cs" />
     <Compile Include="Module\Datastructcs.cs" />
@@ -198,6 +204,9 @@
     <EmbeddedResource Include="Form\StationForm.resx">
       <DependentUpon>StationForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Form\LeadAddForm.resx">
+      <DependentUpon>LeadAddForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -264,6 +273,8 @@
   <ItemGroup>
     <Content Include="48X48.ico" />
     <Content Include="Resources\48X48.ico" />
+    <Content Include="Resources\lead.png" />
+    <Content Include="Resources\leadP.png" />
     <Content Include="Resources\leadPicture.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

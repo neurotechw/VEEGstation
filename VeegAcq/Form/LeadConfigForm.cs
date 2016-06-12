@@ -25,6 +25,10 @@ namespace VeegStation
         /// </summary>
         private LeadSourceSettingForm myLeadSourceSettingForm;
 
+        /// <summary>
+        /// 添加导联Form
+        /// </summary>
+        private LeadAddForm myLeadAddForm;
 
         #endregion
 
@@ -32,8 +36,9 @@ namespace VeegStation
         {
             InitializeComponent();
             this.txtName.Enabled = false;
-            this.rtxtNote.Enabled = false;
+            //this.rtxtNote.Enabled = false;
             myLeadSourceSettingForm = new LeadSourceSettingForm();
+            myLeadAddForm = new LeadAddForm(this);
         }
 
         /// <summary>
@@ -44,6 +49,7 @@ namespace VeegStation
         {
             this.controller = control;
             myLeadSourceSettingForm.ReigisterVeegControl(control);
+            myLeadAddForm.ReigisterVeegControl(control);
         }
 
         /// <summary>
@@ -51,9 +57,18 @@ namespace VeegStation
         /// </summary>
         public void InitLeadConfig()
         {
-            //待验证
+            //硬件配置名称
             cbConfigList.Text = cbConfigList.Items[0].ToString();
-            //初始化
+            //初始化表格
+            InitList(cbConfigList.Text);
+        }
+
+        /// <summary>
+        /// 初始化导联列表
+        /// </summary>
+        /// <param name="p">硬件配置名称</param>
+        private void InitList(string config)
+        {
             
         }
 
@@ -61,6 +76,12 @@ namespace VeegStation
         {
             myLeadSourceSettingForm.InitLeadSetting(cbConfigList.Text);
             myLeadSourceSettingForm.ShowDialog();
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            myLeadAddForm.InitLeadAdd(cbConfigList.Text);
+            myLeadAddForm.ShowDialog();
         }
     }
 }

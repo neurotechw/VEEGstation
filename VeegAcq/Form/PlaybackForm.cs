@@ -100,12 +100,29 @@ namespace VeegStation
         /// <summary>
         /// 测数值,调试用  --by zt
         /// </summary>
-        List<double> testList = new List<double>();  
+        List<double> testList = new List<double>();
+
+        #region 导联参数 --by zt
+        /// <summary>
+        /// 导联配置
+        /// </summary>
+        public Hashtable leadList;
 
         /// <summary>
-        /// 导联源  --by zt
+        /// 导联源
         /// </summary>
-        public ArrayList myLeadSource;
+        public Hashtable leadSource;
+
+        /// <summary>
+        /// 当前导联名称
+        /// </summary>
+        public string currentLeadConfig;
+
+        /// <summary>
+        /// 存放当前导联配置
+        /// </summary>
+        public ArrayList leadConfigArrayList;
+        #endregion
 
         /// <summary>
         /// 导联配置Form  --by zt
@@ -363,7 +380,7 @@ namespace VeegStation
             //修改 --by zt
             _totalSeconds = (int)EegFile.Duration.TotalSeconds; 
             hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
-            this.myLeadSource = EegFile.Montage.LeadSource;
+            //this.myLeadSource = EegFile.Montage.LeadSource;
         }
 
         /// <summary>
@@ -553,6 +570,7 @@ namespace VeegStation
                 //没有事件先手动填充事件
                 //if (tIdx % 127 == 0) _preDEventsList.Add(new preDefineEvent(preDefineEvent.pdEvents.eyesOpen, tIdx));
                 if (tIdx % 127 == 0) customEventList.Add(new CustomEvent("你好", tIdx, Color.Blue));
+                //根据导联源加载数据，未完 --by zt
                 foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
                 {
                     if (sIdx == 19)

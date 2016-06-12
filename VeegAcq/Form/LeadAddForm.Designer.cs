@@ -1,6 +1,6 @@
 ﻿namespace VeegStation
 {
-    partial class LeadSourceSettingForm
+    partial class LeadAddForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,15 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.lbConfig = new System.Windows.Forms.Label();
-            this.btnDefault = new System.Windows.Forms.Button();
-            this.btnClearOne = new System.Windows.Forms.Button();
-            this.btnExit = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
-            this.lvSourceList = new System.Windows.Forms.ListView();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.btnCp3 = new System.Windows.Forms.Button();
             this.btnCp4 = new System.Windows.Forms.Button();
             this.btnPo4 = new System.Windows.Forms.Button();
@@ -77,135 +68,19 @@
             this.btnC4 = new System.Windows.Forms.Button();
             this.btnC3 = new System.Windows.Forms.Button();
             this.btnFp1 = new System.Windows.Forms.Button();
+            this.lvAddLeadList = new System.Windows.Forms.ListView();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnExit = new System.Windows.Forms.Button();
+            this.btnClearOne = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnRef = new System.Windows.Forms.Button();
+            this.lbConfig = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtLeadName = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "硬件配置：";
-            // 
-            // lbConfig
-            // 
-            this.lbConfig.AutoSize = true;
-            this.lbConfig.Location = new System.Drawing.Point(12, 33);
-            this.lbConfig.Name = "lbConfig";
-            this.lbConfig.Size = new System.Drawing.Size(77, 12);
-            this.lbConfig.TabIndex = 1;
-            this.lbConfig.Text = "具体硬件配置";
-            // 
-            // btnDefault
-            // 
-            this.btnDefault.Location = new System.Drawing.Point(52, 578);
-            this.btnDefault.Name = "btnDefault";
-            this.btnDefault.Size = new System.Drawing.Size(75, 23);
-            this.btnDefault.TabIndex = 3;
-            this.btnDefault.Text = "系统默认";
-            this.btnDefault.UseVisualStyleBackColor = true;
-            this.btnDefault.Click += new System.EventHandler(this.btnDefault_Click);
-            // 
-            // btnClearOne
-            // 
-            this.btnClearOne.Location = new System.Drawing.Point(423, 22);
-            this.btnClearOne.Name = "btnClearOne";
-            this.btnClearOne.Size = new System.Drawing.Size(75, 23);
-            this.btnClearOne.TabIndex = 4;
-            this.btnClearOne.Text = "清除一项";
-            this.btnClearOne.UseVisualStyleBackColor = true;
-            this.btnClearOne.Click += new System.EventHandler(this.btnClearOne_Click);
-            // 
-            // btnExit
-            // 
-            this.btnExit.Location = new System.Drawing.Point(423, 578);
-            this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(75, 23);
-            this.btnExit.TabIndex = 5;
-            this.btnExit.Text = "退出";
-            this.btnExit.UseVisualStyleBackColor = true;
-            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(296, 578);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 6;
-            this.btnSave.Text = "保存";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // btnClear
-            // 
-            this.btnClear.Location = new System.Drawing.Point(180, 578);
-            this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(75, 23);
-            this.btnClear.TabIndex = 7;
-            this.btnClear.Text = "清除";
-            this.btnClear.UseVisualStyleBackColor = true;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // lvSourceList
-            // 
-            this.lvSourceList.FullRowSelect = true;
-            this.lvSourceList.GridLines = true;
-            this.lvSourceList.Location = new System.Drawing.Point(545, 22);
-            this.lvSourceList.Name = "lvSourceList";
-            this.lvSourceList.Size = new System.Drawing.Size(113, 548);
-            this.lvSourceList.TabIndex = 8;
-            this.lvSourceList.UseCompatibleStateImageBehavior = false;
-            this.lvSourceList.View = System.Windows.Forms.View.Details;
-            // 
-            // panel1
-            // 
-            this.panel1.BackgroundImage = global::VeegStation.Properties.Resources.leadP;
-            this.panel1.Controls.Add(this.btnCp3);
-            this.panel1.Controls.Add(this.btnCp4);
-            this.panel1.Controls.Add(this.btnPo4);
-            this.panel1.Controls.Add(this.btnFc3);
-            this.panel1.Controls.Add(this.btnSp2);
-            this.panel1.Controls.Add(this.btnFpz);
-            this.panel1.Controls.Add(this.btnSp1);
-            this.panel1.Controls.Add(this.btnFT8);
-            this.panel1.Controls.Add(this.btnF7);
-            this.panel1.Controls.Add(this.btnF8);
-            this.panel1.Controls.Add(this.btnF3);
-            this.panel1.Controls.Add(this.btnFz);
-            this.panel1.Controls.Add(this.btnF4);
-            this.panel1.Controls.Add(this.btnCp8);
-            this.panel1.Controls.Add(this.btnAF3);
-            this.panel1.Controls.Add(this.btnAF4);
-            this.panel1.Controls.Add(this.btnT6);
-            this.panel1.Controls.Add(this.btnFc4);
-            this.panel1.Controls.Add(this.btnC6);
-            this.panel1.Controls.Add(this.btnOz);
-            this.panel1.Controls.Add(this.btnP4);
-            this.panel1.Controls.Add(this.btnPz);
-            this.panel1.Controls.Add(this.btnP3);
-            this.panel1.Controls.Add(this.btnT5);
-            this.panel1.Controls.Add(this.btnPo3);
-            this.panel1.Controls.Add(this.btnPoz);
-            this.panel1.Controls.Add(this.btnCp7);
-            this.panel1.Controls.Add(this.btnFT7);
-            this.panel1.Controls.Add(this.btnC5);
-            this.panel1.Controls.Add(this.btnCz);
-            this.panel1.Controls.Add(this.btnA2);
-            this.panel1.Controls.Add(this.btnA1);
-            this.panel1.Controls.Add(this.btnFp2);
-            this.panel1.Controls.Add(this.btnT3);
-            this.panel1.Controls.Add(this.btnT4);
-            this.panel1.Controls.Add(this.btnO2);
-            this.panel1.Controls.Add(this.btnO1);
-            this.panel1.Controls.Add(this.btnC4);
-            this.panel1.Controls.Add(this.btnC3);
-            this.panel1.Controls.Add(this.btnFp1);
-            this.panel1.Location = new System.Drawing.Point(14, 76);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(503, 494);
-            this.panel1.TabIndex = 2;
             // 
             // btnCp3
             // 
@@ -647,25 +522,173 @@
             this.btnFp1.UseVisualStyleBackColor = true;
             this.btnFp1.Click += new System.EventHandler(this.btnFp1_Click);
             // 
-            // LeadSourceSettingForm
+            // lvAddLeadList
+            // 
+            this.lvAddLeadList.FullRowSelect = true;
+            this.lvAddLeadList.GridLines = true;
+            this.lvAddLeadList.Location = new System.Drawing.Point(551, 28);
+            this.lvAddLeadList.Name = "lvAddLeadList";
+            this.lvAddLeadList.Size = new System.Drawing.Size(171, 548);
+            this.lvAddLeadList.TabIndex = 17;
+            this.lvAddLeadList.UseCompatibleStateImageBehavior = false;
+            this.lvAddLeadList.View = System.Windows.Forms.View.Details;
+            this.lvAddLeadList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lvAddLeadList_MouseDown);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(49, 589);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(75, 23);
+            this.btnClear.TabIndex = 16;
+            this.btnClear.Text = "清除";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(242, 589);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 15;
+            this.btnSave.Text = "保存";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnExit
+            // 
+            this.btnExit.Location = new System.Drawing.Point(434, 589);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(75, 23);
+            this.btnExit.TabIndex = 14;
+            this.btnExit.Text = "退出";
+            this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // btnClearOne
+            // 
+            this.btnClearOne.Location = new System.Drawing.Point(434, 28);
+            this.btnClearOne.Name = "btnClearOne";
+            this.btnClearOne.Size = new System.Drawing.Size(75, 23);
+            this.btnClearOne.TabIndex = 13;
+            this.btnClearOne.Text = "清除一项";
+            this.btnClearOne.UseVisualStyleBackColor = true;
+            this.btnClearOne.Click += new System.EventHandler(this.btnClearOne_Click);
+            // 
+            // panel1
+            // 
+            this.panel1.BackgroundImage = global::VeegStation.Properties.Resources.leadP;
+            this.panel1.Controls.Add(this.btnRef);
+            this.panel1.Controls.Add(this.btnCp3);
+            this.panel1.Controls.Add(this.btnCp4);
+            this.panel1.Controls.Add(this.btnPo4);
+            this.panel1.Controls.Add(this.btnFc3);
+            this.panel1.Controls.Add(this.btnSp2);
+            this.panel1.Controls.Add(this.btnFpz);
+            this.panel1.Controls.Add(this.btnSp1);
+            this.panel1.Controls.Add(this.btnFT8);
+            this.panel1.Controls.Add(this.btnF7);
+            this.panel1.Controls.Add(this.btnF8);
+            this.panel1.Controls.Add(this.btnF3);
+            this.panel1.Controls.Add(this.btnFz);
+            this.panel1.Controls.Add(this.btnF4);
+            this.panel1.Controls.Add(this.btnCp8);
+            this.panel1.Controls.Add(this.btnAF3);
+            this.panel1.Controls.Add(this.btnAF4);
+            this.panel1.Controls.Add(this.btnT6);
+            this.panel1.Controls.Add(this.btnFc4);
+            this.panel1.Controls.Add(this.btnC6);
+            this.panel1.Controls.Add(this.btnOz);
+            this.panel1.Controls.Add(this.btnP4);
+            this.panel1.Controls.Add(this.btnPz);
+            this.panel1.Controls.Add(this.btnP3);
+            this.panel1.Controls.Add(this.btnT5);
+            this.panel1.Controls.Add(this.btnPo3);
+            this.panel1.Controls.Add(this.btnPoz);
+            this.panel1.Controls.Add(this.btnCp7);
+            this.panel1.Controls.Add(this.btnFT7);
+            this.panel1.Controls.Add(this.btnC5);
+            this.panel1.Controls.Add(this.btnCz);
+            this.panel1.Controls.Add(this.btnA2);
+            this.panel1.Controls.Add(this.btnA1);
+            this.panel1.Controls.Add(this.btnFp2);
+            this.panel1.Controls.Add(this.btnT3);
+            this.panel1.Controls.Add(this.btnT4);
+            this.panel1.Controls.Add(this.btnO2);
+            this.panel1.Controls.Add(this.btnO1);
+            this.panel1.Controls.Add(this.btnC4);
+            this.panel1.Controls.Add(this.btnC3);
+            this.panel1.Controls.Add(this.btnFp1);
+            this.panel1.Location = new System.Drawing.Point(25, 82);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(503, 494);
+            this.panel1.TabIndex = 11;
+            // 
+            // btnRef
+            // 
+            this.btnRef.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnRef.Location = new System.Drawing.Point(233, 112);
+            this.btnRef.Name = "btnRef";
+            this.btnRef.Size = new System.Drawing.Size(37, 26);
+            this.btnRef.TabIndex = 43;
+            this.btnRef.Text = "Ref";
+            this.btnRef.UseVisualStyleBackColor = true;
+            this.btnRef.Click += new System.EventHandler(this.btnRef_Click);
+            // 
+            // lbConfig
+            // 
+            this.lbConfig.AutoSize = true;
+            this.lbConfig.Location = new System.Drawing.Point(118, 39);
+            this.lbConfig.Name = "lbConfig";
+            this.lbConfig.Size = new System.Drawing.Size(77, 12);
+            this.lbConfig.TabIndex = 10;
+            this.lbConfig.Text = "具体硬件配置";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(13, 39);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 12);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "硬件配置：";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 14);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 12);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "当前导联名称：";
+            // 
+            // txtLeadName
+            // 
+            this.txtLeadName.Location = new System.Drawing.Point(114, 10);
+            this.txtLeadName.Name = "txtLeadName";
+            this.txtLeadName.Size = new System.Drawing.Size(193, 21);
+            this.txtLeadName.TabIndex = 19;
+            this.txtLeadName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLeadName_KeyPress);
+            // 
+            // LeadAddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 615);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.Controls.Add(this.lvSourceList);
+            this.ClientSize = new System.Drawing.Size(734, 621);
+            this.Controls.Add(this.txtLeadName);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lvAddLeadList);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnClearOne);
-            this.Controls.Add(this.btnDefault);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lbConfig);
             this.Controls.Add(this.label1);
-            this.Name = "LeadSourceSettingForm";
-            this.Text = "导联源设置";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadSourceSettingForm_FormClosing);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.Name = "LeadAddForm";
+            this.Text = "添加导联";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadAddForm_FormClosing);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -674,25 +697,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lbConfig;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnA2;
-        private System.Windows.Forms.Button btnA1;
-        private System.Windows.Forms.Button btnFp2;
-        private System.Windows.Forms.Button btnT3;
-        private System.Windows.Forms.Button btnT4;
-        private System.Windows.Forms.Button btnO2;
-        private System.Windows.Forms.Button btnO1;
-        private System.Windows.Forms.Button btnC4;
-        private System.Windows.Forms.Button btnC3;
-        private System.Windows.Forms.Button btnFp1;
-        private System.Windows.Forms.Button btnDefault;
-        private System.Windows.Forms.Button btnClearOne;
-        private System.Windows.Forms.Button btnExit;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.ListView lvSourceList;
         private System.Windows.Forms.Button btnCp3;
         private System.Windows.Forms.Button btnCp4;
         private System.Windows.Forms.Button btnPo4;
@@ -723,5 +727,26 @@
         private System.Windows.Forms.Button btnFT7;
         private System.Windows.Forms.Button btnC5;
         private System.Windows.Forms.Button btnCz;
+        private System.Windows.Forms.Button btnA2;
+        private System.Windows.Forms.Button btnA1;
+        private System.Windows.Forms.Button btnFp2;
+        private System.Windows.Forms.Button btnT3;
+        private System.Windows.Forms.Button btnT4;
+        private System.Windows.Forms.Button btnO2;
+        private System.Windows.Forms.Button btnO1;
+        private System.Windows.Forms.Button btnC4;
+        private System.Windows.Forms.Button btnC3;
+        private System.Windows.Forms.Button btnFp1;
+        private System.Windows.Forms.ListView lvAddLeadList;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.Button btnClearOne;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnRef;
+        private System.Windows.Forms.Label lbConfig;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtLeadName;
     }
 }

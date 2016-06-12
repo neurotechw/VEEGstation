@@ -32,8 +32,6 @@
             this.gbInfo = new System.Windows.Forms.GroupBox();
             this.cbConfigList = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.rtxtNote = new System.Windows.Forms.RichTextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
@@ -56,13 +54,11 @@
             // 
             this.gbInfo.Controls.Add(this.cbConfigList);
             this.gbInfo.Controls.Add(this.label3);
-            this.gbInfo.Controls.Add(this.rtxtNote);
-            this.gbInfo.Controls.Add(this.label2);
             this.gbInfo.Controls.Add(this.txtName);
             this.gbInfo.Controls.Add(this.label1);
             this.gbInfo.Location = new System.Drawing.Point(12, 12);
             this.gbInfo.Name = "gbInfo";
-            this.gbInfo.Size = new System.Drawing.Size(302, 150);
+            this.gbInfo.Size = new System.Drawing.Size(302, 93);
             this.gbInfo.TabIndex = 1;
             this.gbInfo.TabStop = false;
             // 
@@ -78,7 +74,7 @@
             "24导脑电",
             "32导脑电",
             "32导脑电+多参数"});
-            this.cbConfigList.Location = new System.Drawing.Point(95, 110);
+            this.cbConfigList.Location = new System.Drawing.Point(95, 58);
             this.cbConfigList.Name = "cbConfigList";
             this.cbConfigList.Size = new System.Drawing.Size(187, 20);
             this.cbConfigList.TabIndex = 5;
@@ -86,28 +82,11 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 113);
+            this.label3.Location = new System.Drawing.Point(6, 61);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 12);
             this.label3.TabIndex = 2;
             this.label3.Text = "硬件配置：";
-            // 
-            // rtxtNote
-            // 
-            this.rtxtNote.Location = new System.Drawing.Point(95, 52);
-            this.rtxtNote.Name = "rtxtNote";
-            this.rtxtNote.Size = new System.Drawing.Size(187, 46);
-            this.rtxtNote.TabIndex = 4;
-            this.rtxtNote.Text = "";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 65);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 12);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "备注：";
             // 
             // txtName
             // 
@@ -124,6 +103,7 @@
             this.btnAdd.TabIndex = 2;
             this.btnAdd.Text = "添加";
             this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // btnEdit
             // 
@@ -136,7 +116,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(331, 101);
+            this.btnDelete.Location = new System.Drawing.Point(412, 26);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 23);
             this.btnDelete.TabIndex = 4;
@@ -145,7 +125,7 @@
             // 
             // btnSetting
             // 
-            this.btnSetting.Location = new System.Drawing.Point(331, 137);
+            this.btnSetting.Location = new System.Drawing.Point(412, 62);
             this.btnSetting.Name = "btnSetting";
             this.btnSetting.Size = new System.Drawing.Size(75, 23);
             this.btnSetting.TabIndex = 5;
@@ -156,9 +136,9 @@
             // lvLeadList
             // 
             this.lvLeadList.GridLines = true;
-            this.lvLeadList.Location = new System.Drawing.Point(12, 176);
+            this.lvLeadList.Location = new System.Drawing.Point(12, 111);
             this.lvLeadList.Name = "lvLeadList";
-            this.lvLeadList.Size = new System.Drawing.Size(738, 391);
+            this.lvLeadList.Size = new System.Drawing.Size(738, 456);
             this.lvLeadList.TabIndex = 6;
             this.lvLeadList.UseCompatibleStateImageBehavior = false;
             this.lvLeadList.View = System.Windows.Forms.View.Details;
@@ -167,6 +147,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.ClientSize = new System.Drawing.Size(762, 579);
             this.Controls.Add(this.lvLeadList);
             this.Controls.Add(this.btnSetting);
@@ -188,8 +170,6 @@
         private System.Windows.Forms.GroupBox gbInfo;
         private System.Windows.Forms.ComboBox cbConfigList;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.RichTextBox rtxtNote;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnEdit;

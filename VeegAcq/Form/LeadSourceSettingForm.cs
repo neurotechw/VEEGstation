@@ -167,22 +167,29 @@ namespace VeegStation
             {
                 case "8导脑电":
                                Hide16Buttons();
+                               rowsCount = 10;
                                break;
                 case "8导脑电+多参数":
                                Hide16Buttons();
+                               rowsCount = 10;
                                break;
                 case "16导脑电":
                                Hide24Buttons();
+                               rowsCount = 20;
                                break;
                 case "16导脑电+多参数":
                                Hide24Buttons();
+                               rowsCount = 20;
                                break;
                 case "24导脑电":
                                Hide32Buttons();
+                               rowsCount = 30;
                                break;
                 case "32导脑电":
+                               rowsCount = 40;
                                break;
                 case "32导脑电+多参数":
+                               rowsCount = 40;
                                break;
                 default:
                                break;
@@ -192,7 +199,7 @@ namespace VeegStation
             defaultLeadSource = (Hashtable)controller.CommonDataPool.GetLeadSource(text)[0];
             myLeadSource = (Hashtable) controller.CommonDataPool.GetLeadSource(text)[1];
           
-            //DrawListView();
+            DrawListView();
         }
 
         /// <summary>
@@ -200,57 +207,57 @@ namespace VeegStation
         /// </summary>
         public void DrawListView()
         {
-            ////数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
-            //this.lvSourceList.BeginUpdate();
+            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
+            this.lvSourceList.BeginUpdate();
 
-            ////清空listview
-            //this.leadSetting.Items.Clear();
+            //清空listview
+            this.lvSourceList.Items.Clear();
 
-            ////清空列
-            //this.leadSetting.Columns.Clear();
+            //清空列
+            this.lvSourceList.Columns.Clear();
 
-            ////添加列名
-            //this.leadSetting.Columns.Add("数据源", 50, HorizontalAlignment.Left);
-            //this.leadSetting.Columns.Add("电极名称", 100, HorizontalAlignment.Left);
+            //添加列名
+            this.lvSourceList.Columns.Add("数据源", 50, HorizontalAlignment.Left);
+            this.lvSourceList.Columns.Add("电极名称", 100, HorizontalAlignment.Left);
 
             #region 加载LeadSource中的数据
 
-            ////如果自定义导联源有数据，则加载自定义导联源中数据，若自定义导联源无数据，则加载默认导联源中数据。
-            //if (myLeadSource.Count == 0)
-            //{
-            //    //加载defaultLeadSource的数据
-            //    ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
+            //如果自定义导联源有数据，则加载自定义导联源中数据，若自定义导联源无数据，则加载默认导联源中数据。
+            if (myLeadSource.Count == 0)
+            {
+                //加载defaultLeadSource的数据
+                ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
 
-            //    //排序key
-            //    dKeys.Sort();
-            //    foreach (int key in dKeys)
-            //    {
-            //        ListViewItem lvi = new ListViewItem();
-            //        lvi.Text = key.ToString();
-            //        lvi.SubItems.Add(defaultLeadSource[key].ToString());
-            //        this.leadSetting.Items.Add(lvi);
-            //    }
-            //}
-            //else
-            //{
-            //    //加载自定义导联源中数据
-            //    ArrayList lKeys = new ArrayList(myLeadSource.Keys);
+                //排序key
+                dKeys.Sort();
+                foreach (int key in dKeys)
+                {
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = key.ToString();
+                    lvi.SubItems.Add(defaultLeadSource[key].ToString());
+                    this.lvSourceList.Items.Add(lvi);
+                }
+            }
+            else
+            {
+                //加载自定义导联源中数据
+                ArrayList lKeys = new ArrayList(myLeadSource.Keys);
 
-            //    //排序key
-            //    lKeys.Sort();
-            //    foreach (int key in lKeys)
-            //    {
-            //        ListViewItem lvi = new ListViewItem();
-            //        lvi.Text = key.ToString();
-            //        //lvi.SubItems.Add(key);
-            //        lvi.SubItems.Add(myLeadSource[key].ToString());
-            //        this.leadSetting.Items.Add(lvi);
-            //    }
-            //}
+                //排序key
+                lKeys.Sort();
+                foreach (int key in lKeys)
+                {
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = key.ToString();
+                    //lvi.SubItems.Add(key);
+                    lvi.SubItems.Add(myLeadSource[key].ToString());
+                    this.lvSourceList.Items.Add(lvi);
+                }
+            }
             #endregion
 
-            ////结束数据处理，UI界面一次性绘制。
-            //this.leadSetting.EndUpdate();
+            //结束数据处理，UI界面一次性绘制。
+            this.lvSourceList.EndUpdate();
         }
 
 
@@ -467,11 +474,17 @@ namespace VeegStation
         {
             SetListViewText(((Button)sender).Text);
         }
+
+        private void btnClearOne_Click(object sender, EventArgs e)
+        {
+            SetListViewText("");
+        }
         #endregion
 
         private void btnDefault_Click(object sender, EventArgs e)
         {
             //导联源清除
+            myLeadSource.Clear();
 
             //添加默认配置
             DrawListView();
@@ -559,7 +572,7 @@ namespace VeegStation
 
             for (int i = 1; i < MaxLine; i++)
             {
-                if (stringArray[i] == stringArray[i - 1])
+                if (stringArray[i].Equals(stringArray[i - 1]))
                 {
                     return true;
                 }
@@ -572,6 +585,8 @@ namespace VeegStation
             e.Cancel = true;
             this.Hide();
         }
+
+        
 
         
 

@@ -51,7 +51,10 @@ namespace VeegStation
         /// </summary>
         private void ImportXmlData()
         {
-            
+            #region 导联配置参数  --by zt
+            commonDataPool.LeadSources = xmlConfig.LeadSources;
+            commonDataPool.LeadConfigLists = xmlConfig.LeadConfigLists;
+            #endregion
         }
 
         /// <summary>
@@ -61,13 +64,15 @@ namespace VeegStation
         {
             if (xmlConfig == null)
                 return;
-            //#region 导联配置参数  --by zt
+            #region 导联配置参数  --by zt
+            xmlConfig.LeadSources = commonDataPool.LeadSources;
+            xmlConfig.LeadConfigLists = commonDataPool.LeadConfigLists;
             //xmlConfig.leadList = commonDataPool.leadList;
             //xmlConfig.leadSource = commonDataPool.leadSource;
             //xmlConfig.defaultLeadSource = commonDataPool.defaultLeadSource;
             //xmlConfig.currentLeadConfig = commonDataPool.currentLeadConfig;
             //xmlConfig.demarcateCV = commonDataPool.demarcateCV;
-            //#endregion  
+            #endregion  
 
             if (configManage.SaveToFile("config", xmlConfig) == false)
             {
