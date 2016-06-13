@@ -1,4 +1,3 @@
-
 namespace VeegStation
 {
     partial class PlaybackForm

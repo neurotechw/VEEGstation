@@ -364,7 +364,6 @@ namespace VeegStation
             isAddingEvent = false;
             SetVScrollVisible(false);
             InitMenuItems();
-
             _Page = 0;
             try
             {
@@ -1009,7 +1008,6 @@ namespace VeegStation
         private void HSProgress_MouseCaptureChanged(object sender, EventArgs e)
         {
             Debug.WriteLine(string.Format("Scroll mouse cap changed {0}", e));
-
             //暂停播放
             Pause();
             if (nfi.HasVideo)
