@@ -637,9 +637,16 @@ namespace VeegStation
         /// <summary>
         /// 显示数据
         /// </summary>
-        private void ShowData()
+        public void ShowData()
         {
             DateTime begin = DateTime.Now;
+            #region 滤波处理
+            //每个通道的数据
+            //对每个通道的数据进行滤波
+            //freFilter.BandpassFilter()
+
+            #endregion
+
             SeriesCollection col = chartWave.Series;
             double interval = 2000D / signalNum;
             chartWave.SuspendLayout();
@@ -2168,7 +2175,7 @@ namespace VeegStation
                 //不选50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = false;
                 is50HzFilter = false;
-                LoadData(_Page);
+                //LoadData(_Page);
                 ShowData();
             }
             else
@@ -2176,7 +2183,7 @@ namespace VeegStation
                 //选择50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = true;
                 is50HzFilter = false;
-                LoadData(_Page);
+                //LoadData(_Page);
                 ShowData();
             }
         }
@@ -2185,6 +2192,7 @@ namespace VeegStation
         {
             myBandFilterForm.InitFormFilter();
             myBandFilterForm.Show();
+            
         } 
     }
 }

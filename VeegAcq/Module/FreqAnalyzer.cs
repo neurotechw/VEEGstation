@@ -574,7 +574,7 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 对某一信道进行带通滤波
+        /// 对某一信道进行带通滤波   --by zt
         /// </summary>
         /// <param name="channelIndex"></param>
         /// <param name="data"></param>
@@ -586,7 +586,7 @@ namespace VeegStation
         /// <returns></returns>
         public double[] BandpassFilter(int channelIndex, double[] data, bool is50HzFiltered, bool isBandpassFiltered, int low, int high, int rateOfSample)
         {
-            //如果不进行50Hz滤波,60Hz滤波和带通滤波，则直接返回原始数据
+            //如果不进行50Hz滤波,和带通滤波，则直接返回原始数据
             if (is50HzFiltered == false && isBandpassFiltered == false)
                 return data;
             ///最高波数==数据长度
