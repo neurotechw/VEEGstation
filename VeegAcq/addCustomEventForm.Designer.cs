@@ -28,29 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btn_color = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.nameTextBox = new System.Windows.Forms.RichTextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btn_confirm = new System.Windows.Forms.Button();
             this.btn_cancel = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.colorDialog = new System.Windows.Forms.ColorDialog();
+            this.buttonPanel = new System.Windows.Forms.Panel();
             this.SuspendLayout();
-            // 
-            // btn_color
-            // 
-            this.btn_color.Location = new System.Drawing.Point(124, 12);
-            this.btn_color.Name = "btn_color";
-            this.btn_color.Size = new System.Drawing.Size(25, 25);
-            this.btn_color.TabIndex = 0;
-            this.btn_color.UseVisualStyleBackColor = true;
-            this.btn_color.Click += new System.EventHandler(this.btnColor_Click);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(33, 18);
+            this.label1.Location = new System.Drawing.Point(33, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 12);
             this.label1.TabIndex = 1;
@@ -59,6 +49,7 @@
             // nameTextBox
             // 
             this.nameTextBox.Location = new System.Drawing.Point(35, 97);
+            this.nameTextBox.MaxLength = 50;
             this.nameTextBox.Name = "nameTextBox";
             this.nameTextBox.Size = new System.Drawing.Size(172, 96);
             this.nameTextBox.TabIndex = 3;
@@ -102,18 +93,25 @@
             this.label3.TabIndex = 7;
             this.label3.Text = "设置好后点击确认，再在图表上\r\n选择事件位置";
             // 
+            // buttonPanel
+            // 
+            this.buttonPanel.Location = new System.Drawing.Point(18, 15);
+            this.buttonPanel.Name = "buttonPanel";
+            this.buttonPanel.Size = new System.Drawing.Size(208, 47);
+            this.buttonPanel.TabIndex = 8;
+            // 
             // addCustomEventForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(238, 291);
+            this.Controls.Add(this.buttonPanel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btn_cancel);
             this.Controls.Add(this.btn_confirm);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.nameTextBox);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.btn_color);
             this.Name = "addCustomEventForm";
             this.Text = "addCustomEventForm";
             this.ResumeLayout(false);
@@ -123,13 +121,12 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btn_color;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.RichTextBox nameTextBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btn_confirm;
         private System.Windows.Forms.Button btn_cancel;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ColorDialog colorDialog;
+        private System.Windows.Forms.Panel buttonPanel;
     }
 }

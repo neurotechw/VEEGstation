@@ -17,31 +17,47 @@ namespace VeegStation
     {
         PlaybackForm myPlaybackForm;
 
-        /// <summary>
-        /// 事件名称
-        /// </summary>
-        PreDefineEvent.PreDefineEventsName eventName;
+        //PreDefineEvent.PreDefineEventsName eventName;
 
         /// <summary>
-        /// 事件颜色
+        /// 所添加的预定义事件的编号
         /// </summary>
-        Color eventColor;
+        private int eventIndex;
+
         public predefineEventsForm(PlaybackForm form)
         {
             InitializeComponent();
             myPlaybackForm = form;
+            eventIndex = -1;
 
-            //默认选择睁眼事件
-            eyesOpen.Checked = true;
+            //根据预定义事件列表初始化可选择的事件名称的radiobutton
+            InitRadioButton();
+        }
+
+        /// <summary>
+        /// 根据预定义事件列表初始化可选择的事件名称的radiobutton
+        /// </summary>
+        private void InitRadioButton()
+        {
+            RadioButton rbName;
+            for (int i = 0; i < PreDefineEvent.PreDefineEventNameArray.Count(); i++)
+            {
+                rbName = new RadioButton();
+                rbName.AutoSize = true;
+                rbName.Size = new Size(47, 16);
+                rbName.Text = PreDefineEvent.PreDefineEventNameArray[i];
+                rbName.Location = new Point(3, 17 + 22 * i);
+                rbName.CheckedChanged += new EventHandler(this.radioButton_CheckChanged);
+                rbName.Name = i.ToString();
+                this.nameGroup.Controls.Add(rbName);
+            }
         }
 
         /// <summary>
         /// 初始化事件列表
         /// </summary>
-        public void initList()
+        public void InitList()
         {
-            string name;
-
             //事件显示编号
             int index = 1;
 
@@ -54,16 +70,8 @@ namespace VeegStation
             //根将从Playbackform中读取的内容插入到列表中
             foreach (PreDefineEvent p in myPlaybackForm.GetPreEventList())
             {
-                //由于预定义事件的存储格式为0x4500-ox4503，故不对应ASCII编码，故需要判断
-                switch (p.EventName)
-                {
-                    case PreDefineEvent.PreDefineEventsName.eyesOpen: name = "睁眼"; break;
-                    case PreDefineEvent.PreDefineEventsName.eyesClose: name = "闭眼"; break;
-                    case PreDefineEvent.PreDefineEventsName.deepBreath: name = "深呼吸"; break;
-                    case PreDefineEvent.PreDefineEventsName.calibrate: name = "定标"; break;
-                    default: name = ""; break;
-                }
-                ListViewItem li = new ListViewItem(name);
+                //初始化listview的内容项
+                ListViewItem li = new ListViewItem(p.EventName);
                 li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
 
@@ -86,50 +94,33 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 添加事件点击事件
+        /// 添加事件按钮点击事件
         /// -- by lxl
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void addEvent_Click(object sender, EventArgs e)
         {
-            myPlaybackForm.StartAddEvents(true, eventColor, eventName);
+            if(eventIndex<=0)
+            {
+                MessageBox.Show("请先选择事件的名称");
+                return;
+            }
+            myPlaybackForm.StartAddEvents(eventIndex);
         }
 
         /// <summary>
-        /// 更新listView内容
+        /// 更新删除后listView内容
         /// -- by lxl
         /// </summary>
-        /// <param name="isAdded">是添加事件还是删除事件</param>
-        public void updateListView(bool isAdded)
+        public void updateListView()
         {
-            //若是添加事件，则直接将事件添加到后方（日后还需要对事件进行排序后再添加）
-            if (isAdded)
+            //把事件删除掉，并将所删除事件后的事件序号各减一
+            for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetPreEventList().Count; i++)
             {
-                string name;
-
-                //由于预定义事件的存储格式为0x4500-ox4503，故不对应ASCII编码，故需要判断
-                switch (myPlaybackForm.GetPreEventList()[myPlaybackForm.GetPreEventList().Count - 1].EventName)
-                {
-                    case PreDefineEvent.PreDefineEventsName.eyesOpen: name = "睁眼"; break;
-                    case PreDefineEvent.PreDefineEventsName.eyesClose: name = "闭眼"; break;
-                    case PreDefineEvent.PreDefineEventsName.deepBreath: name = "深呼吸"; break;
-                    case PreDefineEvent.PreDefineEventsName.calibrate: name = "定标"; break;
-                    default: name = ""; break;
-                }
-                ListViewItem li = new ListViewItem(name);
-                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(myPlaybackForm.GetPreEventList()[myPlaybackForm.GetPreEventList().Count - 1].EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
-                li.SubItems.Add(myPlaybackForm.GetPreEventList().Count.ToString());
-                eventList.Items.Add(li);
+                eventList.Items[i].SubItems[2].Text = (int.Parse(eventList.Items[i].SubItems[2].Text) - 1).ToString();
             }
-            else //若是删除事件则直接把事件删除掉，并将所删除事件后的事件序号各加一
-            {
-                for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetPreEventList().Count; i++)
-                {
-                    eventList.Items[i].SubItems[2].Text = (int.Parse(eventList.Items[i].SubItems[2].Text) - 1).ToString();
-                }
-                eventList.Items.RemoveAt(eventList.SelectedIndices[0]);
-            }
+            eventList.Items.RemoveAt(eventList.SelectedIndices[0]);
         }
 
         /// <summary>
@@ -147,13 +138,7 @@ namespace VeegStation
                 return;
 
             //根据所选择的按钮名称来设置预定义事件名称
-            switch (rb.Name)
-            {
-                case "eyesOpen": eventName = PreDefineEvent.PreDefineEventsName.eyesOpen; eventColor = PreDefineEvent.EyesOpenColor; break;
-                case "eyesClose": eventName = PreDefineEvent.PreDefineEventsName.eyesClose; eventColor = PreDefineEvent.EyesCloseColor; break;
-                case "deepBreath": eventName = PreDefineEvent.PreDefineEventsName.deepBreath; eventColor = PreDefineEvent.DeepBreathColor; break;
-                case "calibrate": eventName = PreDefineEvent.PreDefineEventsName.calibrate; eventColor = PreDefineEvent.CalibrateColor; break;
-            }
+            eventIndex = int.Parse(rb.Name);
         }
 
         /// <summary>
@@ -164,7 +149,13 @@ namespace VeegStation
         /// <param name="e"></param>
         private void deleteEvent_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(eventList.SelectedIndices[0].ToString());
+
+            //判定是否有选择一个事件
+            if (this.eventList.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("请选择一个事件进行删除");
+                return;
+            }
 
             //在事件列表中把事件删除
             myPlaybackForm.RemoveEvent(true, eventList.SelectedIndices[0]);

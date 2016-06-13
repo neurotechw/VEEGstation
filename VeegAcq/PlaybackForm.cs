@@ -80,7 +80,7 @@ namespace VeegStation
         /// 事件队列
         /// -- by lxl
         /// </summary>
-        private List<PreDefineEvent> preDEventsList = new List<PreDefineEvent>();
+        private List<PreDefineEvent> preDefineEventsList = new List<PreDefineEvent>();
         private List<CustomEvent> customEventList = new List<CustomEvent>();
         private int _Page;
         private int _maxPage;
@@ -213,25 +213,25 @@ namespace VeegStation
         /// </summary>
         private double mouseValueNow;
         /// <summary>
-        /// 所添加的预定义事件的名字
+        /// 所添加的预定义事件的编号（即第几号预定义事件）,启事位置从0开始
         /// -- by lxl
         /// </summary>
-        private PreDefineEvent.PreDefineEventsName addedEventNameForPDEvent;
+        private int preDefineEventIndex;
         /// <summary>
-        /// 所添加的自定义事件名字
+        /// 所添加的事件名称
         /// -- by lxl
         /// </summary>
-        private string addedEventNameForCustomEvent;
+        private string addedEventName;
         /// <summary>
         /// 判断现在是在添加什么事件，true为custom，false为preDefine
         /// -- by lxl
         /// </summary>
         private bool isAddingPreDefineEvent;
         /// <summary>
-        /// 添加事件时的所选事件的COLOR
+        /// 添加事件时的所选事件的COLOR的索引
         /// -- by lxl
         /// </summary>
-        private Color addingEventColor;
+        private int addingEventColorIndex;
         #endregion
         public PlaybackForm(NationFile EegFile)
         {
@@ -268,6 +268,12 @@ namespace VeegStation
             _totalSeconds = (int)EegFile.Duration.TotalSeconds; // 修改 --by zt
             hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
             this.myLeadSource = EegFile.Montage.LeadSource;
+
+            //初始化预定义事件的颜色选项与名称选项
+            PreDefineEvent.InitPreDefineEventNameWithArray(_nfi.EventCount, _nfi.PreDefineEventNameArray, _nfi.PreDefineEventColorArray);
+
+            //解析事件，并将事件添加进事件列表中
+            ParseEvent();
         }
 
         
@@ -326,6 +332,61 @@ namespace VeegStation
 
             DateTime end = DateTime.Now;
             Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", _packets.Count, (end - begin).TotalSeconds));
+        }
+
+        /// <summary>
+        /// 解析事件
+        /// -- by lxl
+        /// </summary>
+        private void ParseEvent()
+        {
+            //解析预定义事件
+            FileStream fs = new FileStream(this._nfi.NedFileName.Split('.')[0]+".NAT", FileMode.Open, FileAccess.Read);
+
+            //定位到CFG的位置
+            fs.Seek(this._nfi.NatInfo.CfgOff + 68, SeekOrigin.Begin);
+
+            //一直读，独到值为0x45的BYTE即为读出事件
+            int mark;
+            byte[] myByte = new byte[7];
+            do
+            {
+                mark = fs.ReadByte();
+                if (mark != 69)
+                {
+                    fs.Seek(7,SeekOrigin.Current);
+                    continue;
+                }
+
+                //将标志位后的7个BYTE全部读出来
+                fs.Read(myByte, 0, 7);
+                
+                //BYTE第一位为标志预定义事件编号位，第四第五位为存储点位置位（低位存储）
+                preDefineEventsList.Add(new PreDefineEvent(myByte[0], myByte[3] | myByte[4] << 8));
+            } 
+            while (mark >= 0);
+            preDefineEventsList.Sort(new PreDefineEventComparer());
+
+            //解析自定义事件
+            string name;
+            byte[] nameInByte = new byte[104];
+            if (File.Exists(this._nfi.NedFileName.Split('.')[0] + ".ent")) 
+            {
+                //打开.ent文件流并将其中数据读出来
+                FileStream entFS = new FileStream(this._nfi.NedFileName.Split('.')[0] + ".ent", FileMode.Open, FileAccess.Read);
+                byte[] entByte = new byte[entFS.Length];
+
+                entFS.Read(entByte, 0,(int)entFS.Length);
+
+                //解析其中的数据
+                for (int i = 0; i < entByte[5]; i++)
+                {
+                    Array.Copy(entByte, i * 128 + 9, nameInByte, 0, 104);
+                    name = Encoding.GetEncoding(936).GetString(nameInByte).Trim('\0');
+                    customEventList.Add(new CustomEvent(name, entByte[i * 128 + 9 + 104] | (entByte[i * 128 + 9 + 105] << 8), entByte[i * 128 + 9 + 108]));
+                }
+            }
+            customEventList.Sort(new CustomEventComparer());
         }
 
         /// <summary>
@@ -453,9 +514,6 @@ namespace VeegStation
             }
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
-                //没有事件先手动填充事件
-                //if (tIdx % 127 == 0) _preDEventsList.Add(new preDefineEvent(preDefineEvent.pdEvents.eyesOpen, tIdx));
-                if (tIdx % 127 == 0) customEventList.Add(new CustomEvent("你好", tIdx, Color.Blue));
                 foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
                 {
                     if (sIdx == 19)
@@ -1270,8 +1328,14 @@ namespace VeegStation
             //若正在添加事件，则画一条和所选事件颜色相同的线跟着鼠标走  --by lxl
             if (isAddingEvent)
             {
-                e.Graphics.DrawLine(new Pen(addingEventColor), new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
-                mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X) * sampleRate;
+                if (isAddingPreDefineEvent)
+                    e.Graphics.DrawLine(new Pen(PreDefineEvent.PreDefineEventColorArray[preDefineEventIndex]), new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
+                else
+                    e.Graphics.DrawLine(new Pen(CustomEvent.CustomEventColor[addingEventColorIndex]), new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
+                
+                //防止鼠标位置滑倒图表外面去
+                if (Control.MousePosition.X > this.chartWave.Location.X && Control.MousePosition.X < this.boardPanel.Location.X)
+                    mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X) * sampleRate;
             }
 
             //画图表上的秒数,time1Pos为当前图表中前二分之一秒的位置
@@ -1316,23 +1380,17 @@ namespace VeegStation
             double drawPosition;
 
             //画预定义事件                   
-            foreach (PreDefineEvent p in preDEventsList)                  
+            foreach (PreDefineEvent p in preDefineEventsList)                  
             {
                 //只画当前页面能显示的事件
-                if (p.EventPosition / sampleRate < currentSeconds)                 
+                if (p.EventPosition / sampleRate < currentSeconds)
                     continue;
                 if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
                     break;
                 dotPen.Color = p.EventColor;
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate);
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate - currentSeconds);
                 g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
-                switch (p.EventName)
-                {
-                    case PreDefineEvent.PreDefineEventsName.eyesOpen: g.DrawString("睁眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.PreDefineEventsName.eyesClose: g.DrawString("闭眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.PreDefineEventsName.deepBreath: g.DrawString("深呼吸", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.PreDefineEventsName.calibrate: g.DrawString("定标", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                }
+                g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
                 g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
 
@@ -1343,10 +1401,10 @@ namespace VeegStation
                 if (p.EventPosition / sampleRate < currentSeconds)                 
                     continue;
                 if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
-                    break;
-                dotPen.Color = p.EventColor;
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate);
-                g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
+                    continue;
+                dotPen.Color = CustomEvent.CustomEventColor[p.EventColorIndex];
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate - currentSeconds);
+                g.FillRectangle(new SolidBrush(Color.FromArgb(200, CustomEvent.CustomEventColor[p.EventColorIndex])), new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
                 g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
@@ -1489,7 +1547,7 @@ namespace VeegStation
                     myPreDefineEventFormEventForm = new predefineEventsForm(this);
                 myPreDefineEventFormEventForm.Show();
                 myPreDefineEventFormEventForm.BringToFront();
-                myPreDefineEventFormEventForm.initList();
+                myPreDefineEventFormEventForm.InitList();
             }
             else//若名字以pr开头则是custom（自定义）事件
             {
@@ -1507,7 +1565,7 @@ namespace VeegStation
         /// <returns>预定义事件列表</returns>
         public List<PreDefineEvent> GetPreEventList()
         {
-            return preDEventsList;
+            return preDefineEventsList;
         }
 
         /// <summary>
@@ -1526,11 +1584,15 @@ namespace VeegStation
         /// </summary>
         /// <param name="index">索引</param>
         /// <param name="name">名称</param>
-        /// <param name="clr">颜色</param>
-        public void editCustomEvent(int index, string name, Color clr)
+        /// <param name="colorIndex">颜色索引号</param>
+        public void editCustomEvent(int index, string name, int colorIndex)
         {
+            //将新的编辑后的事件保存
             this.customEventList[index].EventName = name;
-            this.customEventList[index].EventColor = clr;
+            this.customEventList[index].EventColorIndex = colorIndex;
+
+            //重画图表
+            this.chartWave.Invalidate();
         }
         /// <summary>
         /// 获取采样频率
@@ -1553,27 +1615,40 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 开始添加事件
+        /// 开始添加预定义事件
+        /// </summary>
+        /// <param name="index">预定义事件的事件编号</param>
+        public void StartAddEvents(int index)
+        {
+
+            //保存添加的预定义事件的编号
+            this.preDefineEventIndex = index;
+
+            //设置当前为正在添加预定义事件
+            isAddingPreDefineEvent = true;
+
+            //设置当前开始添加事件
+            isAddingEvent = true;
+        }
+        /// <summary>
+        /// 开始添加自定义事件
         /// -- by lxl
         /// </summary>
-        /// <param name="flag">true为预定义事件，false为自定义事件</param>
-        /// <param name="clr">事件颜色</param>
+        /// <param name="colorIndex">事件颜色索引</param>
         /// <param name="name">事件名称</param>
-        public void StartAddEvents(bool flag, Color clr, object name)
+        public void StartAddEvents(int colorIndex, string name)
         {
             //设置添加事件过程中所要画的直线的颜色
-            addingEventColor = clr;
+            addingEventColorIndex = colorIndex;
 
-            //设置现在是添加的什么事件
-            isAddingPreDefineEvent = flag;
+            //设置现在是添加自定义事件
+            isAddingPreDefineEvent = false;
 
+            //设置当前开始添加事件
             isAddingEvent = true;
             
             //根据现在是在添加什么事件来确定事件名称
-            if (flag)
-                addedEventNameForPDEvent = (PreDefineEvent.PreDefineEventsName)name;
-            else
-                addedEventNameForCustomEvent = (string)name;
+            addedEventName = name;
         }
 
         /// <summary>
@@ -1623,17 +1698,21 @@ namespace VeegStation
                 {
                     if (isAddingPreDefineEvent)
                     {
-                        preDEventsList.Add(new PreDefineEvent(addedEventNameForPDEvent, mouseValueNow));
+                        //将事件添加进列表并排序
+                        preDefineEventsList.Add(new PreDefineEvent(preDefineEventIndex, mouseValueNow));
+                        preDefineEventsList.Sort(new PreDefineEventComparer());
 
                         //事件添加后更新添加事件的form里的列表
-                        myPreDefineEventFormEventForm.updateListView(true);
+                        myPreDefineEventFormEventForm.InitList();
                     }
                     else
                     {
-                        customEventList.Add(new CustomEvent(addedEventNameForCustomEvent, mouseValueNow, addingEventColor));
+                        //将事件添加进列表并排序
+                        customEventList.Add(new CustomEvent(addedEventName, mouseValueNow, addingEventColorIndex));
+                        customEventList.Sort(new CustomEventComparer());
 
                         //事件添加后更新添加事件的form里的列表
-                        myCustomEventForm.UpdateListView(true);
+                        myCustomEventForm.InitList();
                     }
                 }
 
@@ -1644,7 +1723,7 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 删除指定索引的事件
+        /// 删除指定索引的事件，根据索引值flag判定是删除预定义事件还是自定义事件
         /// -- by lxl
         /// </summary>
         /// <param name="flag">是否是预定义事件</param>
@@ -1653,13 +1732,21 @@ namespace VeegStation
         {
             if (flag)
             {
-                preDEventsList.RemoveAt(index);
+                //判定预定义事件列表最少有一个事件可供删除
+                if (preDefineEventsList.Count() <= 0)
+                    return;
+
+                preDefineEventsList.RemoveAt(index);
 
                 //事件删除后更新添加事件的form里的列表
-                myPreDefineEventFormEventForm.updateListView(false);
+                myPreDefineEventFormEventForm.updateListView();
             }
             else
             {
+                //判定自定义事件列表最少有一个事件可供删除
+                if (customEventList.Count() <= 0)
+                    return;
+
                 customEventList.RemoveAt(index);
 
                 //事件删除后更新添加事件的form里的列表

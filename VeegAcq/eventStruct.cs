@@ -7,38 +7,41 @@ using System.Drawing;
 namespace VeegStation
 {
     /// <summary>
-    /// 预定义事件类，包含颜色，名称（枚举类，4选1），和点的位置（第几个点）
+    /// 预定义事件类，包含颜色，名称（字符串数组），和点的位置（第几个点）
     /// -- by lxl
     /// </summary>
     public class PreDefineEvent
     {
-        public static Color EyesOpenColor = Color.Pink;
-        public static Color EyesCloseColor = Color.Yellow;
-        public static Color DeepBreathColor = Color.Green;
-        public static Color CalibrateColor = Color.Blue;
+        private static Color[] preDefineEventColorArray;
 
-        public PreDefineEvent(PreDefineEventsName e,double pos)
+        public static Color[] PreDefineEventColorArray
         {
-            eventName = e; eventPosition = pos;
-            switch (e)
-            {
-                case PreDefineEventsName.eyesOpen: eventColor = EyesOpenColor; break;
-                case PreDefineEventsName.eyesClose: eventColor = EyesCloseColor; break;
-                case PreDefineEventsName.deepBreath: eventColor = DeepBreathColor; break;
-                case PreDefineEventsName.calibrate: eventColor = CalibrateColor; break;
-            }
+            get { return PreDefineEvent.preDefineEventColorArray; }
         }
 
-        public enum PreDefineEventsName
+        private static string[] preDefineEventNameArray;
+
+        public static string[] PreDefineEventNameArray
         {
-            eyesOpen = 0x4500,
-            eyesClose = 0x4501,
-            deepBreath = 0x4502,
-            calibrate = 0x4503
-        };
+            get { return PreDefineEvent.preDefineEventNameArray; }
+        }
+
+        public PreDefineEvent(int index, double pos)
+        {
+            if (preDefineEventColorArray == null || preDefineEventNameArray == null)
+            {
+                System.Windows.Forms.MessageBox.Show("请先初始化预定义事件名称数组和颜色数组");
+                return;
+            }
+            eventName = preDefineEventNameArray[index];
+            eventColor = preDefineEventColorArray[index];
+            eventPosition = pos;
+        }
+
         private Color eventColor;
         private double eventPosition;
-        private PreDefineEventsName eventName;
+        //private PreDefineEventsName eventName;
+        private string eventName;
         /// <summary>
         /// 事件的颜色
         /// -- by lxl
@@ -61,10 +64,35 @@ namespace VeegStation
         /// 预定义事件的描述，值为pdEvents类型
         /// -- by lxl
         /// </summary>
-        public PreDefineEventsName EventName
+        //public PreDefineEventsName EventName
+        //{
+        //    get { return eventName; }
+        //    set { eventName = value; }
+        //}
+
+        /// <summary>
+        /// 预定义事件的名称
+        /// </summary>
+        public string EventName
         {
             get { return eventName; }
             set { eventName = value; }
+        }
+
+        /// <summary>
+        /// 初始化预定义事件的名称项与颜色项
+        /// </summary>
+        /// <param name="length"></param>
+        /// <param name="name"></param>
+        public static void InitPreDefineEventNameWithArray(int length, string[] name, Color[] clr)
+        {
+            preDefineEventNameArray = new string[length];
+            preDefineEventColorArray = new Color[length];
+            for (int i = 0; i < length; i++)
+            {
+                preDefineEventNameArray[i] = name[i];
+                preDefineEventColorArray[i] = clr[i];
+            }
         }
     }
 
@@ -74,11 +102,30 @@ namespace VeegStation
     /// </summary>
     public class CustomEvent
     {
-        public CustomEvent(string name,double pos,Color clr)
+        /// <summary>
+        /// 构造一个自定义事件
+        /// </summary>
+        /// <param name="name">事件名称</param>
+        /// <param name="pos">事件所在位置</param>
+        /// <param name="i">事件的颜色索引</param>
+        public CustomEvent(string name,double pos,int i)
         {
-            eventName = name; eventPosition = pos; eventColor = clr;
+            eventName = name; eventPosition = pos; eventColorIndex = i;
         }
-        private Color eventColor;
+
+        /// <summary>
+        /// 自定义事件可选颜色
+        /// </summary>
+        private static Color[] customEventColor = new Color[20] { Color.FromArgb(128, 0, 0), Color.FromArgb(128, 128, 0), Color.FromArgb(0, 128, 0), Color.FromArgb(0, 128, 128), Color.FromArgb(0, 0, 128),
+        Color.FromArgb(128, 0, 128),Color.FromArgb(0,128,255),Color.FromArgb(64,64,255),Color.FromArgb(128,0,255),Color.FromArgb(128,64,0),Color.FromArgb(255,0,0),Color.FromArgb(255,255,0),Color.FromArgb(0,255,0),
+        Color.FromArgb(0,255,255),Color.FromArgb(0,0,255),Color.FromArgb(255,0,255),Color.FromArgb(128,255,0),Color.FromArgb(0,64,255),Color.FromArgb(255,0,128),Color.FromArgb(255,128,0)};
+
+        public static Color[] CustomEventColor
+        {
+            get { return CustomEvent.customEventColor; }
+        }
+
+        private int eventColorIndex;
         private double eventPosition;
         private string eventName;
 
@@ -86,10 +133,10 @@ namespace VeegStation
         /// 颜色
         /// -- by lxl
         /// </summary>
-        public Color EventColor
+        public int EventColorIndex
         {
-            get { return eventColor; }
-            set { eventColor = value; }
+            get { return eventColorIndex; }
+            set { eventColorIndex = value; }
         }
         /// <summary>
         /// 事件所在的点的位置
@@ -109,5 +156,6 @@ namespace VeegStation
             get { return eventName; }
             set { eventName = value; }
         }
+
     }
 }
