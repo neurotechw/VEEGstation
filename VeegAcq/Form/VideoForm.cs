@@ -63,6 +63,11 @@ namespace VeegStation
          Point m_ptCanvas;
         private void VideoForm_Load_1(object sender, EventArgs e)
         {
+            toolTip1.SetToolTip(btn_play, "播放");
+            toolTip1.SetToolTip(btn_pause, "暂停");
+            toolTip1.SetToolTip(btn_accelerate, "加速");
+            toolTip1.SetToolTip(btn_decelerate, "减速");
+            toolTip1.SetToolTip(btn_close, "关闭");
             m_ptCanvas = this.pictureBox_Video.Location;
             if (playBack.nfi == null)
             {
@@ -96,6 +101,7 @@ namespace VeegStation
              y = this.pictureBox_Video.Location.Y;
              width = this.pictureBox_Video.Width;
              height = this.pictureBox_Video.Height;
+             btn_pause.Enabled = false;
         }
 
         /// <summary>
@@ -110,6 +116,7 @@ namespace VeegStation
         //暂停函数
         public void Pause()
         {
+            if(Player.IsPlaying)
             Player.Pause();
         }
 
@@ -157,6 +164,7 @@ namespace VeegStation
             this.Hide();
             playBack.timer.Enabled = false;
             playBack.Pause();
+            Player.Pause();
         }
 
         /// <summary>
@@ -179,7 +187,9 @@ namespace VeegStation
             }
             else
             {
+                btn_decelerate.Enabled = true;
                 btn_accelerate.Enabled = false;
+                playBack.btn_decelerate.Enabled = true;
                 playBack.btn_accelerate.Enabled = false;
             }
         }
@@ -235,7 +245,9 @@ namespace VeegStation
             }
             else
             {
+                btn_accelerate.Enabled = true;
                 btn_decelerate.Enabled = false;
+                playBack.btn_accelerate.Enabled = true;
                 playBack.btn_decelerate.Enabled = false;
             }
         }
@@ -267,5 +279,6 @@ namespace VeegStation
             pt = System.Windows.Forms.Control.MousePosition;
         }
         #endregion
+
     }
 }

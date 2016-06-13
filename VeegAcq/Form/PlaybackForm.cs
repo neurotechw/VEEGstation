@@ -346,7 +346,13 @@ namespace VeegStation
             myLeadConfigForm = new LeadConfigForm();
 
             sensitivity = 100;
-            isBoardShow = true;
+
+            //根据是否有视频判定面板是否显示--by wsp
+            if (EegFile.HasVideo)
+                isBoardShow = true;
+            else
+                isBoardShow = false;
+
             this.boardToolStripMenuItem.Checked = isBoardShow;
             this.boardPanel.Visible = isBoardShow;
             timeStandard = 30;
@@ -594,6 +600,9 @@ namespace VeegStation
 
         private void PlaybackForm_Load(object sender, EventArgs e)
         {
+            toolTip1.SetToolTip(btn_accelerate, "加速");
+            toolTip1.SetToolTip(btn_decelerate, "减速");
+            toolTip1.SetToolTip(btn_hide, "隐藏");
             if (nfi == null)
             {
                 Close();
@@ -752,6 +761,8 @@ namespace VeegStation
         private void btnPrev_Click(object sender, EventArgs e)
         {
             Pause();
+            if (nfi.HasVideo)
+                video.Pause();
             PagePrev2();
 
             //点击了上一页，进度条，时间要变化
@@ -764,6 +775,7 @@ namespace VeegStation
             //video.Player.Time = CurrentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
             if (nfi.HasVideo)
                 TimeChange();
+            UpdateBtnEnable();
         }
 
         /// <summary>
@@ -775,6 +787,8 @@ namespace VeegStation
         {
             //暂停播放
             Pause();
+            if (nfi.HasVideo)
+                video.Pause();
             PageNext2();
 
             //点击了下一页，进度条，时间要变化
@@ -787,6 +801,9 @@ namespace VeegStation
             //video.Player.Time = CurrentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
             if (nfi.HasVideo)
                 TimeChange();
+            
+            //翻页后，更新按钮状态是否可用
+            UpdateBtnEnable();
         }
 
         #region  Time时间--by wsp
@@ -863,6 +880,7 @@ namespace VeegStation
                  displayStartTime.Text = dt_Begin1.ToLongTimeString().ToString();
                  displayRecordingTime.Text = dt_TotalTime1.ToLongTimeString().ToString();
              }
+            UpdateBtnEnable();
         }
         #endregion
 
@@ -909,7 +927,9 @@ namespace VeegStation
             if (nfi.HasVideo)
             {
                 if (Player.IsPlaying)
+                {
                     Player.Pause();
+                }
             }
             btnPause.Enabled = false;
             btnPlay.Enabled = true;
@@ -926,6 +946,8 @@ namespace VeegStation
             if (nfi.HasVideo)
             {
                 video.Play();
+                video.btn_pause.Enabled = true;
+                video.btn_play.Enabled = false;
                 if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
                     video.Player.Time = (long)nfi.VideoOffset * 1000;
                 if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
@@ -941,8 +963,12 @@ namespace VeegStation
         public void btnPause_Click(object sender, EventArgs e)
         {
             Pause();
-            if(nfi.HasVideo)
-            video.Pause();
+            if (nfi.HasVideo)
+            {
+                video.Pause();
+                video.btn_play.Enabled = true;
+                video.btn_pause.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -986,16 +1012,31 @@ namespace VeegStation
 
             //暂停播放
             Pause();
+            if (nfi.HasVideo)
+                video.Pause();
             if (CurrentSeconds != hsProgress.Value)
             {
                 CurrentSeconds = hsProgress.Value;
                 Changed();
-                CurrentOffset = CurrentSeconds;
+
+                //为保证拖动进度条之后，竖线位置保持不变--by wsp
+                if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset < nfi.Duration.TotalSeconds)
+                    CurrentOffset = CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset;
+                else
+                {
+                    CurrentOffset = nfi.Duration.TotalSeconds;
+                    chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = nfi.Duration.TotalSeconds - CurrentSeconds;
+                }
                 LoadData(CurrentSeconds);
                 ShowData();
-                if(nfi.HasVideo)
-                Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
-            }
+                //如果有视频，视频也要同步跟随--by wsp
+                if (nfi.HasVideo)
+                {
+                    Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                    video.Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                }
+             }
+            UpdateBtnEnable();
         }
 
         /// <summary>
@@ -1317,7 +1358,9 @@ namespace VeegStation
             {
                 //加速到最大后，加速按钮不可用，减速按钮可用
                 btn_accelerate.Enabled = false;
+                btn_decelerate.Enabled = true;
                 video.btn_accelerate.Enabled = false;
+                video.btn_decelerate.Enabled = true;
             }
         }
 
@@ -1342,12 +1385,15 @@ namespace VeegStation
                 //videoForm的倍速要与该Form倍速保持一致
                 video.Player.PlaybackRate = Player.PlaybackRate;
                 video.btn_decelerate.Enabled = true;
+                video.btn_accelerate.Enabled = true;
             }
             else
             {
                 //加速到最大后，加速按钮不可用，减速按钮可用
                 btn_decelerate.Enabled = false;
+                btn_accelerate.Enabled = true;
                 video.btn_decelerate.Enabled = false;
+                video.btn_accelerate.Enabled = true;
             }
         }
 
@@ -1361,13 +1407,13 @@ namespace VeegStation
         {
             if (panelVideo.Visible == true)
             {
-                btn_hide.Text = "显示";
+                toolTip1.SetToolTip(btn_hide, "显示");
                 panelVideo.Visible = false;
                 video.Show();
             }
             else
             {
-                btn_hide.Text = "隐藏";
+                toolTip1.SetToolTip(btn_hide, "隐藏");
                 panelVideo.Visible = true;
                 video.Hide();
             }
@@ -2019,6 +2065,15 @@ namespace VeegStation
             myLeadConfigForm.InitLeadConfig();
             //myLeadConfigForm.Show();
             myLeadConfigForm.ShowDialog();
+        }
+		private void boardPanel_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics gra = e.Graphics;
+            Pen myPen = Pens.Black;
+            gra.DrawRectangle(myPen, new Rectangle(5, 5, 190, 190));
+            //Graphics gra2 = e.Graphics;
+            //Pen myPen2 = Pens.Black;
+            //gra2.DrawRectangle(myPen2, new Rectangle(5,190,190,730));
         }
     }
 }

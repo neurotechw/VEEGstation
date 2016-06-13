@@ -285,6 +285,13 @@
     <Content Include="Resources\lead.png" />
     <Content Include="Resources\leadP.png" />
     <Content Include="Resources\leadPicture.png" />
+    <Content Include="Resources\pause.png" />
+    <Content Include="Resources\play_new.png" />
+    <Content Include="Resources\stop_new.png" />
+    <Content Include="Resources\倍速.png" />
+    <Content Include="Resources\倍速_2.png" />
+    <Content Include="Resources\删除小.png" />
+    <Content Include="Resources\系统配置小.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
