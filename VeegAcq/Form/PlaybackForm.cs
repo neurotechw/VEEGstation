@@ -104,6 +104,11 @@ namespace VeegStation
 
         #region 导联参数 --by zt
         /// <summary>
+        /// 导联配置Form  --by zt
+        /// </summary>
+        private LeadConfigForm myLeadConfigForm;
+
+        /// <summary>
         /// 导联配置
         /// </summary>
         public Hashtable leadList;
@@ -124,10 +129,52 @@ namespace VeegStation
         public ArrayList leadConfigArrayList;
         #endregion
 
+        #region 滤波参数  --by zt
         /// <summary>
-        /// 导联配置Form  --by zt
+        /// 是否50Hz滤波  --by zt
         /// </summary>
-        private LeadConfigForm myLeadConfigForm;
+        private bool is50HzFilter;
+ 
+        /// <summary>
+        /// 是否带通滤波  --by zt
+        /// </summary>
+        private bool isBandFilter;
+ 
+        /// <summary>
+        /// 采样点数      --by zt
+        /// </summary>
+        private int Ns;   
+        
+        /// <summary>
+        /// 采样时间      --by zt
+        /// </summary>
+        private double tc;   
+      
+        /// <summary>
+        /// 采样频率      --by zt
+        /// </summary>
+        private int fs;           
+
+        /// <summary>
+        /// 低频参数      --by zt
+        /// </summary>
+        private int lowFrequency;
+
+        /// <summary>
+        /// 高频参数      --by zt
+        /// </summary>
+        private int highFrequency;
+
+        /// <summary>
+        /// 滤波实例  --by zt
+        /// </summary>
+        private FreqAnalyzer freFilter = new FreqAnalyzer();
+        
+        /// <summary>
+        /// 带通滤波Form  --by zt
+        /// </summary>
+        private BandFilterForm myBandFilterForm;
+        #endregion
 
         int maxPage;
 
@@ -339,6 +386,35 @@ namespace VeegStation
         private Color addingEventColor;
         #endregion
 
+        #region 访问器
+
+        #region 滤波参数访问器
+        public bool Is50HzFilter
+        {
+            get { return is50HzFilter; }
+            set { is50HzFilter = value; }
+        }
+
+        public bool IsBandFilter
+        {
+            get { return isBandFilter; }
+            set { isBandFilter = value; }
+        }
+
+        public int LowFrequency
+        {
+            get { return lowFrequency; }
+            set { lowFrequency = value; }
+        }
+
+        public int HighFrequency
+        {
+            get { return highFrequency; }
+            set { highFrequency = value; }
+        } 
+        #endregion
+        #endregion
+
         public PlaybackForm(NationFile EegFile)
         {
             InitializeComponent();
@@ -386,6 +462,8 @@ namespace VeegStation
             _totalSeconds = (int)EegFile.Duration.TotalSeconds; 
             hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
             //this.myLeadSource = EegFile.Montage.LeadSource;
+
+            myBandFilterForm = new BandFilterForm(this);
         }
 
         /// <summary>
@@ -2064,6 +2142,7 @@ namespace VeegStation
             //myLeadConfigForm.Show();
             myLeadConfigForm.ShowDialog();
         }
+
 		private void boardPanel_Paint(object sender, PaintEventArgs e)
         {
             Graphics gra = e.Graphics;
@@ -2073,5 +2152,39 @@ namespace VeegStation
             //Pen myPen2 = Pens.Black;
             //gra2.DrawRectangle(myPen2, new Rectangle(5,190,190,730));
         }
+
+        /// <summary>
+        /// 设置带通滤波是否选中
+        /// </summary>
+        public void SetBandFilterChecked()
+        {
+            this.BandFilterToolStripMenuItem.Checked = isBandFilter;
+        }
+
+        private void Filter50HzToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Filter50HzToolStripMenuItem.Checked == true)
+            {
+                //不选50Hz滤波
+                Filter50HzToolStripMenuItem.Checked = false;
+                is50HzFilter = false;
+                LoadData(_Page);
+                ShowData();
+            }
+            else
+            {
+                //选择50Hz滤波
+                Filter50HzToolStripMenuItem.Checked = true;
+                is50HzFilter = false;
+                LoadData(_Page);
+                ShowData();
+            }
+        }
+
+        private void BandFilterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myBandFilterForm.InitFormFilter();
+            myBandFilterForm.Show();
+        } 
     }
 }

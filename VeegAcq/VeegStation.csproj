@@ -91,6 +91,12 @@
     <Compile Include="Form\addCustomEventForm.Designer.cs">
       <DependentUpon>addCustomEventForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\BandFilterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\BandFilterForm.Designer.cs">
+      <DependentUpon>BandFilterForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\CalibrateYForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -134,10 +140,12 @@
       <DependentUpon>LeadEditForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Module\CommonData.cs" />
+    <Compile Include="Module\Complex.cs" />
     <Compile Include="Module\DataFunc.cs" />
     <Compile Include="Module\Datastructcs.cs" />
     <Compile Include="Module\EegPacket.cs" />
     <Compile Include="Module\eventStruct.cs" />
+    <Compile Include="Module\FreqAnalyzer.cs" />
     <Compile Include="Module\Montage.cs" />
     <Compile Include="Module\NatFileInfo.cs" />
     <Compile Include="Module\NatInfo.cs" />
@@ -184,6 +192,9 @@
     </Compile>
     <EmbeddedResource Include="Form\addCustomEventForm.resx">
       <DependentUpon>addCustomEventForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\BandFilterForm.resx">
+      <DependentUpon>BandFilterForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\CalibrateYForm.resx">
       <DependentUpon>CalibrateYForm.cs</DependentUpon>
