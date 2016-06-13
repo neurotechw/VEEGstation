@@ -112,7 +112,7 @@ namespace VeegStation
                 this.myPlaybackForm.IsBandFilter = false;
             }
             this.myPlaybackForm.SetBandFilterChecked();
-
+            this.myPlaybackForm.ShowData();
             this.Hide();
         }
 
