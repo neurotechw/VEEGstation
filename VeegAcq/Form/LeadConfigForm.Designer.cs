@@ -78,6 +78,7 @@
             this.cbConfigList.Name = "cbConfigList";
             this.cbConfigList.Size = new System.Drawing.Size(187, 20);
             this.cbConfigList.TabIndex = 5;
+            this.cbConfigList.SelectedIndexChanged += new System.EventHandler(this.cbConfigList_SelectedIndexChanged);
             // 
             // label3
             // 
@@ -113,6 +114,7 @@
             this.btnEdit.TabIndex = 3;
             this.btnEdit.Text = "编辑";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnDelete
             // 
@@ -122,6 +124,7 @@
             this.btnDelete.TabIndex = 4;
             this.btnDelete.Text = "删除";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnSetting
             // 
@@ -142,13 +145,12 @@
             this.lvLeadList.TabIndex = 6;
             this.lvLeadList.UseCompatibleStateImageBehavior = false;
             this.lvLeadList.View = System.Windows.Forms.View.Details;
+            this.lvLeadList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvLeadList_ColumnClick);
             // 
             // LeadConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
             this.ClientSize = new System.Drawing.Size(762, 579);
             this.Controls.Add(this.lvLeadList);
             this.Controls.Add(this.btnSetting);
@@ -156,6 +158,8 @@
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.gbInfo);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "LeadConfigForm";
             this.Text = "LeadConfigForm";
             this.gbInfo.ResumeLayout(false);

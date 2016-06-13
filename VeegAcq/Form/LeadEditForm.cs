@@ -62,6 +62,11 @@ namespace VeegStation
             this.controller = control;
         }
 
+        /// <summary>
+        /// 初始化Form
+        /// </summary>
+        /// <param name="config"></param>
+        /// <param name="nameOfLead"></param>
         public void InitEditLead(string config, string nameOfLead) 
         {
             lbConfig.Text = config;
@@ -587,20 +592,20 @@ namespace VeegStation
             }
             //保存完直接退出
             this.Hide();
-            //myLeadConfigForm.InitLeadConfig();
+            myLeadConfigForm.InitList();
         }
 
         private void btnExit_Click(object sender, EventArgs e)
         {
             this.Hide();
-            //myLeadConfigForm.InitLeadConfig();
+            myLeadConfigForm.InitList();
         }
 
         private void LeadEditForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
             this.Hide();
-            //myLeadConfigForm.InitLeadConfig();
+            myLeadConfigForm.InitList();
         }
 
         /// <summary>

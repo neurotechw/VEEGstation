@@ -305,7 +305,7 @@ namespace VeegStation
             {
                 if (lead32Names[i] != "")
                 {
-                    defaultLeadConfig32.Add(lead32Names[i] + "-REF");
+                    defaultLeadConfig32P.Add(lead32Names[i] + "-REF");
                 }
             }
 

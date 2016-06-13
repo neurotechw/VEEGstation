@@ -574,7 +574,7 @@ namespace VeegStation
                 this.Close();
 
                 //跳转到导联配置主界面,待定
-                //this.myLeadConfigForm.InitLeadConfig();
+                myLeadConfigForm.InitList();
                 #endregion
             }
             else
@@ -586,14 +586,14 @@ namespace VeegStation
         private void btnExit_Click(object sender, EventArgs e)
         {
             this.Hide();
-            //myLeadConfigForm.InitLeadConfig();
+            myLeadConfigForm.InitList();
         }
 
         private void LeadAddForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
             this.Hide();
-            //myLeadConfigForm.InitLeadConfig();
+            myLeadConfigForm.InitList();
         }
 
         private void lvAddLeadList_MouseDown(object sender, MouseEventArgs e)

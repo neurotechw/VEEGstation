@@ -127,6 +127,12 @@
     <Compile Include="Form\LeadAddForm.Designer.cs">
       <DependentUpon>LeadAddForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\LeadEditForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\LeadEditForm.Designer.cs">
+      <DependentUpon>LeadEditForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Module\CommonData.cs" />
     <Compile Include="Module\DataFunc.cs" />
     <Compile Include="Module\Datastructcs.cs" />
@@ -206,6 +212,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\LeadAddForm.resx">
       <DependentUpon>LeadAddForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\LeadEditForm.resx">
+      <DependentUpon>LeadEditForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
