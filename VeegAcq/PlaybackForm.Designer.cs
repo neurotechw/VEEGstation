@@ -878,6 +878,7 @@ namespace VeegStation
             this.boardPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.savingDataWhileFormClosing);
 
         }
 

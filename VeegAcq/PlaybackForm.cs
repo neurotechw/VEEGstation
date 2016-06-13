@@ -1777,5 +1777,14 @@ namespace VeegStation
             //重画label，防止图表大小改变后label显示位置不正确
             this.labelPanel.Invalidate();
         }
+
+        private void savingDataWhileFormClosing(object sender, EventArgs e)
+        {
+            FileStream fs = new FileStream(_nfi.NedFileName.Split('.')[0]+"LXLTEXT", FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            StreamWriter sw = new StreamWriter(fs);
+            sw.Write(customEventList);
+            sw.Close();
+            fs.Close();
+        }
     }
 }
