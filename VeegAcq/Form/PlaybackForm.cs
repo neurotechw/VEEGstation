@@ -431,8 +431,8 @@ namespace VeegStation
             this.boardToolStripMenuItem.Checked = isBoardShow;
             this.boardPanel.Visible = isBoardShow;
             timeStandard = 30;
-            pixelPerMM = 3.8;
-            mmPerYGrid = 1;
+            //pixelPerMM = 3.8;
+            //mmPerYGrid = 11.5;
             isChangingBoardShow = true;
             signalNum = 20;
             currentTopSignal = 0;
@@ -495,7 +495,9 @@ namespace VeegStation
             //this.commonDataPool = controller.GetCommonData();
             this.commonDataPool = controller.CommonDataPool;
             #region 画图参数
-
+            mmPerYGrid = commonDataPool.MMPerYGrid;
+            pixelPerMM = commonDataPool.PixelPerMM;
+            //pi
             #endregion
 
             #region 导联参数
@@ -607,7 +609,7 @@ namespace VeegStation
                 fs.Read(myByte, 0, 7);
                 
                 //BYTE第一位为标志预定义事件编号位，第四第五位为存储点位置位（低位存储）
-                preDefineEventsList.Add(new PreDefineEvent(myByte[0], myByte[3] | myByte[4] << 8));
+                preDefineEventsList.Add(new PreDefineEvent(myByte[0], (ushort)(myByte[3] | myByte[4] << 8)));
             } 
             while (mark >= 0);
             preDefineEventsList.Sort(new PreDefineEventComparer());
@@ -628,7 +630,7 @@ namespace VeegStation
                 {
                     Array.Copy(entByte, i * 128 + 9, nameInByte, 0, 104);
                     name = Encoding.GetEncoding(936).GetString(nameInByte).Trim('\0');
-                    customEventList.Add(new CustomEvent(name, entByte[i * 128 + 9 + 104] | (entByte[i * 128 + 9 + 105] << 8), entByte[i * 128 + 9 + 108]));
+                    customEventList.Add(new CustomEvent(name, (ushort)(entByte[i * 128 + 9 + 104] | (entByte[i * 128 + 9 + 105] << 8)), entByte[i * 128 + 9 + 108]));
                 }
             }
             customEventList.Sort(new CustomEventComparer());
@@ -1604,6 +1606,7 @@ namespace VeegStation
 
             //一格应该有多少毫米
             mmPerYGrid = pageHeightInMM / 20;
+            commonDataPool.MMPerYGrid = mmPerYGrid;
 
             ShowData();
         }
@@ -1627,17 +1630,25 @@ namespace VeegStation
         {
             //一毫米多少像素点
             pixelPerMM = width / 10D;
+            commonDataPool.PixelPerMM = pixelPerMM;
 
-            //表格高度有多少毫米
-            pageWidthInMM = pageWidthInPixel / pixelPerMM;
-
-            //根据表格宽度设置X轴的最大值
-            SetAxisXMaximum(pageWidthInMM / timeStandard);
+            //更新表格的宽度
+            UpdatePageWidthInMM();
 
             //由于修改了X轴最大值，故重新加载、重新显示数据
             LoadData(CurrentSeconds);
             ShowData();
         }
+
+        private void UpdatePageWidthInMM()
+        {
+            //表格高度有多少毫米
+            pageWidthInMM = pageWidthInPixel / pixelPerMM;
+
+            //根据表格宽度设置X轴的最大值
+            SetAxisXMaximum(pageWidthInMM / timeStandard);
+        }
+
         /// <summary>
         /// chart的重绘函数
         /// -- by lxl
@@ -1738,22 +1749,22 @@ namespace VeegStation
                 if (p.EventPosition / sampleRate > CurrentSeconds + xMaximum)
                     break;
                 dotPen.Color = p.EventColor;
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate - currentSeconds);
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
                 g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
                 g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
 
             //画自定义事件                  
-            foreach (CustomEvent p in customEventList)                  
+            foreach (CustomEvent p in customEventList)
             {
                 //只画当前页面能显示的事件
-                if (p.EventPosition / sampleRate < CurrentSeconds)                 
+                if (p.EventPosition / sampleRate < CurrentSeconds)
                     continue;
                 if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
                     continue;
                 dotPen.Color = CustomEvent.CustomEventColor[p.EventColorIndex];
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate - currentSeconds);
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
                 g.FillRectangle(new SolidBrush(Color.FromArgb(200, CustomEvent.CustomEventColor[p.EventColorIndex])), new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
                 g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
@@ -2051,7 +2062,7 @@ namespace VeegStation
                     if (isAddingPreDefineEvent)
                     {
                         //将事件添加进列表并排序
-                        preDefineEventsList.Add(new PreDefineEvent(preDefineEventIndex, mouseValueNow));
+                        preDefineEventsList.Add(new PreDefineEvent(preDefineEventIndex,Convert.ToUInt16(mouseValueNow)));
                         preDefineEventsList.Sort(new PreDefineEventComparer());
 
                         //事件添加后更新添加事件的form里的列表
@@ -2060,7 +2071,7 @@ namespace VeegStation
                     else
                     {
                         //将事件添加进列表并排序
-                        customEventList.Add(new CustomEvent(addedEventName, mouseValueNow, addingEventColorIndex));
+                        customEventList.Add(new CustomEvent(addedEventName,Convert.ToUInt16( mouseValueNow), addingEventColorIndex));
                         customEventList.Sort(new CustomEventComparer());
 
                         //事件添加后更新添加事件的form里的列表
@@ -2116,6 +2127,9 @@ namespace VeegStation
             if(nfi.HasVideo)
             video.Close();
             controller.PlaybackQuit();
+
+            //将事件写入文件中，先写在此处测试，没问题后移到controller中
+            SavePreDefineEventsToFile(nfi.NedFileName.Split('.')[0]+".NAT");
         }
 
         /// <summary>
@@ -2213,26 +2227,109 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 图表关闭时触发的事件，用来将修改后的事件存储在文件中，（未完成）
+        /// 将预定义事件列表存到文件中
         /// -- by lxl
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void SavingDataWhileFormClosing(object sender, EventArgs e)
+        /// <param name="filename">文件名路径</param>
+        private int SavePreDefineEventsToFile(string filename)
         {
-            //SaveEventsToFile(nfi.NedFileName.Split('.')[0]);
+            try
+            {
+                //打开文件流
+                FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                BinaryWriter bw = new BinaryWriter(fs);
+
+                //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
+                byte[] byteBuf = PreDefineEventsToHex(preDefineEventsList);
+                if (byteBuf == null)
+                {
+                    MessageBox.Show("解析失败:数据转换成BYTE出错");
+                    return 0;
+                }
+
+                //bw.Seek(nfi.NatInfo.CfgOff, SeekOrigin.Begin);
+                bw.Seek(0, SeekOrigin.End);
+                bw.Write(byteBuf);
+                bw.Close();
+                fs.Close();
+
+                //返回1表示成功
+                return 1;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("写入文件错误" + e.Message);
+                return 0;
+            }
         }
 
         /// <summary>
-        /// 将事件列表存到文件中
+        /// 将自定义事件列表保存到文件中
         /// -- by lxl
         /// </summary>
         /// <param name="filename"></param>
-        private void SaveEventsToFile(string filename)
+        private void SaveCustomeEventsToFile(string filename)
         {
-            FileStream fs = new FileStream(nfi.NedFileName.Split('.')[0] + "LXLTEXT", FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            System.Runtime.Serialization.Formatters.Binary.BinaryFormatter binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-            //binaryFormatter
+            try
+            {
+                //打开文件流
+                FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                BinaryWriter bw = new BinaryWriter(fs);
+            }
+            catch
+            { }
+        }
+
+        private byte[] CustomEventsToHex(List<CustomEvent> cEvent)
+        {
+            //建立一个BYTE数组用于存储事件信息
+            byte[] returnBytes;
+            returnBytes = new byte[cEvent.Count() * 128];
+
+            for (int i = 0; i < cEvent.Count(); i++)
+            {
+                Encoding.GetEncoding(936).GetBytes(cEvent[i].EventName, 0, cEvent[i].EventName.Count(), returnBytes, 0);
+            }
+
+            return returnBytes;
+        }
+
+        /// <summary>
+        /// 将预定义事件转换成BYTE数组
+        /// </summary>
+        /// <param name="pdEvent"></param>
+        /// <returns></returns>
+        private byte[] PreDefineEventsToHex(List<PreDefineEvent> pdEvent)
+        {
+            //建立一个BYTE数组用于存储事件信息
+            byte[] returnBytes;
+            returnBytes = new byte[pdEvent.Count() * 8];
+
+            //按照格式构造BYTE数组
+            for(int i = 0;i<pdEvent.Count();i++)
+            {
+                returnBytes[i * 8] = 0x45;
+                returnBytes[i * 8 + 1] = Convert.ToByte(pdEvent[i].EventNameIndex);
+                returnBytes[i * 8 + 2] = returnBytes[i * 8 + 3] = 0x00;
+                returnBytes[i * 8 + 4] = BitConverter.GetBytes(pdEvent[i].EventPosition)[0];
+                returnBytes[i * 8 + 5] = BitConverter.GetBytes(pdEvent[i].EventPosition)[1];
+                returnBytes[i * 8 + 6] = returnBytes[i * 8 + 7] = 0x00;
+            }
+
+            return returnBytes;
+        }
+
+        /// <summary>
+        /// 将事件的位置由DOUBLE转换为2个字节的数组
+        /// -- by lxl
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        private byte[] PointPositionToByte(double pos)
+        {
+            byte[] returnBytes = new byte[2];
+            
+            return returnBytes;
         }
 
         /// <summary>

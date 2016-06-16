@@ -26,22 +26,37 @@ namespace VeegStation
             get { return PreDefineEvent.preDefineEventNameArray; }
         }
 
-        public PreDefineEvent(int index, double pos)
+        /// <summary>
+        /// 根据名称的索引和点的位置构造预定义事件
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="pos"></param>
+        public PreDefineEvent(int index, UInt16 pos)
         {
             if (preDefineEventColorArray == null || preDefineEventNameArray == null)
             {
                 System.Windows.Forms.MessageBox.Show("请先初始化预定义事件名称数组和颜色数组");
                 return;
             }
+            eventNameIndex = index;
             eventName = preDefineEventNameArray[index];
             eventColor = preDefineEventColorArray[index];
             eventPosition = pos;
         }
 
         private Color eventColor;
-        private double eventPosition;
-        //private PreDefineEventsName eventName;
+        private UInt16 eventPosition;
         private string eventName;
+        private int eventNameIndex;
+
+        /// <summary>
+        /// 预定义事件名称在名称数组里的索引
+        /// </summary>
+        public int EventNameIndex
+        {
+            get { return eventNameIndex; }
+            set { eventNameIndex = value; }
+        }
         /// <summary>
         /// 事件的颜色
         /// -- by lxl
@@ -55,20 +70,11 @@ namespace VeegStation
         /// 事件所在的点的位置
         /// -- by lxl
         /// </summary>
-        public double EventPosition
+        public UInt16 EventPosition
         {
             get { return eventPosition; }
             set { eventPosition = value; }
         }
-        /// <summary>
-        /// 预定义事件的描述，值为pdEvents类型
-        /// -- by lxl
-        /// </summary>
-        //public PreDefineEventsName EventName
-        //{
-        //    get { return eventName; }
-        //    set { eventName = value; }
-        //}
 
         /// <summary>
         /// 预定义事件的名称
@@ -86,6 +92,7 @@ namespace VeegStation
         /// <param name="name"></param>
         public static void InitPreDefineEventNameWithArray(int length, string[] name, Color[] clr)
         {
+            
             preDefineEventNameArray = new string[length];
             preDefineEventColorArray = new Color[length];
             for (int i = 0; i < length; i++)
@@ -108,7 +115,7 @@ namespace VeegStation
         /// <param name="name">事件名称</param>
         /// <param name="pos">事件所在位置</param>
         /// <param name="i">事件的颜色索引</param>
-        public CustomEvent(string name,double pos,int i)
+        public CustomEvent(string name,UInt16 pos,int i)
         {
             eventName = name; eventPosition = pos; eventColorIndex = i;
         }
@@ -126,7 +133,7 @@ namespace VeegStation
         }
 
         private int eventColorIndex;
-        private double eventPosition;
+        private UInt16 eventPosition;
         private string eventName;
 
         /// <summary>
@@ -142,7 +149,7 @@ namespace VeegStation
         /// 事件所在的点的位置
         /// -- by lxl
         /// </summary>
-        public double EventPosition
+        public UInt16 EventPosition
         {
             get { return eventPosition; }
             set { eventPosition = value; }

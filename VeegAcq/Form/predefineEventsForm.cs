@@ -101,7 +101,7 @@ namespace VeegStation
         /// <param name="e"></param>
         private void addEvent_Click(object sender, EventArgs e)
         {
-            if (eventIndex <= 0)
+            if (eventIndex < 0)
             {
                 MessageBox.Show("请先选择事件的名称");
                 return;
