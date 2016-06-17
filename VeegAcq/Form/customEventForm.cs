@@ -68,6 +68,7 @@ namespace VeegStation
         private void Btn_quit_Click(object sender, EventArgs e)
         {
             this.Close();
+            this.Dispose();
         }
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace VeegStation
         /// <param name="e"></param>
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            if (myAddCustomEventForm == null)
+            if (myAddCustomEventForm == null || myAddCustomEventForm.IsDisposed)
                 myAddCustomEventForm = new addCustomEventForm(this);
 
             //置状态为添加事件

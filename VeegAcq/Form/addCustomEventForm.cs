@@ -67,6 +67,7 @@ namespace VeegStation
         {
             //关闭form
             this.Close();
+            this.Dispose();
         }
 
         /// <summary>
@@ -90,7 +91,8 @@ namespace VeegStation
                 myCustomEventForm.StartAddEvent(colorIndex, nameTextBox.Text);
 
                 //form隐藏
-                this.Hide();
+                this.Close();
+                this.Dispose();
             }
             else 
             {
@@ -112,6 +114,7 @@ namespace VeegStation
 
                 //form隐藏
                 this.Close();
+                this.Dispose();
             }
         }
 
@@ -148,8 +151,10 @@ namespace VeegStation
             Button btn = sender as Button;
 
             //将当前选择的按钮enable设置为false，并把之前按钮的enable设置为true，（这样可以标识哪个按钮当前被选中）
-            //this.buttonPanel.Controls.Find(colorIndex.ToString(), false)[0].Enabled = true;
-            colorButton[colorIndex].Enabled = true;
+            if (colorIndex != -1)
+            {
+                colorButton[colorIndex].Enabled = true;
+            }
             btn.Enabled = false;
 
             //根据所选的按钮编号设置当前颜色编号

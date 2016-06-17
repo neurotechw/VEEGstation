@@ -32,11 +32,11 @@ namespace VeegStation
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.num = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.color = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btn_add = new System.Windows.Forms.Button();
             this.btn_edit = new System.Windows.Forms.Button();
             this.btn_delete = new System.Windows.Forms.Button();
             this.btn_quit = new System.Windows.Forms.Button();
-            this.color = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // eventList
@@ -66,6 +66,10 @@ namespace VeegStation
             // num
             // 
             this.num.Text = "编号";
+            // 
+            // color
+            // 
+            this.color.Text = "颜色";
             // 
             // btn_add
             // 
@@ -108,10 +112,6 @@ namespace VeegStation
             this.btn_quit.UseVisualStyleBackColor = true;
             this.btn_quit.Click += new System.EventHandler(this.Btn_quit_Click);
             // 
-            // color
-            // 
-            this.color.Text = "颜色";
-            // 
             // CustomEventForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -125,6 +125,7 @@ namespace VeegStation
             this.Controls.Add(this.btn_add);
             this.Controls.Add(this.eventList);
             this.Name = "CustomEventForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "自定义事件";
             this.ResumeLayout(false);
 

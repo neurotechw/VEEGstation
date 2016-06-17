@@ -270,7 +270,7 @@ namespace VeegStation
         /// 校验X轴窗口            
         /// -- by lxl
         /// </summary>
-        private calibrateXForm calibXForm;
+        private CalibrateXForm calibXForm;
 
         /// <summary>
         /// 屏幕的宽度,单位为像素点
@@ -342,7 +342,7 @@ namespace VeegStation
         /// 预定义事件窗口
         /// -- by lxl
         /// </summary>
-        private predefineEventsForm myPreDefineEventFormEventForm;
+        private PredefineEventsForm myPreDefineEventFormEventForm;
 
         /// <summary>
         /// 自定义事件窗口
@@ -460,19 +460,15 @@ namespace VeegStation
             //修改 --by zt
             _totalSeconds = (int)EegFile.Duration.TotalSeconds; 
             hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
-//<<<<<<< HEAD:VeegAcq/PlaybackForm.cs
-//            this.myLeadSource = EegFile.Montage.LeadSource;
+
 
             //初始化预定义事件的颜色选项与名称选项
             PreDefineEvent.InitPreDefineEventNameWithArray(nfi.EventCount, nfi.PreDefineEventNameArray, nfi.PreDefineEventColorArray);
 
             //解析事件，并将事件添加进事件列表中
             ParseEvent();
-//=======
-            //this.myLeadSource = EegFile.Montage.LeadSource;
 
             myBandFilterForm = new BandFilterForm(this);
-//>>>>>>> refs/remotes/origin/master:VeegAcq/Form/PlaybackForm.cs
         }
 
         /// <summary>
@@ -623,6 +619,10 @@ namespace VeegStation
                 FileStream entFS = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".ent", FileMode.Open, FileAccess.Read);
                 byte[] entByte = new byte[entFS.Length];
 
+                if (entFS.Length <= 0)
+                {
+                    return;
+                }
                 entFS.Read(entByte, 0,(int)entFS.Length);
 
                 //解析其中的数据
@@ -1586,8 +1586,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void CalibrateYToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (calibForm == null)
-                calibForm = new CalibrateYForm(this);
+            if (calibForm == null || calibForm.IsDisposed)
+                calibForm = new CalibrateYForm(this, pixelPerMM * 10);
             this.calibForm.Show();
             this.calibForm.BringToFront();
         }
@@ -1617,8 +1617,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void CalibrateXToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (calibXForm == null)
-                calibXForm = new calibrateXForm(this);
+            if (calibXForm == null || calibXForm.IsDisposed)
+                calibXForm = new CalibrateXForm(this, pixelPerMM * 10);
             calibXForm.Show();
             calibXForm.BringToFront();
         }
@@ -1906,15 +1906,15 @@ namespace VeegStation
             //若名字以pr开头则是preDefine（预定义）事件
             if (a.Name.Substring(0, 2) == "pr")
             {
-                if (myPreDefineEventFormEventForm == null)
-                    myPreDefineEventFormEventForm = new predefineEventsForm(this);
+                if (myPreDefineEventFormEventForm == null || myPreDefineEventFormEventForm.IsDisposed)
+                    myPreDefineEventFormEventForm = new PredefineEventsForm(this);
                 myPreDefineEventFormEventForm.Show();
                 myPreDefineEventFormEventForm.BringToFront();
                 myPreDefineEventFormEventForm.InitList();
             }
             else//若名字以pr开头则是custom（自定义）事件
             {
-                if (myCustomEventForm == null)
+                if (myCustomEventForm == null || myCustomEventForm.IsDisposed)
                     myCustomEventForm = new CustomEventForm(this);
                 myCustomEventForm.Show();
                 myCustomEventForm.BringToFront();
@@ -2130,6 +2130,7 @@ namespace VeegStation
 
             //将事件写入文件中，先写在此处测试，没问题后移到controller中
             SavePreDefineEventsToFile(nfi.NedFileName.Split('.')[0]+".NAT");
+            SaveCustomeEventsToFile(nfi.NedFileName.Split('.')[0] + ".ent");
         }
 
         /// <summary>
@@ -2247,8 +2248,7 @@ namespace VeegStation
                     return 0;
                 }
 
-                //bw.Seek(nfi.NatInfo.CfgOff, SeekOrigin.Begin);
-                bw.Seek(0, SeekOrigin.End);
+                bw.Seek(0x28a2, SeekOrigin.Begin);
                 bw.Write(byteBuf);
                 bw.Close();
                 fs.Close();
@@ -2258,40 +2258,9 @@ namespace VeegStation
             }
             catch (Exception e)
             {
-                MessageBox.Show("写入文件错误" + e.Message);
+                MessageBox.Show("预定义事件写入文件错误" + e.Message);
                 return 0;
             }
-        }
-
-        /// <summary>
-        /// 将自定义事件列表保存到文件中
-        /// -- by lxl
-        /// </summary>
-        /// <param name="filename"></param>
-        private void SaveCustomeEventsToFile(string filename)
-        {
-            try
-            {
-                //打开文件流
-                FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                BinaryWriter bw = new BinaryWriter(fs);
-            }
-            catch
-            { }
-        }
-
-        private byte[] CustomEventsToHex(List<CustomEvent> cEvent)
-        {
-            //建立一个BYTE数组用于存储事件信息
-            byte[] returnBytes;
-            returnBytes = new byte[cEvent.Count() * 128];
-
-            for (int i = 0; i < cEvent.Count(); i++)
-            {
-                Encoding.GetEncoding(936).GetBytes(cEvent[i].EventName, 0, cEvent[i].EventName.Count(), returnBytes, 0);
-            }
-
-            return returnBytes;
         }
 
         /// <summary>
@@ -2306,7 +2275,7 @@ namespace VeegStation
             returnBytes = new byte[pdEvent.Count() * 8];
 
             //按照格式构造BYTE数组
-            for(int i = 0;i<pdEvent.Count();i++)
+            for (int i = 0; i < pdEvent.Count(); i++)
             {
                 returnBytes[i * 8] = 0x45;
                 returnBytes[i * 8 + 1] = Convert.ToByte(pdEvent[i].EventNameIndex);
@@ -2320,15 +2289,89 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 将事件的位置由DOUBLE转换为2个字节的数组
+        /// 将自定义事件列表保存到文件中
         /// -- by lxl
         /// </summary>
-        /// <param name="pos"></param>
-        /// <returns></returns>
-        private byte[] PointPositionToByte(double pos)
+        /// <param name="filename"></param>
+        private int SaveCustomeEventsToFile(string filename)
         {
-            byte[] returnBytes = new byte[2];
-            
+            try
+            {
+                if (File.Exists(filename))
+                {
+                    File.Delete(filename);
+                }
+
+                //打开文件流
+                FileStream fs = new FileStream(filename, FileMode.CreateNew, FileAccess.ReadWrite);
+                BinaryWriter bw = new BinaryWriter(fs);
+
+                //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
+                byte[] eventByteBuf = CustomEventsToHex(customEventList);
+
+                //建立一个文件头的BYTEBUF，将自定义事件文件头写进去
+                byte[] headByteBuf = generateCustomEventHeadByte();
+                if (eventByteBuf == null)
+                {
+                    MessageBox.Show("解析失败:数据转换成BYTE出错");
+                    return 0;
+                }
+                bw.Seek(0, SeekOrigin.Begin);
+                bw.Write(headByteBuf);
+                bw.Write(eventByteBuf);
+                bw.Close();
+                fs.Close();
+
+                return 1;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("自定义事件写入文件错误" + e.Message);
+                return 0;
+            }
+        }
+
+        private byte[] generateCustomEventHeadByte()
+        {
+            byte[] returnBytes = new byte[9];
+
+            //将ENTCM按照ASCII转码存入前5个BYTE
+            Encoding.ASCII.GetBytes("ENTCM", 0, "ENTCM".Count(), returnBytes, 0);
+
+            //将事件个数转码存入第六个BYTE
+            returnBytes[5] = BitConverter.GetBytes(customEventList.Count())[0];
+
+            return returnBytes;
+        }
+
+        /// <summary>
+        /// 将自定义事件按格式转成BYTE数组
+        /// </summary>
+        /// <param name="cEvent"></param>
+        /// <returns></returns>
+        private byte[] CustomEventsToHex(List<CustomEvent> cEvent)
+        {
+            //建立一个BYTE数组用于存储事件信息
+            byte[] returnBytes;
+            returnBytes = new byte[cEvent.Count() * 128];
+
+            for (int i = 0; i < cEvent.Count(); i++)
+            {
+                Encoding.GetEncoding(936).GetBytes(cEvent[i].EventName, 0, cEvent[i].EventName.Count(), returnBytes, i * 128);
+                returnBytes[i * 128 + 104] = BitConverter.GetBytes(cEvent[i].EventPosition)[0];
+                returnBytes[i * 128 + 105] = BitConverter.GetBytes(cEvent[i].EventPosition)[1];
+                returnBytes[i * 128 + 108] = BitConverter.GetBytes(cEvent[i].EventColorIndex)[0];           //int32转换成BYTE数组为4个BYTE，由于只有第一个故取数组下标[0]
+
+                //将时间写入事件文件中
+                DateTime time = nfi.StartDateTime.AddSeconds(cEvent[i].EventPosition/sampleRate);
+                returnBytes[i * 128 + 120] = BitConverter.GetBytes((UInt16)time.Hour)[0];
+                returnBytes[i * 128 + 121] = BitConverter.GetBytes((UInt16)time.Hour)[1];
+                returnBytes[i * 128 + 122] = BitConverter.GetBytes((UInt16)time.Minute)[0];
+                returnBytes[i * 128 + 123] = BitConverter.GetBytes((UInt16)time.Minute)[1];
+                returnBytes[i * 128 + 124] = BitConverter.GetBytes((UInt16)time.Second)[0];
+                returnBytes[i * 128 + 125] = BitConverter.GetBytes((UInt16)time.Second)[1];
+            }
+
             return returnBytes;
         }
 

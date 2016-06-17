@@ -13,7 +13,7 @@ namespace VeegStation
     /// 预定义事件FORM
     /// -- by lxl
     /// </summary>
-    public partial class predefineEventsForm : Form
+    public partial class PredefineEventsForm : Form
     {
         PlaybackForm myPlaybackForm;
 
@@ -24,7 +24,7 @@ namespace VeegStation
         /// </summary>
         private int eventIndex;
 
-        public predefineEventsForm(PlaybackForm form)
+        public PredefineEventsForm(PlaybackForm form)
         {
             InitializeComponent();
             myPlaybackForm = form;
@@ -90,7 +90,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btn_Quit_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
+            this.Dispose();
         }
 
         /// <summary>
