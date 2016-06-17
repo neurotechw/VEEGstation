@@ -1,6 +1,6 @@
 ﻿namespace VeegStation
 {
-    partial class calibrateXForm
+    partial class CalibrateXForm
     {
         /// <summary>
         /// Required designer variable.
@@ -86,7 +86,7 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "调整线段长度，直到其长度正好为5CM";
             // 
-            // calibrateXForm
+            // CalibrateXForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -96,7 +96,8 @@
             this.Controls.Add(this.confirmButton);
             this.Controls.Add(this.valueBox);
             this.Controls.Add(this.linePanel);
-            this.Name = "calibrateXForm";
+            this.Name = "CalibrateXForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "X轴校准";
             ((System.ComponentModel.ISupportInitialize)(this.valueBox)).EndInit();
             this.ResumeLayout(false);

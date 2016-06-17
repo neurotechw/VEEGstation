@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,13 +17,47 @@ namespace VeegStation
     {
         CustomEventForm myCustomEventForm;
 
+        /// <summary>
+        /// 所选事件颜色的编号
+        /// </summary>
+        private int colorIndex;
+
+        /// <summary>
+        /// 表示现在是在编辑事件还是添加事件
+        /// </summary>
+        private bool addOrEdit;
+
+        /// <summary>
+        /// 个设置颜色的按钮组
+        /// </summary>
+        Button[] colorButton;
+
         public addCustomEventForm(CustomEventForm form)
         {
+            colorButton = new Button[CustomEvent.CustomEventColor.Count()];
             InitializeComponent();
             myCustomEventForm = form;
-            btn_color.BackColor = colorDialog.Color = Color.Blue;
+            InitColorButton();
+            colorIndex = -1;
         }
 
+        /// <summary>
+        /// 按照颜色列表初始化颜色选择按钮
+        /// </summary>
+        private void InitColorButton()
+        {
+            //根据20个颜色初始化颜色按钮
+            for (int i = 0; i < CustomEvent.CustomEventColor.Count(); i++)
+            {
+                colorButton[i] = new Button();
+                colorButton[i].BackColor = CustomEvent.CustomEventColor[i];
+                colorButton[i].Location = new Point(0 + i % 10 * this.buttonPanel.Width / 10, 0 + i / 10 * this.buttonPanel.Height / 2);
+                colorButton[i].Size = new Size(this.buttonPanel.Width / 10, this.buttonPanel.Height / 2);
+                colorButton[i].Name = i.ToString();
+                colorButton[i].Click += new EventHandler(this.btnColor_Click);
+                this.buttonPanel.Controls.Add(colorButton[i]);
+            }
+        }
         /// <summary>
         /// 取消按钮点击事件
         /// </summary>
@@ -33,6 +67,7 @@ namespace VeegStation
         {
             //关闭form
             this.Close();
+            this.Dispose();
         }
 
         /// <summary>
@@ -42,18 +77,68 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btnConfirm_Click(object sender, EventArgs e)
         {
-            //对所输入的事件描述进行判断
-            if (nameTextBox.Text == "")
+            //如果这个form为添加事件的状态
+            if (addOrEdit)
             {
-                MessageBox.Show("事件描述不能为空");
-                return;
+                //对所输入的事件描述进行判断
+                if (nameTextBox.Text == "")
+                {
+                    MessageBox.Show("事件描述不能为空");
+                    return;
+                }
+
+                //开始添加事件
+                myCustomEventForm.StartAddEvent(colorIndex, nameTextBox.Text);
+
+                //form隐藏
+                this.Close();
+                this.Dispose();
             }
+            else 
+            {
+                //对所输入的事件描述进行判断
+                if (nameTextBox.Text == "")
+                {
+                    MessageBox.Show("事件描述不能为空");
+                    return;
+                }
 
-            //开始添加事件
-            myCustomEventForm.StartAddEvent(colorDialog.Color, nameTextBox.Text);
+                if (colorIndex == -1)
+                {
+                    MessageBox.Show("请选择一个颜色");
+                    return;
+                }
 
-            //form隐藏
-            this.Hide();
+                //将编辑后的事件保存
+                myCustomEventForm.EditEvent(nameTextBox.Text, colorIndex);
+
+                //form隐藏
+                this.Close();
+                this.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// 状态置为添加事件
+        /// </summary>
+        public void IsAddEvent()
+        {
+            addOrEdit = true;
+        }
+
+        /// <summary>
+        /// 状态为编辑事件
+        /// </summary>
+        /// <param name="colorIndex">选中事件的颜色</param>
+        /// <param name="text">选中事件的名称</param>
+        public void IsEditEvent(int clrIndex,string text)
+        {
+            addOrEdit = false;
+            //this.btn_color.BackColor =  clr;
+            //this.buttonPanel.Controls.Find(clrIndex.ToString(), false)[0].Enabled = false;
+            colorButton[clrIndex].Enabled = false;
+            this.colorIndex = clrIndex;
+            this.nameTextBox.Text = text;
         }
         
         /// <summary>
@@ -63,11 +148,20 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btnColor_Click(object sender, EventArgs e)
         {
-            //弹出颜色设置对话框，并选择颜色。选好后将按钮的颜色设置为选择好的颜色
-            if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            Button btn = sender as Button;
+
+            //将当前选择的按钮enable设置为false，并把之前按钮的enable设置为true，（这样可以标识哪个按钮当前被选中）
+            if (colorIndex != -1)
             {
-                btn_color.BackColor = colorDialog.Color;
+                colorButton[colorIndex].Enabled = true;
             }
+            btn.Enabled = false;
+
+            //根据所选的按钮编号设置当前颜色编号
+            this.colorIndex = int.Parse(btn.Name);
+
+            //选择颜色之后让输入框变为选中状态
+            this.nameTextBox.Select();
         }
     }
 }

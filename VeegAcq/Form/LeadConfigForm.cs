@@ -236,5 +236,13 @@ namespace VeegStation
         {
             InitList();
         }
+
+        private void LeadConfigForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            this.controller.myPlaybackForm.InitLeadParameters();
+            this.Hide();
+
+        }
     }
 }

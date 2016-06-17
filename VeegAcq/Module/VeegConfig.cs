@@ -35,6 +35,33 @@ namespace VeegStation
         public Hashtable LeadConfigLists;
         #endregion
 
+        #region 画图参数
+        /// <summary>
+        /// Y轴每格多少毫米
+        /// -- by lxl
+        /// </summary>
+        private double mmPerYGrid;
+
+        /// <summary>
+        /// 表格每页多少毫米
+        /// -- by lxl
+        /// </summary>
+        private double pixelPerMM;
+
+
+        public double PixelPerMM
+        {
+            get { return pixelPerMM; }
+            set { pixelPerMM = value; }
+        }
+
+        public double MMPerYGrid
+        {
+            get { return mmPerYGrid; }
+            set { mmPerYGrid = value; }
+        }
+        #endregion
+
         #endregion
 
         public void SetDefaultConfig()
@@ -313,6 +340,13 @@ namespace VeegStation
 
             LeadConfigLists.Add(leadSourceNames[6], leadConfigList32P);
             #endregion
+            #endregion
+
+            #region 画图参数
+
+            mmPerYGrid = 11.5;
+            pixelPerMM = 3.8;
+
             #endregion
             #endregion
         }

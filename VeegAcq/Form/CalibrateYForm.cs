@@ -18,12 +18,12 @@ namespace VeegStation
         private PlaybackForm myPlayBackform;
         private int height;
 
-        public CalibrateYForm(PlaybackForm form)
+        public CalibrateYForm(PlaybackForm form,double hei)
         {
             InitializeComponent();
 
             ///初始化一个默认的VALUE,(以后需要改成从playbackform中读取）
-            height = 20;
+            height = (int)(hei * 5);
             this.valueBox.Value = height;
             this.myPlayBackform = form;
         }
@@ -64,8 +64,10 @@ namespace VeegStation
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
             //通过量好的长度得出每厘米的像素点，然后配置图标大小，height / 5 = 每一厘米多少像素点
-            myPlayBackform.CalibrateY(height / 5D);          
-            this.Hide();
+            myPlayBackform.CalibrateY(height / 5D);
+
+            this.Close();
+            this.Dispose();
         }
 
         /// <summary>
@@ -75,7 +77,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void BtnCancel_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
+            this.Dispose();
         }
     }
 }

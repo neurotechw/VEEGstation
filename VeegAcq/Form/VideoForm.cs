@@ -63,6 +63,7 @@ namespace VeegStation
          Point m_ptCanvas;
         private void VideoForm_Load_1(object sender, EventArgs e)
         {
+            //文字浮动
             toolTip1.SetToolTip(btn_play, "播放");
             toolTip1.SetToolTip(btn_pause, "暂停");
             toolTip1.SetToolTip(btn_accelerate, "加速");

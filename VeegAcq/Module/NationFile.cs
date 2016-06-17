@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -88,6 +88,40 @@ namespace VeegStation
         /// NED文件名称
         /// </summary>
         private string nedFileName;
+
+        /// <summary>
+        /// 预定义事件种类个数
+        /// -- by lxl
+        /// </summary>
+        private int _eventCount;
+
+        public int EventCount
+        {
+            get { return _eventCount; }
+            set { _eventCount = value; }
+        }
+
+        /// <summary>
+        /// 预定义事件的名称数组
+        /// -- by lxl
+        /// </summary>
+        private string[] _preDefineEventNameArray;
+
+        public string[] PreDefineEventNameArray
+        {
+            get { return _preDefineEventNameArray; }
+        }
+
+        /// <summary>
+        /// 预定义事件的颜色数组
+        /// -- by lxl
+        /// </summary>
+        private System.Drawing.Color[] _preDefineEventColorArray;
+
+        public System.Drawing.Color[] PreDefineEventColorArray
+        {
+            get { return _preDefineEventColorArray; }
+        }
         #endregion
 
         #region 访问器
@@ -228,7 +262,11 @@ namespace VeegStation
             int sizeOfEventInfo = this.NatInfo.MonOff -this.NatInfo.EntOff;
             byte[] eventInfo = new byte[sizeOfEventInfo];
             file.Read(eventInfo, 0, sizeOfEventInfo);
-            //解析事件代码，暂时用不到，所以没写
+
+            //解析事件代码    -- by lxl
+            ParseEventInfo(eventInfo);        
+            //由于病人事件列表可能很长，防止一开始加载文件列表时便解析事件，故将解析具体事件列表放在playbackform中，解析所选择的文件的事件 -- by lxl
+
 
             //解析导联区信息
             int sizeOfMonOff = this.NatInfo.CfgOff - this.NatInfo.MonOff;
@@ -240,6 +278,35 @@ namespace VeegStation
             //this.CFGInfo = new CFGInfo(file);
             ParseDataInfo(file);
 
+        }
+
+        /// <summary>
+        /// 解析事件区信息
+        /// -- by lxl
+        /// </summary>
+        /// <param name="eventInfo"></param>
+        private void ParseEventInfo(byte[] eventInfo)
+        {
+            //短事件个数
+            int shortEventNum = eventInfo[10];
+            //长事件个数
+            int longEventNum = eventInfo[11];
+
+            byte[] name = new byte[10];
+
+            //计算有多少个事件,并相应的分配事件颜色和名称数组的长度
+            //eventInfo[8]为事件区的长度，每个事件占16个字节，故除以16则得到有多少个预定义事件
+            _eventCount = shortEventNum + longEventNum;
+            this._preDefineEventColorArray = new System.Drawing.Color[_eventCount];
+            this._preDefineEventNameArray = new string[_eventCount];
+
+            //解析出数据，将数据存入名称与颜色数组中
+            for (int i = 12; i < _eventCount * 16; i += 16)
+            {
+                Array.Copy(eventInfo, i, name, 0, 10);
+                _preDefineEventNameArray[(i - 12) / 16] = Encoding.GetEncoding(936).GetString(name).Trim('\0');
+                _preDefineEventColorArray[(i - 12) / 16] = System.Drawing.Color.FromArgb(eventInfo[i + 12], eventInfo[i + 13], eventInfo[i + 14]);
+            }
         }
 
         /// <summary>
@@ -283,6 +350,9 @@ namespace VeegStation
             }
         }
 
+        /// <summary>
+        /// Video
+        /// </summary>
         public void CheckHasVideo() 
         {
             DirectoryInfo diTop = new DirectoryInfo(DefaultConfig.AssociatedVideoPath);

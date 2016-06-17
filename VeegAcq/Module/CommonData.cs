@@ -27,6 +27,31 @@ namespace VeegStation
         #endregion
 
         #region 画图配置
+
+        /// <summary>
+        /// Y轴每格多少毫米
+        /// -- by lxl
+        /// </summary>
+        private double mmPerYGrid;
+
+        /// <summary>
+        /// 表格每页多少毫米
+        /// -- by lxl
+        /// </summary>
+        private double pixelPerMM;
+
+
+        public double PixelPerMM
+        {
+            get { return pixelPerMM; }
+            set { pixelPerMM = value; }
+        }
+
+        public double MMPerYGrid
+        {
+            get { return mmPerYGrid; }
+            set { mmPerYGrid = value; }
+        }
         #endregion
 
         #endregion

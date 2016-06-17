@@ -162,6 +162,7 @@
             this.MaximizeBox = false;
             this.Name = "LeadConfigForm";
             this.Text = "LeadConfigForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadConfigForm_FormClosing);
             this.gbInfo.ResumeLayout(false);
             this.gbInfo.PerformLayout();
             this.ResumeLayout(false);

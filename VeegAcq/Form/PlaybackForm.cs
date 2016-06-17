@@ -192,7 +192,7 @@ namespace VeegStation
         /// 事件队列
         /// -- by lxl
         /// </summary>
-        private List<PreDefineEvent> preDEventsList = new List<PreDefineEvent>();
+        private List<PreDefineEvent> preDefineEventsList = new List<PreDefineEvent>();
         private List<CustomEvent> customEventList = new List<CustomEvent>();
         private int _Page;
 
@@ -275,7 +275,7 @@ namespace VeegStation
         /// 校验X轴窗口            
         /// -- by lxl
         /// </summary>
-        private calibrateXForm calibXForm;
+        private CalibrateXForm calibXForm;
 
         /// <summary>
         /// 屏幕的宽度,单位为像素点
@@ -335,18 +335,19 @@ namespace VeegStation
         /// 当前图表的开头为第几秒
         /// -- by lxl
         /// </summary>
-        public int CurrentSeconds;
+        private int currentSeconds;
 
-        //{
-        //    get { return CurrentSeconds; }
-        //    set { CurrentSeconds = value; }
-        //}
+        public int CurrentSeconds
+        {
+            get { return currentSeconds; }
+            set { currentSeconds = value; }
+        }
 
         /// <summary>
         /// 预定义事件窗口
         /// -- by lxl
         /// </summary>
-        private predefineEventsForm myPreDefineEventFormEventForm;
+        private PredefineEventsForm myPreDefineEventFormEventForm;
 
         /// <summary>
         /// 自定义事件窗口
@@ -367,17 +368,15 @@ namespace VeegStation
         private double mouseValueNow;
 
         /// <summary>
-        /// 所添加的预定义事件的名字
+        /// 所添加的预定义事件的编号（即第几号预定义事件）,启事位置从0开始
         /// -- by lxl
         /// </summary>
-        private PreDefineEvent.PreDefineEventsName addedEventNameForPDEvent;
-
+        private int preDefineEventIndex;
         /// <summary>
-        /// 所添加的自定义事件名字
+        /// 所添加的事件名称
         /// -- by lxl
         /// </summary>
-        private string addedEventNameForCustomEvent;
-
+        private string addedEventName;
         /// <summary>
         /// 判断现在是在添加什么事件，true为custom，false为preDefine
         /// -- by lxl
@@ -385,10 +384,10 @@ namespace VeegStation
         private bool isAddingPreDefineEvent;
 
         /// <summary>
-        /// 添加事件时的所选事件的COLOR
+        /// 添加事件时的所选事件的COLOR的索引
         /// -- by lxl
         /// </summary>
-        private Color addingEventColor;
+        private int addingEventColorIndex;
         #endregion
 
         #region 访问器
@@ -437,8 +436,8 @@ namespace VeegStation
             this.boardToolStripMenuItem.Checked = isBoardShow;
             this.boardPanel.Visible = isBoardShow;
             timeStandard = 30;
-            pixelPerMM = 3.8;
-            mmPerYGrid = 1;
+            //pixelPerMM = 3.8;
+            //mmPerYGrid = 11.5;
             isChangingBoardShow = true;
             signalNum = 20;
             currentTopSignal = 0;
@@ -466,7 +465,13 @@ namespace VeegStation
             //修改 --by zt
             _totalSeconds = (int)EegFile.Duration.TotalSeconds; 
             hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
-            //this.myLeadSource = EegFile.Montage.LeadSource;
+
+
+            //初始化预定义事件的颜色选项与名称选项
+            PreDefineEvent.InitPreDefineEventNameWithArray(nfi.EventCount, nfi.PreDefineEventNameArray, nfi.PreDefineEventColorArray);
+
+            //解析事件，并将事件添加进事件列表中
+            ParseEvent();
 
             myBandFilterForm = new BandFilterForm(this);
             InitHardwareConfigParameters(nfi.Montage.SzSetting);
@@ -492,7 +497,9 @@ namespace VeegStation
             //this.commonDataPool = controller.GetCommonData();
             this.commonDataPool = controller.CommonDataPool;
             #region 画图参数
-
+            mmPerYGrid = commonDataPool.MMPerYGrid;
+            pixelPerMM = commonDataPool.PixelPerMM;
+            //pi
             #endregion
 
             #region 导联参数
@@ -517,9 +524,10 @@ namespace VeegStation
         /// <summary>
         /// 根据不同的设备类型，定义硬件配置名称，每个数据块占用的字节数、脑电数据占用的字节数、脑电数据开始位置  --by zt
         /// </summary>
-        private void InitHardwareConfigParameters(string configName) 
+        /// <param name="configName">硬件配置</param>
+        private void InitHardwareConfigParameters(string config) 
         {
-            switch (configName)
+            switch (config)
             {
                 //8导脑电
                 case "P10":
@@ -585,7 +593,7 @@ namespace VeegStation
         /// 从文件中加载数据
         /// </summary>
         /// <param name="Offset"></param>
-        private void  LoadData(int Offset)
+        public void  LoadData(int Offset)
         {
             if (nfi == null)
             {
@@ -600,6 +608,65 @@ namespace VeegStation
 
             DateTime end = DateTime.Now;
             Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", _packets.Count, (end - begin).TotalSeconds));
+        }
+
+        /// <summary>
+        /// 解析事件
+        /// -- by lxl
+        /// </summary>
+        private void ParseEvent()
+        {
+            //解析预定义事件
+            FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0]+".NAT", FileMode.Open, FileAccess.Read);
+
+            //定位到CFG的位置
+            fs.Seek(this.nfi.NatInfo.CfgOff + 68, SeekOrigin.Begin);
+
+            //一直读，独到值为0x45的BYTE即为读出事件
+            int mark;
+            byte[] myByte = new byte[7];
+            do
+            {
+                mark = fs.ReadByte();
+                if (mark != 69)
+                {
+                    fs.Seek(7,SeekOrigin.Current);
+                    continue;
+                }
+
+                //将标志位后的7个BYTE全部读出来
+                fs.Read(myByte, 0, 7);
+                
+                //BYTE第一位为标志预定义事件编号位，第四第五位为存储点位置位（低位存储）
+                preDefineEventsList.Add(new PreDefineEvent(myByte[0], (ushort)(myByte[3] | myByte[4] << 8)));
+            } 
+            while (mark >= 0);
+            preDefineEventsList.Sort(new PreDefineEventComparer());
+
+            //解析自定义事件
+            string name;
+            byte[] nameInByte = new byte[104];
+            if (File.Exists(this.nfi.NedFileName.Split('.')[0] + ".ent")) 
+            {
+                //打开.ent文件流并将其中数据读出来
+                FileStream entFS = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".ent", FileMode.Open, FileAccess.Read);
+                byte[] entByte = new byte[entFS.Length];
+
+                if (entFS.Length <= 0)
+                {
+                    return;
+                }
+                entFS.Read(entByte, 0,(int)entFS.Length);
+
+                //解析其中的数据
+                for (int i = 0; i < entByte[5]; i++)
+                {
+                    Array.Copy(entByte, i * 128 + 9, nameInByte, 0, 104);
+                    name = Encoding.GetEncoding(936).GetString(nameInByte).Trim('\0');
+                    customEventList.Add(new CustomEvent(name, (ushort)(entByte[i * 128 + 9 + 104] | (entByte[i * 128 + 9 + 105] << 8)), entByte[i * 128 + 9 + 108]));
+                }
+            }
+            customEventList.Sort(new CustomEventComparer());
         }
 
         /// <summary>
@@ -672,13 +739,6 @@ namespace VeegStation
         public void ShowData()
         {
             DateTime begin = DateTime.Now;
-            #region 滤波处理
-            //每个通道的数据
-            //对每个通道的数据进行滤波
-            //freFilter.BandpassFilter()
-
-            #endregion
-
             SeriesCollection col = chartWave.Series;
             double interval = 2000D / signalNum;
             chartWave.SuspendLayout();
@@ -687,12 +747,52 @@ namespace VeegStation
                 int a = col[sIdx].Points.Count;
                 col[sIdx].Points.Clear();
             }
+          #region 滤波处理
+            //每个通道的数据     
+            //对每个通道的数据进行滤波
+                //for (int i = 0; i < _packets.Count; i++)
+                //{
+                //    foreach (int sIdx in Enumerable.Range(0, signalNum - 1))
+                //    {
+                //        double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, 10, 100, sampleRate);
+                //        _packets[i].EEG[sIdx] = NewData[i];
+                //    }
+                //}
+                foreach (int sIdx in Enumerable.Range(0, signalNum - 1))
+                {
+                    double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, 10, 100, sampleRate);
+                    for (int i = 0; i < _packets.Count; i++)
+                    {
+                    _packets[i].EEG[sIdx] = NewData[i];
+                    }
+            }
+            //if (isBandFilter == true)
+            //{
+            //    foreach (int j in Enumerable.Range(0, _packets.Count))
+            //    {
+            //        double[] NewData = freFilter.BandpassFilter(j, ReturnSignalDataZhong(j), false, true, myBandFilterForm.low, myBandFilterForm.high, sampleRate);
+            //        for (int i = 0; i < signalNum - 1; i++)
+            //        {
+            //            _packets[j].EEG[i] = NewData[i];
+            //        }
+            //    }
+
+            //}
+            //if (is50HzFilter == true)
+            //{
+            //    foreach (int j in Enumerable.Range(0, _packets.Count))
+            //    {                 
+            //            double[] NewData = freFilter.BandpassFilter(j, ReturnSignalDataZhong(j), true, false, 10, 100, sampleRate);
+            //            for (int i = 0; i < signalNum - 1; i++)
+            //            {         
+            //            _packets[j].EEG[i] = NewData[i];
+            //        }
+            //    }
+            //}
+            //freFilter.BandpassFilter()
+            #endregion   
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
-                //没有事件先手动填充事件
-                //if (tIdx % 127 == 0) _preDEventsList.Add(new preDefineEvent(preDefineEvent.pdEvents.eyesOpen, tIdx));
-                if (tIdx % 127 == 0) customEventList.Add(new CustomEvent("你好", tIdx, Color.Blue));
-                //根据导联源加载数据，未完 --by zt
                 foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
                 {
                     if (sIdx == 19)
@@ -1579,8 +1679,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void CalibrateYToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (calibForm == null)
-                calibForm = new CalibrateYForm(this);
+            if (calibForm == null || calibForm.IsDisposed)
+                calibForm = new CalibrateYForm(this, pixelPerMM * 10);
             this.calibForm.Show();
             this.calibForm.BringToFront();
         }
@@ -1599,6 +1699,7 @@ namespace VeegStation
 
             //一格应该有多少毫米
             mmPerYGrid = pageHeightInMM / 20;
+            commonDataPool.MMPerYGrid = mmPerYGrid;
 
             ShowData();
         }
@@ -1609,8 +1710,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void CalibrateXToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (calibXForm == null)
-                calibXForm = new calibrateXForm(this);
+            if (calibXForm == null || calibXForm.IsDisposed)
+                calibXForm = new CalibrateXForm(this, pixelPerMM * 10);
             calibXForm.Show();
             calibXForm.BringToFront();
         }
@@ -1622,17 +1723,25 @@ namespace VeegStation
         {
             //一毫米多少像素点
             pixelPerMM = width / 10D;
+            commonDataPool.PixelPerMM = pixelPerMM;
 
-            //表格高度有多少毫米
-            pageWidthInMM = pageWidthInPixel / pixelPerMM;
-
-            //根据表格宽度设置X轴的最大值
-            SetAxisXMaximum(pageWidthInMM / timeStandard);
+            //更新表格的宽度
+            UpdatePageWidthInMM();
 
             //由于修改了X轴最大值，故重新加载、重新显示数据
             LoadData(CurrentSeconds);
             ShowData();
         }
+
+        private void UpdatePageWidthInMM()
+        {
+            //表格高度有多少毫米
+            pageWidthInMM = pageWidthInPixel / pixelPerMM;
+
+            //根据表格宽度设置X轴的最大值
+            SetAxisXMaximum(pageWidthInMM / timeStandard);
+        }
+
         /// <summary>
         /// chart的重绘函数
         /// -- by lxl
@@ -1673,8 +1782,14 @@ namespace VeegStation
             //若正在添加事件，则画一条和所选事件颜色相同的线跟着鼠标走  --by lxl
             if (isAddingEvent)
             {
-                e.Graphics.DrawLine(new Pen(addingEventColor), new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
-                mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X) * sampleRate;
+                if (isAddingPreDefineEvent)
+                    e.Graphics.DrawLine(new Pen(PreDefineEvent.PreDefineEventColorArray[preDefineEventIndex]), new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
+                else
+                    e.Graphics.DrawLine(new Pen(CustomEvent.CustomEventColor[addingEventColorIndex]), new Point(Control.MousePosition.X - this.chartWave.Location.X, 0), new Point(Control.MousePosition.X - this.chartWave.Location.X, this.chartWave.Height));
+                
+                //防止鼠标位置滑倒图表外面去
+                if (Control.MousePosition.X > this.chartWave.Location.X && Control.MousePosition.X < this.boardPanel.Location.X)
+                    mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X) * sampleRate;
             }
 
             //画图表上的秒数,time1Pos为当前图表中前二分之一秒的位置
@@ -1719,37 +1834,31 @@ namespace VeegStation
             double drawPosition;
 
             //画预定义事件                   
-            foreach (PreDefineEvent p in preDEventsList)                  
+            foreach (PreDefineEvent p in preDefineEventsList)                  
             {
                 //只画当前页面能显示的事件
-                if (p.EventPosition / sampleRate < CurrentSeconds)                 
+                if (p.EventPosition / sampleRate < currentSeconds)
                     continue;
                 if (p.EventPosition / sampleRate > CurrentSeconds + xMaximum)
                     break;
                 dotPen.Color = p.EventColor;
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate);
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
                 g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
-                switch (p.EventName)
-                {
-                    case PreDefineEvent.PreDefineEventsName.eyesOpen: g.DrawString("睁眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.PreDefineEventsName.eyesClose: g.DrawString("闭眼", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.PreDefineEventsName.deepBreath: g.DrawString("深呼吸", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                    case PreDefineEvent.PreDefineEventsName.calibrate: g.DrawString("定标", strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15)); break;
-                }
+                g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
                 g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
 
             //画自定义事件                  
-            foreach (CustomEvent p in customEventList)                  
+            foreach (CustomEvent p in customEventList)
             {
                 //只画当前页面能显示的事件
-                if (p.EventPosition / sampleRate < CurrentSeconds)                 
+                if (p.EventPosition / sampleRate < CurrentSeconds)
                     continue;
-                if (p.EventPosition / sampleRate > CurrentSeconds + xMaximum)
-                    break;
-                dotPen.Color = p.EventColor;
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(p.EventPosition / sampleRate);
-                g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
+                if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
+                    continue;
+                dotPen.Color = CustomEvent.CustomEventColor[p.EventColorIndex];
+                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
+                g.FillRectangle(new SolidBrush(Color.FromArgb(200, CustomEvent.CustomEventColor[p.EventColorIndex])), new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
                 g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
@@ -1890,19 +1999,19 @@ namespace VeegStation
             //若名字以pr开头则是preDefine（预定义）事件
             if (a.Name.Substring(0, 2) == "pr")
             {
-                if (myPreDefineEventFormEventForm == null)
-                    myPreDefineEventFormEventForm = new predefineEventsForm(this);
+                if (myPreDefineEventFormEventForm == null || myPreDefineEventFormEventForm.IsDisposed)
+                    myPreDefineEventFormEventForm = new PredefineEventsForm(this);
                 myPreDefineEventFormEventForm.Show();
                 myPreDefineEventFormEventForm.BringToFront();
-                myPreDefineEventFormEventForm.initList();
+                myPreDefineEventFormEventForm.InitList();
             }
             else//若名字以pr开头则是custom（自定义）事件
             {
-                if (myCustomEventForm == null)
+                if (myCustomEventForm == null || myCustomEventForm.IsDisposed)
                     myCustomEventForm = new CustomEventForm(this);
                 myCustomEventForm.Show();
                 myCustomEventForm.BringToFront();
-                myCustomEventForm.initList();
+                myCustomEventForm.InitList();
             }
         }
         /// <summary>
@@ -1912,7 +2021,7 @@ namespace VeegStation
         /// <returns>预定义事件列表</returns>
         public List<PreDefineEvent> GetPreEventList()
         {
-            return preDEventsList;
+            return preDefineEventsList;
         }
 
         /// <summary>
@@ -1925,6 +2034,22 @@ namespace VeegStation
             return customEventList;
         }
 
+        /// <summary>
+        /// 编辑事件指定位置的事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="index">索引</param>
+        /// <param name="name">名称</param>
+        /// <param name="colorIndex">颜色索引号</param>
+        public void editCustomEvent(int index, string name, int colorIndex)
+        {
+            //将新的编辑后的事件保存
+            this.customEventList[index].EventName = name;
+            this.customEventList[index].EventColorIndex = colorIndex;
+
+            //重画图表
+            this.chartWave.Invalidate();
+        }
         /// <summary>
         /// 获取采样频率
         /// -- by lxl
@@ -1946,27 +2071,40 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 开始添加事件
+        /// 开始添加预定义事件
+        /// </summary>
+        /// <param name="index">预定义事件的事件编号</param>
+        public void StartAddEvents(int index)
+        {
+
+            //保存添加的预定义事件的编号
+            this.preDefineEventIndex = index;
+
+            //设置当前为正在添加预定义事件
+            isAddingPreDefineEvent = true;
+
+            //设置当前开始添加事件
+            isAddingEvent = true;
+        }
+        /// <summary>
+        /// 开始添加自定义事件
         /// -- by lxl
         /// </summary>
-        /// <param name="flag">true为预定义事件，false为自定义事件</param>
-        /// <param name="clr">事件颜色</param>
+        /// <param name="colorIndex">事件颜色索引</param>
         /// <param name="name">事件名称</param>
-        public void StartAddEvents(bool flag, Color clr, object name)
+        public void StartAddEvents(int colorIndex, string name)
         {
             //设置添加事件过程中所要画的直线的颜色
-            addingEventColor = clr;
+            addingEventColorIndex = colorIndex;
 
-            //设置现在是添加的什么事件
-            isAddingPreDefineEvent = flag;
+            //设置现在是添加自定义事件
+            isAddingPreDefineEvent = false;
 
+            //设置当前开始添加事件
             isAddingEvent = true;
             
             //根据现在是在添加什么事件来确定事件名称
-            if (flag)
-                addedEventNameForPDEvent = (PreDefineEvent.PreDefineEventsName)name;
-            else
-                addedEventNameForCustomEvent = (string)name;
+            addedEventName = name;
         }
 
         /// <summary>
@@ -2016,17 +2154,21 @@ namespace VeegStation
                 {
                     if (isAddingPreDefineEvent)
                     {
-                        preDEventsList.Add(new PreDefineEvent(addedEventNameForPDEvent, mouseValueNow));
+                        //将事件添加进列表并排序
+                        preDefineEventsList.Add(new PreDefineEvent(preDefineEventIndex,Convert.ToUInt16(mouseValueNow)));
+                        preDefineEventsList.Sort(new PreDefineEventComparer());
 
                         //事件添加后更新添加事件的form里的列表
-                        myPreDefineEventFormEventForm.updateListView(true);
+                        myPreDefineEventFormEventForm.InitList();
                     }
                     else
                     {
-                        customEventList.Add(new CustomEvent(addedEventNameForCustomEvent, mouseValueNow, addingEventColor));
+                        //将事件添加进列表并排序
+                        customEventList.Add(new CustomEvent(addedEventName,Convert.ToUInt16( mouseValueNow), addingEventColorIndex));
+                        customEventList.Sort(new CustomEventComparer());
 
                         //事件添加后更新添加事件的form里的列表
-                        myCustomEventForm.UpdateListView(true);
+                        myCustomEventForm.InitList();
                     }
                 }
 
@@ -2037,7 +2179,7 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 删除指定索引的事件
+        /// 删除指定索引的事件，根据索引值flag判定是删除预定义事件还是自定义事件
         /// -- by lxl
         /// </summary>
         /// <param name="flag">是否是预定义事件</param>
@@ -2046,13 +2188,21 @@ namespace VeegStation
         {
             if (flag)
             {
-                preDEventsList.RemoveAt(index);
+                //判定预定义事件列表最少有一个事件可供删除
+                if (preDefineEventsList.Count() <= 0)
+                    return;
+
+                preDefineEventsList.RemoveAt(index);
 
                 //事件删除后更新添加事件的form里的列表
-                myPreDefineEventFormEventForm.updateListView(false);
+                myPreDefineEventFormEventForm.updateListView();
             }
             else
             {
+                //判定自定义事件列表最少有一个事件可供删除
+                if (customEventList.Count() <= 0)
+                    return;
+
                 customEventList.RemoveAt(index);
 
                 //事件删除后更新添加事件的form里的列表
@@ -2070,6 +2220,10 @@ namespace VeegStation
             if(nfi.HasVideo)
             video.Close();
             controller.PlaybackQuit();
+
+            //将事件写入文件中，先写在此处测试，没问题后移到controller中
+            SavePreDefineEventsToFile(nfi.NedFileName.Split('.')[0]+".NAT");
+            SaveCustomeEventsToFile(nfi.NedFileName.Split('.')[0] + ".ent");
         }
 
         /// <summary>
@@ -2167,6 +2321,154 @@ namespace VeegStation
         }
 
         /// <summary>
+        /// 将预定义事件列表存到文件中
+        /// -- by lxl
+        /// </summary>
+        /// <param name="filename">文件名路径</param>
+        private int SavePreDefineEventsToFile(string filename)
+        {
+            try
+            {
+                //打开文件流
+                FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                BinaryWriter bw = new BinaryWriter(fs);
+
+                //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
+                byte[] byteBuf = PreDefineEventsToHex(preDefineEventsList);
+                if (byteBuf == null)
+                {
+                    MessageBox.Show("解析失败:数据转换成BYTE出错");
+                    return 0;
+                }
+
+                bw.Seek(nfi.NatInfo.CfgOff + 60, SeekOrigin.Begin);
+                bw.Write(byteBuf);
+                bw.Close();
+                fs.Close();
+
+                //返回1表示成功
+                return 1;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("预定义事件写入文件错误" + e.Message);
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// 将预定义事件转换成BYTE数组
+        /// </summary>
+        /// <param name="pdEvent"></param>
+        /// <returns></returns>
+        private byte[] PreDefineEventsToHex(List<PreDefineEvent> pdEvent)
+        {
+            //建立一个BYTE数组用于存储事件信息
+            byte[] returnBytes;
+            returnBytes = new byte[pdEvent.Count() * 8];
+
+            //按照格式构造BYTE数组
+            for (int i = 0; i < pdEvent.Count(); i++)
+            {
+                returnBytes[i * 8] = 0x45;
+                returnBytes[i * 8 + 1] = Convert.ToByte(pdEvent[i].EventNameIndex);
+                returnBytes[i * 8 + 2] = returnBytes[i * 8 + 3] = 0x00;
+                returnBytes[i * 8 + 4] = BitConverter.GetBytes(pdEvent[i].EventPosition)[0];
+                returnBytes[i * 8 + 5] = BitConverter.GetBytes(pdEvent[i].EventPosition)[1];
+                returnBytes[i * 8 + 6] = returnBytes[i * 8 + 7] = 0x00;
+            }
+
+            return returnBytes;
+        }
+
+        /// <summary>
+        /// 将自定义事件列表保存到文件中
+        /// -- by lxl
+        /// </summary>
+        /// <param name="filename"></param>
+        private int SaveCustomeEventsToFile(string filename)
+        {
+            try
+            {
+                if (File.Exists(filename))
+                {
+                    File.Delete(filename);
+                }
+
+                //打开文件流
+                FileStream fs = new FileStream(filename, FileMode.CreateNew, FileAccess.ReadWrite);
+                BinaryWriter bw = new BinaryWriter(fs);
+
+                //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
+                byte[] eventByteBuf = CustomEventsToHex(customEventList);
+
+                //建立一个文件头的BYTEBUF，将自定义事件文件头写进去
+                byte[] headByteBuf = generateCustomEventHeadByte();
+                if (eventByteBuf == null)
+                {
+                    MessageBox.Show("解析失败:数据转换成BYTE出错");
+                    return 0;
+                }
+                bw.Seek(0, SeekOrigin.Begin);
+                bw.Write(headByteBuf);
+                bw.Write(eventByteBuf);
+                bw.Close();
+                fs.Close();
+
+                return 1;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("自定义事件写入文件错误" + e.Message);
+                return 0;
+            }
+        }
+
+        private byte[] generateCustomEventHeadByte()
+        {
+            byte[] returnBytes = new byte[9];
+
+            //将ENTCM按照ASCII转码存入前5个BYTE
+            Encoding.ASCII.GetBytes("ENTCM", 0, "ENTCM".Count(), returnBytes, 0);
+
+            //将事件个数转码存入第六个BYTE
+            returnBytes[5] = BitConverter.GetBytes(customEventList.Count())[0];
+
+            return returnBytes;
+        }
+
+        /// <summary>
+        /// 将自定义事件按格式转成BYTE数组
+        /// </summary>
+        /// <param name="cEvent"></param>
+        /// <returns></returns>
+        private byte[] CustomEventsToHex(List<CustomEvent> cEvent)
+        {
+            //建立一个BYTE数组用于存储事件信息
+            byte[] returnBytes;
+            returnBytes = new byte[cEvent.Count() * 128];
+
+            for (int i = 0; i < cEvent.Count(); i++)
+            {
+                Encoding.GetEncoding(936).GetBytes(cEvent[i].EventName, 0, cEvent[i].EventName.Count(), returnBytes, i * 128);
+                returnBytes[i * 128 + 104] = BitConverter.GetBytes(cEvent[i].EventPosition)[0];
+                returnBytes[i * 128 + 105] = BitConverter.GetBytes(cEvent[i].EventPosition)[1];
+                returnBytes[i * 128 + 108] = BitConverter.GetBytes(cEvent[i].EventColorIndex)[0];           //int32转换成BYTE数组为4个BYTE，由于只有第一个故取数组下标[0]
+
+                //将时间写入事件文件中
+                DateTime time = nfi.StartDateTime.AddSeconds(cEvent[i].EventPosition/sampleRate);
+                returnBytes[i * 128 + 120] = BitConverter.GetBytes((UInt16)time.Hour)[0];
+                returnBytes[i * 128 + 121] = BitConverter.GetBytes((UInt16)time.Hour)[1];
+                returnBytes[i * 128 + 122] = BitConverter.GetBytes((UInt16)time.Minute)[0];
+                returnBytes[i * 128 + 123] = BitConverter.GetBytes((UInt16)time.Minute)[1];
+                returnBytes[i * 128 + 124] = BitConverter.GetBytes((UInt16)time.Second)[0];
+                returnBytes[i * 128 + 125] = BitConverter.GetBytes((UInt16)time.Second)[1];
+            }
+
+            return returnBytes;
+        }
+
+        /// <summary>
         /// 鼠标放上去显示点的值，测试代码，正式版删掉。  --by zt
         /// </summary>
         /// <param name="sender"></param>
@@ -2230,15 +2532,15 @@ namespace VeegStation
                 //不选50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = false;
                 is50HzFilter = false;
-                //LoadData(_Page);
+                LoadData(CurrentSeconds);
                 ShowData();
             }
             else
             {
                 //选择50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = true;
-                is50HzFilter = false;
-                //LoadData(_Page);
+                is50HzFilter = true;
+                LoadData(CurrentSeconds);
                 ShowData();
             }
         }
@@ -2248,6 +2550,35 @@ namespace VeegStation
             myBandFilterForm.InitFormFilter();
             myBandFilterForm.Show();
             
-        } 
+        }
+        /// <summary>
+        /// 返回一个通道所有的数据--by wsp
+        /// </summary>
+        /// <param name="NumSigal"></param>
+        /// <returns></returns>
+        private double[] ReturnSignalData(int NumSigal)
+        {
+            double[] singalData = new double[_packets.Count];
+            int i = 0;
+            foreach (int sIdx in Enumerable.Range(0, _packets.Count))
+            {
+                    singalData[i] = _packets[sIdx].EEG[NumSigal];
+                    i++;
+            }
+            return singalData;
+        }
+
+        private double[] ReturnSignalDataZhong(int NumSigal)
+        {
+            double[] singalData = new double[signalNum-1];
+            int i = 0;
+            foreach (int sIdx in Enumerable.Range(0, signalNum-1))
+            {
+                singalData[i] = _packets[NumSigal].EEG[sIdx];
+                i++;
+            }
+            return singalData;
+        }
+
     }
 }

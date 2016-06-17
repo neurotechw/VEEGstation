@@ -13,7 +13,7 @@ namespace VeegStation
     /// 校准X轴的FORM
     /// -- by lxl
     /// </summary>
-    public partial class calibrateXForm : Form
+    public partial class CalibrateXForm : Form
     {
         /// <summary>
         /// 量取的宽度
@@ -21,12 +21,12 @@ namespace VeegStation
         private int width;
         private PlaybackForm myPlayBackform;
 
-        public calibrateXForm(PlaybackForm form)
+        public CalibrateXForm(PlaybackForm form,double wid)
         {
             InitializeComponent();
 
             //初始化一个默认的VALUE,(以后需要改成从playbackform中读取）
-            width = 20;
+            width = (int)(wid * 5);
             this.valueBox.Value = width;
             this.myPlayBackform = form;
         }
@@ -70,7 +70,9 @@ namespace VeegStation
         {
             //通过量好的长度得出每厘米的像素点，然后配置图表大小，height / 5 = 每一厘米多少像素点
             myPlayBackform.CalibrateX(width / 5D);
-            this.Hide();
+
+            this.Close();
+            this.Dispose();
         }
 
         /// <summary>
@@ -80,7 +82,8 @@ namespace VeegStation
         /// <param name="e"></param>
         private void BtnCancel_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
+            this.Dispose();
         }
     }
 }
