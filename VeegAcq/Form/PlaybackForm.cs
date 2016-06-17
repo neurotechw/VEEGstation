@@ -505,7 +505,7 @@ namespace VeegStation
         /// 从文件中加载数据
         /// </summary>
         /// <param name="Offset"></param>
-        private void  LoadData(int Offset)
+        public void  LoadData(int Offset)
         {
             if (nfi == null)
             {
@@ -706,13 +706,6 @@ namespace VeegStation
         public void ShowData()
         {
             DateTime begin = DateTime.Now;
-            #region 滤波处理
-            //每个通道的数据
-            //对每个通道的数据进行滤波
-            //freFilter.BandpassFilter()
-
-            #endregion
-
             SeriesCollection col = chartWave.Series;
             double interval = 2000D / signalNum;
             chartWave.SuspendLayout();
@@ -721,6 +714,50 @@ namespace VeegStation
                 int a = col[sIdx].Points.Count;
                 col[sIdx].Points.Clear();
             }
+          #region 滤波处理
+            //每个通道的数据     
+            //对每个通道的数据进行滤波
+                //for (int i = 0; i < _packets.Count; i++)
+                //{
+                //    foreach (int sIdx in Enumerable.Range(0, signalNum - 1))
+                //    {
+                //        double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, 10, 100, sampleRate);
+                //        _packets[i].EEG[sIdx] = NewData[i];
+                //    }
+                //}
+                foreach (int sIdx in Enumerable.Range(0, signalNum - 1))
+                {
+                    double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, 10, 100, sampleRate);
+                    for (int i = 0; i < _packets.Count; i++)
+                    {
+                    _packets[i].EEG[sIdx] = NewData[i];
+                    }
+            }
+            //if (isBandFilter == true)
+            //{
+            //    foreach (int j in Enumerable.Range(0, _packets.Count))
+            //    {
+            //        double[] NewData = freFilter.BandpassFilter(j, ReturnSignalDataZhong(j), false, true, myBandFilterForm.low, myBandFilterForm.high, sampleRate);
+            //        for (int i = 0; i < signalNum - 1; i++)
+            //        {
+            //            _packets[j].EEG[i] = NewData[i];
+            //        }
+            //    }
+
+            //}
+            //if (is50HzFilter == true)
+            //{
+            //    foreach (int j in Enumerable.Range(0, _packets.Count))
+            //    {                 
+            //            double[] NewData = freFilter.BandpassFilter(j, ReturnSignalDataZhong(j), true, false, 10, 100, sampleRate);
+            //            for (int i = 0; i < signalNum - 1; i++)
+            //            {         
+            //            _packets[j].EEG[i] = NewData[i];
+            //        }
+            //    }
+            //}
+            //freFilter.BandpassFilter()
+            #endregion   
             foreach (int tIdx in Enumerable.Range(0, _packets.Count))
             {
                 foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
@@ -2248,7 +2285,7 @@ namespace VeegStation
                     return 0;
                 }
 
-                bw.Seek(0x28a2, SeekOrigin.Begin);
+                bw.Seek(nfi.NatInfo.CfgOff + 60, SeekOrigin.Begin);
                 bw.Write(byteBuf);
                 bw.Close();
                 fs.Close();
@@ -2439,15 +2476,15 @@ namespace VeegStation
                 //不选50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = false;
                 is50HzFilter = false;
-                //LoadData(_Page);
+                LoadData(CurrentSeconds);
                 ShowData();
             }
             else
             {
                 //选择50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = true;
-                is50HzFilter = false;
-                //LoadData(_Page);
+                is50HzFilter = true;
+                LoadData(CurrentSeconds);
                 ShowData();
             }
         }
@@ -2457,6 +2494,35 @@ namespace VeegStation
             myBandFilterForm.InitFormFilter();
             myBandFilterForm.Show();
             
-        } 
+        }
+        /// <summary>
+        /// 返回一个通道所有的数据--by wsp
+        /// </summary>
+        /// <param name="NumSigal"></param>
+        /// <returns></returns>
+        private double[] ReturnSignalData(int NumSigal)
+        {
+            double[] singalData = new double[_packets.Count];
+            int i = 0;
+            foreach (int sIdx in Enumerable.Range(0, _packets.Count))
+            {
+                    singalData[i] = _packets[sIdx].EEG[NumSigal];
+                    i++;
+            }
+            return singalData;
+        }
+
+        private double[] ReturnSignalDataZhong(int NumSigal)
+        {
+            double[] singalData = new double[signalNum-1];
+            int i = 0;
+            foreach (int sIdx in Enumerable.Range(0, signalNum-1))
+            {
+                singalData[i] = _packets[NumSigal].EEG[sIdx];
+                i++;
+            }
+            return singalData;
+        }
+
     }
 }

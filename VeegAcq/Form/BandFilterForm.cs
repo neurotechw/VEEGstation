@@ -13,6 +13,8 @@ namespace VeegStation
     {
         private PlaybackForm myPlaybackForm;
         private bool isFirst = true;
+        public int low;
+        public int high;
         /// <summary>
         /// 带通滤波form  --by zt
         /// </summary>
@@ -92,8 +94,8 @@ namespace VeegStation
                 }
                 else
                 {
-                    int low = Convert.ToInt32(textBox_lowFrequency.Text);
-                    int high = Convert.ToInt32(textBox_highFrequency.Text);
+                     low = Convert.ToInt32(textBox_lowFrequency.Text);
+                     high = Convert.ToInt32(textBox_highFrequency.Text);
                     if (low > high)
                     {
                         MessageBox.Show("低通频率大于高通频率，请重新选择。", "提示", MessageBoxButtons.OK);
@@ -112,6 +114,7 @@ namespace VeegStation
                 this.myPlaybackForm.IsBandFilter = false;
             }
             this.myPlaybackForm.SetBandFilterChecked();
+            this.myPlaybackForm.LoadData(myPlaybackForm.CurrentSeconds);
             this.myPlaybackForm.ShowData();
             this.Hide();
         }
