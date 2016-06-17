@@ -111,22 +111,27 @@ namespace VeegStation
         /// <summary>
         /// 导联配置
         /// </summary>
-        public Hashtable leadList;
+        private Hashtable leadList;
 
         /// <summary>
         /// 导联源
         /// </summary>
-        public Hashtable leadSource;
+        private Hashtable leadSource;
 
         /// <summary>
         /// 当前导联名称
         /// </summary>
-        public string currentLeadConfig;
+        private string currentLeadConfig;
 
         /// <summary>
         /// 存放当前导联配置
         /// </summary>
-        public ArrayList leadConfigArrayList;
+        private ArrayList leadConfigArrayList;
+
+        /// <summary>
+        /// 该数据的硬件配置名称
+        /// </summary>
+        private string hardwareConfigName;
         #endregion
 
         #region 滤波参数  --by zt
@@ -464,6 +469,7 @@ namespace VeegStation
             //this.myLeadSource = EegFile.Montage.LeadSource;
 
             myBandFilterForm = new BandFilterForm(this);
+            InitHardwareConfigParameters(nfi.Montage.SzSetting);
         }
 
         /// <summary>
@@ -490,9 +496,90 @@ namespace VeegStation
             #endregion
 
             #region 导联参数
+            InitLeadParameters();
             #endregion
         }
 
+        /// <summary>
+        /// 更新导联参数  --by zt
+        /// </summary>
+        public void InitLeadParameters() 
+        {
+            Hashtable defaultLeadSource = (Hashtable)this.controller.CommonDataPool.GetLeadSource(this.hardwareConfigName)[0];
+            Hashtable myLeadSource = (Hashtable)this.controller.CommonDataPool.GetLeadSource(this.hardwareConfigName)[1];
+
+            this.leadSource = myLeadSource.Count != 0 ? myLeadSource : defaultLeadSource;
+            this.leadList = (Hashtable)this.controller.CommonDataPool.GetLeadList(this.hardwareConfigName);
+
+            InitLeadItems();
+        }
+
+        /// <summary>
+        /// 根据不同的设备类型，定义硬件配置名称，每个数据块占用的字节数、脑电数据占用的字节数、脑电数据开始位置  --by zt
+        /// </summary>
+        private void InitHardwareConfigParameters(string configName) 
+        {
+            switch (configName)
+            {
+                //8导脑电
+                case "P10":
+                    this.hardwareConfigName = "8导脑电";
+                    byteOfPerData = 26;
+                    numberOfPerData = 8;
+                    indexOfData = 6;
+                    break;
+
+                //8导脑电+多参数
+                case "P11":
+                    this.hardwareConfigName = "8导脑电+多参数";
+                    byteOfPerData = 48;
+                    numberOfPerData = 8;
+                    indexOfData = 28;
+                    break;
+
+                //16导脑电
+                case "P20":
+                    this.hardwareConfigName = "16导脑电";
+                    byteOfPerData = 46;
+                    numberOfPerData = 16;
+                    indexOfData = 6;
+                    break;
+
+                //16导脑电+多参数
+                case "P21":
+                    this.hardwareConfigName = "16导脑电+多参数";
+                    byteOfPerData = 68;
+                    numberOfPerData = 16;
+                    indexOfData = 28;
+                    break;
+
+                //24导脑电
+                case "P30":
+                    this.hardwareConfigName = "24导脑电";
+                    byteOfPerData = 86;
+                    numberOfPerData = 19;
+                    indexOfData = 6;
+                    break;
+
+                //32导脑电
+                case "P40":
+                    this.hardwareConfigName = "32导脑电";
+                    byteOfPerData = 86;
+                    numberOfPerData = 19;
+                    indexOfData = 6;
+                    break;
+
+                //32导脑电+多参数
+                case "P41":
+                    this.hardwareConfigName = "32导脑电+多参数";
+                    byteOfPerData = 108;
+                    numberOfPerData = 19;
+                    indexOfData = 28;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         /// <summary>
         /// 从文件中加载数据
@@ -507,61 +594,6 @@ namespace VeegStation
             int loadRec = WINDOW_SECONDS * sampleRate;
             DateTime begin = DateTime.Now;
             #region 加载数据
-
-            //根据不同的设备类型，定义每个数据块占用的字节数、脑电数据占用的字节数、脑电数据开始位置
-            switch (nfi.Montage.SzSetting)
-            {   
-                //8导脑电
-                case "P10":                 
-                    byteOfPerData = 26;
-                    numberOfPerData = 8;
-                    indexOfData = 6;
-                    break;
-
-                //8导脑电+多参数
-                case "P11":                 
-                    byteOfPerData = 48;
-                    numberOfPerData = 8;
-                    indexOfData = 28;
-                    break;
-
-                //16导脑电
-                case "P20":                 
-                    byteOfPerData = 46;
-                    numberOfPerData = 16;
-                    indexOfData = 6;
-                    break;
-
-                //16导脑电+多参数
-                case "P21":                 
-                    byteOfPerData = 68;
-                    numberOfPerData = 16;
-                    indexOfData = 28;
-                    break;
-
-                //24导脑电
-                case "P30":                 
-                    byteOfPerData = 86;
-                    numberOfPerData = 19;
-                    indexOfData = 6;
-                    break;
-
-                //32导脑电
-                case "P40":                 
-                    byteOfPerData = 86;
-                    numberOfPerData = 19;
-                    indexOfData = 6;
-                    break;
-
-                //32导脑电+多参数
-                case "P41":                 
-                    byteOfPerData = 108;
-                    numberOfPerData = 19;
-                    indexOfData = 28;
-                    break;
-                default:
-                    break;
-            }
 
             ParseData(byteOfPerData, numberOfPerData, indexOfData, Offset, loadRec);
             #endregion
@@ -1414,6 +1446,29 @@ namespace VeegStation
                     item.Checked = true;
                 this.signalToolStripMenuItem.DropDownItems.Add(item);
             }
+        }
+
+        /// <summary>
+        /// 初始化导联选择选项  --by zt
+        /// </summary>
+        private void InitLeadItems() 
+        {
+            System.Windows.Forms.ToolStripMenuItem item;//= new ToolStripMenuItem();
+
+            ////初始化时间基准选项
+            //foreach (int t in timeStandardArray)
+            //{
+            //    item = new ToolStripMenuItem();
+            //    item.Name = "timeStandardMenuItem_" + t;
+            //    item.Size = new Size(140, 22);
+            //    item.Text = t + "mm/sec";
+            //    item.Click += new EventHandler(this.TimerStandartMenuItem_Click);
+            //    if (t == timeStandard)
+            //        item.Checked = true;
+            //    this.timeStandartToolStripMenuItem.DropDownItems.Add(item);
+            //}
+
+
         }
 
        /// <summary>

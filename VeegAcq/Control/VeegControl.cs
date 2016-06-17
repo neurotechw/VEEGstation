@@ -13,7 +13,7 @@ namespace VeegStation
         /// <summary>
         /// 回放Form
         /// </summary>
-        private PlaybackForm myPlaybackForm;
+        public PlaybackForm myPlaybackForm;
 
         /// <summary>
         /// 初始化Controller

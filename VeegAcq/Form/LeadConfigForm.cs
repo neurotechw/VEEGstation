@@ -105,6 +105,7 @@ namespace VeegStation
             txtName.Text = "默认导联配置";
             myLeadLists = controller.CommonDataPool.LeadConfigLists;
             myLeadList = (Hashtable)myLeadLists[cbConfigList.Text];
+            //myLeadList = controller.CommonDataPool.GetLeadList(cbConfigList.Text);
 
             DataTable dt = new DataTable();
             InitDT(dt);
@@ -219,6 +220,7 @@ namespace VeegStation
             if (MessageBox.Show("确认删除？", "此删除不可恢复", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 myLeadList.Remove(nameOfColumn);
+                selectedColumn = 0;
             }
             InitList();
         }

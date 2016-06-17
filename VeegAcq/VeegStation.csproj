@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Control\CommonDataPart.cs" />
     <Compile Include="Control\ConfigPart.cs" />
+    <Compile Include="Control\PlaybackPart.cs" />
     <Compile Include="Control\VeegControl.cs" />
     <Compile Include="Form\addCustomEventForm.cs">
       <SubType>Form</SubType>
@@ -139,6 +140,7 @@
     <Compile Include="Form\LeadEditForm.Designer.cs">
       <DependentUpon>LeadEditForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Module\CFGInfo.cs" />
     <Compile Include="Module\CommonData.cs" />
     <Compile Include="Module\Complex.cs" />
     <Compile Include="Module\DataFunc.cs" />
