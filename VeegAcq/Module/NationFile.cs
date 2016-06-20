@@ -279,7 +279,7 @@ namespace VeegStation
             ParseDataInfo(file);
 
         }
-
+        
         /// <summary>
         /// 解析事件区信息
         /// -- by lxl
@@ -295,7 +295,6 @@ namespace VeegStation
             byte[] name = new byte[10];
 
             //计算有多少个事件,并相应的分配事件颜色和名称数组的长度
-            //eventInfo[8]为事件区的长度，每个事件占16个字节，故除以16则得到有多少个预定义事件
             _eventCount = shortEventNum + longEventNum;
             this._preDefineEventColorArray = new System.Drawing.Color[_eventCount];
             this._preDefineEventNameArray = new string[_eventCount];
@@ -307,6 +306,162 @@ namespace VeegStation
                 _preDefineEventNameArray[(i - 12) / 16] = Encoding.GetEncoding(936).GetString(name).Trim('\0');
                 _preDefineEventColorArray[(i - 12) / 16] = System.Drawing.Color.FromArgb(eventInfo[i + 12], eventInfo[i + 13], eventInfo[i + 14]);
             }
+        }
+
+        /// <summary>
+        /// 解析预定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="filename">文件绝对路径</param>
+        /// <param name="cfgoff">Cfg字段所处的位置</param>
+        /// <returns></returns>
+        public List<PreDefineEvent> ParsePreDefineEvent(string filename,int cfgoff)
+        {
+            List<PreDefineEvent> pdList = new List<PreDefineEvent>();
+            
+            //预定义事件在文件中存储的位置
+            int posInFile;
+
+            //解析预定义事件
+            FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+
+            //定位到CFG的位置
+            fs.Seek(cfgoff + 68, SeekOrigin.Begin);
+            posInFile = cfgoff + 68;
+
+            //一直读，独到值为0x45的BYTE即为读出事件
+            int mark;
+            byte[] myByte = new byte[7];
+            do
+            {
+                mark = fs.ReadByte();
+                posInFile++;
+                if (mark != 69)
+                {
+                    fs.Seek(7, SeekOrigin.Current);
+                    posInFile += 7;
+                    continue;
+                }
+
+                //将标志位后的7个BYTE全部读出来
+                fs.Read(myByte, 0, 7);
+
+                //BYTE第一位为标志预定义事件编号位，第四第五位为存储点位置位（低位存储）
+                pdList.Add(new PreDefineEvent(myByte[0], (ushort)(myByte[3] | myByte[4] << 8), posInFile - 1));   //减1把readbyte那的+1减掉
+                posInFile += 7;
+            }
+            while (mark >= 0);
+
+            return pdList;
+        }
+
+        /// <summary>
+        /// 解析自定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="filename">文件绝对路径</param>
+        /// <param name="cfgoff">Cfg字段所处的位置</param>
+        /// <returns></returns>
+        public List<CustomEvent> ParseCustomEvent(string filename, int cfgoff)
+        {
+            List<CustomEvent> cList = new List<CustomEvent>();  
+
+            //解析自定义事件
+            string name;
+            byte[] nameInByte = new byte[104];
+            if (File.Exists(filename))
+            {
+                //打开.ent文件流并将其中数据读出来
+                FileStream entFS = new FileStream(filename, FileMode.Open, FileAccess.Read);
+                byte[] entByte = new byte[entFS.Length];
+
+                if (entFS.Length <= 0)
+                {
+                    return null;
+                }
+                entFS.Read(entByte, 0, (int)entFS.Length);
+
+                //解析其中的数据
+                for (int i = 0; i < entByte[5]; i++)
+                {
+                    Array.Copy(entByte, i * 128 + 9, nameInByte, 0, 104);
+                    name = Encoding.GetEncoding(936).GetString(nameInByte).Trim('\0');
+                    cList.Add(new CustomEvent(name, (ushort)(entByte[i * 128 + 9 + 104] | (entByte[i * 128 + 9 + 105] << 8)), entByte[i * 128 + 9 + 108]));
+                }
+                return cList;
+            }
+            else
+            { 
+                return null; 
+            }
+        }
+
+        /// <summary>
+        /// 解析CFG字段后除开具体事件信息外的信息
+        /// -- by xcg
+        /// </summary>
+        /// <param name="filename">文件绝对路径</param>
+        /// <param name="cfgoff">Cfg字段所处的位置</param>
+        /// <returns></returns>
+        public EventProperty ParseEventProperty(string filename, int cfgoff)
+        {
+            EventProperty eventProperty = new EventProperty();
+            eventProperty.BeginningTime = new List<DateTime>();
+            eventProperty.RecordQuantity = new List<int>();
+            eventProperty.RecordTime = new List<TimeSpan>();
+
+            //打开文件流，并定位到CFG后的第12位
+            FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read);
+            fs.Seek(cfgoff + 12, SeekOrigin.Begin);
+
+            byte[] myByte = new byte[8];
+
+            //开始时间，年月日
+            fs.Read(myByte, 0, 8);
+            string StartDay = ((myByte[7] << 8 | myByte[6]) + "-" + myByte[5] + "-" + myByte[4]).ToString();
+            this.startDay = DateTime.Parse(StartDay);
+
+            // 添加病例时点击“脑电图采集”按钮的时间，时分秒
+            fs.Read(myByte, 0, 8);
+            eventProperty.ColletTime = new TimeSpan(myByte[7] << 8 | myByte[6], myByte[5], myByte[4]);
+
+            //采集时点击“退出”按钮的时间，时分秒
+            fs.Read(myByte, 0, 8);
+            eventProperty.ExitTime = new TimeSpan(myByte[7] << 8 | myByte[6], myByte[5], myByte[4]);
+
+            //采集的总点数
+            fs.Read(myByte, 0, 8);
+            eventProperty.NumberOfSamples = myByte[7] << 24 | myByte[6] << 16 | myByte[5] << 8 | myByte[4];
+
+            #region 解析NAT文件中的时间信息
+            int mark;
+            int mRTArrayIndex = -1;
+            do
+            {
+                mark = fs.ReadByte();
+                if (mark != 84)
+                {
+                    fs.Seek(7, SeekOrigin.Current);
+                    continue;
+                }
+
+                //将标志位后的7个BYTE全部读出来
+                fs.Read(myByte, 0, 7);
+                if (myByte[0] == 0X03)
+                {
+                    eventProperty.BeginningTime.Add(new DateTime(eventProperty.StartDay.Year,eventProperty.StartDay.Month,eventProperty.StartDay.Day,myByte[6] << 8 | myByte[5], myByte[4], myByte[3]));
+                }
+
+                if (myByte[0] == 0X04)
+                {
+                    mRTArrayIndex++;
+                    eventProperty.RecordQuantity.Add(myByte[6] << 24 | myByte[5] << 16 | myByte[4] << 8 | myByte[3]);
+                    eventProperty.RecordTime.Add(new TimeSpan(0, 0, eventProperty.RecordQuantity[mRTArrayIndex]));
+                }
+            } while (mark >= 0);
+            #endregion
+
+            return eventProperty;
         }
 
         /// <summary>
