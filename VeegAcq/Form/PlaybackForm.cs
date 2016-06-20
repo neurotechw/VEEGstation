@@ -2260,5 +2260,15 @@ namespace VeegStation
             return singalData;
         }
 
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.DetectionInfoPanel.Hide();
+        }
+
+        private void BtnHide_Click(object sender, EventArgs e)
+        {
+            this.PationInfoPanel.Hide();
+        }
+
     }
 }
