@@ -86,7 +86,7 @@
             this.linePanel.TabIndex = 6;
             this.linePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.Draw);
             // 
-            // CalibrateForm
+            // CalibrateYForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -97,7 +97,8 @@
             this.Controls.Add(this.linePanel);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.confirmButton);
-            this.Name = "CalibrateForm";
+            this.Name = "CalibrateYForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Y轴校准";
             ((System.ComponentModel.ISupportInitialize)(this.valueBox)).EndInit();
             this.ResumeLayout(false);

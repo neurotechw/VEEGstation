@@ -55,6 +55,13 @@ namespace VeegStation
             commonDataPool.LeadSources = xmlConfig.LeadSources;
             commonDataPool.LeadConfigLists = xmlConfig.LeadConfigLists;
             #endregion
+
+            #region 画图参数
+
+            commonDataPool.MMPerYGrid = xmlConfig.MMPerYGrid;
+            commonDataPool.PixelPerMM = xmlConfig.PixelPerMM;
+
+            #endregion
         }
 
         /// <summary>
@@ -74,6 +81,12 @@ namespace VeegStation
             //xmlConfig.demarcateCV = commonDataPool.demarcateCV;
             #endregion  
 
+            #region 画图参数
+
+            xmlConfig.MMPerYGrid = commonDataPool.MMPerYGrid;
+            xmlConfig.PixelPerMM = commonDataPool.PixelPerMM;
+
+            #endregion
             if (configManage.SaveToFile("config", xmlConfig) == false)
             {
                  System.Windows.Forms.MessageBox.Show("写XML配置文件失败！");

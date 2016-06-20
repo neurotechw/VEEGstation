@@ -84,12 +84,13 @@
   <ItemGroup>
     <Compile Include="Control\CommonDataPart.cs" />
     <Compile Include="Control\ConfigPart.cs" />
+    <Compile Include="Control\PlaybackPart.cs" />
     <Compile Include="Control\VeegControl.cs" />
-    <Compile Include="Form\addCustomEventForm.cs">
+    <Compile Include="Form\AddCustomEventForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form\addCustomEventForm.Designer.cs">
-      <DependentUpon>addCustomEventForm.cs</DependentUpon>
+    <Compile Include="Form\AddCustomEventForm.Designer.cs">
+      <DependentUpon>AddCustomEventForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Form\BandFilterForm.cs">
       <SubType>Form</SubType>
@@ -103,17 +104,17 @@
     <Compile Include="Form\CalibrateYForm.Designer.cs">
       <DependentUpon>CalibrateYForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form\calibrateXForm.cs">
+    <Compile Include="Form\CalibrateXForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form\calibrateXForm.Designer.cs">
-      <DependentUpon>calibrateXForm.cs</DependentUpon>
+    <Compile Include="Form\CalibrateXForm.Designer.cs">
+      <DependentUpon>CalibrateXForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form\customEventForm.cs">
+    <Compile Include="Form\CustomEventForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form\customEventForm.Designer.cs">
-      <DependentUpon>customEventForm.cs</DependentUpon>
+    <Compile Include="Form\CustomEventForm.Designer.cs">
+      <DependentUpon>CustomEventForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Form\LeadConfigForm.cs">
       <SubType>Form</SubType>
@@ -139,12 +140,13 @@
     <Compile Include="Form\LeadEditForm.Designer.cs">
       <DependentUpon>LeadEditForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Module\CFGInfo.cs" />
     <Compile Include="Module\CommonData.cs" />
     <Compile Include="Module\Complex.cs" />
     <Compile Include="Module\DataFunc.cs" />
     <Compile Include="Module\Datastructcs.cs" />
     <Compile Include="Module\EegPacket.cs" />
-    <Compile Include="Module\eventStruct.cs" />
+    <Compile Include="Module\EventStruct.cs" />
     <Compile Include="Module\FreqAnalyzer.cs" />
     <Compile Include="Module\Montage.cs" />
     <Compile Include="Module\NatFileInfo.cs" />
@@ -158,11 +160,11 @@
     <Compile Include="Form\PlaybackForm.Designer.cs">
       <DependentUpon>PlaybackForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form\predefineEventsForm.cs">
+    <Compile Include="Form\PredefineEventsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form\predefineEventsForm.Designer.cs">
-      <DependentUpon>predefineEventsForm.cs</DependentUpon>
+    <Compile Include="Form\PredefineEventsForm.Designer.cs">
+      <DependentUpon>PredefineEventsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Form\StationForm.cs">
       <SubType>Form</SubType>
@@ -190,8 +192,8 @@
     <Compile Include="Form\VideoForm.Designer.cs">
       <DependentUpon>VideoForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Form\addCustomEventForm.resx">
-      <DependentUpon>addCustomEventForm.cs</DependentUpon>
+    <EmbeddedResource Include="Form\AddCustomEventForm.resx">
+      <DependentUpon>AddCustomEventForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\BandFilterForm.resx">
       <DependentUpon>BandFilterForm.cs</DependentUpon>
@@ -199,11 +201,11 @@
     <EmbeddedResource Include="Form\CalibrateYForm.resx">
       <DependentUpon>CalibrateYForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form\calibrateXForm.resx">
-      <DependentUpon>calibrateXForm.cs</DependentUpon>
+    <EmbeddedResource Include="Form\CalibrateXForm.resx">
+      <DependentUpon>CalibrateXForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form\customEventForm.resx">
-      <DependentUpon>customEventForm.cs</DependentUpon>
+    <EmbeddedResource Include="Form\CustomEventForm.resx">
+      <DependentUpon>CustomEventForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\LeadConfigForm.resx">
       <DependentUpon>LeadConfigForm.cs</DependentUpon>
@@ -215,8 +217,8 @@
       <DependentUpon>PlaybackForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form\predefineEventsForm.resx">
-      <DependentUpon>predefineEventsForm.cs</DependentUpon>
+    <EmbeddedResource Include="Form\PredefineEventsForm.resx">
+      <DependentUpon>PredefineEventsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form\StationForm.resx">
       <DependentUpon>StationForm.cs</DependentUpon>

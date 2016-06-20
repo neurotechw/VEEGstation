@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -106,4 +106,29 @@ namespace VeegStation
             return -Math.Sign((x.StartTime - y.StartTime).TotalSeconds);
         }
     }
+
+    /// <summary>
+    /// 预定义事件比较器
+    /// -- by lxl
+    /// </summary>
+    public class PreDefineEventComparer : IComparer<PreDefineEvent>
+    {
+        public int Compare(PreDefineEvent x, PreDefineEvent y)
+        {
+            return Math.Sign(x.EventPosition - y.EventPosition);
+        }
+    }
+
+    /// <summary>
+    /// 自定义事件比较器
+    /// -- by lxl
+    /// </summary>
+    public class CustomEventComparer : IComparer<CustomEvent>
+    {
+        public int Compare(CustomEvent x, CustomEvent y)
+        {
+            return Math.Sign(x.EventPosition - y.EventPosition);
+        }
+    }
 }
+
