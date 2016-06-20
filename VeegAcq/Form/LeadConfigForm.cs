@@ -87,10 +87,11 @@ namespace VeegStation
         /// <summary>
         /// 初始化LeadConfig
         /// </summary>
-        public void InitLeadConfig()
+        public void InitLeadConfig(string config)
         {
             //硬件配置名称
-            cbConfigList.Text = cbConfigList.Items[0].ToString();
+            //cbConfigList.Text = cbConfigList.Items[0].ToString();
+            cbConfigList.Text = config;
 
             //初始化表格
             InitList();

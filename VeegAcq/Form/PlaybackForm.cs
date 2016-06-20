@@ -111,7 +111,7 @@ namespace VeegStation
         /// <summary>
         /// 导联配置
         /// </summary>
-        private Hashtable leadList;
+        private Hashtable leadConfigList;
 
         /// <summary>
         /// 导联源
@@ -121,7 +121,7 @@ namespace VeegStation
         /// <summary>
         /// 当前导联名称
         /// </summary>
-        private string currentLeadConfig;
+        private string currentLeadConfigName;
 
         /// <summary>
         /// 存放当前导联配置
@@ -422,6 +422,7 @@ namespace VeegStation
         public PlaybackForm(NationFile EegFile)
         {
             InitializeComponent();
+
             //构造导联配置Form实例  --by zt
             myLeadConfigForm = new LeadConfigForm();
 
@@ -516,7 +517,7 @@ namespace VeegStation
             Hashtable myLeadSource = (Hashtable)this.controller.CommonDataPool.GetLeadSource(this.hardwareConfigName)[1];
 
             this.leadSource = myLeadSource.Count != 0 ? myLeadSource : defaultLeadSource;
-            this.leadList = (Hashtable)this.controller.CommonDataPool.GetLeadList(this.hardwareConfigName);
+            this.leadConfigList = (Hashtable)this.controller.CommonDataPool.GetLeadList(this.hardwareConfigName);
 
             InitLeadItems();
         }
@@ -602,7 +603,6 @@ namespace VeegStation
             int loadRec = WINDOW_SECONDS * sampleRate;
             DateTime begin = DateTime.Now;
             #region 加载数据
-
             ParseData(byteOfPerData, numberOfPerData, indexOfData, Offset, loadRec);
             #endregion
 
@@ -688,7 +688,7 @@ namespace VeegStation
             fs.Seek(byteOfPerData * Offset * sampleRate, SeekOrigin.Current);//  --by lxl
             byte[] buf = new byte[byteOfPerData];
             _packets.Clear();
-            testList.Clear();
+            testList.Clear();//测试  --by zt
 
             foreach (int x in Enumerable.Range(0, loadRec))
             {
@@ -747,7 +747,7 @@ namespace VeegStation
                 int a = col[sIdx].Points.Count;
                 col[sIdx].Points.Clear();
             }
-          #region 滤波处理
+            #region 滤波处理
             //每个通道的数据     
             //对每个通道的数据进行滤波
                 //for (int i = 0; i < _packets.Count; i++)
@@ -765,7 +765,7 @@ namespace VeegStation
                     {
                     _packets[i].EEG[sIdx] = NewData[i];
                     }
-            }
+                }
             //if (isBandFilter == true)
             //{
             //    foreach (int j in Enumerable.Range(0, _packets.Count))
@@ -791,24 +791,80 @@ namespace VeegStation
             //}
             //freFilter.BandpassFilter()
             #endregion   
-            foreach (int tIdx in Enumerable.Range(0, _packets.Count))
+            try 
             {
-                foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
-                {
-                    if (sIdx == 19)
-                    {
-                        col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
-                        continue;
-                    }
-                    double val = _packets[tIdx].EEG[sIdx];
-                    //val /= 20;   //修改，注释掉  --by zt
-                    val = val * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
-                    //val += (2000 - 100 * sIdx - 50);
-                    val += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
+                if (leadConfigArrayList == null || leadConfigArrayList.Count == 0)
+                    return;
 
-                    col[sIdx].Points.AddXY(tIdx / 128.0, val);
+                //做差后的值
+                double[] sampleDifferValue = new double[leadConfigArrayList.Count];
+                foreach (int tIdx in Enumerable.Range(0, _packets.Count))
+                {
+                    foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
+                    {
+                        //offset = 2400 - i * 200;   注释掉，offset不能这么写   -by lxl
+                        //offset = (int)chart_EEG.ChartAreas[0].AxisY.Maximum - i * 2 * vertical_axis_Scale - vertical_axis_Scale;  // -- by lxl
+
+                        //第20路为心电数据，放在最后一路显示
+                        if (sIdx == 19)
+                        {
+                            col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
+                            continue;
+                        }
+                        //获取做差的两个电极名称
+                        string[] FPi_FPj = leadConfigArrayList[sIdx].ToString().Split(new char[] { '-' });
+                        //查找多差电极对应的通道号
+                        int channelNum_Positive = 1;
+                        int channelNum_Negative = 1;
+                        //由通道号对应通道名称的哈希表中读取需要显示的通道号
+                        foreach (DictionaryEntry item in leadSource)
+                        {
+                            if (item.Value.ToString() == FPi_FPj[0])
+                                channelNum_Positive = Convert.ToInt32(item.Key);
+                            if (item.Value.ToString() == FPi_FPj[1])
+                                channelNum_Negative = Convert.ToInt32(item.Key);
+                        }
+                        //求两个电极电位差
+                        double sampleValue_Positive = 0;
+                        double sampleValue_Negative = 0;
+                        if (FPi_FPj[0] != "REF")
+                            sampleValue_Positive = _packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
+                        if (FPi_FPj[1] != "REF")
+                            sampleValue_Negative = _packets[tIdx].EEG[channelNum_Positive - 1];
+                        sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
+                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                        sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
+                        col[sIdx].Points.AddXY(tIdx / (double)this.sampleRate, sampleDifferValue[sIdx]);
+                        //Plot(i.ToString(), time[k] - timeCount, offset + data[i][k] * sensitivity * Math.Pow(10, 6) / multiplyingPower);
+                        //Plot(i.ToString(), time[k] - timeCount, offset + (data[i][k] / Math.Abs(data[i][k]) * demarcateCV) * _sensitivity / multiplyingPower);
+                    }
                 }
+
+
+                //foreach (int tIdx in Enumerable.Range(0, _packets.Count))
+                //{
+                //    foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
+                //    {
+                //        if (sIdx == 19)
+                //        {
+                //            col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
+                //            continue;
+                //        }
+                //        double val = _packets[tIdx].EEG[sIdx];
+                //        //val /= 20;   //修改，注释掉  --by zt
+                //        val = val * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                //        //val += (2000 - 100 * sIdx - 50);
+                //        val += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
+
+                //        col[sIdx].Points.AddXY(tIdx / 128.0, val);
+                //    }
+                //}
             }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(ex.Message + ":chart");
+            }
+            
             chartWave.ResumeLayout();
             DateTime end = DateTime.Now;
             Debug.WriteLine(string.Format("Show a window of data in {0} seconds", (end - begin).TotalSeconds));
@@ -1554,22 +1610,65 @@ namespace VeegStation
         private void InitLeadItems() 
         {
             System.Windows.Forms.ToolStripMenuItem item;//= new ToolStripMenuItem();
+            currentLeadConfigName = "默认导联配置";
+            //初始化导联选择选项
+            foreach (string name in leadConfigList.Keys) 
+            {
+                item = new ToolStripMenuItem();
+                item.Name = "leadNameMenuItem_" + name;
+                item.Size = new Size(140, 22);
+                item.Text = name;
+                item.Click += new EventHandler(this.LeadNameMenuItem_Click);
+                if (name == currentLeadConfigName)
+                    item.Checked = true;
+                this.leadChooseToolStripMenuItem.DropDownItems.Add(item);
+            }
 
-            ////初始化时间基准选项
-            //foreach (int t in timeStandardArray)
-            //{
-            //    item = new ToolStripMenuItem();
-            //    item.Name = "timeStandardMenuItem_" + t;
-            //    item.Size = new Size(140, 22);
-            //    item.Text = t + "mm/sec";
-            //    item.Click += new EventHandler(this.TimerStandartMenuItem_Click);
-            //    if (t == timeStandard)
-            //        item.Checked = true;
-            //    this.timeStandartToolStripMenuItem.DropDownItems.Add(item);
-            //}
-
+            //当前导联配置
+            leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
 
         }
+
+        /// <summary>
+        /// 导联菜单选项点击事件
+        /// -- by zt
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LeadNameMenuItem_Click(object sender, EventArgs e)
+        {
+            //string num = sender.ToString().Substring(0, sender.ToString().Length - 6);
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+
+            //将位选中的checked改为false，把选中的item的checked改为true
+            foreach (ToolStripMenuItem i in this.leadChooseToolStripMenuItem.DropDownItems)
+            {
+                i.Checked = false;
+            }
+            item.Checked = true;
+
+            //选择导联名称
+            string name = item.Text;
+
+            //选择导联配置
+            leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
+
+            //重新显示数据
+            ShowData();
+
+            //timeStandard = int.Parse(num);
+
+            ////修改X轴的最大值
+            //SetAxisXMaximum(pageWidthInMM / timeStandard);
+
+            ////让画图函数重新计算一下当前的_xMaximum是多少，（因为若面板是显示的状态则只能再根据坐标与像素点来计算X轴显示的最大值）
+            //isChangingBoardShow = true;
+
+            ////重新加载数据与显示数据
+            //LoadData(CurrentSeconds);
+            //ShowData();
+        }
+
 
        /// <summary>
        /// 视频加速
@@ -2502,7 +2601,7 @@ namespace VeegStation
 
         private void 导联设置ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            myLeadConfigForm.InitLeadConfig();
+            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
             //myLeadConfigForm.Show();
             myLeadConfigForm.ShowDialog();
         }
