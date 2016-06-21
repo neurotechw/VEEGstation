@@ -456,7 +456,7 @@ namespace VeegStation
                 {
                     mRTArrayIndex++;
                     eventProperty.RecordQuantity.Add(myByte[6] << 24 | myByte[5] << 16 | myByte[4] << 8 | myByte[3]);
-                    eventProperty.RecordTime.Add(new TimeSpan(0, 0, eventProperty.RecordQuantity[mRTArrayIndex]));
+                    eventProperty.RecordTime.Add(new TimeSpan(0, 0, eventProperty.RecordQuantity[mRTArrayIndex] /natInfo.Freq));
                 }
             } while (mark >= 0);
             #endregion
