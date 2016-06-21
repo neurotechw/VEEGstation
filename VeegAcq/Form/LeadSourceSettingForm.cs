@@ -35,6 +35,11 @@ namespace VeegStation
         /// </summary>
         private Hashtable defaultLeadSource;
 
+        /// <summary>
+        /// 导联源的size
+        /// </summary>
+        private int sizeOfLeadSource;
+
         public LeadSourceSettingForm()
         {
             InitializeComponent();
@@ -198,6 +203,7 @@ namespace VeegStation
             //导联源
             defaultLeadSource = (Hashtable)controller.CommonDataPool.GetLeadSource(text)[0];
             myLeadSource = (Hashtable) controller.CommonDataPool.GetLeadSource(text)[1];
+            sizeOfLeadSource = defaultLeadSource.Count;
           
             DrawListView();
         }
@@ -540,6 +546,22 @@ namespace VeegStation
                 MessageBox.Show("不能重复选择导联源，请重新选择导联源");
                 return;
             }
+
+            //判断当前导联源的size是否为初始size
+            int count = 0;
+            foreach (ListViewItem item in this.lvSourceList.Items)
+            {
+                if (!item.SubItems[1].Text.Equals(""))
+                {
+                    count++;
+                }
+            }
+            if (count != sizeOfLeadSource) 
+            {
+                MessageBox.Show("导联源数目不能改变");
+                return;
+            }
+
             //保存自定义的导联源
             myLeadSource.Clear();
             foreach (ListViewItem item in this.lvSourceList.Items)

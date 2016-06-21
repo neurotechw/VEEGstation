@@ -1993,19 +1993,19 @@ namespace VeegStation
             }
 
             //画自定义事件                  
-            foreach (CustomEvent p in customEventList)
-            {
-                //只画当前页面能显示的事件
-                if (p.EventPosition / sampleRate < CurrentSeconds)
-                    continue;
-                if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
-                    continue;
-                dotPen.Color = CustomEvent.CustomEventColor[p.EventColorIndex];
-                drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
-                g.FillRectangle(new SolidBrush(Color.FromArgb(200, CustomEvent.CustomEventColor[p.EventColorIndex])), new Rectangle((int)drawPosition - 40, 5, 80, 15));
-                g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
-                g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
-            }
+            //foreach (CustomEvent p in customEventList)
+            //{
+            //    只画当前页面能显示的事件
+            //    if (p.EventPosition / sampleRate < CurrentSeconds)
+            //        continue;
+            //    if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
+            //        continue;
+            //    dotPen.Color = CustomEvent.CustomEventColor[p.EventColorIndex];
+            //    drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
+            //    g.FillRectangle(new SolidBrush(Color.FromArgb(200, CustomEvent.CustomEventColor[p.EventColorIndex])), new Rectangle((int)drawPosition - 40, 5, 80, 15));
+            //    g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
+            //    g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
+            //}
         }
         /// <summary>
         /// labelPanel的重绘函数,若要更新label则需调用labelPanel.Invalidate()函数
