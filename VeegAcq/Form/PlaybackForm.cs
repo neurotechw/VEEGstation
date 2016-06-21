@@ -65,6 +65,18 @@ namespace VeegStation
         /// </summary>
         private VideoForm video;
 
+        /// <summary>
+        /// 获得中断之间的时差
+        /// --by wsp
+        /// </summary>
+        private double getDvalue=0.0;
+
+        /// <summary>
+        /// 中断的时间数组
+        /// --by wsp
+        /// </summary>
+        private double[] timeSignal;
+
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         
         /// <summary>
@@ -188,12 +200,27 @@ namespace VeegStation
         /// </summary>
         private List<EegPacket> _packets = new List<EegPacket>();
 
+        #region 事件相关
         /// <summary>
         /// 事件队列
         /// -- by lxl
         /// </summary>
         private List<PreDefineEvent> preDefineEventsList = new List<PreDefineEvent>();
         private List<CustomEvent> customEventList = new List<CustomEvent>();
+
+        /// <summary>
+        /// 事件属性，CFG后面除开具体的事件信息外的其余信息
+        /// -- by lxl
+        /// </summary>
+        private EventProperty eventProperty;
+
+        /// <summary>
+        /// 删除预定义事件时用来保存删除事件的位置列表
+        /// -- by lxl
+        /// </summary>
+        private List<int> positionInFileList = new List<int>();
+        #endregion
+
         private int _Page;
 
         /// <summary>
@@ -425,8 +452,6 @@ namespace VeegStation
             //构造导联配置Form实例  --by zt
             myLeadConfigForm = new LeadConfigForm();
 
-            sensitivity = 100;
-
             //根据是否有视频判定面板是否显示--by wsp
             if (EegFile.HasVideo)
                 isBoardShow = true;
@@ -435,15 +460,12 @@ namespace VeegStation
 
             this.boardToolStripMenuItem.Checked = isBoardShow;
             this.boardPanel.Visible = isBoardShow;
-            timeStandard = 30;
-            //pixelPerMM = 3.8;
-            //mmPerYGrid = 11.5;
             isChangingBoardShow = true;
             signalNum = 20;
             currentTopSignal = 0;
             isAddingEvent = false;
             SetVScrollVisible(false);
-            InitMenuItems();
+
             _Page = 0;
             try
             {
@@ -460,7 +482,7 @@ namespace VeegStation
 
             //开始时间  --by zt
             DT = EegFile.StartDateTime; 
-            GetHsprogressMax();
+            //GetHsprogressMax();                   不知道谁写的什么鬼，没发现用处，作用仅仅对hsProgress.maximum赋值（似乎像是以前按页来算的赋值方式），然而下方又赋值了一次（下方赋值为正确），故注释 -- by lxl
 
             //修改 --by zt
             _totalSeconds = (int)EegFile.Duration.TotalSeconds; 
@@ -475,6 +497,7 @@ namespace VeegStation
 
             myBandFilterForm = new BandFilterForm(this);
             InitHardwareConfigParameters(nfi.Montage.SzSetting);
+            timeSignal = new double[eventProperty.RecordTime.Count];
         }
 
         /// <summary>
@@ -497,10 +520,16 @@ namespace VeegStation
             //this.commonDataPool = controller.GetCommonData();
             this.commonDataPool = controller.CommonDataPool;
             #region 画图参数
+
             mmPerYGrid = commonDataPool.MMPerYGrid;
             pixelPerMM = commonDataPool.PixelPerMM;
-            //pi
+            setTimeStandard(commonDataPool.TimeStandard);
+            setSensitivity(commonDataPool.Sensitivity);
+
             #endregion
+
+            //初始化时间基准、灵敏度与通道显示数目的选项
+            InitMenuItems();
 
             #region 导联参数
             InitLeadParameters();
@@ -616,57 +645,9 @@ namespace VeegStation
         /// </summary>
         private void ParseEvent()
         {
-            //解析预定义事件
-            FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0]+".NAT", FileMode.Open, FileAccess.Read);
-
-            //定位到CFG的位置
-            fs.Seek(this.nfi.NatInfo.CfgOff + 68, SeekOrigin.Begin);
-
-            //一直读，独到值为0x45的BYTE即为读出事件
-            int mark;
-            byte[] myByte = new byte[7];
-            do
-            {
-                mark = fs.ReadByte();
-                if (mark != 69)
-                {
-                    fs.Seek(7,SeekOrigin.Current);
-                    continue;
-                }
-
-                //将标志位后的7个BYTE全部读出来
-                fs.Read(myByte, 0, 7);
-                
-                //BYTE第一位为标志预定义事件编号位，第四第五位为存储点位置位（低位存储）
-                preDefineEventsList.Add(new PreDefineEvent(myByte[0], (ushort)(myByte[3] | myByte[4] << 8)));
-            } 
-            while (mark >= 0);
-            preDefineEventsList.Sort(new PreDefineEventComparer());
-
-            //解析自定义事件
-            string name;
-            byte[] nameInByte = new byte[104];
-            if (File.Exists(this.nfi.NedFileName.Split('.')[0] + ".ent")) 
-            {
-                //打开.ent文件流并将其中数据读出来
-                FileStream entFS = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".ent", FileMode.Open, FileAccess.Read);
-                byte[] entByte = new byte[entFS.Length];
-
-                if (entFS.Length <= 0)
-                {
-                    return;
-                }
-                entFS.Read(entByte, 0,(int)entFS.Length);
-
-                //解析其中的数据
-                for (int i = 0; i < entByte[5]; i++)
-                {
-                    Array.Copy(entByte, i * 128 + 9, nameInByte, 0, 104);
-                    name = Encoding.GetEncoding(936).GetString(nameInByte).Trim('\0');
-                    customEventList.Add(new CustomEvent(name, (ushort)(entByte[i * 128 + 9 + 104] | (entByte[i * 128 + 9 + 105] << 8)), entByte[i * 128 + 9 + 108]));
-                }
-            }
-            customEventList.Sort(new CustomEventComparer());
+            preDefineEventsList = nfi.ParsePreDefineEvent(nfi.NedFileName.Split('.')[0] + ".NAT",nfi.NatInfo.CfgOff);
+            customEventList = nfi.ParseCustomEvent(nfi.NedFileName.Split('.')[0] + ".ent", nfi.NatInfo.CfgOff);
+            eventProperty = nfi.ParseEventProperty(nfi.NedFileName.Split('.')[0] + ".NAT", nfi.NatInfo.CfgOff);
         }
 
         /// <summary>
@@ -1074,7 +1055,33 @@ namespace VeegStation
                     DT_RelativeTime = DT_RelativeTime.AddSeconds(remainTime);
                     LongTime = (DT_RelativeTime - vTime).TotalSeconds;
                 //    displayRecordingTime.Text = DT_RelativeTime.ToLongTimeString().ToString();
-                    AllShowTime(GetStarTotalSecond(), CurrentSeconds, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+
+                    //保证脑电采集时信号中断情况
+                    //测试使用
+                    eventProperty.BeginningTime = new List<DateTime> { DateTime.Parse("2016-05-24  16:56:40"), DateTime.Parse("2016-05-24  23:59:40") };
+                    eventProperty.RecordTime = new List<TimeSpan> { TimeSpan.Parse("00:00:10"), TimeSpan.Parse("00:00:20") };
+                    
+                    for(int i =0;i<eventProperty.RecordTime.Count;i++)
+                    {                      
+                        timeSignal[i]=eventProperty.RecordTime[i].TotalSeconds;
+                    }
+                    for (int j = 0; j < timeSignal.GetLength(0); j++)
+                    {
+                        if ((int)(CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset) == timeSignal[j])
+                        {
+                            displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
+                            TimeSpan dValue = eventProperty.BeginningTime[j] - nfi.StartDateTime;
+                            getDvalue = dValue.TotalSeconds - timeSignal[j];
+                        }
+                        else
+                        {
+                            if(GetStarTotalSecond()+CurrentSeconds + getDvalue+this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset>=86400)
+                            {
+                                getDvalue = -(GetStarTotalSecond() + CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);        
+                            }
+                            AllShowTime(GetStarTotalSecond(), CurrentSeconds + getDvalue, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+                        }
+                    }           
                     ShowTime(CurrentSeconds, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
                 }
             }
@@ -1404,6 +1411,7 @@ namespace VeegStation
             MessageBox.Show("********");
         }
 
+        #region 灵敏度 -- by lxl
         /// <summary>
         /// 灵敏度点击事件
         /// -- by lxl
@@ -1422,11 +1430,19 @@ namespace VeegStation
             }
             item.Checked = true;
 
-            sensitivity = int.Parse(num);
+            setSensitivity(int.Parse(num));
             //根据修改的值再重新显示图表
             ShowData();
         }
 
+        private void setSensitivity(int value)
+        {
+            sensitivity = value;
+            this.toolStripStatusLabel_sensitivity.Text = value + "μv/cm";
+        }
+        #endregion
+
+        #region 时间基准 -- by lxl
         /// <summary>
         /// 时间基准菜单选项点击事件
         /// -- by lxl
@@ -1445,7 +1461,8 @@ namespace VeegStation
             }
             item.Checked = true;
 
-            timeStandard = int.Parse(num);
+            //设置新的时间灵敏度
+            setTimeStandard(int.Parse(num));
 
             //修改X轴的最大值
             SetAxisXMaximum(pageWidthInMM / timeStandard);
@@ -1457,6 +1474,15 @@ namespace VeegStation
             LoadData(CurrentSeconds);
             ShowData();
         }
+
+        private void setTimeStandard(int value)
+        {
+            timeStandard = value;
+            this.toolStripStatusLabel_timeStandard.Text = value + "mm/sec";
+        }
+        #endregion
+
+        #region 设置图表范围 -- by lxl
 
         /// <summary>
         /// 设置可显示的X轴最大值
@@ -1493,6 +1519,88 @@ namespace VeegStation
             UpdateWindowSeconds();
         }
 
+        #endregion
+
+        #region 图表校准 -- by lxl
+
+        /// <summary>
+        /// Y轴校准点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CalibrateYToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (calibForm == null || calibForm.IsDisposed)
+                calibForm = new CalibrateYForm(this, pixelPerMM * 10);
+            this.calibForm.Show();
+            this.calibForm.BringToFront();
+        }
+
+        /// <summary>
+        /// Y轴校准
+        /// -- by lxl
+        /// </summary>
+        /// <param name="height">一厘米多少像素点</param>
+        public void CalibrateY(double height)
+        {
+            //一毫米多少像素点
+            pixelPerMM = height / 10D;
+
+            //表格高度有多少毫米
+            pageHeightInMM = pageHeightInPixel / pixelPerMM;
+
+            //一格应该有多少毫米
+            mmPerYGrid = pageHeightInMM / 20;
+            commonDataPool.MMPerYGrid = mmPerYGrid;
+
+            ShowData();
+        }
+        /// <summary>
+        /// X轴校准点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CalibrateXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (calibXForm == null || calibXForm.IsDisposed)
+                calibXForm = new CalibrateXForm(this, pixelPerMM * 10);
+            calibXForm.Show();
+            calibXForm.BringToFront();
+        }
+        /// <summary>
+        /// X轴校准函数
+        /// </summary>
+        /// <param name="width">一厘米多少个像素点</param>
+        public void CalibrateX(double width)
+        {
+            //一毫米多少像素点
+            pixelPerMM = width / 10D;
+            commonDataPool.PixelPerMM = pixelPerMM;
+
+            //更新表格的宽度
+            UpdatePageWidthInMM();
+
+            //由于修改了X轴最大值，故重新加载、重新显示数据
+            LoadData(CurrentSeconds);
+            ShowData();
+        }
+
+        /// <summary>
+        /// 更新表格的宽度
+        /// -- by lxl
+        /// </summary>
+        private void UpdatePageWidthInMM()
+        {
+            //表格高度有多少毫米
+            pageWidthInMM = pageWidthInPixel / pixelPerMM;
+
+            //根据表格宽度设置X轴的最大值
+            SetAxisXMaximum(pageWidthInMM / timeStandard);
+        }
+
+        #endregion
+
         /// <summary>
         /// --by wsp
         /// 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；
@@ -1515,7 +1623,7 @@ namespace VeegStation
         /// </summary>
         private void InitMenuItems()
         {
-            System.Windows.Forms.ToolStripMenuItem item;//= new ToolStripMenuItem();
+            System.Windows.Forms.ToolStripMenuItem item;
 
             //初始化时间基准选项
             foreach (int t in timeStandardArray)
@@ -1680,77 +1788,7 @@ namespace VeegStation
             maxPage = (numberOfSamples + ((int)(10 * 30D / Convert.ToDouble(timeStandard)) * sampleRate) - 1) / ((int)(10 * 30D / Convert.ToDouble(timeStandard)) * sampleRate);  // 修改 --by zt
         }
 
-        /// <summary>
-        /// Y轴校准点击事件
-        /// -- by lxl
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CalibrateYToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (calibForm == null || calibForm.IsDisposed)
-                calibForm = new CalibrateYForm(this, pixelPerMM * 10);
-            this.calibForm.Show();
-            this.calibForm.BringToFront();
-        }
-        /// <summary>
-        /// Y轴校准
-        /// -- by lxl
-        /// </summary>
-        /// <param name="height">一厘米多少像素点</param>
-        public void CalibrateY(double height)
-        {
-            //一毫米多少像素点
-            pixelPerMM = height / 10D;
-
-            //表格高度有多少毫米
-            pageHeightInMM = pageHeightInPixel / pixelPerMM;
-
-            //一格应该有多少毫米
-            mmPerYGrid = pageHeightInMM / 20;
-            commonDataPool.MMPerYGrid = mmPerYGrid;
-
-            ShowData();
-        }
-        /// <summary>
-        /// X轴校准点击事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void CalibrateXToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (calibXForm == null || calibXForm.IsDisposed)
-                calibXForm = new CalibrateXForm(this, pixelPerMM * 10);
-            calibXForm.Show();
-            calibXForm.BringToFront();
-        }
-        /// <summary>
-        /// X轴校准函数
-        /// </summary>
-        /// <param name="width">一厘米多少个像素点</param>
-        public void CalibrateX(double width)
-        {
-            //一毫米多少像素点
-            pixelPerMM = width / 10D;
-            commonDataPool.PixelPerMM = pixelPerMM;
-
-            //更新表格的宽度
-            UpdatePageWidthInMM();
-
-            //由于修改了X轴最大值，故重新加载、重新显示数据
-            LoadData(CurrentSeconds);
-            ShowData();
-        }
-
-        private void UpdatePageWidthInMM()
-        {
-            //表格高度有多少毫米
-            pageWidthInMM = pageWidthInPixel / pixelPerMM;
-
-            //根据表格宽度设置X轴的最大值
-            SetAxisXMaximum(pageWidthInMM / timeStandard);
-        }
-
+        #region 重绘及画图相关 -- by lxl
         /// <summary>
         /// chart的重绘函数
         /// -- by lxl
@@ -1892,6 +1930,7 @@ namespace VeegStation
                 e.Graphics.DrawString((i + 1).ToString(), strFont, strBrush, new RectangleF(0, (int)(topSigPos + (i - currentTopSignal) * intervalPos), this.labelPanel.Width, 15));
             }
         }
+        #endregion
 
         /// <summary>
         /// 面板点击事件
@@ -1916,7 +1955,7 @@ namespace VeegStation
             else
                 this.vScroll.Location = new Point(this.chartWave.Location.X + this.chartWave.Width - this.vScroll.Width, this.vScroll.Location.Y);
 
-            this.chartWave.Invalidate();
+            //this.chartWave.Invalidate();
         }
        
         /// <summary>
@@ -1947,22 +1986,38 @@ namespace VeegStation
         private void SignalToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
+
+            //先将所有的item的checked设置为false,再将选中的设置为true
             foreach (ToolStripMenuItem i in this.signalToolStripMenuItem.DropDownItems)
             {
                 i.Checked = false;
             }
             item.Checked = true;
+
+            //活得所点击的所显示的显示信道数量，(获得到的为text)
             signalNum = int.Parse(sender.ToString());
+
+            //修改chart的样式
             this.chartWave.ChartAreas[0].AxisY.MajorGrid.Interval = 2000D / signalNum;
             this.chartWave.ChartAreas[0].AxisY.MajorTickMark.Interval = 2000D / signalNum;
+
+            //保证最上方的currentTopSignal不大于应该有的20
             if (currentTopSignal + signalNum > 20)
                 currentTopSignal = 20 - signalNum;
+
+            //重新显示数据
             ShowData();
+
+            //根据设置的显示数量设置右边数值滚动条是否可见
             if (signalNum < 20)
                 SetVScrollVisible(true);
             else
                 SetVScrollVisible(false);
+
+            //设置数值滚动条的可变范围
             this.vScroll.LargeChange = signalNum + 1;
+
+            //重画左边的labelPanel
             this.labelPanel.Invalidate();
         }
         /// <summary>
@@ -2074,10 +2129,17 @@ namespace VeegStation
         /// 获取文件开始时间
         /// -- by lxl
         /// </summary>
+        /// <param name="pointPos">点的位置</param>
         /// <returns></returns>
-        public DateTime GetStartTime()
+        public DateTime GetEventTime(int pointPos)
         {
-            return nfi.StartDateTime;
+            int i;
+            for (i = 0; i < eventProperty.RecordQuantity.Count(); i++)
+            {
+                if (pointPos <= eventProperty.RecordQuantity[i])
+                    break;
+            }
+            return eventProperty.BeginningTime[i - 1].AddSeconds((pointPos - eventProperty.RecordQuantity[i - 1]) / sampleRate);
         }
 
         /// <summary>
@@ -2165,8 +2227,8 @@ namespace VeegStation
                     if (isAddingPreDefineEvent)
                     {
                         //将事件添加进列表并排序
-                        preDefineEventsList.Add(new PreDefineEvent(preDefineEventIndex,Convert.ToUInt16(mouseValueNow)));
-                        preDefineEventsList.Sort(new PreDefineEventComparer());
+                        FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read);
+                        preDefineEventsList.Add(new PreDefineEvent(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read).Length - 1));
 
                         //事件添加后更新添加事件的form里的列表
                         myPreDefineEventFormEventForm.InitList();
@@ -2175,7 +2237,6 @@ namespace VeegStation
                     {
                         //将事件添加进列表并排序
                         customEventList.Add(new CustomEvent(addedEventName,Convert.ToUInt16( mouseValueNow), addingEventColorIndex));
-                        customEventList.Sort(new CustomEventComparer());
 
                         //事件添加后更新添加事件的form里的列表
                         myCustomEventForm.InitList();
@@ -2202,6 +2263,7 @@ namespace VeegStation
                 if (preDefineEventsList.Count() <= 0)
                     return;
 
+                positionInFileList.Add(preDefineEventsList[index].PosInFile);
                 preDefineEventsList.RemoveAt(index);
 
                 //事件删除后更新添加事件的form里的列表
@@ -2228,12 +2290,23 @@ namespace VeegStation
         private void PlaybackForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             if(nfi.HasVideo)
-            video.Close();
+                video.Close();
+            this.SaveDataToCommonDataPool();
             controller.PlaybackQuit();
 
             //将事件写入文件中，先写在此处测试，没问题后移到controller中
             SavePreDefineEventsToFile(nfi.NedFileName.Split('.')[0]+".NAT");
             SaveCustomeEventsToFile(nfi.NedFileName.Split('.')[0] + ".ent");
+        }
+
+        /// <summary>
+        /// 把数据保存在commondatapool中
+        /// -- by lxl
+        /// </summary>
+        private void SaveDataToCommonDataPool()
+        {
+            commonDataPool.Sensitivity = sensitivity;
+            commonDataPool.TimeStandard = timeStandard;
         }
 
         /// <summary>
@@ -2343,16 +2416,26 @@ namespace VeegStation
                 FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryWriter bw = new BinaryWriter(fs);
 
-                //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
-                byte[] byteBuf = PreDefineEventsToHex(preDefineEventsList);
-                if (byteBuf == null)
+                //读取每个事件，并把每个事件写入其在文件中的位置
+                foreach (PreDefineEvent p in preDefineEventsList)
                 {
-                    MessageBox.Show("解析失败:数据转换成BYTE出错");
-                    return 0;
+                    //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
+                    byte[] byteBuf = PreDefineEventsToHex(p);
+                    if (byteBuf == null)
+                    {
+                        MessageBox.Show("解析失败:数据转换成BYTE出错");
+                        return 0;
+                    }
+
+                    bw.Seek(p.PosInFile, SeekOrigin.Begin);
+                    bw.Write(byteBuf);
                 }
 
-                bw.Seek(nfi.NatInfo.CfgOff + 60, SeekOrigin.Begin);
-                bw.Write(byteBuf);
+                foreach (int p in positionInFileList)
+                {
+                    bw.Seek(p, SeekOrigin.Begin);
+                    bw.Write(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
+                }
                 bw.Close();
                 fs.Close();
 
@@ -2371,22 +2454,19 @@ namespace VeegStation
         /// </summary>
         /// <param name="pdEvent"></param>
         /// <returns></returns>
-        private byte[] PreDefineEventsToHex(List<PreDefineEvent> pdEvent)
+        private byte[] PreDefineEventsToHex(PreDefineEvent pdEvent)
         {
             //建立一个BYTE数组用于存储事件信息
             byte[] returnBytes;
-            returnBytes = new byte[pdEvent.Count() * 8];
+            returnBytes = new byte[8];
 
             //按照格式构造BYTE数组
-            for (int i = 0; i < pdEvent.Count(); i++)
-            {
-                returnBytes[i * 8] = 0x45;
-                returnBytes[i * 8 + 1] = Convert.ToByte(pdEvent[i].EventNameIndex);
-                returnBytes[i * 8 + 2] = returnBytes[i * 8 + 3] = 0x00;
-                returnBytes[i * 8 + 4] = BitConverter.GetBytes(pdEvent[i].EventPosition)[0];
-                returnBytes[i * 8 + 5] = BitConverter.GetBytes(pdEvent[i].EventPosition)[1];
-                returnBytes[i * 8 + 6] = returnBytes[i * 8 + 7] = 0x00;
-            }
+                returnBytes[0] = 0x45;
+                returnBytes[1] = Convert.ToByte(pdEvent.EventNameIndex);
+                returnBytes[2] = returnBytes[3] = 0x00;
+                returnBytes[4] = BitConverter.GetBytes(pdEvent.EventPosition)[0];
+                returnBytes[5] = BitConverter.GetBytes(pdEvent.EventPosition)[1];
+                returnBytes[6] = returnBytes[7] = 0x00;
 
             return returnBytes;
         }
@@ -2589,13 +2669,12 @@ namespace VeegStation
             }
             return singalData;
         }
-
-        private void BtnClose_Click(object sender, EventArgs e)
+        private void BtnClose_Click_1(object sender, EventArgs e)
         {
             this.DetectionInfoPanel.Hide();
         }
 
-        private void BtnHide_Click(object sender, EventArgs e)
+        private void BtnHide_Click_1(object sender, EventArgs e)
         {
             this.PationInfoPanel.Hide();
         }

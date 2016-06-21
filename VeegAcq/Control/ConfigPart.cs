@@ -60,6 +60,8 @@ namespace VeegStation
 
             commonDataPool.MMPerYGrid = xmlConfig.MMPerYGrid;
             commonDataPool.PixelPerMM = xmlConfig.PixelPerMM;
+            commonDataPool.TimeStandard = xmlConfig.TimeStandard;
+            commonDataPool.Sensitivity = xmlConfig.Sensitivity;
 
             #endregion
         }
@@ -85,6 +87,8 @@ namespace VeegStation
 
             xmlConfig.MMPerYGrid = commonDataPool.MMPerYGrid;
             xmlConfig.PixelPerMM = commonDataPool.PixelPerMM;
+            xmlConfig.Sensitivity = commonDataPool.Sensitivity;
+            xmlConfig.TimeStandard = commonDataPool.TimeStandard;
 
             #endregion
             if (configManage.SaveToFile("config", xmlConfig) == false)

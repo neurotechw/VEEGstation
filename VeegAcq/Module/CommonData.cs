@@ -40,6 +40,29 @@ namespace VeegStation
         /// </summary>
         private double pixelPerMM;
 
+        /// <summary>
+        /// 时间基准
+        /// -- by lxl
+        /// </summary>
+        private int timeStandard;
+
+        /// <summary>
+        /// 灵敏度
+        /// -- by lxl
+        /// </summary>
+        private int sensitivity;
+
+        public int Sensitivity
+        {
+            get { return sensitivity; }
+            set { sensitivity = value; }
+        }
+
+        public int TimeStandard
+        {
+            get { return timeStandard; }
+            set { timeStandard = value; }
+        }
 
         public double PixelPerMM
         {

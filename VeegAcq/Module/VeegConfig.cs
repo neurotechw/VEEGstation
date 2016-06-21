@@ -48,6 +48,29 @@ namespace VeegStation
         /// </summary>
         private double pixelPerMM;
 
+        /// <summary>
+        /// 时间基准
+        /// -- by lxl
+        /// </summary>
+        private int timeStandard;
+
+        /// <summary>
+        /// 灵敏度
+        /// -- by lxl
+        /// </summary>
+        private int sensitivity;
+
+        public int Sensitivity
+        {
+            get { return sensitivity; }
+            set { sensitivity = value; }
+        }
+
+        public int TimeStandard
+        {
+            get { return timeStandard; }
+            set { timeStandard = value; }
+        }
 
         public double PixelPerMM
         {
@@ -346,6 +369,8 @@ namespace VeegStation
 
             mmPerYGrid = 11.5;
             pixelPerMM = 3.8;
+            timeStandard = 30;
+            sensitivity = 100;
 
             #endregion
             #endregion
