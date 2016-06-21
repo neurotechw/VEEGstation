@@ -186,7 +186,7 @@ namespace VeegStation
         /// <summary>
         /// 脑电数据list  --by xjg
         /// </summary>
-        private List<EegPacket> _packets = new List<EegPacket>();
+        private List<EegPacket> packets = new List<EegPacket>();
 
         #region 事件相关
         /// <summary>
@@ -217,7 +217,7 @@ namespace VeegStation
         /// </summary>
         public double LongTime;
         private int _maxPage;
-        private int _totalSeconds;
+        private int totalSeconds;
         private DateTime? _LastTime = null;
 
         /// <summary>
@@ -523,8 +523,8 @@ namespace VeegStation
             //GetHsprogressMax();                   不知道谁写的什么鬼，没发现用处，作用仅仅对hsProgress.maximum赋值（似乎像是以前按页来算的赋值方式），然而下方又赋值了一次（下方赋值为正确），故注释 -- by lxl
 
             //修改 --by zt
-            _totalSeconds = (int)this.nfi.Duration.TotalSeconds;
-            hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
+            totalSeconds = (int)this.nfi.Duration.TotalSeconds;
+            hsProgress.Maximum = totalSeconds;         //不一定是整数秒 故maximum不需要-1
 
             //硬件配置名称
             this.InitHardwareConfigParameters(nfi.Montage.SzSetting);
@@ -659,7 +659,7 @@ namespace VeegStation
             #endregion
 
             DateTime end = DateTime.Now;
-            Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", _packets.Count, (end - begin).TotalSeconds));
+            Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", packets.Count, (end - begin).TotalSeconds));
         }
 
         /// <summary>
@@ -691,7 +691,7 @@ namespace VeegStation
             //将文件流定位在偏移值为OFFSET秒的位置
             fs.Seek(byteOfPerData * Offset * sampleRate, SeekOrigin.Current);//  --by lxl
             byte[] buf = new byte[byteOfPerData];
-            _packets.Clear();
+            packets.Clear();
             testList.Clear();//测试  --by zt
 
             foreach (int x in Enumerable.Range(0, loadRec))
@@ -729,7 +729,7 @@ namespace VeegStation
                     eeg.Add(0);
                 }
                 EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
-                _packets.Add(pkt);
+                packets.Add(pkt);
             }
 
             //Console.WriteLine("最大值 {0}，最小值 {1}", testList.Max(), testList.Min());  //测试用到  --by zt
@@ -765,9 +765,9 @@ namespace VeegStation
                 foreach (int sIdx in Enumerable.Range(0, signalNum - 1))
                 {
                     double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, 10, 100, sampleRate);
-                    for (int i = 0; i < _packets.Count; i++)
+                    for (int i = 0; i < packets.Count; i++)
                     {
-                    _packets[i].EEG[sIdx] = NewData[i];
+                    packets[i].EEG[sIdx] = NewData[i];
                     }
                 }
             //if (isBandFilter == true)
@@ -802,7 +802,7 @@ namespace VeegStation
 
                 //做差后的值
                 double[] sampleDifferValue = new double[leadConfigArrayList.Count];
-                foreach (int tIdx in Enumerable.Range(0, _packets.Count))
+                foreach (int tIdx in Enumerable.Range(0, packets.Count))
                 {
                     foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
                     {
@@ -812,7 +812,7 @@ namespace VeegStation
                         //第20路为心电数据，放在最后一路显示
                         if (sIdx == 19)
                         {
-                            col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
+                            col[19].Points.AddXY(tIdx / 128.0, packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
                             continue;
                         }
 
@@ -836,9 +836,9 @@ namespace VeegStation
                         double sampleValue_Positive = 0;
                         double sampleValue_Negative = 0;
                         if (FPi_FPj[0] != "REF")
-                            sampleValue_Positive = _packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
+                            sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
                         if (FPi_FPj[1] != "REF")
-                            sampleValue_Negative = _packets[tIdx].EEG[channelNum_Positive - 1];
+                            sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
                         sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
                         sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
@@ -979,8 +979,8 @@ namespace VeegStation
            CurrentSeconds += (int)(Math.Floor(xMaximum));
 
             //图表开头秒数不能大于总秒数减去水平滚动条的largechange+1，（即保证留且仅留两秒的空白提醒用户后面没有数据了） --by lxl
-            if (CurrentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
-                CurrentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
+            if (CurrentSeconds > totalSeconds - hsProgress.LargeChange + 1)
+                CurrentSeconds = totalSeconds - hsProgress.LargeChange + 1;
 
             //重新加载显示数据
             LoadData(CurrentSeconds);
@@ -996,8 +996,8 @@ namespace VeegStation
         private void PageNext2()
         {
             CurrentSeconds += (int)(Math.Floor(xMaximum));
-            if (CurrentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
-                CurrentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
+            if (CurrentSeconds > totalSeconds - hsProgress.LargeChange + 1)
+                CurrentSeconds = totalSeconds - hsProgress.LargeChange + 1;
             CurrentOffset = CurrentSeconds;
             LoadData(CurrentSeconds);
             ShowData();
@@ -1328,7 +1328,7 @@ namespace VeegStation
                 btnNext.Enabled = true;
                 return;
             }
-            else if (CurrentSeconds > _totalSeconds - hsProgress.LargeChange)
+            else if (CurrentSeconds > totalSeconds - hsProgress.LargeChange)
             {
                 btnPrev.Enabled = true;
                 btnNext.Enabled = false;
@@ -2744,11 +2744,11 @@ namespace VeegStation
         /// <returns></returns>
         private double[] ReturnSignalData(int NumSigal)
         {
-            double[] singalData = new double[_packets.Count];
+            double[] singalData = new double[packets.Count];
             int i = 0;
-            foreach (int sIdx in Enumerable.Range(0, _packets.Count))
+            foreach (int sIdx in Enumerable.Range(0, packets.Count))
             {
-                    singalData[i] = _packets[sIdx].EEG[NumSigal];
+                    singalData[i] = packets[sIdx].EEG[NumSigal];
                     i++;
             }
             return singalData;
@@ -2760,7 +2760,7 @@ namespace VeegStation
             int i = 0;
             foreach (int sIdx in Enumerable.Range(0, signalNum-1))
             {
-                singalData[i] = _packets[NumSigal].EEG[sIdx];
+                singalData[i] = packets[NumSigal].EEG[sIdx];
                 i++;
             }
             return singalData;
