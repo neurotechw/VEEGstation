@@ -46,7 +46,7 @@ namespace VeegStation
                 //允许更改item的颜色
                 li.UseItemStyleForSubItems = false;
 
-                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
                 li.SubItems.Add("");
                 index++;
@@ -113,7 +113,7 @@ namespace VeegStation
                 //允许更改item的颜色
                 li.UseItemStyleForSubItems = false;
 
-                li.SubItems.Add(myPlaybackForm.GetStartTime().AddSeconds((int)(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                li.SubItems.Add(myPlaybackForm.GetEventTime(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventPosition).AddSeconds((int)(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
                 li.SubItems.Add(myPlaybackForm.GetCustomEventList().Count.ToString());
 
                 //添加第四列代表事件颜色的subitem，name值为事件颜色的编号,backcolor为当前事件颜色

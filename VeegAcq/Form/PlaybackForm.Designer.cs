@@ -111,6 +111,10 @@ namespace VeegStation
             this.vScroll = new System.Windows.Forms.VScrollBar();
             this.labelPanel = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripStatusLabel_timeStandardLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_timeStandard = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_sensitivityLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_sensitivity = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
@@ -220,7 +224,11 @@ namespace VeegStation
             this.toolStriplabel_retime,
             this.displayRecordingTime,
             this.toolStriplabel_totaltime,
-            this.displayTotalTime});
+            this.displayTotalTime,
+            this.toolStripStatusLabel_timeStandardLabel,
+            this.toolStripStatusLabel_timeStandard,
+            this.toolStripStatusLabel_sensitivityLabel,
+            this.toolStripStatusLabel_sensitivity});
             this.statusStrip1.Location = new System.Drawing.Point(0, 556);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(942, 26);
@@ -701,19 +709,19 @@ namespace VeegStation
             // sensitivityToolStripMenuItem
             // 
             this.sensitivityToolStripMenuItem.Name = "sensitivityToolStripMenuItem";
-            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.sensitivityToolStripMenuItem.Text = "灵敏度";
             // 
             // timeStandartToolStripMenuItem
             // 
             this.timeStandartToolStripMenuItem.Name = "timeStandartToolStripMenuItem";
-            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.timeStandartToolStripMenuItem.Text = "时间基准";
             // 
             // signalToolStripMenuItem
             // 
             this.signalToolStripMenuItem.Name = "signalToolStripMenuItem";
-            this.signalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.signalToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.signalToolStripMenuItem.Text = "显示通道";
             // 
             // leadChooseToolStripMenuItem
@@ -729,6 +737,30 @@ namespace VeegStation
             this.BandFilterToolStripMenuItem});
             this.滤波ToolStripMenuItem.Name = "滤波ToolStripMenuItem";
             this.滤波ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.滤波ToolStripMenuItem.Text = "滤波";
+            // 
+            // Filter50HzToolStripMenuItem
+            // 
+            this.Filter50HzToolStripMenuItem.Name = "Filter50HzToolStripMenuItem";
+            this.Filter50HzToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.Filter50HzToolStripMenuItem.Text = "50Hz陷波";
+            this.Filter50HzToolStripMenuItem.Click += new System.EventHandler(this.Filter50HzToolStripMenuItem_Click);
+            // 
+            // BandFilterToolStripMenuItem
+            // 
+            this.BandFilterToolStripMenuItem.Name = "BandFilterToolStripMenuItem";
+            this.BandFilterToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.BandFilterToolStripMenuItem.Text = "带通滤波";
+            this.BandFilterToolStripMenuItem.Click += new System.EventHandler(this.BandFilterToolStripMenuItem_Click);
+
+            // 
+            // 滤波ToolStripMenuItem
+            // 
+            this.滤波ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Filter50HzToolStripMenuItem,
+            this.BandFilterToolStripMenuItem});
+            this.滤波ToolStripMenuItem.Name = "滤波ToolStripMenuItem";
+            this.滤波ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.滤波ToolStripMenuItem.Text = "滤波";
             // 
             // Filter50HzToolStripMenuItem
@@ -886,6 +918,38 @@ namespace VeegStation
             this.labelPanel.TabIndex = 15;
             this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawLabelPanel);
             // 
+            // toolStripStatusLabel_timeStandardLabel
+            // 
+            this.toolStripStatusLabel_timeStandardLabel.Name = "toolStripStatusLabel_timeStandardLabel";
+            this.toolStripStatusLabel_timeStandardLabel.Size = new System.Drawing.Size(56, 21);
+            this.toolStripStatusLabel_timeStandardLabel.Text = "时间基准";
+            // 
+            // toolStripStatusLabel_timeStandard
+            // 
+            this.toolStripStatusLabel_timeStandard.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.toolStripStatusLabel_timeStandard.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
+            this.toolStripStatusLabel_timeStandard.Name = "toolStripStatusLabel_timeStandard";
+            this.toolStripStatusLabel_timeStandard.Size = new System.Drawing.Size(49, 21);
+            this.toolStripStatusLabel_timeStandard.Text = "##/##";
+            // 
+            // toolStripStatusLabel_sensitivityLabel
+            // 
+            this.toolStripStatusLabel_sensitivityLabel.Name = "toolStripStatusLabel_sensitivityLabel";
+            this.toolStripStatusLabel_sensitivityLabel.Size = new System.Drawing.Size(44, 21);
+            this.toolStripStatusLabel_sensitivityLabel.Text = "灵敏度";
+            // 
+            // toolStripStatusLabel_sensitivity
+            // 
+            this.toolStripStatusLabel_sensitivity.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.toolStripStatusLabel_sensitivity.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
+            this.toolStripStatusLabel_sensitivity.Name = "toolStripStatusLabel_sensitivity";
+            this.toolStripStatusLabel_sensitivity.Size = new System.Drawing.Size(49, 21);
+            this.toolStripStatusLabel_sensitivity.Text = "##/##";
+            // 
             // PlaybackForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1008,5 +1072,9 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripMenuItem 滤波ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem Filter50HzToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem BandFilterToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_timeStandardLabel;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_timeStandard;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_sensitivityLabel;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_sensitivity;
     }
 }

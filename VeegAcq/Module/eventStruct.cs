@@ -31,7 +31,7 @@ namespace VeegStation
         /// </summary>
         /// <param name="index"></param>
         /// <param name="pos"></param>
-        public PreDefineEvent(int index, UInt16 pos)
+        public PreDefineEvent(int index, UInt16 pos,int posInF)
         {
             if (preDefineEventColorArray == null || preDefineEventNameArray == null)
             {
@@ -42,12 +42,23 @@ namespace VeegStation
             eventName = preDefineEventNameArray[index];
             eventColor = preDefineEventColorArray[index];
             eventPosition = pos;
+            posInFile = posInF;
         }
 
         private Color eventColor;
         private UInt16 eventPosition;
         private string eventName;
         private int eventNameIndex;
+        private int posInFile;
+
+        /// <summary>
+        /// 预定义事件所在文件里的位置
+        /// </summary>
+        public int PosInFile
+        {
+            get { return posInFile; }
+            set { posInFile = value; }
+        }
 
         /// <summary>
         /// 预定义事件名称在名称数组里的索引
@@ -163,6 +174,98 @@ namespace VeegStation
             get { return eventName; }
             set { eventName = value; }
         }
+
+    }
+
+    public struct EventProperty
+    {
+        /// <summary>
+        /// 采集开始时间，精确到日
+        /// 54 00 最后4个字节 
+        /// </summary>
+        private DateTime startDay;
+
+        /// <summary>
+        /// 添加病例时点击“脑电图采集”按钮的时间，格式：秒分时
+        /// 第一个 54 01 最后4个字节
+        /// </summary>
+        private TimeSpan colletTime;
+
+        /// <summary>
+        /// 采集时点击“退出”按钮的时间，格式：秒分时
+        /// 第二个 54 01 最后4个字节
+        /// </summary>
+        private TimeSpan exitTime;
+
+        /// <summary>
+        /// 采集的总点数
+        /// 54 02 最后4个字节
+        /// </summary>
+        private int numberOfSamples;
+
+        /// <summary>
+        /// 采集时点击“记录”按钮的时间，格式：秒分时
+        /// 54 03 最后4个字节
+        /// </summary>
+        private List<DateTime> beginningTime;
+
+        /// <summary>
+        /// 本次记录之前采集数据的总点数
+        /// 54 04 最后四个字节
+        /// </summary>
+        private List<int> recordQuantity;
+
+        /// <summary>
+        /// 本次记录之前采集数据的总秒数
+        /// t =M/N,M为本次记录之前采集数据的总点数,N为每秒采样的点数
+        /// </summary>
+        private List<TimeSpan> recordTime;
+
+        #region 访问器
+
+        public DateTime StartDay
+        {
+            get { return startDay; }
+            set { startDay = value; }
+        }
+
+        public TimeSpan ColletTime
+        {
+            get { return colletTime; }
+            set { colletTime = value; }
+        }
+
+
+        public TimeSpan ExitTime
+        {
+            get { return exitTime; }
+            set { exitTime = value; }
+        }
+
+        public int NumberOfSamples
+        {
+            get { return numberOfSamples; }
+            set { numberOfSamples = value; }
+        }
+
+        public List<DateTime> BeginningTime
+        {
+            get { return beginningTime; }
+            set { beginningTime = value; }
+        }
+
+        public List<int> RecordQuantity
+        {
+            get { return recordQuantity; }
+            set { recordQuantity = value; }
+        }
+
+        public List<TimeSpan> RecordTime
+        {
+            get { return recordTime; }
+            set { recordTime = value; }
+        }
+        #endregion
 
     }
 }
