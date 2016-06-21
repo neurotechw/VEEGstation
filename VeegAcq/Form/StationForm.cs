@@ -34,7 +34,7 @@ namespace VeegStation
         public StationForm()
         {
             InitializeComponent();
-            
+            //LogHelper.WriteLog(typeof(StationForm),  "测试日志是否添加成功");
         }
 
         private void HelpAbout_Click(object sender, EventArgs e)
