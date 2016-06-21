@@ -486,6 +486,15 @@ namespace VeegStation
         {
             this.controller = control;
             myLeadConfigForm.ReigisterVeegControl(control);
+            InitPlaybackFormParas();
+        }
+
+        /// <summary>
+        /// 初始化PlaybackForm中各参数
+        /// --by zt
+        /// </summary>
+        private void InitPlaybackFormParas() 
+        {
             InitFromConfig();
         }
 
@@ -507,6 +516,8 @@ namespace VeegStation
             InitLeadParameters();
             #endregion
         }
+
+
 
         /// <summary>
         /// 更新导联参数  --by zt
@@ -1630,6 +1641,8 @@ namespace VeegStation
 
             //当前导联配置
             leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
+
+            //
 
         }
 
