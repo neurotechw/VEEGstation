@@ -608,12 +608,5 @@ namespace VeegStation
             this.Hide();
         }
 
-        
-
-        
-
-
-
-
     }
 }
