@@ -95,7 +95,7 @@ namespace VeegStation
             this.sensitivityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timeStandartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.signalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.导联选择ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.leadChooseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.滤波ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Filter50HzToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.BandFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -741,7 +741,7 @@ namespace VeegStation
             this.sensitivityToolStripMenuItem,
             this.timeStandartToolStripMenuItem,
             this.signalToolStripMenuItem,
-            this.导联选择ToolStripMenuItem,
+            this.leadChooseToolStripMenuItem,
             this.滤波ToolStripMenuItem});
             this.格式ToolStripMenuItem.Name = "格式ToolStripMenuItem";
             this.格式ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.R)));
@@ -766,11 +766,35 @@ namespace VeegStation
             this.signalToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.signalToolStripMenuItem.Text = "显示通道";
             // 
-            // 导联选择ToolStripMenuItem
+            // leadChooseToolStripMenuItem
             // 
-            this.导联选择ToolStripMenuItem.Name = "导联选择ToolStripMenuItem";
-            this.导联选择ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.导联选择ToolStripMenuItem.Text = "导联选择";
+            this.leadChooseToolStripMenuItem.Name = "leadChooseToolStripMenuItem";
+            this.leadChooseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.leadChooseToolStripMenuItem.Text = "导联选择";
+            // 
+            // 滤波ToolStripMenuItem
+            // 
+            this.滤波ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Filter50HzToolStripMenuItem,
+            this.BandFilterToolStripMenuItem});
+            this.滤波ToolStripMenuItem.Name = "滤波ToolStripMenuItem";
+            this.滤波ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.滤波ToolStripMenuItem.Text = "滤波";
+            // 
+            // Filter50HzToolStripMenuItem
+            // 
+            this.Filter50HzToolStripMenuItem.Name = "Filter50HzToolStripMenuItem";
+            this.Filter50HzToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.Filter50HzToolStripMenuItem.Text = "50Hz陷波";
+            this.Filter50HzToolStripMenuItem.Click += new System.EventHandler(this.Filter50HzToolStripMenuItem_Click);
+            // 
+            // BandFilterToolStripMenuItem
+            // 
+            this.BandFilterToolStripMenuItem.Name = "BandFilterToolStripMenuItem";
+            this.BandFilterToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.BandFilterToolStripMenuItem.Text = "带通滤波";
+            this.BandFilterToolStripMenuItem.Click += new System.EventHandler(this.BandFilterToolStripMenuItem_Click);
+
             // 
             // 滤波ToolStripMenuItem
             // 
@@ -922,7 +946,6 @@ namespace VeegStation
             this.vScroll.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vScroll.Location = new System.Drawing.Point(725, 65);
-            this.vScroll.Maximum = 20;
             this.vScroll.Name = "vScroll";
             this.vScroll.Size = new System.Drawing.Size(17, 492);
             this.vScroll.TabIndex = 14;
@@ -1126,7 +1149,7 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripMenuItem boardToolStripMenuItem;
         private System.Windows.Forms.VScrollBar vScroll;
         private System.Windows.Forms.Panel labelPanel;
-        private System.Windows.Forms.ToolStripMenuItem 导联选择ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem leadChooseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 导联设置ToolStripMenuItem;
 		private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem 滤波ToolStripMenuItem;

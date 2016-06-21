@@ -64,6 +64,9 @@
     </StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="nVLC, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\nVLC.2.1.0.3\lib\net40\nVLC.dll</HintPath>
       <Private>True</Private>
@@ -148,6 +151,7 @@
     <Compile Include="Module\EegPacket.cs" />
     <Compile Include="Module\EventStruct.cs" />
     <Compile Include="Module\FreqAnalyzer.cs" />
+    <Compile Include="Module\LogHelper.cs" />
     <Compile Include="Module\Montage.cs" />
     <Compile Include="Module\NatFileInfo.cs" />
     <Compile Include="Module\NatInfo.cs" />
