@@ -451,7 +451,7 @@ namespace VeegStation
             catch(Exception ex)
             {
                 MessageBox.Show("文件格式错误");
-                //加日志
+                LogHelper.WriteLog(typeof(PlaybackForm), ex.Message + "文件格式错误");
                 return;
             }
 
@@ -470,7 +470,7 @@ namespace VeegStation
             PreDefineEvent.InitPreDefineEventNameWithArray(nfi.EventCount, nfi.PreDefineEventNameArray, nfi.PreDefineEventColorArray);
 
             myBandFilterForm = new BandFilterForm(this);
-            InitHardwareConfigParameters(nfi.Montage.SzSetting);
+            
         }
 
         /// <summary>
@@ -537,7 +537,10 @@ namespace VeegStation
             hsProgress.Maximum = totalSeconds;         //不一定是整数秒 故maximum不需要-1
 
             //硬件配置名称
-            this.InitHardwareConfigParameters(nfi.Montage.SzSetting);
+            this.InitHardwareConfigParameters(nfi.NatInfo.ByteConfigType);
+
+            this.byteOfPerData = nfi.NatInfo.RowsOfData;
+            
         }
 
         private void InitChartParas() 
@@ -719,62 +722,62 @@ namespace VeegStation
         /// 根据不同的设备类型，定义硬件配置名称，每个数据块占用的字节数、脑电数据占用的字节数、脑电数据开始位置  --by zt
         /// </summary>
         /// <param name="configName">硬件配置</param>
-        private void InitHardwareConfigParameters(string config) 
+        private void InitHardwareConfigParameters(byte config) 
         {
             switch (config)
             {
                 //8导脑电
-                case "P10":
+                case 0x00:
                     this.hardwareConfigName = "8导脑电";
-                    byteOfPerData = 26;
+                    //byteOfPerData = 26;
                     numberOfPerData = 8;
                     indexOfData = 6;
                     break;
 
                 //8导脑电+多参数
-                case "P11":
+                case 0x40:
                     this.hardwareConfigName = "8导脑电+多参数";
-                    byteOfPerData = 48;
+                    //byteOfPerData = 48;
                     numberOfPerData = 8;
                     indexOfData = 28;
                     break;
 
                 //16导脑电
-                case "P20":
+                case 0x04:
                     this.hardwareConfigName = "16导脑电";
-                    byteOfPerData = 46;
+                    //byteOfPerData = 46;
                     numberOfPerData = 16;
                     indexOfData = 6;
                     break;
 
                 //16导脑电+多参数
-                case "P21":
+                case 0x44:
                     this.hardwareConfigName = "16导脑电+多参数";
-                    byteOfPerData = 68;
+                    //byteOfPerData = 68;
                     numberOfPerData = 16;
                     indexOfData = 28;
                     break;
 
                 //24导脑电
-                case "P30":
+                case 0x02:
                     this.hardwareConfigName = "24导脑电";
-                    byteOfPerData = 86;
+                    //byteOfPerData = 86;
                     numberOfPerData = 19;
                     indexOfData = 6;
                     break;
 
                 //32导脑电
-                case "P40":
+                case 0x08:
                     this.hardwareConfigName = "32导脑电";
-                    byteOfPerData = 86;
+                    //byteOfPerData = 86;
                     numberOfPerData = 19;
                     indexOfData = 6;
                     break;
 
                 //32导脑电+多参数
-                case "P41":
+                case 0x48:
                     this.hardwareConfigName = "32导脑电+多参数";
-                    byteOfPerData = 108;
+                    //byteOfPerData = 108;
                     numberOfPerData = 19;
                     indexOfData = 28;
                     break;

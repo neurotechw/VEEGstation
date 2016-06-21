@@ -112,14 +112,15 @@ namespace VeegStation
         /// b5~b2: 0010 脑电40导	
         /// b5~b2: 0011 脑电64导
         /// b1 b0 : 00   保留	
-        /// 例如：            16进制   一帧大小     16进制
-        /// P10配置: 00000000  0x00   	26	       0x1A
-        /// P11配置: 01000000  0x40     48         0x30
-        /// P20配置: 00000100  0x04     46         0x2E
-        /// P21配置: 01000100  0x44 	    68         0x44
-        /// P40配置: 00001000  0x08     86         0x56
-        /// P41配置: 01001000  0x48     108        0x6C
-        /// P80配置: 00001100  0x0C     134        0x86
+        /// 例如：                        2进制       16进制        10进制    一帧大小     16进制
+        /// P10配置（8导脑电）:         00000000       0x00            0  	    26	       0x1A
+        /// P11配置（8导脑电+多参数）:  01000000        0x40           64      48           0x30
+        /// P20配置（16导脑电）:        00000100        0x04           4       46           0x2E
+        /// P21配置（16导脑电+多参数）: 01000100        0x44 	          68      68          0x44
+        /// P30配置（24导脑电）：       00000010        0x02            2       86         0x56
+        /// P40配置（32导脑电）:        00001000       0x08             8       86         0x56
+        /// P41配置（32导脑电+多参数）: 01001000        0x48            72      108        0x6C
+        /// P80配置 :                  00001100        0x0C            12      134        0x86
         /// </summary>
         private byte byteConfigType;          
         
@@ -255,6 +256,7 @@ namespace VeegStation
         public static int FixedLength_Flag = 4;
         public static int FixedLength_IsHaveVideo = 4;
         public static int FixedLength_RowsOfData = 4;
+        public static int FixedLength_ByteConfigType = 1;
         #endregion
 
         /// <summary>
@@ -382,15 +384,17 @@ namespace VeegStation
                 this.isHaveVideo = true;
             fileIndex += FixedLength_IsHaveVideo;
 
-            //一帧的数据大小,不知道帧的含义 
+            //一帧的数据大小 
             byte[] rowsOfData = Util.getFixedLengthByteArray(nationInfo, fileIndex, FixedLength_RowsOfData);
             this.rowsOfData = (rowsOfData[3] << 24 | rowsOfData[2] << 16 | rowsOfData[1] << 8 | rowsOfData[0]);
             fileIndex += FixedLength_RowsOfData;
 
             // 配置信息
-            this.byteConfigType = Convert.ToByte(Util.getFixedLengthByteArray(nationInfo, fileIndex, 1)[0].ToString(), 16);
+            byte[] byteConfigTypeBuf = Util.getFixedLengthByteArray(nationInfo, fileIndex, FixedLength_ByteConfigType);
+            //this.byteConfigType = Convert.ToByte(byteConfigTypeBuf[0].ToString(), 16);
+            this.byteConfigType = byteConfigTypeBuf[0];
 
-            Debug.WriteLine(string.Format("NatInfo {0}", this.StartDate));
+            Debug.WriteLine(string.Format("NatInfo {0},byteConfigType {1}", this.StartDate,this.byteConfigType));
 
         }
     }
