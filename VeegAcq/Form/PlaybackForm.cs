@@ -483,6 +483,10 @@ namespace VeegStation
             //解析事件，并将事件添加进事件列表中
             ParseEvent();
 
+            //解析完事件后在右边列表中显示出事件
+            UpdateLVPreDefineEvents();
+            UpdateLVCustomEvents();
+
             myBandFilterForm = new BandFilterForm(this);
             InitHardwareConfigParameters(nfi.Montage.SzSetting);
         }
@@ -1555,6 +1559,10 @@ namespace VeegStation
 
         #region 事件listView -- by lxl
 
+        /// <summary>
+        /// 更新预定义事件列表
+        /// -- by lxl
+        /// </summary>
         private void UpdateLVPreDefineEvents()
         {
             //事件显示编号
@@ -1566,19 +1574,70 @@ namespace VeegStation
             //更新列表前先清空列表内容
             lvPreDefineEvents.Items.Clear();
 
-            //根将从Playbackform中读取的内容插入到列表中
-            foreach (PreDefineEvent p in preDefineEventsList)
+            if (preDefineEventsList != null)
             {
-                //初始化listview的内容项
-                ListViewItem li = new ListViewItem(p.EventName);
-                li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
-                li.SubItems.Add(index.ToString());
+                //根将从Playbackform中读取的内容插入到列表中
+                foreach (PreDefineEvent p in preDefineEventsList)
+                {
+                    ListViewItem li = new ListViewItem(p.EventName);
 
-                //序号递增
-                index++;
-                lvPreDefineEvents.Items.Add(li);
+
+                    //允许更改item的颜色
+                    li.UseItemStyleForSubItems = false;
+
+                    //初始化listview的内容项
+                    li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
+                    li.SubItems.Add(index.ToString());
+                    li.SubItems.Add("");
+
+                    //序号递增
+                    index++;
+                    lvPreDefineEvents.Items.Add(li);
+
+                    lvPreDefineEvents.Items[index - 2].SubItems[3].BackColor = p.EventColor;
+                }
             }
+
             lvPreDefineEvents.EndUpdate();
+        }
+
+        /// <summary>
+        /// 更新自定义事件
+        /// -- by lxl
+        /// </summary>
+        private void UpdateLVCustomEvents()
+        {
+            //事件显示的编号
+            int index = 1;
+            
+            //开始更新列表
+            lvCustomEvents.BeginUpdate();
+
+            //先把列表清空
+            lvCustomEvents.Items.Clear();
+
+            if (customEventList != null)
+            {
+                //从playbackform中读取事件列表，然后将事件添加到列表中
+                foreach (CustomEvent p in customEventList)
+                {
+                    ListViewItem li = new ListViewItem(p.EventName);
+
+                    //允许更改item的颜色
+                    li.UseItemStyleForSubItems = false;
+
+                    li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
+                    li.SubItems.Add(index.ToString());
+                    li.SubItems.Add("");
+                    index++;
+                    lvCustomEvents.Items.Add(li);
+                    this.lvCustomEvents.Items[index - 2].SubItems[3].BackColor = CustomEvent.CustomEventColor[p.EventColorIndex];
+                    this.lvCustomEvents.Items[index - 2].SubItems[3].Name = p.EventColorIndex.ToString();
+                }
+            }
+
+            //结束更新列表
+            lvCustomEvents.EndUpdate();
         }
 
         #endregion
