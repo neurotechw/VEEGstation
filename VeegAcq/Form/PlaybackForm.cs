@@ -1553,6 +1553,36 @@ namespace VeegStation
 
         #endregion
 
+        #region 事件listView -- by lxl
+
+        private void UpdateLVPreDefineEvents()
+        {
+            //事件显示编号
+            int index = 1;
+
+            //开始更新列表
+            lvPreDefineEvents.BeginUpdate();
+
+            //更新列表前先清空列表内容
+            lvPreDefineEvents.Items.Clear();
+
+            //根将从Playbackform中读取的内容插入到列表中
+            foreach (PreDefineEvent p in preDefineEventsList)
+            {
+                //初始化listview的内容项
+                ListViewItem li = new ListViewItem(p.EventName);
+                li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                li.SubItems.Add(index.ToString());
+
+                //序号递增
+                index++;
+                lvPreDefineEvents.Items.Add(li);
+            }
+            lvPreDefineEvents.EndUpdate();
+        }
+
+        #endregion
+
         /// <summary>
         /// --by wsp
         /// 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；
@@ -1816,6 +1846,7 @@ namespace VeegStation
             }
         }
 
+        #region 画事件 -- by lxl
         /// <summary>
         /// 画病人事件
         /// -- by lxl
@@ -1829,23 +1860,61 @@ namespace VeegStation
             SolidBrush strBrush = new SolidBrush(Color.White);
             Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
 
+            //画自定义和预定义事件
+            DrawPreDefineEvents(g, dotPen, strBrush, strFont);
+            DrawCustomEvents(g, dotPen, strBrush, strFont);
+        }
+
+        /// <summary>
+        /// 画预定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="g">画布</param>
+        /// <param name="pen">画笔</param>
+        /// <param name="strBrush">字体的画刷</param>
+        /// <param name="strFont">字体</param>
+        private void DrawPreDefineEvents(Graphics g,Pen pen,SolidBrush strBrush, Font strFont)
+        {
+            if(preDefineEventsList == null)
+            {
+                return;
+            }
             //事件该画的位置
             double drawPosition;
 
             //画预定义事件                   
-            foreach (PreDefineEvent p in preDefineEventsList)                  
+            foreach (PreDefineEvent p in preDefineEventsList)
             {
                 //只画当前页面能显示的事件
                 if (p.EventPosition / sampleRate < currentSeconds)
                     continue;
                 if (p.EventPosition / sampleRate > CurrentSeconds + xMaximum)
                     break;
-                dotPen.Color = p.EventColor;
+                pen.Color = p.EventColor;
                 drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
                 g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
-                g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
+                g.DrawLine(pen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
+        }
+
+        /// <summary>
+        /// 画自定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="g">画布</param>
+        /// <param name="pen">画笔</param>
+        /// <param name="strBrush">字体的画刷</param>
+        /// <param name="strFont">字体</param>
+        private void DrawCustomEvents(Graphics g,Pen pen,SolidBrush strBrush, Font strFont)
+        {
+            if (customEventList == null)
+            {
+                return;
+            }
+
+            //事件该画的位置
+            double drawPosition;
 
             //画自定义事件                  
             foreach (CustomEvent p in customEventList)
@@ -1855,13 +1924,15 @@ namespace VeegStation
                     continue;
                 if (p.EventPosition / sampleRate > currentSeconds + xMaximum)
                     continue;
-                dotPen.Color = CustomEvent.CustomEventColor[p.EventColorIndex];
+                pen.Color = CustomEvent.CustomEventColor[p.EventColorIndex];
                 drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
                 g.FillRectangle(new SolidBrush(Color.FromArgb(200, CustomEvent.CustomEventColor[p.EventColorIndex])), new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
-                g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
+                g.DrawLine(pen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
         }
+
+        #endregion
         /// <summary>
         /// labelPanel的重绘函数,若要更新label则需调用labelPanel.Invalidate()函数
         /// -- by lxl
