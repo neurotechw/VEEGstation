@@ -549,7 +549,11 @@ namespace VeegStation
             isChangingBoardShow = true;
             currentTopSignal = 0;
             isAddingEvent = false;
-            SetSignalNum(20);
+
+            if (leadConfigArrayList.Count >= 20)
+                SetSignalNum(20);
+            else
+                SetSignalNum(leadConfigArrayList.Count);
         }
 
         /// <summary>
@@ -691,7 +695,7 @@ namespace VeegStation
                 {
                     signalNumArray[j] = (int)Math.Pow(2, j);
                 }
-                signalNumArray[signalNumArray.Count()] = signalNum;
+                signalNumArray[signalNumArray.Length - 1] = signalNum;
             }
         }
 
@@ -979,7 +983,7 @@ namespace VeegStation
                         if (FPi_FPj[1] != "REF")
                             sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
                         sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
-                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
                         col[sIdx].Points.AddXY(tIdx / (double)this.sampleRate, sampleDifferValue[sIdx]);
                     }
@@ -2962,11 +2966,19 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 设置带通滤波是否选中
+        /// 设置带通滤波是否选中,及状态栏中带通滤波
         /// </summary>
         public void SetBandFilterChecked()
         {
             this.BandFilterToolStripMenuItem.Checked = isBandFilter;
+            if (this.BandFilterToolStripMenuItem.Checked == false) 
+            {
+                this.toolStripStatusLabel_bandFilter.Text = "None";
+            }
+            else 
+            {
+                this.toolStripStatusLabel_bandFilter.Text = lowFrequency + "Hz,  " + this.highFrequency + "Hz";
+            }
         }
 
         private void Filter50HzToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2976,6 +2988,7 @@ namespace VeegStation
                 //不选50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = false;
                 is50HzFilter = false;
+                this.toolStripStatusLabel_trap.Text = "None";
                 LoadData(CurrentSeconds);
                 ShowData();
             }
@@ -2984,6 +2997,7 @@ namespace VeegStation
                 //选择50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = true;
                 is50HzFilter = true;
+                this.toolStripStatusLabel_trap.Text = "50Hz";
                 LoadData(CurrentSeconds);
                 ShowData();
             }
@@ -2993,8 +3007,8 @@ namespace VeegStation
         {
             myBandFilterForm.InitFormFilter();
             myBandFilterForm.Show();
-            
         }
+
         /// <summary>
         /// 返回一个通道所有的数据--by wsp
         /// </summary>

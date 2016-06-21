@@ -30,10 +30,10 @@ namespace VeegStation
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlaybackForm));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine1 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine2 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnPlay = new System.Windows.Forms.ToolStripButton();
             this.btnPause = new System.Windows.Forms.ToolStripButton();
@@ -128,6 +128,10 @@ namespace VeegStation
             this.vScroll = new System.Windows.Forms.VScrollBar();
             this.labelPanel = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripStatusLabel_lbTrap = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_trap = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_lbBandFilter = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_bandFilter = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
@@ -212,21 +216,21 @@ namespace VeegStation
             // pationInfoToolStripMenuItem
             // 
             this.pationInfoToolStripMenuItem.Name = "pationInfoToolStripMenuItem";
-            this.pationInfoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pationInfoToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.pationInfoToolStripMenuItem.Text = "病人属性";
             this.pationInfoToolStripMenuItem.Click += new System.EventHandler(this.pationInfoToolStripMenuItem_Click);
             // 
             // detectionInfoToolStripMenuItem
             // 
             this.detectionInfoToolStripMenuItem.Name = "detectionInfoToolStripMenuItem";
-            this.detectionInfoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.detectionInfoToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.detectionInfoToolStripMenuItem.Text = "检查属性";
             this.detectionInfoToolStripMenuItem.Click += new System.EventHandler(this.detectionInfoToolStripMenuItem_Click);
             // 
             // hideingToolStripMenuItem
             // 
             this.hideingToolStripMenuItem.Name = "hideingToolStripMenuItem";
-            this.hideingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hideingToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.hideingToolStripMenuItem.Text = "隐藏";
             this.hideingToolStripMenuItem.Click += new System.EventHandler(this.hideingToolStripMenuItem_Click);
             // 
@@ -242,7 +246,11 @@ namespace VeegStation
             this.toolStripStatusLabel_timeStandardLabel,
             this.toolStripStatusLabel_timeStandard,
             this.toolStripStatusLabel_sensitivityLabel,
-            this.toolStripStatusLabel_sensitivity});
+            this.toolStripStatusLabel_sensitivity,
+            this.toolStripStatusLabel_lbTrap,
+            this.toolStripStatusLabel_trap,
+            this.toolStripStatusLabel_lbBandFilter,
+            this.toolStripStatusLabel_bandFilter});
             this.statusStrip1.Location = new System.Drawing.Point(0, 556);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(942, 26);
@@ -345,50 +353,50 @@ namespace VeegStation
             this.chartWave.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.AxisX.LabelStyle.Enabled = false;
-            chartArea1.AxisX.LabelStyle.Interval = 1D;
-            chartArea1.AxisX.LabelStyle.IntervalOffset = 0D;
-            chartArea1.AxisX.MajorGrid.Interval = 1D;
-            chartArea1.AxisX.MajorGrid.IntervalOffset = 1D;
-            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
-            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea1.AxisX.MajorTickMark.Interval = 1D;
-            chartArea1.AxisX.MajorTickMark.IntervalOffset = 0D;
-            chartArea1.AxisX.Minimum = 0D;
-            stripLine1.BorderColor = System.Drawing.Color.Black;
-            stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            stripLine1.StripWidth = 0.0001D;
-            chartArea1.AxisX.StripLines.Add(stripLine1);
-            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
-            chartArea1.AxisY.IsInterlaced = true;
-            chartArea1.AxisY.LabelStyle.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Interval = 100D;
-            chartArea1.AxisY.MajorGrid.IntervalOffset = 0D;
-            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisY.MajorTickMark.Enabled = false;
-            chartArea1.AxisY.MajorTickMark.Interval = 100D;
-            chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
-            chartArea1.AxisY.Maximum = 2000D;
-            chartArea1.AxisY.Minimum = 0D;
-            chartArea1.Name = "mainArea";
-            chartArea1.Position.Auto = false;
-            chartArea1.Position.Height = 94F;
-            chartArea1.Position.Width = 100F;
-            chartArea1.Position.Y = 3F;
-            this.chartWave.ChartAreas.Add(chartArea1);
-            legend1.Enabled = false;
-            legend1.Name = "Legend1";
-            legend1.Position.Auto = false;
-            legend1.Position.Height = 100F;
-            legend1.Position.Width = 100F;
-            this.chartWave.Legends.Add(legend1);
+            chartArea2.AxisX.LabelStyle.Enabled = false;
+            chartArea2.AxisX.LabelStyle.Interval = 1D;
+            chartArea2.AxisX.LabelStyle.IntervalOffset = 0D;
+            chartArea2.AxisX.MajorGrid.Interval = 1D;
+            chartArea2.AxisX.MajorGrid.IntervalOffset = 1D;
+            chartArea2.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
+            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea2.AxisX.MajorTickMark.Interval = 1D;
+            chartArea2.AxisX.MajorTickMark.IntervalOffset = 0D;
+            chartArea2.AxisX.Minimum = 0D;
+            stripLine2.BorderColor = System.Drawing.Color.Black;
+            stripLine2.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            stripLine2.StripWidth = 0.0001D;
+            chartArea2.AxisX.StripLines.Add(stripLine2);
+            chartArea2.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
+            chartArea2.AxisY.IsInterlaced = true;
+            chartArea2.AxisY.LabelStyle.Enabled = false;
+            chartArea2.AxisY.MajorGrid.Interval = 100D;
+            chartArea2.AxisY.MajorGrid.IntervalOffset = 0D;
+            chartArea2.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
+            chartArea2.AxisY.MajorTickMark.Enabled = false;
+            chartArea2.AxisY.MajorTickMark.Interval = 100D;
+            chartArea2.AxisY.MajorTickMark.IntervalOffset = 0D;
+            chartArea2.AxisY.Maximum = 2000D;
+            chartArea2.AxisY.Minimum = 0D;
+            chartArea2.Name = "mainArea";
+            chartArea2.Position.Auto = false;
+            chartArea2.Position.Height = 94F;
+            chartArea2.Position.Width = 100F;
+            chartArea2.Position.Y = 3F;
+            this.chartWave.ChartAreas.Add(chartArea2);
+            legend2.Enabled = false;
+            legend2.Name = "Legend1";
+            legend2.Position.Auto = false;
+            legend2.Position.Height = 100F;
+            legend2.Position.Width = 100F;
+            this.chartWave.Legends.Add(legend2);
             this.chartWave.Location = new System.Drawing.Point(62, 63);
             this.chartWave.Name = "chartWave";
-            series1.ChartArea = "mainArea";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chartWave.Series.Add(series1);
+            series2.ChartArea = "mainArea";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chartWave.Series.Add(series2);
             this.chartWave.Size = new System.Drawing.Size(880, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
@@ -570,7 +578,7 @@ namespace VeegStation
             this.DetectionInfoPanel.Controls.Add(this.RequesterTextBt);
             this.DetectionInfoPanel.Controls.Add(this.DetectinonL);
             this.DetectionInfoPanel.Controls.Add(this.DetectionTextBt);
-            this.DetectionInfoPanel.Location = new System.Drawing.Point(90, 212);
+            this.DetectionInfoPanel.Location = new System.Drawing.Point(346, 60);
             this.DetectionInfoPanel.Name = "DetectionInfoPanel";
             this.DetectionInfoPanel.Size = new System.Drawing.Size(280, 291);
             this.DetectionInfoPanel.TabIndex = 2;
@@ -1053,6 +1061,38 @@ namespace VeegStation
             this.labelPanel.TabIndex = 15;
             this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawLabelPanel);
             // 
+            // toolStripStatusLabel_lbTrap
+            // 
+            this.toolStripStatusLabel_lbTrap.Name = "toolStripStatusLabel_lbTrap";
+            this.toolStripStatusLabel_lbTrap.Size = new System.Drawing.Size(32, 21);
+            this.toolStripStatusLabel_lbTrap.Text = "陷波";
+            // 
+            // toolStripStatusLabel_trap
+            // 
+            this.toolStripStatusLabel_trap.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.toolStripStatusLabel_trap.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
+            this.toolStripStatusLabel_trap.Name = "toolStripStatusLabel_trap";
+            this.toolStripStatusLabel_trap.Size = new System.Drawing.Size(44, 21);
+            this.toolStripStatusLabel_trap.Text = "None";
+            // 
+            // toolStripStatusLabel_lbBandFilter
+            // 
+            this.toolStripStatusLabel_lbBandFilter.Name = "toolStripStatusLabel_lbBandFilter";
+            this.toolStripStatusLabel_lbBandFilter.Size = new System.Drawing.Size(56, 21);
+            this.toolStripStatusLabel_lbBandFilter.Text = "带通滤波";
+            // 
+            // toolStripStatusLabel_bandFilter
+            // 
+            this.toolStripStatusLabel_bandFilter.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.toolStripStatusLabel_bandFilter.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
+            this.toolStripStatusLabel_bandFilter.Name = "toolStripStatusLabel_bandFilter";
+            this.toolStripStatusLabel_bandFilter.Size = new System.Drawing.Size(44, 21);
+            this.toolStripStatusLabel_bandFilter.Text = "None";
+            // 
             // PlaybackForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1194,5 +1234,9 @@ namespace VeegStation
         private System.Windows.Forms.TableLayoutPanel tyPanelEventListView;
         private System.Windows.Forms.Label lblPreDefineEvent;
         private System.Windows.Forms.Label lblCustomEvent;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_lbTrap;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_trap;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_lbBandFilter;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_bandFilter;
     }
 }
