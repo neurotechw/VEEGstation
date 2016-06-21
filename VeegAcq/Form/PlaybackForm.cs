@@ -811,11 +811,14 @@ namespace VeegStation
                             col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
                             continue;
                         }
+
                         //获取做差的两个电极名称
                         string[] FPi_FPj = leadConfigArrayList[sIdx].ToString().Split(new char[] { '-' });
+
                         //查找多差电极对应的通道号
                         int channelNum_Positive = 1;
                         int channelNum_Negative = 1;
+
                         //由通道号对应通道名称的哈希表中读取需要显示的通道号
                         foreach (DictionaryEntry item in leadSource)
                         {
@@ -824,6 +827,7 @@ namespace VeegStation
                             if (item.Value.ToString() == FPi_FPj[1])
                                 channelNum_Negative = Convert.ToInt32(item.Key);
                         }
+
                         //求两个电极电位差
                         double sampleValue_Positive = 0;
                         double sampleValue_Negative = 0;
@@ -835,8 +839,6 @@ namespace VeegStation
                         sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
                         col[sIdx].Points.AddXY(tIdx / (double)this.sampleRate, sampleDifferValue[sIdx]);
-                        //Plot(i.ToString(), time[k] - timeCount, offset + data[i][k] * sensitivity * Math.Pow(10, 6) / multiplyingPower);
-                        //Plot(i.ToString(), time[k] - timeCount, offset + (data[i][k] / Math.Abs(data[i][k]) * demarcateCV) * _sensitivity / multiplyingPower);
                     }
                 }
 
@@ -1609,6 +1611,8 @@ namespace VeegStation
         /// </summary>
         private void InitLeadItems() 
         {
+            //清除
+            this.leadChooseToolStripMenuItem.DropDownItems.Clear();
             System.Windows.Forms.ToolStripMenuItem item;//= new ToolStripMenuItem();
             currentLeadConfigName = "默认导联配置";
             //初始化导联选择选项
@@ -1647,11 +1651,15 @@ namespace VeegStation
             }
             item.Checked = true;
 
-            //选择导联名称
-            string name = item.Text;
+            //当前导联名称即选择导联名称
+            currentLeadConfigName = item.Text;
 
             //选择导联配置
             leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
+
+            //label改变
+
+            //通道数目改变
 
             //重新显示数据
             ShowData();
