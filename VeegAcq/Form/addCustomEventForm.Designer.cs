@@ -114,7 +114,7 @@ namespace VeegStation
             this.Controls.Add(this.label1);
             this.Name = "addCustomEventForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "addCustomEventForm";
+            this.Text = "添加自定义事件";
             this.ResumeLayout(false);
             this.PerformLayout();
 
