@@ -979,7 +979,7 @@ namespace VeegStation
                         if (FPi_FPj[1] != "REF")
                             sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
                         sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
-                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx]  * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
                         col[sIdx].Points.AddXY(tIdx / (double)this.sampleRate, sampleDifferValue[sIdx]);
                     }
