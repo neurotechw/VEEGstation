@@ -844,7 +844,7 @@ namespace VeegStation
                 ser.ChartType = SeriesChartType.FastLine;
                 ser.BorderDashStyle = ChartDashStyle.Solid;
                 chartWave.Series.Add(ser);
-            }         
+            }
             if (nfi.HasVideo)
             {
                 IMediaPlayerFactory factory = new MediaPlayerFactory();
@@ -873,6 +873,11 @@ namespace VeegStation
                 video = new VideoForm(this);
                 video.Show();
                 video.Hide();
+            }
+            else
+            {
+                interfaceToolStripMenuItem.Enabled = false;
+                this.vScroll.Location = new Point(this.chartWave.Location.X + this.chartWave.Width - this.vScroll.Width, this.vScroll.Location.Y);
             }
         }
 
@@ -1126,6 +1131,10 @@ namespace VeegStation
             else
             {
                 timer.Enabled = true;
+                if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= nfi.Duration.TotalSeconds)
+                {
+                    Clear();
+                } 
                 //MessageBox.Show("没有视频", "提示");
             }
             btnPlay.Enabled = false;
@@ -1921,6 +1930,7 @@ namespace VeegStation
             DT_RelativeTime = DateTime.Parse("2016-05-23  00:00:00");
             DT_TotalTime = DateTime.Parse("2016-05-23 00:00:00");
             CurrentOffset = 0;
+            if (nfi.HasVideo)
             Player.Time =0;
             DT = nfi.StartDateTime;
             hsProgress.Value = 0;
