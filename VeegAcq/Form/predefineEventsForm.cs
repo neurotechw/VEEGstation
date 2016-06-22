@@ -68,10 +68,11 @@ namespace VeegStation
             eventList.Items.Clear();
 
             //根将从Playbackform中读取的内容插入到列表中
-            foreach (PreDefineEvent p in myPlaybackForm.GetPreEventList())
+            foreach (PreDefineEvent p in myPlaybackForm.GetSortedPreEventList())
             {
                 //初始化listview的内容项
                 ListViewItem li = new ListViewItem(p.EventName);
+                li.Name = p.EventID.ToString();
                 li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
 
@@ -117,7 +118,7 @@ namespace VeegStation
         public void updateListView()
         {
             //把事件删除掉，并将所删除事件后的事件序号各减一
-            for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetPreEventList().Count; i++)
+            for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetSortedPreEventList().Count; i++)
             {
                 eventList.Items[i].SubItems[2].Text = (int.Parse(eventList.Items[i].SubItems[2].Text) - 1).ToString();
             }
@@ -159,7 +160,7 @@ namespace VeegStation
             }
 
             //在事件列表中把事件删除
-            myPlaybackForm.RemoveEvent(true, eventList.SelectedIndices[0]);
+            myPlaybackForm.RemoveEvent(true, eventList.SelectedIndices[0], int.Parse(eventList.SelectedItems[0].Name));
         }
     }
 }
