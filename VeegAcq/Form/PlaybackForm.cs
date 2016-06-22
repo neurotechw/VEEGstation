@@ -3382,7 +3382,7 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.DetectionInfoPanel.Hide();         
+            this.DetectionInfoPanel.Hide();    
         }
 
         /// <summary>
