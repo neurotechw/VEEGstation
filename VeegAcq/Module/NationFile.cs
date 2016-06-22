@@ -377,7 +377,7 @@ namespace VeegStation
 
                 if (entFS.Length <= 0)
                 {
-                    return null;
+                    return cList;
                 }
                 entFS.Read(entByte, 0, (int)entFS.Length);
 
@@ -392,7 +392,7 @@ namespace VeegStation
             }
             else
             { 
-                return null; 
+                return cList; 
             }
         }
 

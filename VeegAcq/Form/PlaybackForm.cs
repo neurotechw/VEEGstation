@@ -123,7 +123,7 @@ namespace VeegStation
         /// <summary>
         /// 导联配置
         /// </summary>
-        private Hashtable leadList;
+        private Hashtable leadConfigList;
 
         /// <summary>
         /// 导联源
@@ -133,7 +133,7 @@ namespace VeegStation
         /// <summary>
         /// 当前导联名称
         /// </summary>
-        private string currentLeadConfig;
+        private string currentLeadConfigName;
 
         /// <summary>
         /// 存放当前导联配置
@@ -198,7 +198,7 @@ namespace VeegStation
         /// <summary>
         /// 脑电数据list  --by xjg
         /// </summary>
-        private List<EegPacket> _packets = new List<EegPacket>();
+        private List<EegPacket> packets = new List<EegPacket>();
 
         #region 事件相关
         /// <summary>
@@ -229,7 +229,7 @@ namespace VeegStation
         /// </summary>
         public double LongTime;
         private int _maxPage;
-        private int _totalSeconds;
+        private int totalSeconds;
         private DateTime? _LastTime = null;
 
         /// <summary>
@@ -449,54 +449,40 @@ namespace VeegStation
         public PlaybackForm(NationFile EegFile)
         {
             InitializeComponent();
+
             //构造导联配置Form实例  --by zt
             myLeadConfigForm = new LeadConfigForm();
 
+            //构造滤波Form实例  --by zt
+            myBandFilterForm = new BandFilterForm(this);
+
+            try
+            {
+                this.nfi = EegFile;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("文件格式错误");
+                LogHelper.WriteLog(typeof(PlaybackForm), ex.Message + "文件格式错误");
+                return;
+            }
+
             //根据是否有视频判定面板是否显示--by wsp
-            if (EegFile.HasVideo)
+            if (this.nfi.HasVideo)
                 isBoardShow = true;
             else
                 isBoardShow = false;
 
             this.boardToolStripMenuItem.Checked = isBoardShow;
             this.boardPanel.Visible = isBoardShow;
-            isChangingBoardShow = true;
-            signalNum = 20;
-            currentTopSignal = 0;
-            isAddingEvent = false;
-            SetVScrollVisible(false);
 
             _Page = 0;
-            try
-            {
-                nfi = EegFile;
-            }
-            catch
-            { }
-
-            //采样率 --by zt
-            sampleRate = EegFile.NatInfo.Freq;  
-
-            //总点数  --by zt
-            numberOfSamples = EegFile.NumberOfSamples; 
-
-            //开始时间  --by zt
-            DT = EegFile.StartDateTime; 
-            //GetHsprogressMax();                   不知道谁写的什么鬼，没发现用处，作用仅仅对hsProgress.maximum赋值（似乎像是以前按页来算的赋值方式），然而下方又赋值了一次（下方赋值为正确），故注释 -- by lxl
-
-            //修改 --by zt
-            _totalSeconds = (int)EegFile.Duration.TotalSeconds; 
-            hsProgress.Maximum = _totalSeconds;         //不一定是整数秒 故maximum不需要-1
-
-
+            
             //初始化预定义事件的颜色选项与名称选项
             PreDefineEvent.InitPreDefineEventNameWithArray(nfi.EventCount, nfi.PreDefineEventNameArray, nfi.PreDefineEventColorArray);
 
-            //解析事件，并将事件添加进事件列表中
-            ParseEvent();
-
             myBandFilterForm = new BandFilterForm(this);
-            InitHardwareConfigParameters(nfi.Montage.SzSetting);
+            
         }
 
         /// <summary>
@@ -507,7 +493,82 @@ namespace VeegStation
         {
             this.controller = control;
             myLeadConfigForm.ReigisterVeegControl(control);
+            
+        }
+
+        #region 各种初始化
+        /// <summary>
+        /// 初始化PlaybackForm中各参数
+        /// --by zt
+        /// </summary>
+        public void InitPlaybackFormParas() 
+        {
+            //诺诚文件
+            InitNationFileParas();
+
+            //配置文件
             InitFromConfig();
+
+            //根据配置导联里的通道个数通道显示选项数组
+            SetSignalNumArray(leadConfigArrayList.Count);
+
+            //初始化一些画图必要的变量
+            InitChartParas();
+
+            //初始化时间基准、灵敏度与通道显示数目的选项,（注意，要放在InitFromConfig()后面）
+            InitMenuItems();
+
+
+            
+            //解析事件，并将事件添加进事件列表中
+            ParseEvent();
+
+            //解析完事件后在右边列表中显示出事件
+            UpdateLVPreDefineEvents();
+            UpdateLVCustomEvents();
+        }
+
+        /// <summary>
+        /// 从诺诚文件中获得信息
+        /// --by zt
+        /// </summary>
+        private void InitNationFileParas() 
+        {
+            //采样率 --by zt
+            sampleRate = this.nfi.NatInfo.Freq;
+
+            //总点数  --by zt
+            numberOfSamples = this.nfi.NumberOfSamples;
+
+            //开始时间  --by zt
+            DT = this.nfi.StartDateTime;
+            //GetHsprogressMax();                   不知道谁写的什么鬼，没发现用处，作用仅仅对hsProgress.maximum赋值（似乎像是以前按页来算的赋值方式），然而下方又赋值了一次（下方赋值为正确），故注释 -- by lxl
+
+            //修改 --by zt
+            totalSeconds = (int)this.nfi.Duration.TotalSeconds;
+            hsProgress.Maximum = totalSeconds;         //不一定是整数秒 故maximum不需要-1
+
+            //硬件配置名称
+            this.InitHardwareConfigParameters(nfi.NatInfo.ByteConfigType);
+
+            this.byteOfPerData = nfi.NatInfo.RowsOfData;
+            
+        }
+
+        private void InitChartParas() 
+        {
+            //根据有多少条信道设置数值滚动条的最大值
+            this.vScroll.Maximum = this.leadConfigArrayList.Count;
+
+            //画图相关变量的初始化
+            isChangingBoardShow = true;
+            currentTopSignal = 0;
+            isAddingEvent = false;
+
+            if (leadConfigArrayList.Count >= 20)
+                SetSignalNum(20);
+            else
+                SetSignalNum(leadConfigArrayList.Count);
         }
 
         /// <summary>
@@ -527,13 +588,133 @@ namespace VeegStation
 
             #endregion
 
-            //初始化时间基准、灵敏度与通道显示数目的选项
-            InitMenuItems();
-
             #region 导联参数
             InitLeadParameters();
             #endregion
         }
+
+        #region 初始化格式内各个选项 -- by lxl
+        /// <summary>
+        /// 初始化时间基准与灵敏度的选项
+        /// -- by lxl
+        /// </summary>
+        private void InitMenuItems()
+        {
+            //初始化时间基准选项
+            InitTimeStandardMenuItems();
+
+            //初始化灵敏度选项
+            InitSensitivityMenuItems();
+
+            //初始化通道数量选项
+            InitSignalNumMenuItems();
+        }
+
+        /// <summary>
+        /// 初始化时间基准选项
+        /// -- by lxl
+        /// </summary>
+        private void InitTimeStandardMenuItems()
+        {
+            System.Windows.Forms.ToolStripMenuItem item;
+
+            //初始化时间基准选项
+            foreach (int t in timeStandardArray)
+            {
+                item = new ToolStripMenuItem();
+                item.Name = "timeStandardMenuItem_" + t;
+                item.Size = new Size(140, 22);
+                item.Text = t + "mm/sec";
+                item.Click += new EventHandler(this.TimerStandartMenuItem_Click);
+                if (t == timeStandard)
+                    item.Checked = true;
+                this.timeStandartToolStripMenuItem.DropDownItems.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// 初始化灵敏度选项
+        /// -- by lxl
+        /// </summary>
+        private void InitSensitivityMenuItems()
+        {
+            System.Windows.Forms.ToolStripMenuItem item;
+
+            //初始化灵敏度选项
+            foreach (int s in sensitivityArray)
+            {
+                item = new ToolStripMenuItem();
+                item.Name = "vcmToolStripMenuItem_" + s;
+                item.Size = new Size(140, 22);
+                item.Text = s + "μv/cm";
+                item.Click += new EventHandler(this.SensivityToolStripMenuItem_Click);
+                if (s == sensitivity)
+                    item.Checked = true;
+                this.sensitivityToolStripMenuItem.DropDownItems.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// 初始化通道数量选项
+        /// -- by lxl
+        /// </summary>
+        private void InitSignalNumMenuItems()
+        {
+            System.Windows.Forms.ToolStripMenuItem item;
+
+            //初始化通道显示数据选项
+            foreach (int si in signalNumArray)
+            {
+                item = new ToolStripMenuItem();
+                item.Name = "signalToolStripMenuItem_" + si;
+                item.Size = new Size(140, 22);
+                item.Text = si.ToString();
+                item.Click += new EventHandler(this.SignalToolStripMenuItem_Click);
+                if (si == signalNum)
+                    item.Checked = true;
+                this.signalToolStripMenuItem.DropDownItems.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// 根据所设置的最大通道值设置通道显示选项数组
+        /// -- by lxl
+        /// </summary>
+        /// <param name="signalNum">通道的最大数目</param>
+        private void SetSignalNumArray(int signalNum)
+        {
+            //屏幕最多显示20路通道，故>=20显示的数目都为20
+            if (signalNum >= 20)
+            {
+                signalNumArray = new int[] { 1, 2, 4, 8, 16, 20 };
+            }
+            else
+            {
+                //获得通道数目所在的区间（即大于2^i && 小于2^i+1）
+                int i;
+                for (i = 0; i < signalNum; i++)
+                {
+                    if (signalNum < Math.Pow(2, i))
+                        break;
+                }
+                i--;
+
+                //分配通道显示数据数组大小
+                if (Math.Pow(2, i) == signalNum)
+                    signalNumArray = new int[i];
+                else
+                    signalNumArray = new int[i + 1];
+
+                //给数组内容赋值。（注意，数组内最后一个值无论math.pow(2,i)是否等于count都为count的值，故将其单独提出来）
+                for (int j = 0; j < signalNumArray.Count() - 1; j++)
+                {
+                    signalNumArray[j] = (int)Math.Pow(2, j);
+                }
+                signalNumArray[signalNumArray.Length - 1] = signalNum;
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// 更新导联参数  --by zt
@@ -544,7 +725,7 @@ namespace VeegStation
             Hashtable myLeadSource = (Hashtable)this.controller.CommonDataPool.GetLeadSource(this.hardwareConfigName)[1];
 
             this.leadSource = myLeadSource.Count != 0 ? myLeadSource : defaultLeadSource;
-            this.leadList = (Hashtable)this.controller.CommonDataPool.GetLeadList(this.hardwareConfigName);
+            this.leadConfigList = (Hashtable)this.controller.CommonDataPool.GetLeadList(this.hardwareConfigName);
 
             InitLeadItems();
         }
@@ -553,62 +734,62 @@ namespace VeegStation
         /// 根据不同的设备类型，定义硬件配置名称，每个数据块占用的字节数、脑电数据占用的字节数、脑电数据开始位置  --by zt
         /// </summary>
         /// <param name="configName">硬件配置</param>
-        private void InitHardwareConfigParameters(string config) 
+        private void InitHardwareConfigParameters(byte config) 
         {
             switch (config)
             {
                 //8导脑电
-                case "P10":
+                case 0x00:
                     this.hardwareConfigName = "8导脑电";
-                    byteOfPerData = 26;
+                    //byteOfPerData = 26;
                     numberOfPerData = 8;
                     indexOfData = 6;
                     break;
 
                 //8导脑电+多参数
-                case "P11":
+                case 0x40:
                     this.hardwareConfigName = "8导脑电+多参数";
-                    byteOfPerData = 48;
+                    //byteOfPerData = 48;
                     numberOfPerData = 8;
                     indexOfData = 28;
                     break;
 
                 //16导脑电
-                case "P20":
+                case 0x04:
                     this.hardwareConfigName = "16导脑电";
-                    byteOfPerData = 46;
+                    //byteOfPerData = 46;
                     numberOfPerData = 16;
                     indexOfData = 6;
                     break;
 
                 //16导脑电+多参数
-                case "P21":
+                case 0x44:
                     this.hardwareConfigName = "16导脑电+多参数";
-                    byteOfPerData = 68;
+                    //byteOfPerData = 68;
                     numberOfPerData = 16;
                     indexOfData = 28;
                     break;
 
                 //24导脑电
-                case "P30":
+                case 0x02:
                     this.hardwareConfigName = "24导脑电";
-                    byteOfPerData = 86;
+                    //byteOfPerData = 86;
                     numberOfPerData = 19;
                     indexOfData = 6;
                     break;
 
                 //32导脑电
-                case "P40":
+                case 0x08:
                     this.hardwareConfigName = "32导脑电";
-                    byteOfPerData = 86;
+                    //byteOfPerData = 86;
                     numberOfPerData = 19;
                     indexOfData = 6;
                     break;
 
                 //32导脑电+多参数
-                case "P41":
+                case 0x48:
                     this.hardwareConfigName = "32导脑电+多参数";
-                    byteOfPerData = 108;
+                    //byteOfPerData = 108;
                     numberOfPerData = 19;
                     indexOfData = 28;
                     break;
@@ -616,6 +797,8 @@ namespace VeegStation
                     break;
             }
         }
+
+        #endregion
 
         /// <summary>
         /// 从文件中加载数据
@@ -630,12 +813,11 @@ namespace VeegStation
             int loadRec = WINDOW_SECONDS * sampleRate;
             DateTime begin = DateTime.Now;
             #region 加载数据
-
             ParseData(byteOfPerData, numberOfPerData, indexOfData, Offset, loadRec);
             #endregion
 
             DateTime end = DateTime.Now;
-            Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", _packets.Count, (end - begin).TotalSeconds));
+            Debug.WriteLine(string.Format("Read a window of data {0} records in {1} seconds", packets.Count, (end - begin).TotalSeconds));
         }
 
         /// <summary>
@@ -667,8 +849,8 @@ namespace VeegStation
             //将文件流定位在偏移值为OFFSET秒的位置
             fs.Seek(byteOfPerData * Offset * sampleRate, SeekOrigin.Current);//  --by lxl
             byte[] buf = new byte[byteOfPerData];
-            _packets.Clear();
-            testList.Clear();
+            packets.Clear();
+            testList.Clear();//测试  --by zt
 
             foreach (int x in Enumerable.Range(0, loadRec))
             {
@@ -700,12 +882,12 @@ namespace VeegStation
                 }
 
                 //其余的用0补全
-                for (int i = numberOfPerData; i < 19; i++)
+                for (int i = numberOfPerData; i < leadSource.Count; i++)
                 {
                     eeg.Add(0);
                 }
                 EegPacket pkt = new EegPacket(ekg, eeg.ToArray());
-                _packets.Add(pkt);
+                packets.Add(pkt);
             }
 
             //Console.WriteLine("最大值 {0}，最小值 {1}", testList.Max(), testList.Min());  //测试用到  --by zt
@@ -722,12 +904,12 @@ namespace VeegStation
             SeriesCollection col = chartWave.Series;
             double interval = 2000D / signalNum;
             chartWave.SuspendLayout();
-            foreach (int sIdx in Enumerable.Range(0, 20))
+            foreach (int sIdx in Enumerable.Range(0, leadConfigArrayList.Count))
             {
                 int a = col[sIdx].Points.Count;
                 col[sIdx].Points.Clear();
             }
-          #region 滤波处理
+            #region 滤波处理
             //每个通道的数据     
             //对每个通道的数据进行滤波
                 //for (int i = 0; i < _packets.Count; i++)
@@ -741,11 +923,11 @@ namespace VeegStation
                 foreach (int sIdx in Enumerable.Range(0, signalNum - 1))
                 {
                     double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, 10, 100, sampleRate);
-                    for (int i = 0; i < _packets.Count; i++)
+                    for (int i = 0; i < packets.Count; i++)
                     {
-                    _packets[i].EEG[sIdx] = NewData[i];
+                    packets[i].EEG[sIdx] = NewData[i];
                     }
-            }
+                }
             //if (isBandFilter == true)
             //{
             //    foreach (int j in Enumerable.Range(0, _packets.Count))
@@ -771,24 +953,81 @@ namespace VeegStation
             //}
             //freFilter.BandpassFilter()
             #endregion   
-            foreach (int tIdx in Enumerable.Range(0, _packets.Count))
+            try 
             {
-                foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
-                {
-                    if (sIdx == 19)
-                    {
-                        col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
-                        continue;
-                    }
-                    double val = _packets[tIdx].EEG[sIdx];
-                    //val /= 20;   //修改，注释掉  --by zt
-                    val = val * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
-                    //val += (2000 - 100 * sIdx - 50);
-                    val += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
+                if (leadConfigArrayList == null || leadConfigArrayList.Count == 0)
+                    return;
 
-                    col[sIdx].Points.AddXY(tIdx / 128.0, val);
+                //做差后的值
+                double[] sampleDifferValue = new double[leadConfigArrayList.Count];
+                foreach (int tIdx in Enumerable.Range(0, packets.Count))
+                {
+                    foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
+                    {
+                        //offset = 2400 - i * 200;   注释掉，offset不能这么写   -by lxl
+                        //offset = (int)chart_EEG.ChartAreas[0].AxisY.Maximum - i * 2 * vertical_axis_Scale - vertical_axis_Scale;  // -- by lxl
+
+                        //第20路为心电数据，放在最后一路显示
+                        //if (sIdx == 19)
+                        //{
+                        //    col[19].Points.AddXY(tIdx / 128.0, packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
+                        //    continue;
+                        //}
+
+                        //获取做差的两个电极名称
+                        string[] FPi_FPj = leadConfigArrayList[sIdx].ToString().Split(new char[] { '-' });
+
+                        //查找多差电极对应的通道号
+                        int channelNum_Positive = 1;
+                        int channelNum_Negative = 1;
+
+                        //由通道号对应通道名称的哈希表中读取需要显示的通道号
+                        foreach (DictionaryEntry item in leadSource)
+                        {
+                            if (item.Value.ToString() == FPi_FPj[0])
+                                channelNum_Positive = Convert.ToInt32(item.Key);
+                            if (item.Value.ToString() == FPi_FPj[1])
+                                channelNum_Negative = Convert.ToInt32(item.Key);
+                        }
+
+                        //求两个电极电位差
+                        double sampleValue_Positive = 0;
+                        double sampleValue_Negative = 0;
+                        if (FPi_FPj[0] != "REF")
+                            sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
+                        if (FPi_FPj[1] != "REF")
+                            sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
+                        sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
+                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                        sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
+                        col[sIdx].Points.AddXY(tIdx / (double)this.sampleRate, sampleDifferValue[sIdx]);
+                    }
                 }
+
+                //foreach (int tIdx in Enumerable.Range(0, _packets.Count))
+                //{
+                //    foreach (int sIdx in Enumerable.Range(currentTopSignal, signalNum))
+                //    {
+                //        if (sIdx == 19)
+                //        {
+                //            col[19].Points.AddXY(tIdx / 128.0, _packets[tIdx].EKG * interval * 10 / sensitivity / mmPerYGrid + (2000D - interval * (19 - currentTopSignal) - interval / 2));
+                //            continue;
+                //        }
+                //        double val = _packets[tIdx].EEG[sIdx];
+                //        //val /= 20;   //修改，注释掉  --by zt
+                //        val = val * interval * 10 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                //        //val += (2000 - 100 * sIdx - 50);
+                //        val += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
+
+                //        col[sIdx].Points.AddXY(tIdx / 128.0, val);
+                //    }
+                //}
             }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(ex.Message + ":chart");
+            }
+            
             chartWave.ResumeLayout();
             DateTime end = DateTime.Now;
             Debug.WriteLine(string.Format("Show a window of data in {0} seconds", (end - begin).TotalSeconds));
@@ -819,7 +1058,7 @@ namespace VeegStation
             displayTotalTime.Text = DT_TotalTime.ToLongTimeString().ToString();
             #endregion
             chartWave.Series.Clear();
-            foreach (int idx in Enumerable.Range(0, 20))
+            foreach (int idx in Enumerable.Range(0, leadConfigArrayList.Count))
             {
                 Series ser = new Series();
                 ser.ChartType = SeriesChartType.FastLine;
@@ -903,8 +1142,8 @@ namespace VeegStation
            CurrentSeconds += (int)(Math.Floor(xMaximum));
 
             //图表开头秒数不能大于总秒数减去水平滚动条的largechange+1，（即保证留且仅留两秒的空白提醒用户后面没有数据了） --by lxl
-            if (CurrentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
-                CurrentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
+            if (CurrentSeconds > totalSeconds - hsProgress.LargeChange + 1)
+                CurrentSeconds = totalSeconds - hsProgress.LargeChange + 1;
 
             //重新加载显示数据
             LoadData(CurrentSeconds);
@@ -920,8 +1159,8 @@ namespace VeegStation
         private void PageNext2()
         {
             CurrentSeconds += (int)(Math.Floor(xMaximum));
-            if (CurrentSeconds > _totalSeconds - hsProgress.LargeChange + 1)
-                CurrentSeconds = _totalSeconds - hsProgress.LargeChange + 1;
+            if (CurrentSeconds > totalSeconds - hsProgress.LargeChange + 1)
+                CurrentSeconds = totalSeconds - hsProgress.LargeChange + 1;
             CurrentOffset = CurrentSeconds;
             LoadData(CurrentSeconds);
             ShowData();
@@ -1280,7 +1519,7 @@ namespace VeegStation
                 btnNext.Enabled = true;
                 return;
             }
-            else if (CurrentSeconds > _totalSeconds - hsProgress.LargeChange)
+            else if (CurrentSeconds > totalSeconds - hsProgress.LargeChange)
             {
                 btnPrev.Enabled = true;
                 btnNext.Enabled = false;
@@ -1602,6 +1841,91 @@ namespace VeegStation
 
         #endregion
 
+        #region 事件listView -- by lxl
+
+        /// <summary>
+        /// 更新预定义事件列表
+        /// -- by lxl
+        /// </summary>
+        private void UpdateLVPreDefineEvents()
+        {
+            //事件显示编号
+            int index = 1;
+
+            //开始更新列表
+            lvPreDefineEvents.BeginUpdate();
+
+            //更新列表前先清空列表内容
+            lvPreDefineEvents.Items.Clear();
+
+            if (preDefineEventsList != null)
+            {
+                //根将从Playbackform中读取的内容插入到列表中
+                foreach (PreDefineEvent p in preDefineEventsList)
+                {
+                    ListViewItem li = new ListViewItem(p.EventName);
+
+
+                    //允许更改item的颜色
+                    li.UseItemStyleForSubItems = false;
+
+                    //初始化listview的内容项
+                    li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
+                    li.SubItems.Add(index.ToString());
+                    li.SubItems.Add("");
+
+                    //序号递增
+                    index++;
+                    lvPreDefineEvents.Items.Add(li);
+
+                    lvPreDefineEvents.Items[index - 2].SubItems[3].BackColor = p.EventColor;
+                }
+            }
+
+            lvPreDefineEvents.EndUpdate();
+        }
+
+        /// <summary>
+        /// 更新自定义事件
+        /// -- by lxl
+        /// </summary>
+        private void UpdateLVCustomEvents()
+        {
+            //事件显示的编号
+            int index = 1;
+            
+            //开始更新列表
+            lvCustomEvents.BeginUpdate();
+
+            //先把列表清空
+            lvCustomEvents.Items.Clear();
+
+            if (customEventList != null)
+            {
+                //从playbackform中读取事件列表，然后将事件添加到列表中
+                foreach (CustomEvent p in customEventList)
+                {
+                    ListViewItem li = new ListViewItem(p.EventName);
+
+                    //允许更改item的颜色
+                    li.UseItemStyleForSubItems = false;
+
+                    li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
+                    li.SubItems.Add(index.ToString());
+                    li.SubItems.Add("");
+                    index++;
+                    lvCustomEvents.Items.Add(li);
+                    this.lvCustomEvents.Items[index - 2].SubItems[3].BackColor = CustomEvent.CustomEventColor[p.EventColorIndex];
+                    this.lvCustomEvents.Items[index - 2].SubItems[3].Name = p.EventColorIndex.ToString();
+                }
+            }
+
+            //结束更新列表
+            lvCustomEvents.EndUpdate();
+        }
+
+        #endregion
+
         /// <summary>
         /// --by wsp
         /// 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；
@@ -1639,75 +1963,78 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 初始化时间基准与灵敏度的选项
-        /// -- by lxl
-        /// </summary>
-        private void InitMenuItems()
-        {
-            System.Windows.Forms.ToolStripMenuItem item;
-
-            //初始化时间基准选项
-            foreach (int t in timeStandardArray)
-            {
-                item = new ToolStripMenuItem();
-                item.Name = "timeStandardMenuItem_" + t;
-                item.Size = new Size(140, 22);
-                item.Text = t + "mm/sec";
-                item.Click += new EventHandler(this.TimerStandartMenuItem_Click);
-                if (t == timeStandard)
-                    item.Checked = true;
-                this.timeStandartToolStripMenuItem.DropDownItems.Add(item);
-            }
-
-            //初始化灵敏度选项
-            foreach (int s in sensitivityArray)
-            {
-                item = new ToolStripMenuItem();
-                item.Name = "vcmToolStripMenuItem_" + s;
-                item.Size = new Size(140, 22);
-                item.Text = s + "μv/cm";
-                item.Click += new EventHandler(this.SensivityToolStripMenuItem_Click);
-                if (s == sensitivity)
-                    item.Checked = true;
-                this.sensitivityToolStripMenuItem.DropDownItems.Add(item);
-            }
-
-            //初始化通道显示数据选项
-            foreach (int si in signalNumArray)
-            {
-                item = new ToolStripMenuItem();
-                item.Name = "signalToolStripMenuItem_" + si;
-                item.Size = new Size(140, 22);
-                item.Text = si.ToString();
-                item.Click += new EventHandler(this.SignalToolStripMenuItem_Click);
-                if (si == signalNum)
-                    item.Checked = true;
-                this.signalToolStripMenuItem.DropDownItems.Add(item);
-            }
-        }
-
-        /// <summary>
         /// 初始化导联选择选项  --by zt
         /// </summary>
         private void InitLeadItems() 
         {
+            //清除
+            this.leadChooseToolStripMenuItem.DropDownItems.Clear();
             System.Windows.Forms.ToolStripMenuItem item;//= new ToolStripMenuItem();
+            currentLeadConfigName = "默认导联配置";
+            //初始化导联选择选项
+            foreach (string name in leadConfigList.Keys) 
+            {
+                item = new ToolStripMenuItem();
+                item.Name = "leadNameMenuItem_" + name;
+                item.Size = new Size(140, 22);
+                item.Text = name;
+                item.Click += new EventHandler(this.LeadNameMenuItem_Click);
+                if (name == currentLeadConfigName)
+                    item.Checked = true;
+                this.leadChooseToolStripMenuItem.DropDownItems.Add(item);
+            }
 
-            ////初始化时间基准选项
-            //foreach (int t in timeStandardArray)
-            //{
-            //    item = new ToolStripMenuItem();
-            //    item.Name = "timeStandardMenuItem_" + t;
-            //    item.Size = new Size(140, 22);
-            //    item.Text = t + "mm/sec";
-            //    item.Click += new EventHandler(this.TimerStandartMenuItem_Click);
-            //    if (t == timeStandard)
-            //        item.Checked = true;
-            //    this.timeStandartToolStripMenuItem.DropDownItems.Add(item);
-            //}
+            //当前导联配置
+            leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
 
+            //
 
         }
+
+        /// <summary>
+        /// 导联菜单选项点击事件
+        /// -- by zt
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LeadNameMenuItem_Click(object sender, EventArgs e)
+        {
+            //string num = sender.ToString().Substring(0, sender.ToString().Length - 6);
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+
+            //将位选中的checked改为false，把选中的item的checked改为true
+            foreach (ToolStripMenuItem i in this.leadChooseToolStripMenuItem.DropDownItems)
+            {
+                i.Checked = false;
+            }
+            item.Checked = true;
+
+            //当前导联名称即选择导联名称
+            currentLeadConfigName = item.Text;
+
+            //选择导联配置
+            leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
+
+            //label改变
+
+            //通道数目改变
+
+            //重新显示数据
+            ShowData();
+
+            //timeStandard = int.Parse(num);
+
+            ////修改X轴的最大值
+            //SetAxisXMaximum(pageWidthInMM / timeStandard);
+
+            ////让画图函数重新计算一下当前的_xMaximum是多少，（因为若面板是显示的状态则只能再根据坐标与像素点来计算X轴显示的最大值）
+            //isChangingBoardShow = true;
+
+            ////重新加载数据与显示数据
+            //LoadData(CurrentSeconds);
+            //ShowData();
+        }
+
 
        /// <summary>
        /// 视频加速
@@ -1885,6 +2212,7 @@ namespace VeegStation
             }
         }
 
+        #region 画事件 -- by lxl
         /// <summary>
         /// 画病人事件
         /// -- by lxl
@@ -1898,23 +2226,61 @@ namespace VeegStation
             SolidBrush strBrush = new SolidBrush(Color.White);
             Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
 
+            //画自定义和预定义事件
+            DrawPreDefineEvents(g, dotPen, strBrush, strFont);
+            DrawCustomEvents(g, dotPen, strBrush, strFont);
+        }
+
+        /// <summary>
+        /// 画预定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="g">画布</param>
+        /// <param name="pen">画笔</param>
+        /// <param name="strBrush">字体的画刷</param>
+        /// <param name="strFont">字体</param>
+        private void DrawPreDefineEvents(Graphics g,Pen pen,SolidBrush strBrush, Font strFont)
+        {
+            if(preDefineEventsList == null)
+            {
+                return;
+            }
             //事件该画的位置
             double drawPosition;
 
             //画预定义事件                   
-            foreach (PreDefineEvent p in preDefineEventsList)                  
+            foreach (PreDefineEvent p in preDefineEventsList)
             {
                 //只画当前页面能显示的事件
                 if (p.EventPosition / sampleRate < currentSeconds)
                     continue;
                 if (p.EventPosition / sampleRate > CurrentSeconds + xMaximum)
                     break;
-                dotPen.Color = p.EventColor;
+                pen.Color = p.EventColor;
                 drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
                 g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
-                g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
+                g.DrawLine(pen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
             }
+        }
+
+        /// <summary>
+        /// 画自定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="g">画布</param>
+        /// <param name="pen">画笔</param>
+        /// <param name="strBrush">字体的画刷</param>
+        /// <param name="strFont">字体</param>
+        private void DrawCustomEvents(Graphics g,Pen pen,SolidBrush strBrush, Font strFont)
+        {
+            if (customEventList == null)
+            {
+                return;
+            }
+
+            //事件该画的位置
+            double drawPosition;
 
             //画自定义事件                  
         //    foreach (CustomEvent p in customEventList)
@@ -1931,6 +2297,8 @@ namespace VeegStation
         //        g.DrawLine(dotPen, new Point((int)drawPosition, 5), new Point((int)drawPosition, (int)this.chartWave.ChartAreas[0].AxisY.ValueToPixelPosition(0)));
         //    }
         }
+
+        #endregion
         /// <summary>
         /// labelPanel的重绘函数,若要更新label则需调用labelPanel.Invalidate()函数
         /// -- by lxl
@@ -1948,7 +2316,7 @@ namespace VeegStation
             //根据信道所在的位置分别画25通道的label
             foreach (int i in Enumerable.Range(currentTopSignal, signalNum))
             {
-                e.Graphics.DrawString((i + 1).ToString(), strFont, strBrush, new RectangleF(0, (int)(topSigPos + (i - currentTopSignal) * intervalPos), this.labelPanel.Width, 15));
+                e.Graphics.DrawString(leadConfigArrayList[i].ToString(), strFont, strBrush, new RectangleF(0, (int)(topSigPos + (i - currentTopSignal) * intervalPos), this.labelPanel.Width, 15));
             }
         }
         #endregion
@@ -1971,10 +2339,7 @@ namespace VeegStation
             isChangingBoardShow = true;
 
             //修改竖直滚动条的位置
-            if (isBoardShow)
-                this.vScroll.Location = new Point(this.boardPanel.Location.X - this.vScroll.Width, this.vScroll.Location.Y);
-            else
-                this.vScroll.Location = new Point(this.chartWave.Location.X + this.chartWave.Width - this.vScroll.Width, this.vScroll.Location.Y);
+            UpdateVScrollLocation();
 
             //this.chartWave.Invalidate();
         }
@@ -1998,6 +2363,7 @@ namespace VeegStation
             ShowData();
         }
 
+        #region 修改通道数目部分 -- by lxl
         /// <summary>
         /// 通道数目显示点击事件
         /// -- by lxl
@@ -2015,8 +2381,23 @@ namespace VeegStation
             }
             item.Checked = true;
 
-            //活得所点击的所显示的显示信道数量，(获得到的为text)
-            signalNum = int.Parse(sender.ToString());
+            //活得所点击的所显示的显示信道数量，并修改(获得到的为text)
+            SetSignalNum(int.Parse(sender.ToString()));
+
+            //重新显示数据
+            ShowData();
+        }
+
+        /// <summary>
+        /// 设置当前显示的通道数目是多少，并进行相对应的修改
+        /// PS:由于会修改到图表和label，切记一定要在调用完InitializeComponent（）后调用这个函数！ 不然会报错！
+        /// PPS:调用该函数后需要调用ShowData()才能更新显示的数据
+        /// -- by lxl
+        /// </summary>
+        /// <param name="num"></param>
+        private void SetSignalNum(int num)
+        {
+            signalNum = num;
 
             //修改chart的样式
             this.chartWave.ChartAreas[0].AxisY.MajorGrid.Interval = 2000D / signalNum;
@@ -2026,21 +2407,29 @@ namespace VeegStation
             if (currentTopSignal + signalNum > 20)
                 currentTopSignal = 20 - signalNum;
 
-            //重新显示数据
-            ShowData();
-
-            //根据设置的显示数量设置右边数值滚动条是否可见
-            if (signalNum < 20)
-                SetVScrollVisible(true);
-            else
-                SetVScrollVisible(false);
+            UpdateVScrollVisibleStatus();
 
             //设置数值滚动条的可变范围
             this.vScroll.LargeChange = signalNum + 1;
 
             //重画左边的labelPanel
             this.labelPanel.Invalidate();
+
         }
+
+        /// <summary>
+        /// 更新当前右边垂直滚动条是否可用
+        /// -- by lxl
+        /// </summary>
+        private void UpdateVScrollVisibleStatus()
+        {
+            //根据设置的显示数量设置右边数值滚动条是否可见
+            if (signalNum < leadConfigArrayList.Count)
+                SetVScrollVisible(true);
+            else
+                SetVScrollVisible(false);
+        }
+
         /// <summary>
         /// 设置竖直滚动条是否可用
         /// -- by lxl
@@ -2049,6 +2438,24 @@ namespace VeegStation
         private void SetVScrollVisible(bool flag)
         {
             this.vScroll.Visible = flag;
+            if (flag)
+            {
+                UpdateVScrollLocation();
+            }
+        }
+
+        /// <summary>
+        /// 更新竖直滚动条的位置
+        /// -- by lxl
+        /// </summary>
+        private void UpdateVScrollLocation()
+        {
+
+            //修改竖直滚动条的位置
+            if (isBoardShow)
+                this.vScroll.Location = new Point(this.boardPanel.Location.X - this.vScroll.Width, this.vScroll.Location.Y);
+            else
+                this.vScroll.Location = new Point(this.chartWave.Location.X + this.chartWave.Width - this.vScroll.Width, this.vScroll.Location.Y);
         }
 
         /// <summary>
@@ -2072,6 +2479,9 @@ namespace VeegStation
                 this.labelPanel.Invalidate();
             }
         }
+
+        #endregion
+
         /// <summary>
         /// 事件按钮点击事件
         /// -- by lxl
@@ -2613,7 +3023,7 @@ namespace VeegStation
 
         private void 导联设置ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            myLeadConfigForm.InitLeadConfig();
+            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
             //myLeadConfigForm.Show();
             myLeadConfigForm.ShowDialog();
         }
@@ -2629,11 +3039,19 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 设置带通滤波是否选中
+        /// 设置带通滤波是否选中,及状态栏中带通滤波
         /// </summary>
         public void SetBandFilterChecked()
         {
             this.BandFilterToolStripMenuItem.Checked = isBandFilter;
+            if (this.BandFilterToolStripMenuItem.Checked == false) 
+            {
+                this.toolStripStatusLabel_bandFilter.Text = "None";
+            }
+            else 
+            {
+                this.toolStripStatusLabel_bandFilter.Text = lowFrequency + "Hz,  " + this.highFrequency + "Hz";
+            }
         }
 
         private void Filter50HzToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2643,6 +3061,7 @@ namespace VeegStation
                 //不选50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = false;
                 is50HzFilter = false;
+                this.toolStripStatusLabel_trap.Text = "None";
                 LoadData(CurrentSeconds);
                 ShowData();
             }
@@ -2651,6 +3070,7 @@ namespace VeegStation
                 //选择50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = true;
                 is50HzFilter = true;
+                this.toolStripStatusLabel_trap.Text = "50Hz";
                 LoadData(CurrentSeconds);
                 ShowData();
             }
@@ -2660,8 +3080,8 @@ namespace VeegStation
         {
             myBandFilterForm.InitFormFilter();
             myBandFilterForm.Show();
-            
         }
+
         /// <summary>
         /// 返回一个通道所有的数据--by wsp
         /// </summary>
@@ -2669,11 +3089,11 @@ namespace VeegStation
         /// <returns></returns>
         private double[] ReturnSignalData(int NumSigal)
         {
-            double[] singalData = new double[_packets.Count];
+            double[] singalData = new double[packets.Count];
             int i = 0;
-            foreach (int sIdx in Enumerable.Range(0, _packets.Count))
+            foreach (int sIdx in Enumerable.Range(0, packets.Count))
             {
-                    singalData[i] = _packets[sIdx].EEG[NumSigal];
+                    singalData[i] = packets[sIdx].EEG[NumSigal];
                     i++;
             }
             return singalData;
@@ -2685,7 +3105,7 @@ namespace VeegStation
             int i = 0;
             foreach (int sIdx in Enumerable.Range(0, signalNum-1))
             {
-                singalData[i] = _packets[NumSigal].EEG[sIdx];
+                singalData[i] = packets[NumSigal].EEG[sIdx];
                 i++;
             }
             return singalData;
