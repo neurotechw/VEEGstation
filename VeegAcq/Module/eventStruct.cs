@@ -37,7 +37,7 @@ namespace VeegStation
         /// </summary>
         /// <param name="index"></param>
         /// <param name="pos"></param>
-        public PreDefineEvent(int index, UInt16 pos,int posInF)
+        public PreDefineEvent(int index, UInt16 pos,int posInF,int id)
         {
             if (preDefineEventColorArray == null || preDefineEventNameArray == null)
             {
@@ -53,6 +53,7 @@ namespace VeegStation
             eventColor = preDefineEventColorArray[index];
             eventPosition = pos;
             posInFile = posInF;
+            eventID = id;
         }
 
         private Color eventColor;
@@ -60,6 +61,16 @@ namespace VeegStation
         private string eventName;
         private int eventNameIndex;
         private int posInFile;
+        private int eventID;
+
+        /// <summary>
+        /// 预定义事件ID，用于寻找事件用。值为int形，为预定义事件存储在.nat文件中的顺序，从1开始
+        /// </summary>
+        public int EventID
+        {
+            get { return eventID; }
+            set { eventID = value; }
+        }
 
         /// <summary>
         /// 预定义事件所在文件里的位置

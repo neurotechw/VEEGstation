@@ -370,7 +370,6 @@ namespace VeegStation
             myController = new VeegControl(play);
             play.ReigisterVeegControl(myController);
             play.InitPlaybackFormParas();
-
             play.ShowDialog();
             play.Dispose();
         }

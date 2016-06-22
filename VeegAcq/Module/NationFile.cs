@@ -331,6 +331,7 @@ namespace VeegStation
 
             //一直读，独到值为0x45的BYTE即为读出事件
             int mark;
+            int id = 1;
             byte[] myByte = new byte[7];
             do
             {
@@ -347,7 +348,7 @@ namespace VeegStation
                 fs.Read(myByte, 0, 7);
 
                 //BYTE第一位为标志预定义事件编号位，第四第五位为存储点位置位（低位存储）
-                pdList.Add(new PreDefineEvent(myByte[0], (ushort)(myByte[3] | myByte[4] << 8), posInFile - 1));   //减1把readbyte那的+1减掉
+                pdList.Add(new PreDefineEvent(myByte[0], (ushort)(myByte[3] | myByte[4] << 8), posInFile - 1, id));   //减1把readbyte那的+1减掉
                 posInFile += 7;
             }
             while (mark >= 0);
@@ -388,12 +389,11 @@ namespace VeegStation
                     name = Encoding.GetEncoding(936).GetString(nameInByte).Trim('\0');
                     cList.Add(new CustomEvent(name, (ushort)(entByte[i * 128 + 9 + 104] | (entByte[i * 128 + 9 + 105] << 8)), entByte[i * 128 + 9 + 108]));
                 }
-                return cList;
+
+                //将时间列表排序
+                cList.Sort(new CustomEventComparer());
             }
-            else
-            { 
-                return cList; 
-            }
+            return cList;
         }
 
         /// <summary>
@@ -456,7 +456,7 @@ namespace VeegStation
                 {
                     mRTArrayIndex++;
                     eventProperty.RecordQuantity.Add(myByte[6] << 24 | myByte[5] << 16 | myByte[4] << 8 | myByte[3]);
-                    eventProperty.RecordTime.Add(new TimeSpan(0, 0, eventProperty.RecordQuantity[mRTArrayIndex]));
+                    eventProperty.RecordTime.Add(new TimeSpan(0, 0, eventProperty.RecordQuantity[mRTArrayIndex] /natInfo.Freq));
                 }
             } while (mark >= 0);
             #endregion

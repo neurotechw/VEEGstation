@@ -65,6 +65,18 @@ namespace VeegStation
         /// </summary>
         private VideoForm video;
 
+        /// <summary>
+        /// 获得中断之间的时差
+        /// --by wsp
+        /// </summary>
+        private double getDvalue=0.0;
+
+        /// <summary>
+        /// 中断的时间数组
+        /// --by wsp
+        /// </summary>
+        private double[] timeSignal;
+
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         
         /// <summary>
@@ -206,7 +218,7 @@ namespace VeegStation
         /// 删除预定义事件时用来保存删除事件的位置列表
         /// -- by lxl
         /// </summary>
-        private List<int> positionInFileList = new List<int>();
+        private List<int> positionInFileOfDeletedFileList = new List<int>();
         #endregion
 
         private int _Page;
@@ -1023,6 +1035,7 @@ namespace VeegStation
 
         private void PlaybackForm_Load(object sender, EventArgs e)
         {
+           
             toolTip1.SetToolTip(btn_accelerate, "加速");
             toolTip1.SetToolTip(btn_decelerate, "减速");
             toolTip1.SetToolTip(btn_hide, "隐藏");
@@ -1051,7 +1064,7 @@ namespace VeegStation
                 ser.ChartType = SeriesChartType.FastLine;
                 ser.BorderDashStyle = ChartDashStyle.Solid;
                 chartWave.Series.Add(ser);
-            }         
+            }
             if (nfi.HasVideo)
             {
                 IMediaPlayerFactory factory = new MediaPlayerFactory();
@@ -1080,6 +1093,11 @@ namespace VeegStation
                 video = new VideoForm(this);
                 video.Show();
                 video.Hide();
+            }
+            else
+            {
+                interfaceToolStripMenuItem.Enabled = false;
+                this.vScroll.Location = new Point(this.chartWave.Location.X + this.chartWave.Width - this.vScroll.Width, this.vScroll.Location.Y);
             }
         }
 
@@ -1276,7 +1294,30 @@ namespace VeegStation
                     DT_RelativeTime = DT_RelativeTime.AddSeconds(remainTime);
                     LongTime = (DT_RelativeTime - vTime).TotalSeconds;
                 //    displayRecordingTime.Text = DT_RelativeTime.ToLongTimeString().ToString();
-                    AllShowTime(GetStarTotalSecond(), CurrentSeconds, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+
+                    //保证脑电采集时信号中断情况--by wsp
+                    //测试使用
+                   // eventProperty.BeginningTime = new List<DateTime> { DateTime.Parse("2016-05-24  16:10:32"),DateTime.Parse("2016-05-24  16:56:40"), DateTime.Parse("2016-05-24  23:59:40") };
+                  //  eventProperty.RecordTime = new List<TimeSpan> { TimeSpan.Parse("00:00:00"),TimeSpan.Parse("00:00:10"), TimeSpan.Parse("00:00:20") };
+                    GetAllDvalue();
+                    for (int j = 0; j < timeSignal.GetLength(0); j++)
+                    {
+                        if ((int)(CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset) == timeSignal[j])
+                        {
+                                displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
+                                //TimeSpan dValue = eventProperty.BeginningTime[j] - nfi.StartDateTime;
+                                // getDvalue = dValue.TotalSeconds - timeSignal[j];
+                                getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j];
+                        }
+                        else
+                        {
+                            if (GetStarTotalSecond() + CurrentSeconds + getDvalue + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= 86400)
+                            {
+                                getDvalue = -(GetStarTotalSecond() + CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+                            }
+                            AllShowTime(GetStarTotalSecond(), CurrentSeconds + getDvalue, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+                        }
+                    }           
                     ShowTime(CurrentSeconds, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
                 }
             }
@@ -1293,14 +1334,16 @@ namespace VeegStation
                  if ((int)nfi.Duration.TotalSeconds < nfi.Duration.TotalSeconds)
                  {
                      dt_TotalTime1 = dt_TotalTime1.AddSeconds(nfi.Duration.TotalSeconds + 1);
-                     dt_Begin1 = dt_Begin1.AddSeconds(nfi.Duration.TotalSeconds + 1);
+                     //dt_Begin1 = dt_Begin1.AddSeconds(nfi.Duration.TotalSeconds + 1);
+                     AllShowTime(GetStarTotalSecond(), CurrentSeconds + getDvalue+1, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
                  }
                  else
                  {
                      dt_TotalTime1 = dt_TotalTime1.AddSeconds(nfi.Duration.TotalSeconds);
-                     dt_Begin1 = dt_Begin1.AddSeconds(nfi.Duration.TotalSeconds);
+                     //dt_Begin1 = dt_Begin1.AddSeconds(nfi.Duration.TotalSeconds);
+                     AllShowTime(GetStarTotalSecond(), CurrentSeconds + getDvalue, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
                  }
-                 displayStartTime.Text = dt_Begin1.ToLongTimeString().ToString();
+                 //displayStartTime.Text = dt_Begin1.ToLongTimeString().ToString();
                  displayRecordingTime.Text = dt_TotalTime1.ToLongTimeString().ToString();
              }
             UpdateBtnEnable();
@@ -1333,6 +1376,10 @@ namespace VeegStation
             else
             {
                 timer.Enabled = true;
+                if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= nfi.Duration.TotalSeconds)
+                {
+                    Clear();
+                } 
                 //MessageBox.Show("没有视频", "提示");
             }
             btnPlay.Enabled = false;
@@ -1440,7 +1487,6 @@ namespace VeegStation
             {
                 CurrentSeconds = hsProgress.Value;
                 Changed();
-
                 //为保证拖动进度条之后，竖线位置保持不变--by wsp
                 if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset < nfi.Duration.TotalSeconds)
                     CurrentOffset = CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset;
@@ -1662,7 +1708,10 @@ namespace VeegStation
             isChangingBoardShow = true; 
             
             //重新加载数据与显示数据
-            LoadData(CurrentSeconds);
+            if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset > pageWidthInMM / timeStandard)
+                LoadData(CurrentSeconds + (int)(chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset));
+            else
+                LoadData(CurrentSeconds);
             ShowData();
         }
 
@@ -1798,10 +1847,30 @@ namespace VeegStation
         /// </summary>
         private void Changed()
         {
+        //    eventProperty.BeginningTime = new List<DateTime> { DateTime.Parse("2016-05-24  16:10:32"), DateTime.Parse("2016-05-24  16:56:40"), DateTime.Parse("2016-05-24  23:59:40") };
+       //     eventProperty.RecordTime = new List<TimeSpan> { TimeSpan.Parse("00:00:00"), TimeSpan.Parse("00:00:10"), TimeSpan.Parse("00:00:20") };
+            GetAllDvalue();
+            for (int i = timeSignal.GetLength(0) - 1; i >0 ; i--)
+            {
+                if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i])
+                {
+                    getDvalue = GettimeSignalNumber(i) - GetStarTotalSecond() - timeSignal[i];
+                    break;
+                }
+                else if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i - 1])
+                {
+                    getDvalue = GettimeSignalNumber(i - 1) - GetStarTotalSecond() - timeSignal[i-1];
+                    break;
+                }
+            }
             DT = nfi.StartDateTime;
             DT_RelativeTime = DateTime.Parse("2016-05-23  00:00:00");
             DT = DT.AddSeconds(CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
-            AllShowTime(GetStarTotalSecond(), CurrentSeconds, chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+            if (GetStarTotalSecond() + CurrentSeconds + getDvalue + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= 86400)
+            {
+                getDvalue -=86400;
+            }
+            AllShowTime(GetStarTotalSecond(), CurrentSeconds+getDvalue, chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
       //      displayStartTime.Text = DT.ToLongTimeString().ToString();
             DT_RelativeTime = DT_RelativeTime.AddSeconds(CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
       //      displayRecordingTime.Text = DT_RelativeTime.ToLongTimeString().ToString();
@@ -2201,6 +2270,7 @@ namespace VeegStation
             DT_RelativeTime = DateTime.Parse("2016-05-23  00:00:00");
             DT_TotalTime = DateTime.Parse("2016-05-23 00:00:00");
             CurrentOffset = 0;
+            if (nfi.HasVideo)
             Player.Time =0;
             DT = nfi.StartDateTime;
             hsProgress.Value = 0;
@@ -2355,25 +2425,6 @@ namespace VeegStation
                 myCustomEventForm.InitList();
             }
         }
-        /// <summary>
-        /// 获得预定义事件列表
-        /// -- by lxl
-        /// </summary>
-        /// <returns>预定义事件列表</returns>
-        public List<PreDefineEvent> GetPreEventList()
-        {
-            return preDefineEventsList;
-        }
-
-        /// <summary>
-        /// 获得自定义事件列表
-        /// -- by lxl
-        /// </summary>
-        /// <returns>自定义事件列表</returns>
-        public List<CustomEvent> GetCustomEventList()
-        {
-            return customEventList;
-        }
 
         
 
@@ -2518,16 +2569,30 @@ namespace VeegStation
         /// </summary>
         /// <param name="flag">是否是预定义事件</param>
         /// <param name="index">索引</param>
-        public void RemoveEvent(bool flag, int index)
+        /// <param name="id">预定义事件的ID,当FLAG为true时需要</param>
+        public void RemoveEvent(bool flag, int index,int id=0)
         {
             if (flag)
             {
+                //判断ID必须要赋值
+                if (id == 0)
+                    throw new Exception("删除预定义事件ID不能为0，请设置要删除的预定义事件的ID");
+
                 //判定预定义事件列表最少有一个事件可供删除
                 if (preDefineEventsList.Count() <= 0)
                     return;
 
-                positionInFileList.Add(preDefineEventsList[index].PosInFile);
-                preDefineEventsList.RemoveAt(index);
+                //positionInFileList.Add(preDefineEventsList[index].PosInFile);
+                //preDefineEventsList.RemoveAt(index);
+                foreach (PreDefineEvent p in preDefineEventsList)
+                {
+                    if (p.EventID == id)
+                    {
+                        positionInFileOfDeletedFileList.Add(p.PosInFile);
+                        preDefineEventsList.Remove(p);
+                        break;
+                    }
+                }
 
                 //事件删除后更新列表
                 UpdateEventsListView(flag);
@@ -2568,6 +2633,7 @@ namespace VeegStation
             }
         }
 
+        #region 事件list操作 -- by lxl
         /// <summary>
         /// 往列表中添加预定义事件
         /// -- by lxl
@@ -2578,7 +2644,7 @@ namespace VeegStation
         private void AddPreDefineEvents(int index,ushort pointPos,int posInFile)
         {
             //将事件添加进列表
-            preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile));
+            preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile,preDefineEventsList.Count));
         }
 
         /// <summary>
@@ -2592,7 +2658,31 @@ namespace VeegStation
         {
             //将事件添加进列表并排序
             customEventList.Add(new CustomEvent(name, pointPos, colorIndex));
+            customEventList.Sort(new CustomEventComparer());
         }
+
+        /// <summary>
+        /// 获得排序后的预定义事件列表,返回的列表是经过排序过的
+        /// -- by lxl
+        /// </summary>
+        /// <returns>预定义事件列表</returns>
+        public List<PreDefineEvent> GetSortedPreEventList()
+        {
+            List<PreDefineEvent> returnList = new List<PreDefineEvent>(preDefineEventsList);
+            returnList.Sort(new PreDefineEventComparer());
+            return returnList;
+        }
+
+        /// <summary>
+        /// 获得自定义事件列表
+        /// -- by lxl
+        /// </summary>
+        /// <returns>自定义事件列表</returns>
+        public List<CustomEvent> GetCustomEventList()
+        {
+            return customEventList;
+        }
+        #endregion
 
         #region 事件listView -- by lxl
 
@@ -2614,7 +2704,7 @@ namespace VeegStation
             if (preDefineEventsList != null)
             {
                 //根将从Playbackform中读取的内容插入到列表中
-                foreach (PreDefineEvent p in preDefineEventsList)
+                foreach (PreDefineEvent p in GetSortedPreEventList())
                 {
                     ListViewItem li = new ListViewItem(p.EventName);
 
@@ -2623,6 +2713,7 @@ namespace VeegStation
                     li.UseItemStyleForSubItems = false;
 
                     //初始化listview的内容项
+                    li.Name = p.EventID.ToString();
                     li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
                     li.SubItems.Add(index.ToString());
                     li.SubItems.Add("");
@@ -2699,6 +2790,7 @@ namespace VeegStation
         }
 
         #endregion
+
         /// <summary>
         /// 当回放Form关闭时，弹出视频Form也要关闭
         /// </summary>
@@ -2771,7 +2863,7 @@ namespace VeegStation
             {
                 h = 0;
                 s = 0;
-                m = 0;
+               m = 0;
             }
             else
             {
@@ -2779,7 +2871,7 @@ namespace VeegStation
                 int l = (int)(Starttime + CurrentPosition + Line) % 3600;
                 m = l / 60;
                 s = l % 60;
-            }
+           }
             if (h > 9 && s > 9 && m > 9)
                 displayStartTime.Text = h.ToString() + ":" + m.ToString() + ":" + s.ToString();
             if (h > 9 && s <= 9 && m > 9)
@@ -2820,6 +2912,7 @@ namespace VeegStation
             this.labelPanel.Invalidate();
         }
 
+        #region 事件存储 -- by lxl
         /// <summary>
         /// 将预定义事件列表存到文件中
         /// -- by lxl
@@ -2848,7 +2941,7 @@ namespace VeegStation
                     bw.Write(byteBuf);
                 }
 
-                foreach (int p in positionInFileList)
+                foreach (int p in positionInFileOfDeletedFileList)
                 {
                     bw.Seek(p, SeekOrigin.Begin);
                     bw.Write(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
@@ -2868,6 +2961,7 @@ namespace VeegStation
 
         /// <summary>
         /// 将预定义事件转换成BYTE数组
+        /// -- by lxl
         /// </summary>
         /// <param name="pdEvent"></param>
         /// <returns></returns>
@@ -2902,6 +2996,10 @@ namespace VeegStation
                     File.Delete(filename);
                 }
 
+                //list没有内容则只删除文件
+                if (customEventList.Count <= 0)
+                    return 0;
+
                 //打开文件流
                 FileStream fs = new FileStream(filename, FileMode.CreateNew, FileAccess.ReadWrite);
                 BinaryWriter bw = new BinaryWriter(fs);
@@ -2931,6 +3029,11 @@ namespace VeegStation
             }
         }
 
+        /// <summary>
+        /// 生成自定义事件.ent文件的头部二进制
+        /// -- by lxl
+        /// </summary>
+        /// <returns></returns>
         private byte[] generateCustomEventHeadByte()
         {
             byte[] returnBytes = new byte[9];
@@ -2946,6 +3049,7 @@ namespace VeegStation
 
         /// <summary>
         /// 将自定义事件按格式转成BYTE数组
+        /// -- by lxl
         /// </summary>
         /// <param name="cEvent"></param>
         /// <returns></returns>
@@ -2974,6 +3078,8 @@ namespace VeegStation
 
             return returnBytes;
         }
+
+        #endregion
 
         /// <summary>
         /// 鼠标放上去显示点的值，测试代码，正式版删掉。  --by zt
@@ -3096,7 +3202,29 @@ namespace VeegStation
             }
             return singalData;
         }
+        /// <summary>
+        /// 病人属性隐藏按钮事件
+        /// </summary>
+        /// --by wsp
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnClose_Click_1(object sender, EventArgs e)
+        {
+            this.DetectionInfoPanel.Hide();
+        }
 
+        /// <summary>
+        /// 检查属性隐藏按钮事件
+        /// --by wsp
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnHide_Click_1(object sender, EventArgs e)
+        {
+            this.PationInfoPanel.Hide();
+        }
+
+        #region 面板listview控制按钮点击事件  -- by lxl
         /// <summary>
         /// 删除按钮点击事件
         /// -- by lxl
@@ -3113,7 +3241,7 @@ namespace VeegStation
             }
 
             //删除事件
-            RemoveEvent(true, lvPreDefineEvents.SelectedIndices[0]);
+            RemoveEvent(true, lvPreDefineEvents.SelectedIndices[0],int.Parse(lvPreDefineEvents.SelectedItems[0].Name));
 
             //更新相关的事件列表
             UpdateEventsListView(true);
@@ -3197,5 +3325,29 @@ namespace VeegStation
             myAddCustomEventForm.ShowDialog();
         }
 
+        #endregion
+
+        /// 获取执行中断过程中所有时间差
+        /// --by wsp
+        /// </summary>
+        /// <returns></returns>
+        private double[] GetAllDvalue()
+        {
+            timeSignal = new double[eventProperty.RecordTime.Count];
+            for (int i = 0; i < eventProperty.RecordTime.Count; i++)
+            {
+                timeSignal[i] = eventProperty.RecordTime[i].TotalSeconds;
+            }
+            return timeSignal;
+        }
+
+        /// <summary>
+        /// 获取前一个中断位置的开始总时长
+        /// </summary>
+        /// <returns></returns>
+        private int GettimeSignalNumber(int i)
+        {
+            return eventProperty.BeginningTime[i].Hour * 3600 + eventProperty.BeginningTime[i].Minute * 60 + eventProperty.BeginningTime[i].Second;
+        }
     }
 }
