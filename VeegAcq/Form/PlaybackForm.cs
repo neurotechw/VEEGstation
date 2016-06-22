@@ -451,7 +451,7 @@ namespace VeegStation
             catch(Exception ex)
             {
                 MessageBox.Show("文件格式错误");
-                //加日志
+                LogHelper.WriteLog(typeof(PlaybackForm), ex.Message + "文件格式错误");
                 return;
             }
 
@@ -470,7 +470,7 @@ namespace VeegStation
             PreDefineEvent.InitPreDefineEventNameWithArray(nfi.EventCount, nfi.PreDefineEventNameArray, nfi.PreDefineEventColorArray);
 
             myBandFilterForm = new BandFilterForm(this);
-            InitHardwareConfigParameters(nfi.Montage.SzSetting);
+            
         }
 
         /// <summary>
@@ -537,7 +537,10 @@ namespace VeegStation
             hsProgress.Maximum = totalSeconds;         //不一定是整数秒 故maximum不需要-1
 
             //硬件配置名称
-            this.InitHardwareConfigParameters(nfi.Montage.SzSetting);
+            this.InitHardwareConfigParameters(nfi.NatInfo.ByteConfigType);
+
+            this.byteOfPerData = nfi.NatInfo.RowsOfData;
+            
         }
 
         private void InitChartParas() 
@@ -549,7 +552,11 @@ namespace VeegStation
             isChangingBoardShow = true;
             currentTopSignal = 0;
             isAddingEvent = false;
-            SetSignalNum(20);
+
+            if (leadConfigArrayList.Count >= 20)
+                SetSignalNum(20);
+            else
+                SetSignalNum(leadConfigArrayList.Count);
         }
 
         /// <summary>
@@ -691,7 +698,7 @@ namespace VeegStation
                 {
                     signalNumArray[j] = (int)Math.Pow(2, j);
                 }
-                signalNumArray[signalNumArray.Count()] = signalNum;
+                signalNumArray[signalNumArray.Length - 1] = signalNum;
             }
         }
 
@@ -715,62 +722,62 @@ namespace VeegStation
         /// 根据不同的设备类型，定义硬件配置名称，每个数据块占用的字节数、脑电数据占用的字节数、脑电数据开始位置  --by zt
         /// </summary>
         /// <param name="configName">硬件配置</param>
-        private void InitHardwareConfigParameters(string config) 
+        private void InitHardwareConfigParameters(byte config) 
         {
             switch (config)
             {
                 //8导脑电
-                case "P10":
+                case 0x00:
                     this.hardwareConfigName = "8导脑电";
-                    byteOfPerData = 26;
+                    //byteOfPerData = 26;
                     numberOfPerData = 8;
                     indexOfData = 6;
                     break;
 
                 //8导脑电+多参数
-                case "P11":
+                case 0x40:
                     this.hardwareConfigName = "8导脑电+多参数";
-                    byteOfPerData = 48;
+                    //byteOfPerData = 48;
                     numberOfPerData = 8;
                     indexOfData = 28;
                     break;
 
                 //16导脑电
-                case "P20":
+                case 0x04:
                     this.hardwareConfigName = "16导脑电";
-                    byteOfPerData = 46;
+                    //byteOfPerData = 46;
                     numberOfPerData = 16;
                     indexOfData = 6;
                     break;
 
                 //16导脑电+多参数
-                case "P21":
+                case 0x44:
                     this.hardwareConfigName = "16导脑电+多参数";
-                    byteOfPerData = 68;
+                    //byteOfPerData = 68;
                     numberOfPerData = 16;
                     indexOfData = 28;
                     break;
 
                 //24导脑电
-                case "P30":
+                case 0x02:
                     this.hardwareConfigName = "24导脑电";
-                    byteOfPerData = 86;
+                    //byteOfPerData = 86;
                     numberOfPerData = 19;
                     indexOfData = 6;
                     break;
 
                 //32导脑电
-                case "P40":
+                case 0x08:
                     this.hardwareConfigName = "32导脑电";
-                    byteOfPerData = 86;
+                    //byteOfPerData = 86;
                     numberOfPerData = 19;
                     indexOfData = 6;
                     break;
 
                 //32导脑电+多参数
-                case "P41":
+                case 0x48:
                     this.hardwareConfigName = "32导脑电+多参数";
-                    byteOfPerData = 108;
+                    //byteOfPerData = 108;
                     numberOfPerData = 19;
                     indexOfData = 28;
                     break;
@@ -979,12 +986,11 @@ namespace VeegStation
                         if (FPi_FPj[1] != "REF")
                             sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
                         sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
-                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx]  * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
                         col[sIdx].Points.AddXY(tIdx / (double)this.sampleRate, sampleDifferValue[sIdx]);
                     }
                 }
-
 
                 //foreach (int tIdx in Enumerable.Range(0, _packets.Count))
                 //{
@@ -2963,11 +2969,19 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 设置带通滤波是否选中
+        /// 设置带通滤波是否选中,及状态栏中带通滤波
         /// </summary>
         public void SetBandFilterChecked()
         {
             this.BandFilterToolStripMenuItem.Checked = isBandFilter;
+            if (this.BandFilterToolStripMenuItem.Checked == false) 
+            {
+                this.toolStripStatusLabel_bandFilter.Text = "None";
+            }
+            else 
+            {
+                this.toolStripStatusLabel_bandFilter.Text = lowFrequency + "Hz,  " + this.highFrequency + "Hz";
+            }
         }
 
         private void Filter50HzToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2977,6 +2991,7 @@ namespace VeegStation
                 //不选50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = false;
                 is50HzFilter = false;
+                this.toolStripStatusLabel_trap.Text = "None";
                 LoadData(CurrentSeconds);
                 ShowData();
             }
@@ -2985,6 +3000,7 @@ namespace VeegStation
                 //选择50Hz滤波
                 Filter50HzToolStripMenuItem.Checked = true;
                 is50HzFilter = true;
+                this.toolStripStatusLabel_trap.Text = "50Hz";
                 LoadData(CurrentSeconds);
                 ShowData();
             }
@@ -2994,8 +3010,8 @@ namespace VeegStation
         {
             myBandFilterForm.InitFormFilter();
             myBandFilterForm.Show();
-            
         }
+
         /// <summary>
         /// 返回一个通道所有的数据--by wsp
         /// </summary>

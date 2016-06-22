@@ -107,12 +107,13 @@ namespace VeegStation
                 default:
                     break;
             }
+            //初始化当前导联
+            myLeadList = controller.CommonDataPool.GetLeadList(config);
 
             //初始化ListView
             InitList(nameOfLead);
 
-            //初始化当前导联
-            myLeadList = controller.CommonDataPool.GetLeadList(config);
+            
         }
 
         /// <summary>

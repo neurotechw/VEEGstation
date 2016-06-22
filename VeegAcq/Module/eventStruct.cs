@@ -12,6 +12,9 @@ namespace VeegStation
     /// </summary>
     public class PreDefineEvent
     {
+        /// <summary>
+        /// 预定义事件的名称数组
+        /// </summary>
         private static Color[] preDefineEventColorArray;
 
         public static Color[] PreDefineEventColorArray
@@ -19,6 +22,9 @@ namespace VeegStation
             get { return PreDefineEvent.preDefineEventColorArray; }
         }
 
+        /// <summary>
+        /// 预定义事件的颜色数组
+        /// </summary>
         private static string[] preDefineEventNameArray;
 
         public static string[] PreDefineEventNameArray
@@ -38,6 +44,10 @@ namespace VeegStation
                 System.Windows.Forms.MessageBox.Show("请先初始化预定义事件名称数组和颜色数组");
                 return;
             }
+
+            //若是读出的index为0x32，则为stop事件
+            if (index == 0x32)
+                index = preDefineEventNameArray.Length - 1;
             eventNameIndex = index;
             eventName = preDefineEventNameArray[index];
             eventColor = preDefineEventColorArray[index];
@@ -104,13 +114,17 @@ namespace VeegStation
         public static void InitPreDefineEventNameWithArray(int length, string[] name, Color[] clr)
         {
             
-            preDefineEventNameArray = new string[length];
-            preDefineEventColorArray = new Color[length];
+            preDefineEventNameArray = new string[length + 1];
+            preDefineEventColorArray = new Color[length + 1];
             for (int i = 0; i < length; i++)
             {
                 preDefineEventNameArray[i] = name[i];
                 preDefineEventColorArray[i] = clr[i];
             }
+
+            //最后添加一个额外的stop事件
+            preDefineEventNameArray[length] = "Stop";
+            preDefineEventColorArray[length] = Color.Red;
         }
     }
 
