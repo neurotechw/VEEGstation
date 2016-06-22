@@ -15,7 +15,12 @@ namespace VeegStation
     /// </summary>
     public partial class addCustomEventForm : Form
     {
-        CustomEventForm myCustomEventForm;
+        PlaybackForm parentForm;
+
+        /// <summary>
+        /// 所选择的事件索引
+        /// </summary>
+        private int selectedIndex;
 
         /// <summary>
         /// 所选事件颜色的编号
@@ -32,11 +37,21 @@ namespace VeegStation
         /// </summary>
         Button[] colorButton;
 
-        public addCustomEventForm(CustomEventForm form)
+        public addCustomEventForm(PlaybackForm form,int index)
         {
             colorButton = new Button[CustomEvent.CustomEventColor.Count()];
             InitializeComponent();
-            myCustomEventForm = form;
+            selectedIndex=index;
+            parentForm = form;
+            InitColorButton();
+            colorIndex = -1;
+        }
+
+        public addCustomEventForm(PlaybackForm form)
+        {
+            colorButton = new Button[CustomEvent.CustomEventColor.Count()];
+            InitializeComponent();
+            parentForm = form;
             InitColorButton();
             colorIndex = -1;
         }
@@ -88,7 +103,7 @@ namespace VeegStation
                 }
 
                 //开始添加事件
-                myCustomEventForm.StartAddEvent(colorIndex, nameTextBox.Text);
+                parentForm.StartAddEvents(colorIndex, nameTextBox.Text);
 
                 //form隐藏
                 this.Close();
@@ -110,7 +125,7 @@ namespace VeegStation
                 }
 
                 //将编辑后的事件保存
-                myCustomEventForm.EditEvent(nameTextBox.Text, colorIndex);
+                parentForm.EditCustomEvent(selectedIndex, nameTextBox.Text, colorIndex);
 
                 //form隐藏
                 this.Close();

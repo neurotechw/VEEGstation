@@ -80,7 +80,7 @@ namespace VeegStation
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             if (myAddCustomEventForm == null || myAddCustomEventForm.IsDisposed)
-                myAddCustomEventForm = new addCustomEventForm(this);
+                myAddCustomEventForm = new addCustomEventForm(this.myPlaybackForm);
 
             //置状态为添加事件
             myAddCustomEventForm.IsAddEvent();
@@ -94,7 +94,7 @@ namespace VeegStation
         /// </summary>
         /// <param name="colorIndex"></param>
         /// <param name="name"></param>
-        public void StartAddEvent(int colorIndex, string name)
+        public void StartAddEvents(int colorIndex, string name)
         {
             myPlaybackForm.StartAddEvents(colorIndex, name);
         }
@@ -103,35 +103,14 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         /// <param name="isAdded">是添加事件还是删除事件</param>
-        public void UpdateListView(bool isAdded)
+        public void UpdateListView()
         {
-            //若是添加事件，则直接将事件添加到后方（日后还需要对事件进行排序后再添加）
-            if (isAdded)
+            //直接把事件删除掉，并将所删除事件后的事件序号各减一
+            for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetCustomEventList().Count; i++)
             {
-                ListViewItem li = new ListViewItem(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventName);
-
-                //允许更改item的颜色
-                li.UseItemStyleForSubItems = false;
-
-                li.SubItems.Add(myPlaybackForm.GetEventTime(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventPosition).AddSeconds((int)(myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
-                li.SubItems.Add(myPlaybackForm.GetCustomEventList().Count.ToString());
-
-                //添加第四列代表事件颜色的subitem，name值为事件颜色的编号,backcolor为当前事件颜色
-                ListViewItem.ListViewSubItem subItem = new ListViewItem.ListViewSubItem();
-                subItem.Text = "";
-                subItem.Name = myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventColorIndex.ToString();
-                subItem.BackColor = CustomEvent.CustomEventColor[myPlaybackForm.GetCustomEventList()[myPlaybackForm.GetCustomEventList().Count - 1].EventColorIndex];
-                li.SubItems.Add(subItem);
-                eventList.Items.Add(li);
+                eventList.Items[i].SubItems[2].Text = (int.Parse(eventList.Items[i].SubItems[2].Text) - 1).ToString();
             }
-            else //若是删除事件则直接把事件删除掉，并将所删除事件后的事件序号各加一
-            {
-                for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetCustomEventList().Count; i++)
-                {
-                    eventList.Items[i].SubItems[2].Text = (int.Parse(eventList.Items[i].SubItems[2].Text) - 1).ToString();
-                }
-                eventList.Items.RemoveAt(eventList.SelectedIndices[0]);
-            }
+            eventList.Items.RemoveAt(eventList.SelectedIndices[0]);
         }
 
         /// <summary>
@@ -159,15 +138,16 @@ namespace VeegStation
         /// <param name="e"></param>
         private void BtnEdit_Click(object sender, EventArgs e)
         {
-            if (myAddCustomEventForm == null)
-                myAddCustomEventForm = new addCustomEventForm(this);
-
             //判定是否有选择一个事件
             if (this.eventList.SelectedItems.Count <= 0)
             {
                 MessageBox.Show("请选择一个事件进行编辑");
                 return;
             }
+
+            if (myAddCustomEventForm == null)
+                myAddCustomEventForm = new addCustomEventForm(this.myPlaybackForm,eventList.SelectedIndices[0]);
+            
             //置状态为编辑事件
             myAddCustomEventForm.IsEditEvent(int.Parse(this.eventList.SelectedItems[0].SubItems[3].Name), this.eventList.SelectedItems[0].SubItems[0].Text);
 
@@ -187,7 +167,7 @@ namespace VeegStation
             this.eventList.SelectedItems[0].SubItems[3].Name = colorIndex.ToString();
 
             //将编辑后的事件保存在事件列表中
-            myPlaybackForm.editCustomEvent(this.eventList.SelectedIndices[0], text,colorIndex);
+            myPlaybackForm.EditCustomEvent(this.eventList.SelectedIndices[0], text,colorIndex);
         }
     }
 }

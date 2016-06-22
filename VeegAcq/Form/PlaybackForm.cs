@@ -1792,91 +1792,6 @@ namespace VeegStation
 
         #endregion
 
-        #region 事件listView -- by lxl
-
-        /// <summary>
-        /// 更新预定义事件列表
-        /// -- by lxl
-        /// </summary>
-        private void UpdateLVPreDefineEvents()
-        {
-            //事件显示编号
-            int index = 1;
-
-            //开始更新列表
-            lvPreDefineEvents.BeginUpdate();
-
-            //更新列表前先清空列表内容
-            lvPreDefineEvents.Items.Clear();
-
-            if (preDefineEventsList != null)
-            {
-                //根将从Playbackform中读取的内容插入到列表中
-                foreach (PreDefineEvent p in preDefineEventsList)
-                {
-                    ListViewItem li = new ListViewItem(p.EventName);
-
-
-                    //允许更改item的颜色
-                    li.UseItemStyleForSubItems = false;
-
-                    //初始化listview的内容项
-                    li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
-                    li.SubItems.Add(index.ToString());
-                    li.SubItems.Add("");
-
-                    //序号递增
-                    index++;
-                    lvPreDefineEvents.Items.Add(li);
-
-                    lvPreDefineEvents.Items[index - 2].SubItems[3].BackColor = p.EventColor;
-                }
-            }
-
-            lvPreDefineEvents.EndUpdate();
-        }
-
-        /// <summary>
-        /// 更新自定义事件
-        /// -- by lxl
-        /// </summary>
-        private void UpdateLVCustomEvents()
-        {
-            //事件显示的编号
-            int index = 1;
-            
-            //开始更新列表
-            lvCustomEvents.BeginUpdate();
-
-            //先把列表清空
-            lvCustomEvents.Items.Clear();
-
-            if (customEventList != null)
-            {
-                //从playbackform中读取事件列表，然后将事件添加到列表中
-                foreach (CustomEvent p in customEventList)
-                {
-                    ListViewItem li = new ListViewItem(p.EventName);
-
-                    //允许更改item的颜色
-                    li.UseItemStyleForSubItems = false;
-
-                    li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
-                    li.SubItems.Add(index.ToString());
-                    li.SubItems.Add("");
-                    index++;
-                    lvCustomEvents.Items.Add(li);
-                    this.lvCustomEvents.Items[index - 2].SubItems[3].BackColor = CustomEvent.CustomEventColor[p.EventColorIndex];
-                    this.lvCustomEvents.Items[index - 2].SubItems[3].Name = p.EventColorIndex.ToString();
-                }
-            }
-
-            //结束更新列表
-            lvCustomEvents.EndUpdate();
-        }
-
-        #endregion
-
         /// <summary>
         /// --by wsp
         /// 进度条，PagePrev,PageNext变化时，对应的时间也要发生变化；
@@ -2460,22 +2375,8 @@ namespace VeegStation
             return customEventList;
         }
 
-        /// <summary>
-        /// 编辑事件指定位置的事件
-        /// -- by lxl
-        /// </summary>
-        /// <param name="index">索引</param>
-        /// <param name="name">名称</param>
-        /// <param name="colorIndex">颜色索引号</param>
-        public void editCustomEvent(int index, string name, int colorIndex)
-        {
-            //将新的编辑后的事件保存
-            this.customEventList[index].EventName = name;
-            this.customEventList[index].EventColorIndex = colorIndex;
+        
 
-            //重画图表
-            this.chartWave.Invalidate();
-        }
         /// <summary>
         /// 获取采样频率
         /// -- by lxl
@@ -2589,18 +2490,18 @@ namespace VeegStation
                     {
                         //将事件添加进列表并排序
                         FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read);
-                        preDefineEventsList.Add(new PreDefineEvent(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read).Length - 1));
+                        AddPreDefineEvents(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read).Length - 1);
 
-                        //事件添加后更新添加事件的form里的列表
-                        myPreDefineEventFormEventForm.InitList();
+                        //事件添加后更新对应的列表
+                        UpdateEventsListView(true);
                     }
                     else
                     {
                         //将事件添加进列表并排序
-                        customEventList.Add(new CustomEvent(addedEventName,Convert.ToUInt16( mouseValueNow), addingEventColorIndex));
+                        AddCustomEvents(addedEventName, Convert.ToUInt16(mouseValueNow), addingEventColorIndex);
 
-                        //事件添加后更新添加事件的form里的列表
-                        myCustomEventForm.InitList();
+                        //事件添加后更新对应的列表
+                        UpdateEventsListView(false);
                     }
                 }
 
@@ -2610,6 +2511,7 @@ namespace VeegStation
             }
         }
 
+        #region 事件处理区
         /// <summary>
         /// 删除指定索引的事件，根据索引值flag判定是删除预定义事件还是自定义事件
         /// -- by lxl
@@ -2627,8 +2529,8 @@ namespace VeegStation
                 positionInFileList.Add(preDefineEventsList[index].PosInFile);
                 preDefineEventsList.RemoveAt(index);
 
-                //事件删除后更新添加事件的form里的列表
-                myPreDefineEventFormEventForm.updateListView();
+                //事件删除后更新列表
+                UpdateEventsListView(flag);
             }
             else
             {
@@ -2638,11 +2540,165 @@ namespace VeegStation
 
                 customEventList.RemoveAt(index);
 
-                //事件删除后更新添加事件的form里的列表
-                myCustomEventForm.UpdateListView(false);
+                //事件删除后更新列表
+                UpdateEventsListView(flag);
             }
             this.chartWave.Invalidate();
         }
+
+        /// <summary>
+        /// 更新操作过后的事件里的列表
+        /// </summary>
+        /// <param name="flag">操作的是否预定义事件</param>
+        private void UpdateEventsListView(bool flag)
+        {
+            if (flag)
+            {
+                //更新事件列表
+                if (myPreDefineEventFormEventForm != null && !myPreDefineEventFormEventForm.IsDisposed)
+                    myPreDefineEventFormEventForm.InitList();
+                UpdateLVPreDefineEvents();
+            }
+            else
+            {
+                //事件删除后更新添加事件的form里的列表
+                if (myCustomEventForm != null && !myCustomEventForm.IsDisposed)
+                    myCustomEventForm.InitList();
+                UpdateLVCustomEvents();
+            }
+        }
+
+        /// <summary>
+        /// 往列表中添加预定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="index">预定义事件的索引</param>
+        /// <param name="pointPos">预定义事件点的位置</param>
+        /// <param name="posInFile">预定义事件在文件中的位置</param>
+        private void AddPreDefineEvents(int index,ushort pointPos,int posInFile)
+        {
+            //将事件添加进列表
+            preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile));
+        }
+
+        /// <summary>
+        /// 往列表中添加自定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="name">自定义事件的名字</param>
+        /// <param name="pointPos">自定义事件点的位置</param>
+        /// <param name="colorIndex">自定义事件颜色索引</param>
+        private void AddCustomEvents(string name,ushort pointPos,int colorIndex)
+        {
+            //将事件添加进列表并排序
+            customEventList.Add(new CustomEvent(name, pointPos, colorIndex));
+        }
+
+        #region 事件listView -- by lxl
+
+        /// <summary>
+        /// 更新预定义事件列表
+        /// -- by lxl
+        /// </summary>
+        private void UpdateLVPreDefineEvents()
+        {
+            //事件显示编号
+            int index = 1;
+
+            //开始更新列表
+            lvPreDefineEvents.BeginUpdate();
+
+            //更新列表前先清空列表内容
+            lvPreDefineEvents.Items.Clear();
+
+            if (preDefineEventsList != null)
+            {
+                //根将从Playbackform中读取的内容插入到列表中
+                foreach (PreDefineEvent p in preDefineEventsList)
+                {
+                    ListViewItem li = new ListViewItem(p.EventName);
+
+
+                    //允许更改item的颜色
+                    li.UseItemStyleForSubItems = false;
+
+                    //初始化listview的内容项
+                    li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
+                    li.SubItems.Add(index.ToString());
+                    li.SubItems.Add("");
+
+                    //序号递增
+                    index++;
+                    lvPreDefineEvents.Items.Add(li);
+
+                    lvPreDefineEvents.Items[index - 2].SubItems[3].BackColor = p.EventColor;
+                }
+            }
+
+            lvPreDefineEvents.EndUpdate();
+        }
+
+        /// <summary>
+        /// 更新自定义事件
+        /// -- by lxl
+        /// </summary>
+        private void UpdateLVCustomEvents()
+        {
+            //事件显示的编号
+            int index = 1;
+
+            //开始更新列表
+            lvCustomEvents.BeginUpdate();
+
+            //先把列表清空
+            lvCustomEvents.Items.Clear();
+
+            if (customEventList != null)
+            {
+                //从playbackform中读取事件列表，然后将事件添加到列表中
+                foreach (CustomEvent p in customEventList)
+                {
+                    ListViewItem li = new ListViewItem(p.EventName);
+
+                    //允许更改item的颜色
+                    li.UseItemStyleForSubItems = false;
+
+                    li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
+                    li.SubItems.Add(index.ToString());
+                    li.SubItems.Add("");
+                    index++;
+                    lvCustomEvents.Items.Add(li);
+                    this.lvCustomEvents.Items[index - 2].SubItems[3].BackColor = CustomEvent.CustomEventColor[p.EventColorIndex];
+                    this.lvCustomEvents.Items[index - 2].SubItems[3].Name = p.EventColorIndex.ToString();
+                }
+            }
+
+            //结束更新列表
+            lvCustomEvents.EndUpdate();
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 编辑事件指定位置的事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="index">索引</param>
+        /// <param name="name">名称</param>
+        /// <param name="colorIndex">颜色索引号</param>
+        public void EditCustomEvent(int index, string name, int colorIndex)
+        {
+            //将新的编辑后的事件保存
+            this.customEventList[index].EventName = name;
+            this.customEventList[index].EventColorIndex = colorIndex;
+
+            UpdateEventsListView(false);
+
+            //重画图表
+            this.chartWave.Invalidate();
+        }
+
+        #endregion
         /// <summary>
         /// 当回放Form关闭时，弹出视频Form也要关闭
         /// </summary>
@@ -3039,6 +3095,106 @@ namespace VeegStation
                 i++;
             }
             return singalData;
+        }
+
+        /// <summary>
+        /// 删除按钮点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDeletePredefineEvents_Click(object sender, EventArgs e)
+        {
+            //判定是否有选择一个事件
+            if (this.lvPreDefineEvents.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("请选择一个事件进行删除");
+                return;
+            }
+
+            //删除事件
+            RemoveEvent(true, lvPreDefineEvents.SelectedIndices[0]);
+
+            //更新相关的事件列表
+            UpdateEventsListView(true);
+        }
+
+        /// <summary>
+        /// 编辑按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnEditPreDefineEvents_Click(object sender, EventArgs e)
+        {
+            //弹出事件编辑框
+            if (myPreDefineEventFormEventForm == null || myPreDefineEventFormEventForm.IsDisposed)
+                myPreDefineEventFormEventForm = new PredefineEventsForm(this);
+            myPreDefineEventFormEventForm.Show();
+            myPreDefineEventFormEventForm.BringToFront();
+            myPreDefineEventFormEventForm.InitList();
+        }
+
+        /// <summary>
+        /// 自定义事件列表增加按钮点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnAddCustomEvents_Click(object sender, EventArgs e)
+        {
+            addCustomEventForm myAddCustomEventForm = new addCustomEventForm(this);
+            
+            //置状态为编辑事件
+            myAddCustomEventForm.IsAddEvent();
+
+            //添加自定义事件的form弹出，并且为关闭前不允许操作该form
+            myAddCustomEventForm.ShowDialog();
+        }
+
+        /// <summary>
+        /// 自定义事件列表删除按钮点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDeleteCustomEvents_Click(object sender, EventArgs e)
+        {
+            //判定是否有选择一个事件
+            if (this.lvCustomEvents.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("请选择一个事件进行删除");
+                return;
+            }
+
+            //移除掉事件
+            RemoveEvent(false, lvCustomEvents.SelectedIndices[0]);
+
+            //更新相关的时间列表
+            UpdateEventsListView(false);
+        }
+
+        /// <summary>
+        /// 自定义时间列表编辑按钮点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnEditCustomEvents_Click(object sender, EventArgs e)
+        {
+            //判断是否有选择一个事件
+            if (lvCustomEvents.SelectedItems.Count <= 0)
+            {
+                MessageBox.Show("请选择一个事件进行编辑");
+                return;
+            }
+
+            addCustomEventForm myAddCustomEventForm = new addCustomEventForm(this, lvCustomEvents.SelectedIndices[0]);
+
+            //置状态为编辑事件
+            myAddCustomEventForm.IsEditEvent(int.Parse(this.lvCustomEvents.SelectedItems[0].SubItems[3].Name), this.lvCustomEvents.SelectedItems[0].SubItems[0].Text);
+
+            //添加自定义事件的form弹出，并且为关闭前不允许操作该form
+            myAddCustomEventForm.ShowDialog();
         }
 
     }
