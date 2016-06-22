@@ -87,7 +87,7 @@ namespace VeegStation
         /// <summary>
         /// 采样率 --by zt
         /// </summary>
-        private int sampleRate;  
+        private int sampleRate;
 
         /// <summary>
         /// 总点数 --by zt
@@ -444,6 +444,13 @@ namespace VeegStation
             set { highFrequency = value; }
         } 
         #endregion
+
+
+        public int SampleRate
+        {
+            get { return sampleRate; }
+        }  
+
         #endregion
 
         public PlaybackForm(NationFile EegFile)
@@ -2146,7 +2153,7 @@ namespace VeegStation
                 
                 //防止鼠标位置滑倒图表外面去
                 if (Control.MousePosition.X > this.chartWave.Location.X && Control.MousePosition.X < this.boardPanel.Location.X)
-                    mouseValueNow = this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X) * sampleRate;
+                    mouseValueNow = (this.chartWave.ChartAreas[0].AxisX.PixelPositionToValue(Control.MousePosition.X - this.chartWave.Location.X) + currentSeconds) * sampleRate;
             }
 
             //画图表上的秒数,time1Pos为当前图表中前二分之一秒的位置
@@ -2261,6 +2268,7 @@ namespace VeegStation
         }
 
         #endregion
+
         /// <summary>
         /// labelPanel的重绘函数,若要更新label则需调用labelPanel.Invalidate()函数
         /// -- by lxl
@@ -2282,29 +2290,6 @@ namespace VeegStation
             }
         }
         #endregion
-
-        /// <summary>
-        /// 面板点击事件
-        /// -- by lxl
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BoardToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //取反isBoardShow，更改当前面板显示状态
-            isBoardShow = !isBoardShow;
-
-            this.boardPanel.Visible = isBoardShow;
-            this.boardToolStripMenuItem.Checked = isBoardShow;
-
-            //重新计算X轴显示的最大值
-            isChangingBoardShow = true;
-
-            //修改竖直滚动条的位置
-            UpdateVScrollLocation();
-
-            //this.chartWave.Invalidate();
-        }
        
         /// <summary>
         /// 重头播放，对数据进行初始化处理
@@ -2473,20 +2458,31 @@ namespace VeegStation
             }
         }
 
-        
-
         /// <summary>
-        /// 获取采样频率
+        /// 面板点击事件
         /// -- by lxl
         /// </summary>
-        /// <returns></returns>
-        public double GetSampleRate()
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BoardToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            return sampleRate;
+            //取反isBoardShow，更改当前面板显示状态
+            isBoardShow = !isBoardShow;
+
+            this.boardPanel.Visible = isBoardShow;
+            this.boardToolStripMenuItem.Checked = isBoardShow;
+
+            //重新计算X轴显示的最大值
+            isChangingBoardShow = true;
+
+            //修改竖直滚动条的位置
+            UpdateVScrollLocation();
+
+            //this.chartWave.Invalidate();
         }
 
         /// <summary>
-        /// 获取文件开始时间
+        /// 根据事件点的位置得到事件发生的时间
         /// -- by lxl
         /// </summary>
         /// <param name="pointPos">点的位置</param>
@@ -2500,43 +2496,6 @@ namespace VeegStation
                     break;
             }
             return eventProperty.BeginningTime[i - 1].AddSeconds((pointPos - eventProperty.RecordQuantity[i - 1]) / sampleRate);
-        }
-
-        /// <summary>
-        /// 开始添加预定义事件
-        /// </summary>
-        /// <param name="index">预定义事件的事件编号</param>
-        public void StartAddEvents(int index)
-        {
-
-            //保存添加的预定义事件的编号
-            this.preDefineEventIndex = index;
-
-            //设置当前为正在添加预定义事件
-            isAddingPreDefineEvent = true;
-
-            //设置当前开始添加事件
-            isAddingEvent = true;
-        }
-        /// <summary>
-        /// 开始添加自定义事件
-        /// -- by lxl
-        /// </summary>
-        /// <param name="colorIndex">事件颜色索引</param>
-        /// <param name="name">事件名称</param>
-        public void StartAddEvents(int colorIndex, string name)
-        {
-            //设置添加事件过程中所要画的直线的颜色
-            addingEventColorIndex = colorIndex;
-
-            //设置现在是添加自定义事件
-            isAddingPreDefineEvent = false;
-
-            //设置当前开始添加事件
-            isAddingEvent = true;
-            
-            //根据现在是在添加什么事件来确定事件名称
-            addedEventName = name;
         }
 
         /// <summary>
@@ -2588,7 +2547,11 @@ namespace VeegStation
                     {
                         //将事件添加进列表并排序
                         FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read);
-                        AddPreDefineEvents(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read).Length - 1);
+                        AddPreDefineEvents(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)fs.Length - 1);
+
+                        //关闭文件，释放文件流
+                        fs.Close();
+                        fs.Dispose();
 
                         //事件添加后更新对应的列表
                         UpdateEventsListView(true);
@@ -2609,7 +2572,7 @@ namespace VeegStation
             }
         }
 
-        #region 事件处理区
+        #region 事件处理区 -- by lxl
         /// <summary>
         /// 删除指定索引的事件，根据索引值flag判定是删除预定义事件还是自定义事件
         /// -- by lxl
@@ -2691,7 +2654,7 @@ namespace VeegStation
         private void AddPreDefineEvents(int index,ushort pointPos,int posInFile)
         {
             //将事件添加进列表
-            preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile,preDefineEventsList.Count));
+            preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile,preDefineEventsList.Count + 1));
         }
 
         /// <summary>
@@ -2730,6 +2693,45 @@ namespace VeegStation
             return customEventList;
         }
         #endregion
+
+
+        /// <summary>
+        /// 开始添加预定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="index">预定义事件的事件编号</param>
+        public void StartAddEvents(int index)
+        {
+
+            //保存添加的预定义事件的编号
+            this.preDefineEventIndex = index;
+
+            //设置当前为正在添加预定义事件
+            isAddingPreDefineEvent = true;
+
+            //设置当前开始添加事件
+            isAddingEvent = true;
+        }
+        /// <summary>
+        /// 开始添加自定义事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="colorIndex">事件颜色索引</param>
+        /// <param name="name">事件名称</param>
+        public void StartAddEvents(int colorIndex, string name)
+        {
+            //设置添加事件过程中所要画的直线的颜色
+            addingEventColorIndex = colorIndex;
+
+            //设置现在是添加自定义事件
+            isAddingPreDefineEvent = false;
+
+            //设置当前开始添加事件
+            isAddingEvent = true;
+
+            //根据现在是在添加什么事件来确定事件名称
+            addedEventName = name;
+        }
 
         #region 事件listView -- by lxl
 

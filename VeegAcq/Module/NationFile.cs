@@ -353,6 +353,10 @@ namespace VeegStation
             }
             while (mark >= 0);
 
+            //关闭文件流
+            fs.Close();
+            fs.Dispose();
+
             return pdList;
         }
 

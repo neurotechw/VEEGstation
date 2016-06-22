@@ -46,7 +46,7 @@ namespace VeegStation
                 //允许更改item的颜色
                 li.UseItemStyleForSubItems = false;
 
-                li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
                 li.SubItems.Add("");
                 index++;
