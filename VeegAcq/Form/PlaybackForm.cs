@@ -1087,6 +1087,7 @@ namespace VeegStation
                     Debug.WriteLine(Player.Length);
 
                     //初始阶段，不播放视频
+                    Player.Play();
                     Player.Pause();
                 }
 
@@ -1974,6 +1975,7 @@ namespace VeegStation
                 if (Speed <= 4)
                 {
                     btn_accelerate.Enabled = true;
+                    btn_decelerate.Enabled = true;
                     Player.PlaybackRate = Player.PlaybackRate * 2;
 
                     //设置Speed是为了使得脑电数据也要加倍
