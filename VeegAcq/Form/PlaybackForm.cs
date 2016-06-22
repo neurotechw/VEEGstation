@@ -1035,10 +1035,11 @@ namespace VeegStation
 
         private void PlaybackForm_Load(object sender, EventArgs e)
         {
-           
             toolTip1.SetToolTip(btn_accelerate, "加速");
             toolTip1.SetToolTip(btn_decelerate, "减速");
             toolTip1.SetToolTip(btn_hide, "隐藏");
+            if (nfi.Duration.TotalSeconds <= pageWidthInMM / timeStandard)
+                btnNext.Enabled = false;
             if (nfi == null)
             {
                 Close();
@@ -1518,6 +1519,9 @@ namespace VeegStation
             if (CurrentSeconds <= 0)
             {
                 btnPrev.Enabled = false;
+                if (nfi.Duration.TotalSeconds <= pageWidthInMM / timeStandard)
+                    btnNext.Enabled = false;
+                else
                 btnNext.Enabled = true;
                 return;
             }
@@ -1717,6 +1721,7 @@ namespace VeegStation
             }
                 LoadData(CurrentSeconds);
                 ShowData();
+                UpdateBtnEnable();
         }
 
         private void setTimeStandard(int value)
