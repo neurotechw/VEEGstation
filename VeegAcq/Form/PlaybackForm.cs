@@ -1727,6 +1727,7 @@ namespace VeegStation
                 chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset + 1 - (int)(chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
             }
                 LoadData(CurrentSeconds);
+                hsProgress.Value = CurrentSeconds;
                 ShowData();
                 UpdateBtnEnable();
         }
