@@ -1094,7 +1094,6 @@ namespace VeegStation
                     Debug.WriteLine(Player.Length);
 
                     //初始阶段，不播放视频
-                    Player.Play();
                     Player.Pause();
                 }
 
