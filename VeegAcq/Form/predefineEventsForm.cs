@@ -72,7 +72,7 @@ namespace VeegStation
             {
                 //初始化listview的内容项
                 ListViewItem li = new ListViewItem(p.EventName);
-                li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).AddSeconds((int)(p.EventPosition / myPlaybackForm.GetSampleRate())).ToLongTimeString());
+                li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).ToLongTimeString());
                 li.SubItems.Add(index.ToString());
 
                 //序号递增

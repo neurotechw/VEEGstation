@@ -1096,7 +1096,9 @@ namespace VeegStation
             }
             else
             {
-                interfaceToolStripMenuItem.Enabled = false;
+               // interfaceToolStripMenuItem.Enabled = false;
+                this.panelVideo.Enabled = false;
+                this.btn_hide.Enabled = false;
                 this.vScroll.Location = new Point(this.chartWave.Location.X + this.chartWave.Width - this.vScroll.Width, this.vScroll.Location.Y);
             }
         }
@@ -1709,10 +1711,12 @@ namespace VeegStation
             
             //重新加载数据与显示数据
             if (chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset > pageWidthInMM / timeStandard)
-                LoadData(CurrentSeconds + (int)(chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset));
-            else
+            {
+                CurrentSeconds += (int)(chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset) - 1;
+                chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset + 1 - (int)(chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+            }
                 LoadData(CurrentSeconds);
-            ShowData();
+                ShowData();
         }
 
         private void setTimeStandard(int value)
@@ -2044,26 +2048,42 @@ namespace VeegStation
        /// <param name="e"></param>
         private void btn_accelerate_Click(object sender, EventArgs e)
         {
-            //倍速过快时，会使得视频花屏，因此对倍速做了限制
-            if (Speed <= 4)
+            if (nfi.HasVideo)
             {
-                btn_accelerate.Enabled = true;
-                Player.PlaybackRate = Player.PlaybackRate * 2;
+                //倍速过快时，会使得视频花屏，因此对倍速做了限制
+                if (Speed <= 4)
+                {
+                    btn_accelerate.Enabled = true;
+                    Player.PlaybackRate = Player.PlaybackRate * 2;
 
-                //设置Speed是为了使得脑电数据也要加倍
-                Speed = Player.PlaybackRate;
+                    //设置Speed是为了使得脑电数据也要加倍
+                    Speed = Player.PlaybackRate;
 
-                //videoForm的倍速要与该Form倍速保持一致
-                video.Player.PlaybackRate = Player.PlaybackRate;
-                video.btn_accelerate.Enabled = true;
+                    //videoForm的倍速要与该Form倍速保持一致
+                    video.Player.PlaybackRate = Player.PlaybackRate;
+                    video.btn_accelerate.Enabled = true;
+                }
+                else
+                {
+                    //加速到最大后，加速按钮不可用，减速按钮可用
+                    btn_accelerate.Enabled = false;
+                    btn_decelerate.Enabled = true;
+                    video.btn_accelerate.Enabled = false;
+                    video.btn_decelerate.Enabled = true;
+                }
             }
             else
             {
-                //加速到最大后，加速按钮不可用，减速按钮可用
-                btn_accelerate.Enabled = false;
-                btn_decelerate.Enabled = true;
-                video.btn_accelerate.Enabled = false;
-                video.btn_decelerate.Enabled = true;
+                if (Speed <= 4)
+                {
+                    btn_accelerate.Enabled = true;
+                    Speed *= 2;
+                }
+                else
+                {
+                    btn_accelerate.Enabled = false;
+                    btn_decelerate.Enabled = true;
+                }
             }
         }
 
@@ -2075,28 +2095,48 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btn_decelerate_Click(object sender, EventArgs e)
         {
-            if (Speed >= 0.5)
+            if (nfi.HasVideo)
             {
-                //倍速过慢时，视频也会花屏，因此对最低倍速也做了限制
-                btn_accelerate.Enabled = true;
-                btn_decelerate.Enabled = true;
-                Player.PlaybackRate = Player.PlaybackRate / 2;
+                if (Speed >= 0.5)
+                {
+                    //倍速过慢时，视频也会花屏，因此对最低倍速也做了限制
+                    btn_accelerate.Enabled = true;
+                    btn_decelerate.Enabled = true;
+                    Player.PlaybackRate = Player.PlaybackRate / 2;
 
-                //设置Speed是为了使得脑电数据也要减速
-                Speed = Player.PlaybackRate;
+                    //设置Speed是为了使得脑电数据也要减速
+                    Speed = Player.PlaybackRate;
 
-                //videoForm的倍速要与该Form倍速保持一致
-                video.Player.PlaybackRate = Player.PlaybackRate;
-                video.btn_decelerate.Enabled = true;
-                video.btn_accelerate.Enabled = true;
+                    //videoForm的倍速要与该Form倍速保持一致           
+                    video.Player.PlaybackRate = Player.PlaybackRate;
+                    video.btn_decelerate.Enabled = true;
+                    video.btn_accelerate.Enabled = true;
+                }
+                else
+                {
+                    //加速到最大后，加速按钮不可用，减速按钮可用
+                    btn_decelerate.Enabled = false;
+                    btn_accelerate.Enabled = true;
+                    video.btn_decelerate.Enabled = false;
+                    video.btn_accelerate.Enabled = true;
+                }
             }
             else
             {
-                //加速到最大后，加速按钮不可用，减速按钮可用
-                btn_decelerate.Enabled = false;
-                btn_accelerate.Enabled = true;
-                video.btn_decelerate.Enabled = false;
-                video.btn_accelerate.Enabled = true;
+                if (Speed >= 0.5)
+                {
+                    //倍速过慢时，视频也会花屏，因此对最低倍速也做了限制
+                    btn_accelerate.Enabled = true;
+                    btn_decelerate.Enabled = true;
+                    Speed /= 2;
+                }
+                else
+                {
+                    //加速到最大后，加速按钮不可用，减速按钮可用
+                    btn_decelerate.Enabled = false;
+                    btn_accelerate.Enabled = true;
+                }
+
             }
         }
 
@@ -3110,27 +3150,6 @@ namespace VeegStation
             }
             return singalData;
         }
-        /// <summary>
-        /// 病人属性隐藏按钮事件
-        /// </summary>
-        /// --by wsp
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnClose_Click_1(object sender, EventArgs e)
-        {
-            this.DetectionInfoPanel.Hide();
-        }
-
-        /// <summary>
-        /// 检查属性隐藏按钮事件
-        /// --by wsp
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnHide_Click_1(object sender, EventArgs e)
-        {
-            this.PationInfoPanel.Hide();
-        }
 
         /// <summary>
         /// 获取执行中断过程中所有时间差
@@ -3154,6 +3173,28 @@ namespace VeegStation
         private int GettimeSignalNumber(int i)
         {
             return eventProperty.BeginningTime[i].Hour * 3600 + eventProperty.BeginningTime[i].Minute * 60 + eventProperty.BeginningTime[i].Second;
+        }
+
+        /// <summary>
+        /// 病人属性隐藏按钮事件
+        /// </summary>
+        /// --by wsp
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.DetectionInfoPanel.Hide();         
+        }
+
+        /// <summary>
+        /// 检查属性隐藏按钮事件
+        /// --by wsp
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnHide_Click(object sender, EventArgs e)
+        {
+            this.PationInfoPanel.Hide();
         }
     }
 }
