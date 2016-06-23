@@ -277,7 +277,7 @@ namespace VeegStation
                 myLeadList.Remove(nameOfColumn);
                 selectedColumn = 0;
             }
-            InitList();
+            InitList("默认导联配置");
         }
 
         private void lvLeadList_ColumnClick(object sender, ColumnClickEventArgs e)
