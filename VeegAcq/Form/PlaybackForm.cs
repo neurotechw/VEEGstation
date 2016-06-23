@@ -680,6 +680,8 @@ namespace VeegStation
         {
             System.Windows.Forms.ToolStripMenuItem item;
 
+            this.signalToolStripMenuItem.DropDownItems.Clear();
+
             //初始化通道显示数据选项
             foreach (int si in signalNumArray)
             {
@@ -715,10 +717,9 @@ namespace VeegStation
                     if (signalNum < Math.Pow(2, i))
                         break;
                 }
-                i--;
 
                 //分配通道显示数据数组大小
-                if (Math.Pow(2, i) == signalNum)
+                if (Math.Pow(2, i - 1) == signalNum)
                     signalNumArray = new int[i];
                 else
                     signalNumArray = new int[i + 1];
@@ -922,7 +923,7 @@ namespace VeegStation
             SeriesCollection col = chartWave.Series;
             double interval = 2000D / signalNum;
             chartWave.SuspendLayout();
-            foreach (int sIdx in Enumerable.Range(0, leadConfigArrayList.Count))
+            foreach (int sIdx in Enumerable.Range(0, chartWave.Series.Count))
             {
                 int a = col[sIdx].Points.Count;
                 col[sIdx].Points.Clear();
@@ -1971,7 +1972,9 @@ namespace VeegStation
             this.labelPanel.Invalidate();
 
             //通道数目改变
-            signalNum = (leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum;
+            SetSignalNum((leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum);
+            SetSignalNumArray(signalNum);
+            InitSignalNumMenuItems();
 
             //重新显示数据
             ShowData();
