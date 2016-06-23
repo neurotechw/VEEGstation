@@ -1263,7 +1263,7 @@ namespace VeegStation
 
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.Panel panelVideo;
+        public System.Windows.Forms.Panel panelVideo;
         public System.Windows.Forms.DataVisualization.Charting.Chart chartWave;
         public System.Windows.Forms.Timer timer;
         private System.Windows.Forms.ToolStripButton btnPause;
