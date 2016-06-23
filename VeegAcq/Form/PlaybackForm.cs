@@ -2006,6 +2006,7 @@ namespace VeegStation
                 if (Speed <= 4)
                 {
                     btn_accelerate.Enabled = true;
+                    btn_decelerate.Enabled = true;
                     Speed *= 2;
                 }
                 else
