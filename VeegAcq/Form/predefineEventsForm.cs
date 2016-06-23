@@ -40,7 +40,7 @@ namespace VeegStation
         private void InitRadioButton()
         {
             RadioButton rbName;
-            for (int i = 0; i < PreDefineEvent.PreDefineEventNameArray.Count(); i++)
+            for (int i = 0; i < PreDefineEvent.PreDefineEventNameArray.Count() - 1; i++)
             {
                 rbName = new RadioButton();
                 rbName.AutoSize = true;
@@ -68,7 +68,7 @@ namespace VeegStation
             eventList.Items.Clear();
 
             //根将从Playbackform中读取的内容插入到列表中
-            foreach (PreDefineEvent p in myPlaybackForm.GetSortedPreEventList())
+            foreach (PreDefineEvent p in myPlaybackForm.GetSortedPreDefineEventList())
             {
                 //初始化listview的内容项
                 ListViewItem li = new ListViewItem(p.EventName);
@@ -118,7 +118,7 @@ namespace VeegStation
         public void updateListView()
         {
             //把事件删除掉，并将所删除事件后的事件序号各减一
-            for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetSortedPreEventList().Count; i++)
+            for (int i = eventList.SelectedIndices[0]; i <= myPlaybackForm.GetSortedPreDefineEventList().Count; i++)
             {
                 eventList.Items[i].SubItems[2].Text = (int.Parse(eventList.Items[i].SubItems[2].Text) - 1).ToString();
             }

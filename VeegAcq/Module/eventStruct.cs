@@ -35,14 +35,15 @@ namespace VeegStation
         /// <summary>
         /// 根据名称的索引和点的位置构造预定义事件
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="pos"></param>
+        /// <param name="index">预定义事件的索引</param>
+        /// <param name="pos">事件点所在数据点中的位置</param>
+        /// <param name="posInF">事件位于文件中的位置，若是放入添加事件列表中则该值可为任意数</param>
+        /// <param name="id">事件的标识ID</param>
         public PreDefineEvent(int index, UInt16 pos,int posInF,int id)
         {
             if (preDefineEventColorArray == null || preDefineEventNameArray == null)
             {
-                System.Windows.Forms.MessageBox.Show("请先初始化预定义事件名称数组和颜色数组");
-                return;
+                throw new Exception("请先初始化预定义事件名称数组和颜色数组");
             }
 
             //若是读出的index为0x32，则为stop事件
