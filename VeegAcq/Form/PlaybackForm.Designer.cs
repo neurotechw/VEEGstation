@@ -67,6 +67,7 @@ namespace VeegStation
             this.DetectionInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.Hiding = new System.Windows.Forms.ToolStripMenuItem();
             this.PationInfoPanel = new System.Windows.Forms.Panel();
+            this.btnHide = new System.Windows.Forms.Button();
             this.PatAgeL = new System.Windows.Forms.Label();
             this.PatAgeTextBt = new System.Windows.Forms.TextBox();
             this.SingleHandAdvanCB = new System.Windows.Forms.ComboBox();
@@ -78,6 +79,7 @@ namespace VeegStation
             this.PatIDL = new System.Windows.Forms.Label();
             this.PatIDTextBt = new System.Windows.Forms.TextBox();
             this.DetectionInfoPanel = new System.Windows.Forms.Panel();
+            this.btnClose = new System.Windows.Forms.Button();
             this.FilePathL = new System.Windows.Forms.Label();
             this.FilePathTextBt = new System.Windows.Forms.TextBox();
             this.DetectionRemarksL = new System.Windows.Forms.Label();
@@ -118,15 +120,15 @@ namespace VeegStation
             this.boardPanel = new System.Windows.Forms.Panel();
             this.tyPanelEventListView = new System.Windows.Forms.TableLayoutPanel();
             this.lvCustomEvents = new System.Windows.Forms.ListView();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvCEName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvCETime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvCENumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvCEColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvPreDefineEvents = new System.Windows.Forms.ListView();
-            this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.number = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.color = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvPDName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvPDTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvPDNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvPDColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnAddCustomEvents = new System.Windows.Forms.Button();
             this.btnDeleteCustomEvents = new System.Windows.Forms.Button();
             this.btnEditPreDefineEvents = new System.Windows.Forms.Button();
@@ -137,8 +139,6 @@ namespace VeegStation
             this.vScroll = new System.Windows.Forms.VScrollBar();
             this.labelPanel = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnClose = new System.Windows.Forms.Button();
-            this.btnHide = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
@@ -500,6 +500,16 @@ namespace VeegStation
             this.PationInfoPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PationInfoPanel_MouseDown);
             this.PationInfoPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PationInfoPanel_MouseMove);
             // 
+            // btnHide
+            // 
+            this.btnHide.Image = ((System.Drawing.Image)(resources.GetObject("btnHide.Image")));
+            this.btnHide.Location = new System.Drawing.Point(256, 5);
+            this.btnHide.Name = "btnHide";
+            this.btnHide.Size = new System.Drawing.Size(22, 23);
+            this.btnHide.TabIndex = 22;
+            this.btnHide.UseVisualStyleBackColor = true;
+            this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
+            // 
             // PatAgeL
             // 
             this.PatAgeL.AllowDrop = true;
@@ -626,6 +636,16 @@ namespace VeegStation
             this.DetectionInfoPanel.Visible = false;
             this.DetectionInfoPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DetectionInfoPanel_MouseDown);
             this.DetectionInfoPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DetectionInfoPanel_MouseMove);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
+            this.btnClose.Location = new System.Drawing.Point(269, 4);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(23, 23);
+            this.btnClose.TabIndex = 44;
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // FilePathL
             // 
@@ -974,33 +994,32 @@ namespace VeegStation
             this.tyPanelEventListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tyPanelEventListView.ColumnCount = 7;
-            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tyPanelEventListView.Controls.Add(this.lvCustomEvents, 0, 1);
-            this.tyPanelEventListView.Controls.Add(this.lvPreDefineEvents, 0, 3);
-            this.tyPanelEventListView.Controls.Add(this.btnAddCustomEvents, 1, 0);
-            this.tyPanelEventListView.Controls.Add(this.btnDeleteCustomEvents, 2, 0);
-            this.tyPanelEventListView.Controls.Add(this.btnEditPreDefineEvents, 1, 2);
-            this.tyPanelEventListView.Controls.Add(this.btnDeletePredefineEvents, 2, 2);
-            this.tyPanelEventListView.Controls.Add(this.btnEditCustomEvents, 5, 0);
-            this.tyPanelEventListView.Controls.Add(this.lblCustomEvent, 0, 0);
-            this.tyPanelEventListView.Controls.Add(this.lblPreDefineEvent, 0, 2);
+            this.tyPanelEventListView.ColumnCount = 6;
+            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
+            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tyPanelEventListView.Controls.Add(this.lvCustomEvents, 0, 4);
+            this.tyPanelEventListView.Controls.Add(this.lvPreDefineEvents, 0, 1);
+            this.tyPanelEventListView.Controls.Add(this.btnAddCustomEvents, 0, 5);
+            this.tyPanelEventListView.Controls.Add(this.btnDeleteCustomEvents, 1, 5);
+            this.tyPanelEventListView.Controls.Add(this.btnEditPreDefineEvents, 0, 2);
+            this.tyPanelEventListView.Controls.Add(this.btnDeletePredefineEvents, 1, 2);
+            this.tyPanelEventListView.Controls.Add(this.btnEditCustomEvents, 2, 5);
+            this.tyPanelEventListView.Controls.Add(this.lblCustomEvent, 0, 3);
+            this.tyPanelEventListView.Controls.Add(this.lblPreDefineEvent, 0, 0);
             this.tyPanelEventListView.Location = new System.Drawing.Point(11, 199);
             this.tyPanelEventListView.Name = "tyPanelEventListView";
-            this.tyPanelEventListView.RowCount = 4;
+            this.tyPanelEventListView.RowCount = 6;
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 2F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 44F));
             this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 46F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 2F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 44F));
             this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 46F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tyPanelEventListView.Size = new System.Drawing.Size(186, 297);
             this.tyPanelEventListView.TabIndex = 15;
             // 
@@ -1010,38 +1029,38 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvCustomEvents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4});
-            this.tyPanelEventListView.SetColumnSpan(this.lvCustomEvents, 7);
+            this.lvCENumber,
+            this.lvCEName,
+            this.lvCETime,
+            this.lvCEColor});
+            this.tyPanelEventListView.SetColumnSpan(this.lvCustomEvents, 6);
             this.lvCustomEvents.FullRowSelect = true;
             this.lvCustomEvents.GridLines = true;
-            this.lvCustomEvents.Location = new System.Drawing.Point(3, 14);
+            this.lvCustomEvents.Location = new System.Drawing.Point(3, 154);
             this.lvCustomEvents.Name = "lvCustomEvents";
-            this.lvCustomEvents.Size = new System.Drawing.Size(180, 130);
+            this.lvCustomEvents.Size = new System.Drawing.Size(180, 124);
             this.lvCustomEvents.TabIndex = 14;
             this.lvCustomEvents.UseCompatibleStateImageBehavior = false;
             this.lvCustomEvents.View = System.Windows.Forms.View.Details;
             // 
-            // columnHeader1
+            // lvCEName
             // 
-            this.columnHeader1.Text = "名称";
-            this.columnHeader1.Width = 36;
+            this.lvCEName.Text = "名称";
+            this.lvCEName.Width = 36;
             // 
-            // columnHeader2
+            // lvCETime
             // 
-            this.columnHeader2.Text = "发生时间";
+            this.lvCETime.Text = "发生时间";
             // 
-            // columnHeader3
+            // lvCENumber
             // 
-            this.columnHeader3.Text = "编号";
-            this.columnHeader3.Width = 36;
+            this.lvCENumber.Text = "编号";
+            this.lvCENumber.Width = 36;
             // 
-            // columnHeader4
+            // lvCEColor
             // 
-            this.columnHeader4.Text = "颜色";
-            this.columnHeader4.Width = 36;
+            this.lvCEColor.Text = "颜色";
+            this.lvCEColor.Width = 36;
             // 
             // lvPreDefineEvents
             // 
@@ -1049,38 +1068,38 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvPreDefineEvents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.name,
-            this.time,
-            this.number,
-            this.color});
-            this.tyPanelEventListView.SetColumnSpan(this.lvPreDefineEvents, 7);
+            this.lvPDNumber,
+            this.lvPDName,
+            this.lvPDTime,
+            this.lvPDColor});
+            this.tyPanelEventListView.SetColumnSpan(this.lvPreDefineEvents, 6);
             this.lvPreDefineEvents.FullRowSelect = true;
             this.lvPreDefineEvents.GridLines = true;
-            this.lvPreDefineEvents.Location = new System.Drawing.Point(3, 161);
+            this.lvPreDefineEvents.Location = new System.Drawing.Point(3, 8);
             this.lvPreDefineEvents.Name = "lvPreDefineEvents";
-            this.lvPreDefineEvents.Size = new System.Drawing.Size(180, 133);
+            this.lvPreDefineEvents.Size = new System.Drawing.Size(180, 124);
             this.lvPreDefineEvents.TabIndex = 13;
             this.lvPreDefineEvents.UseCompatibleStateImageBehavior = false;
             this.lvPreDefineEvents.View = System.Windows.Forms.View.Details;
             // 
-            // name
+            // lvPDName
             // 
-            this.name.Text = "名称";
-            this.name.Width = 36;
+            this.lvPDName.Text = "名称";
+            this.lvPDName.Width = 36;
             // 
-            // time
+            // lvPDTime
             // 
-            this.time.Text = "发生时间";
+            this.lvPDTime.Text = "发生时间";
             // 
-            // number
+            // lvPDNumber
             // 
-            this.number.Text = "编号";
-            this.number.Width = 36;
+            this.lvPDNumber.Text = "编号";
+            this.lvPDNumber.Width = 36;
             // 
-            // color
+            // lvPDColor
             // 
-            this.color.Text = "颜色";
-            this.color.Width = 36;
+            this.lvPDColor.Text = "颜色";
+            this.lvPDColor.Width = 36;
             // 
             // btnAddCustomEvents
             // 
@@ -1088,9 +1107,9 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnAddCustomEvents, 2);
-            this.btnAddCustomEvents.Location = new System.Drawing.Point(29, 3);
+            this.btnAddCustomEvents.Location = new System.Drawing.Point(3, 284);
             this.btnAddCustomEvents.Name = "btnAddCustomEvents";
-            this.btnAddCustomEvents.Size = new System.Drawing.Size(46, 5);
+            this.btnAddCustomEvents.Size = new System.Drawing.Size(54, 10);
             this.btnAddCustomEvents.TabIndex = 17;
             this.btnAddCustomEvents.Text = "增加";
             this.btnAddCustomEvents.UseVisualStyleBackColor = true;
@@ -1102,9 +1121,9 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnDeleteCustomEvents, 2);
-            this.btnDeleteCustomEvents.Location = new System.Drawing.Point(81, 3);
+            this.btnDeleteCustomEvents.Location = new System.Drawing.Point(63, 284);
             this.btnDeleteCustomEvents.Name = "btnDeleteCustomEvents";
-            this.btnDeleteCustomEvents.Size = new System.Drawing.Size(46, 5);
+            this.btnDeleteCustomEvents.Size = new System.Drawing.Size(54, 10);
             this.btnDeleteCustomEvents.TabIndex = 18;
             this.btnDeleteCustomEvents.Text = "删除";
             this.btnDeleteCustomEvents.UseVisualStyleBackColor = true;
@@ -1116,11 +1135,11 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnEditPreDefineEvents, 3);
-            this.btnEditPreDefineEvents.Location = new System.Drawing.Point(29, 150);
+            this.btnEditPreDefineEvents.Location = new System.Drawing.Point(3, 138);
             this.btnEditPreDefineEvents.Name = "btnEditPreDefineEvents";
-            this.btnEditPreDefineEvents.Size = new System.Drawing.Size(72, 5);
+            this.btnEditPreDefineEvents.Size = new System.Drawing.Size(84, 5);
             this.btnEditPreDefineEvents.TabIndex = 19;
-            this.btnEditPreDefineEvents.Text = "编辑";
+            this.btnEditPreDefineEvents.Text = "添加";
             this.btnEditPreDefineEvents.UseVisualStyleBackColor = true;
             this.btnEditPreDefineEvents.Click += new System.EventHandler(this.btnEditPreDefineEvents_Click);
             // 
@@ -1130,9 +1149,9 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnDeletePredefineEvents, 3);
-            this.btnDeletePredefineEvents.Location = new System.Drawing.Point(107, 150);
+            this.btnDeletePredefineEvents.Location = new System.Drawing.Point(93, 138);
             this.btnDeletePredefineEvents.Name = "btnDeletePredefineEvents";
-            this.btnDeletePredefineEvents.Size = new System.Drawing.Size(76, 5);
+            this.btnDeletePredefineEvents.Size = new System.Drawing.Size(90, 5);
             this.btnDeletePredefineEvents.TabIndex = 20;
             this.btnDeletePredefineEvents.Text = "删除";
             this.btnDeletePredefineEvents.UseVisualStyleBackColor = true;
@@ -1144,9 +1163,9 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnEditCustomEvents, 2);
-            this.btnEditCustomEvents.Location = new System.Drawing.Point(133, 3);
+            this.btnEditCustomEvents.Location = new System.Drawing.Point(123, 284);
             this.btnEditCustomEvents.Name = "btnEditCustomEvents";
-            this.btnEditCustomEvents.Size = new System.Drawing.Size(50, 5);
+            this.btnEditCustomEvents.Size = new System.Drawing.Size(60, 10);
             this.btnEditCustomEvents.TabIndex = 21;
             this.btnEditCustomEvents.Text = "修改";
             this.btnEditCustomEvents.UseVisualStyleBackColor = true;
@@ -1158,11 +1177,12 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblCustomEvent.AutoSize = true;
-            this.lblCustomEvent.Location = new System.Drawing.Point(3, 0);
+            this.tyPanelEventListView.SetColumnSpan(this.lblCustomEvent, 6);
+            this.lblCustomEvent.Location = new System.Drawing.Point(3, 146);
             this.lblCustomEvent.Name = "lblCustomEvent";
-            this.lblCustomEvent.Size = new System.Drawing.Size(20, 11);
+            this.lblCustomEvent.Size = new System.Drawing.Size(180, 5);
             this.lblCustomEvent.TabIndex = 16;
-            this.lblCustomEvent.Text = "自";
+            this.lblCustomEvent.Text = "自定义事件：";
             // 
             // lblPreDefineEvent
             // 
@@ -1170,11 +1190,12 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblPreDefineEvent.AutoSize = true;
-            this.lblPreDefineEvent.Location = new System.Drawing.Point(3, 147);
+            this.tyPanelEventListView.SetColumnSpan(this.lblPreDefineEvent, 6);
+            this.lblPreDefineEvent.Location = new System.Drawing.Point(3, 0);
             this.lblPreDefineEvent.Name = "lblPreDefineEvent";
-            this.lblPreDefineEvent.Size = new System.Drawing.Size(20, 11);
+            this.lblPreDefineEvent.Size = new System.Drawing.Size(180, 5);
             this.lblPreDefineEvent.TabIndex = 15;
-            this.lblPreDefineEvent.Text = "预";
+            this.lblPreDefineEvent.Text = "预定义事件：";
             // 
             // vScroll
             // 
@@ -1195,26 +1216,6 @@ namespace VeegStation
             this.labelPanel.Size = new System.Drawing.Size(62, 494);
             this.labelPanel.TabIndex = 15;
             this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawLabelPanel);
-            // 
-            // btnClose
-            // 
-            this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
-            this.btnClose.Location = new System.Drawing.Point(269, 4);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(23, 23);
-            this.btnClose.TabIndex = 44;
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // btnHide
-            // 
-            this.btnHide.Image = ((System.Drawing.Image)(resources.GetObject("btnHide.Image")));
-            this.btnHide.Location = new System.Drawing.Point(256, 5);
-            this.btnHide.Name = "btnHide";
-            this.btnHide.Size = new System.Drawing.Size(22, 23);
-            this.btnHide.TabIndex = 22;
-            this.btnHide.UseVisualStyleBackColor = true;
-            this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
             // 
             // PlaybackForm
             // 
@@ -1345,15 +1346,15 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_sensitivityLabel;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_sensitivity;
         private System.Windows.Forms.ListView lvPreDefineEvents;
-        private System.Windows.Forms.ColumnHeader name;
-        private System.Windows.Forms.ColumnHeader time;
-        private System.Windows.Forms.ColumnHeader number;
-        private System.Windows.Forms.ColumnHeader color;
+        private System.Windows.Forms.ColumnHeader lvPDName;
+        private System.Windows.Forms.ColumnHeader lvPDTime;
+        private System.Windows.Forms.ColumnHeader lvPDNumber;
+        private System.Windows.Forms.ColumnHeader lvPDColor;
         private System.Windows.Forms.ListView lvCustomEvents;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
+        private System.Windows.Forms.ColumnHeader lvCEName;
+        private System.Windows.Forms.ColumnHeader lvCETime;
+        private System.Windows.Forms.ColumnHeader lvCENumber;
+        private System.Windows.Forms.ColumnHeader lvCEColor;
         private System.Windows.Forms.TableLayoutPanel tyPanelEventListView;
         private System.Windows.Forms.Label lblPreDefineEvent;
         private System.Windows.Forms.Label lblCustomEvent;

@@ -71,10 +71,10 @@ namespace VeegStation
             foreach (PreDefineEvent p in myPlaybackForm.GetSortedPreDefineEventList())
             {
                 //初始化listview的内容项
-                ListViewItem li = new ListViewItem(p.EventName);
+                ListViewItem li = new ListViewItem(index.ToString());
+                li.SubItems.Add(p.EventName);
                 li.Name = p.EventID.ToString();
                 li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).ToLongTimeString());
-                li.SubItems.Add(index.ToString());
 
                 //序号递增
                 index++;

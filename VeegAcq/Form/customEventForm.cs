@@ -41,13 +41,13 @@ namespace VeegStation
             //从playbackform中读取事件列表，然后将事件添加到列表中
             foreach (CustomEvent p in myPlaybackForm.GetCustomEventList())
             {
-                ListViewItem li = new ListViewItem(p.EventName);
+                ListViewItem li = new ListViewItem(index.ToString());
 
                 //允许更改item的颜色
                 li.UseItemStyleForSubItems = false;
 
+                li.SubItems.Add(p.EventName);
                 li.SubItems.Add(myPlaybackForm.GetEventTime(p.EventPosition).ToLongTimeString());
-                li.SubItems.Add(index.ToString());
                 li.SubItems.Add("");
                 index++;
                 eventList.Items.Add(li);

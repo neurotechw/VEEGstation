@@ -41,9 +41,9 @@ namespace VeegStation
             // eventList
             // 
             this.eventList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.num,
             this.name,
-            this.time,
-            this.num});
+            this.time});
             this.eventList.FullRowSelect = true;
             this.eventList.GridLines = true;
             this.eventList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
