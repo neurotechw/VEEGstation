@@ -145,7 +145,7 @@ namespace VeegStation
                 return;
             }
 
-            if (myAddCustomEventForm == null)
+            if (myAddCustomEventForm == null || myAddCustomEventForm.IsDisposed)
                 myAddCustomEventForm = new addCustomEventForm(this.myPlaybackForm,eventList.SelectedIndices[0]);
             
             //置状态为编辑事件

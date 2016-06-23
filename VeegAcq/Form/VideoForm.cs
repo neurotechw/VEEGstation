@@ -93,16 +93,14 @@ namespace VeegStation
 
                 //打开该文件
                 Player.Open(Media);
-
-                Player.Pause();       
-             }
-
-             //获得picturebox的X,Y值，宽，高
-             x = this.pictureBox_Video.Location.X;
-             y = this.pictureBox_Video.Location.Y;
-             width = this.pictureBox_Video.Width;
-             height = this.pictureBox_Video.Height;
-             btn_pause.Enabled = false;
+                Player.Pause();
+             }        
+                //获得picturebox的X,Y值，宽，高
+                x = this.pictureBox_Video.Location.X;
+                y = this.pictureBox_Video.Location.Y;
+                width = this.pictureBox_Video.Width;
+                height = this.pictureBox_Video.Height;
+                btn_pause.Enabled = false;
         }
 
         /// <summary>
@@ -111,7 +109,7 @@ namespace VeegStation
         public void Play()
         {
             Player.Play();
-            Player.Time = (long)playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + (long)playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+            Player.Time = (long)(playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000);
         }
 
         //暂停函数

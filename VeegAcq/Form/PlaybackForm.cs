@@ -1093,14 +1093,15 @@ namespace VeegStation
                     Debug.WriteLine(Player.IsSeekable);
                     Debug.WriteLine(Player.Length);
 
-                    //初始阶段，不播放视频
-                    Player.Pause();
+                    //初始阶段，不播放视频 
+                    Player.Play();
+                    Player.Time = (long)nfi.VideoOffset * 1000;
                 }
-
                 //方便该Form与视频弹出Form进行数据交换
                 video = new VideoForm(this);
                 video.Show();
                 video.Hide();
+                Player.Pause();
             }
             else
             {
@@ -1425,13 +1426,13 @@ namespace VeegStation
             Play();
             if (nfi.HasVideo)
             {
-                video.Play();
-                video.btn_pause.Enabled = true;
-                video.btn_play.Enabled = false;
                 if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
                     video.Player.Time = (long)nfi.VideoOffset * 1000;
                 if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
                     video.Player.Time = (long)nfi.VideoOffset * 1000 + CurrentSeconds * 1000;
+                video.Play();
+                video.btn_pause.Enabled = true;
+                video.btn_play.Enabled = false;             
             }
         }
 
@@ -2304,7 +2305,7 @@ namespace VeegStation
             DT_TotalTime = DateTime.Parse("2016-05-23 00:00:00");
             CurrentOffset = 0;
             if (nfi.HasVideo)
-            Player.Time =0;
+            Player.Time =(long)nfi.VideoOffset*1000;
             DT = nfi.StartDateTime;
             hsProgress.Value = 0;
             LoadData(CurrentSeconds);
