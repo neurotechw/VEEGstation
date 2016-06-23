@@ -77,6 +77,12 @@ namespace VeegStation
         /// </summary>
         private double[] timeSignal;
 
+        /// <summary>
+        /// 标示作为video是否弹出
+        /// --by wsp
+        /// </summary>
+        private int  isPop=0;
+
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         
         /// <summary>
@@ -1105,14 +1111,14 @@ namespace VeegStation
                     Debug.WriteLine(Player.Length);
 
                     //初始阶段，不播放视频 
-                    Player.Play();
-                    Player.Time = (long)nfi.VideoOffset * 1000;
+        //            Player.Play();
+        //            Player.Time = (long)nfi.VideoOffset * 1000;
                 }
                 //方便该Form与视频弹出Form进行数据交换
                 video = new VideoForm(this);
-                video.Show();
-                video.Hide();
-                Player.Pause();
+                //video.Show();
+                //video.Hide();
+       //         Player.Pause();
             }
             else
             {
@@ -1435,15 +1441,18 @@ namespace VeegStation
         public void btnPlay_Click(object sender, EventArgs e)
         {
             Play();
-            if (nfi.HasVideo)
+            if (isPop == 1)
             {
-                if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                    video.Player.Time = (long)nfi.VideoOffset * 1000;
-                if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                    video.Player.Time = (long)nfi.VideoOffset * 1000 + CurrentSeconds * 1000;
-                video.Play();
-                video.btn_pause.Enabled = true;
-                video.btn_play.Enabled = false;             
+                if (nfi.HasVideo)
+                {
+                    if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                        video.Player.Time = (long)nfi.VideoOffset * 1000;
+                    if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                        video.Player.Time = (long)nfi.VideoOffset * 1000 + CurrentSeconds * 1000;
+                    video.Play();
+                    video.btn_pause.Enabled = true;
+                    video.btn_play.Enabled = false;
+                }
             }
         }
 
@@ -1455,11 +1464,14 @@ namespace VeegStation
         public void btnPause_Click(object sender, EventArgs e)
         {
             Pause();
-            if (nfi.HasVideo)
+            if (isPop == 1)
             {
-                video.Pause();
-                video.btn_play.Enabled = true;
-                video.btn_pause.Enabled = false;
+                if (nfi.HasVideo)
+                {
+                    video.Pause();
+                    video.btn_play.Enabled = true;
+                    video.btn_pause.Enabled = false;
+                }
             }
         }
 
@@ -1503,8 +1515,11 @@ namespace VeegStation
             Debug.WriteLine(string.Format("Scroll mouse cap changed {0}", e));
             //暂停播放
             Pause();
-            if (nfi.HasVideo)
-                video.Pause();
+            if (isPop == 1)
+            {
+                if (nfi.HasVideo)
+                    video.Pause();
+            }
             if (CurrentSeconds != hsProgress.Value)
             {
                 CurrentSeconds = hsProgress.Value;
@@ -1523,6 +1538,7 @@ namespace VeegStation
                 if (nfi.HasVideo)
                 {
                     Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                    if(isPop==1)
                     video.Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
                 }
              }
@@ -1658,8 +1674,11 @@ namespace VeegStation
             if (nfi.HasVideo)
             {
                 Player.Time = CurrentSeconds * 1000;
-                video.Player.Time = CurrentSeconds * 1000; 
-                video.btn_play.Enabled = true;
+                if (isPop == 1)
+                {
+                    video.Player.Time = CurrentSeconds * 1000;
+                    video.btn_play.Enabled = true;
+                }
             }
         }
 
@@ -2004,17 +2023,23 @@ namespace VeegStation
                     //设置Speed是为了使得脑电数据也要加倍
                     Speed = Player.PlaybackRate;
 
-                    //videoForm的倍速要与该Form倍速保持一致
-                    video.Player.PlaybackRate = Player.PlaybackRate;
-                    video.btn_accelerate.Enabled = true;
+                    if (isPop == 1)
+                    {
+                        //videoForm的倍速要与该Form倍速保持一致
+                        video.Player.PlaybackRate = Player.PlaybackRate;
+                        video.btn_accelerate.Enabled = true;
+                    }
                 }
                 else
                 {
                     //加速到最大后，加速按钮不可用，减速按钮可用
                     btn_accelerate.Enabled = false;
                     btn_decelerate.Enabled = true;
-                    video.btn_accelerate.Enabled = false;
-                    video.btn_decelerate.Enabled = true;
+                    if (isPop == 1)
+                    {
+                        video.btn_accelerate.Enabled = false;
+                        video.btn_decelerate.Enabled = true;
+                    }
                 }
             }
             else
@@ -2053,18 +2078,24 @@ namespace VeegStation
                     //设置Speed是为了使得脑电数据也要减速
                     Speed = Player.PlaybackRate;
 
-                    //videoForm的倍速要与该Form倍速保持一致           
-                    video.Player.PlaybackRate = Player.PlaybackRate;
-                    video.btn_decelerate.Enabled = true;
-                    video.btn_accelerate.Enabled = true;
+                    //videoForm的倍速要与该Form倍速保持一致     
+                    if (isPop == 1)
+                    {
+                        video.Player.PlaybackRate = Player.PlaybackRate;
+                        video.btn_decelerate.Enabled = true;
+                        video.btn_accelerate.Enabled = true;
+                    }
                 }
                 else
                 {
                     //加速到最大后，加速按钮不可用，减速按钮可用
                     btn_decelerate.Enabled = false;
                     btn_accelerate.Enabled = true;
-                    video.btn_decelerate.Enabled = false;
-                    video.btn_accelerate.Enabled = true;
+                    if (isPop == 1)
+                    {
+                        video.btn_decelerate.Enabled = false;
+                        video.btn_accelerate.Enabled = true;
+                    }
                 }
             }
             else
@@ -2097,8 +2128,11 @@ namespace VeegStation
             if (panelVideo.Visible == true)
             {
                 toolTip1.SetToolTip(btn_hide, "显示");
-                panelVideo.Visible = false;
+        //        panelVideo.Visible = false;
                 video.Show();
+                if (Player.IsPlaying)
+                    video.Play();
+                isPop = 1;
             }
             else
             {

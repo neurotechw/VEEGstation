@@ -101,7 +101,16 @@ namespace VeegStation
                 y = this.pictureBox_Video.Location.Y;
                 width = this.pictureBox_Video.Width;
                 height = this.pictureBox_Video.Height;
-                btn_pause.Enabled = false;
+                if (playBack.Player.IsPlaying)
+                {
+                    btn_pause.Enabled = true;
+                    btn_play.Enabled = false;
+                }
+                else
+                {
+                    btn_pause.Enabled = false;
+                    btn_play.Enabled = true;
+                }
         }
 
         /// <summary>
