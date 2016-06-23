@@ -1931,6 +1931,10 @@ namespace VeegStation
             leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
 
             //
+            signalNum = (leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum;
+            
+            
+
 
         }
 
@@ -1959,8 +1963,10 @@ namespace VeegStation
             leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
 
             //label改变
+            this.labelPanel.Invalidate();
 
             //通道数目改变
+            signalNum = (leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum;
 
             //重新显示数据
             ShowData();
