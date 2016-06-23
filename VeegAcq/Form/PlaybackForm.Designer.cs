@@ -43,7 +43,6 @@ namespace VeegStation
             this.InformationTSSSBt = new System.Windows.Forms.ToolStripDropDownButton();
             this.pationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.detectionInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStriplabel_abtime = new System.Windows.Forms.ToolStripStatusLabel();
             this.displayStartTime = new System.Windows.Forms.ToolStripStatusLabel();
@@ -120,14 +119,14 @@ namespace VeegStation
             this.boardPanel = new System.Windows.Forms.Panel();
             this.tyPanelEventListView = new System.Windows.Forms.TableLayoutPanel();
             this.lvCustomEvents = new System.Windows.Forms.ListView();
+            this.lvCENumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvCEName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvCETime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lvCENumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvCEColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvPreDefineEvents = new System.Windows.Forms.ListView();
+            this.lvPDNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvPDName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvPDTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lvPDNumber = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lvPDColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnAddCustomEvents = new System.Windows.Forms.Button();
             this.btnDeleteCustomEvents = new System.Windows.Forms.Button();
@@ -157,9 +156,8 @@ namespace VeegStation
             this.btnPause,
             this.toolStripSeparator1,
             this.btnPrev,
-            this.btnNext,
-            this.InformationTSSSBt});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.btnNext});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 26);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(942, 25);
             this.toolStrip1.TabIndex = 0;
@@ -212,34 +210,25 @@ namespace VeegStation
             // 
             this.InformationTSSSBt.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pationInfoToolStripMenuItem,
-            this.detectionInfoToolStripMenuItem,
-            this.hideingToolStripMenuItem});
-            this.InformationTSSSBt.Image = ((System.Drawing.Image)(resources.GetObject("InformationTSSSBt.Image")));
+            this.detectionInfoToolStripMenuItem});
             this.InformationTSSSBt.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.InformationTSSSBt.Name = "InformationTSSSBt";
-            this.InformationTSSSBt.Size = new System.Drawing.Size(60, 22);
+            this.InformationTSSSBt.Size = new System.Drawing.Size(44, 19);
             this.InformationTSSSBt.Text = "信息";
             // 
             // pationInfoToolStripMenuItem
             // 
             this.pationInfoToolStripMenuItem.Name = "pationInfoToolStripMenuItem";
-            this.pationInfoToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.pationInfoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.pationInfoToolStripMenuItem.Text = "病人属性";
             this.pationInfoToolStripMenuItem.Click += new System.EventHandler(this.pationInfoToolStripMenuItem_Click);
             // 
             // detectionInfoToolStripMenuItem
             // 
             this.detectionInfoToolStripMenuItem.Name = "detectionInfoToolStripMenuItem";
-            this.detectionInfoToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.detectionInfoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.detectionInfoToolStripMenuItem.Text = "检查属性";
             this.detectionInfoToolStripMenuItem.Click += new System.EventHandler(this.detectionInfoToolStripMenuItem_Click);
-            // 
-            // hideingToolStripMenuItem
-            // 
-            this.hideingToolStripMenuItem.Name = "hideingToolStripMenuItem";
-            this.hideingToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.hideingToolStripMenuItem.Text = "隐藏";
-            this.hideingToolStripMenuItem.Click += new System.EventHandler(this.hideingToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -797,6 +786,7 @@ namespace VeegStation
             // 
             this.menuStrip1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InformationTSSSBt,
             this.格式ToolStripMenuItem,
             this.calibrateToolStripMenuItem,
             this.interfaceToolStripMenuItem,
@@ -804,7 +794,7 @@ namespace VeegStation
             this.导联设置ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(942, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(942, 26);
             this.menuStrip1.TabIndex = 9;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -818,31 +808,31 @@ namespace VeegStation
             this.滤波ToolStripMenuItem});
             this.格式ToolStripMenuItem.Name = "格式ToolStripMenuItem";
             this.格式ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.R)));
-            this.格式ToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
+            this.格式ToolStripMenuItem.Size = new System.Drawing.Size(58, 22);
             this.格式ToolStripMenuItem.Text = "格式(R)";
             // 
             // sensitivityToolStripMenuItem
             // 
             this.sensitivityToolStripMenuItem.Name = "sensitivityToolStripMenuItem";
-            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.sensitivityToolStripMenuItem.Text = "灵敏度";
             // 
             // timeStandartToolStripMenuItem
             // 
             this.timeStandartToolStripMenuItem.Name = "timeStandartToolStripMenuItem";
-            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.timeStandartToolStripMenuItem.Text = "时间基准";
             // 
             // signalToolStripMenuItem
             // 
             this.signalToolStripMenuItem.Name = "signalToolStripMenuItem";
-            this.signalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.signalToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.signalToolStripMenuItem.Text = "显示通道";
             // 
             // leadChooseToolStripMenuItem
             // 
             this.leadChooseToolStripMenuItem.Name = "leadChooseToolStripMenuItem";
-            this.leadChooseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.leadChooseToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.leadChooseToolStripMenuItem.Text = "导联选择";
             // 
             // 滤波ToolStripMenuItem
@@ -851,7 +841,7 @@ namespace VeegStation
             this.Filter50HzToolStripMenuItem,
             this.BandFilterToolStripMenuItem});
             this.滤波ToolStripMenuItem.Name = "滤波ToolStripMenuItem";
-            this.滤波ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.滤波ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.滤波ToolStripMenuItem.Text = "滤波";
             // 
             // Filter50HzToolStripMenuItem
@@ -875,7 +865,7 @@ namespace VeegStation
             this.calibrateXToolStripMenuItem});
             this.calibrateToolStripMenuItem.Name = "calibrateToolStripMenuItem";
             this.calibrateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.C)));
-            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
+            this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(59, 22);
             this.calibrateToolStripMenuItem.Text = "校准(C)";
             // 
             // calibrateYToolStripMenuItem
@@ -898,7 +888,7 @@ namespace VeegStation
             this.boardToolStripMenuItem});
             this.interfaceToolStripMenuItem.Name = "interfaceToolStripMenuItem";
             this.interfaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
-            this.interfaceToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+            this.interfaceToolStripMenuItem.Size = new System.Drawing.Size(54, 22);
             this.interfaceToolStripMenuItem.Text = "界面(I)";
             // 
             // boardToolStripMenuItem
@@ -915,7 +905,7 @@ namespace VeegStation
             this.customeEventstoolstripmenuItem});
             this.eventToolStripMenuItem.Name = "eventToolStripMenuItem";
             this.eventToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.E)));
-            this.eventToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.eventToolStripMenuItem.Size = new System.Drawing.Size(57, 22);
             this.eventToolStripMenuItem.Text = "事件(E)";
             // 
             // predefineEventstoolstripmenuItem
@@ -935,7 +925,7 @@ namespace VeegStation
             // 导联设置ToolStripMenuItem
             // 
             this.导联设置ToolStripMenuItem.Name = "导联设置ToolStripMenuItem";
-            this.导联设置ToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.导联设置ToolStripMenuItem.Size = new System.Drawing.Size(67, 22);
             this.导联设置ToolStripMenuItem.Text = "导联编制";
             this.导联设置ToolStripMenuItem.Click += new System.EventHandler(this.导联设置ToolStripMenuItem_Click);
             // 
@@ -1043,6 +1033,11 @@ namespace VeegStation
             this.lvCustomEvents.UseCompatibleStateImageBehavior = false;
             this.lvCustomEvents.View = System.Windows.Forms.View.Details;
             // 
+            // lvCENumber
+            // 
+            this.lvCENumber.Text = "编号";
+            this.lvCENumber.Width = 36;
+            // 
             // lvCEName
             // 
             this.lvCEName.Text = "名称";
@@ -1051,11 +1046,6 @@ namespace VeegStation
             // lvCETime
             // 
             this.lvCETime.Text = "发生时间";
-            // 
-            // lvCENumber
-            // 
-            this.lvCENumber.Text = "编号";
-            this.lvCENumber.Width = 36;
             // 
             // lvCEColor
             // 
@@ -1082,6 +1072,11 @@ namespace VeegStation
             this.lvPreDefineEvents.UseCompatibleStateImageBehavior = false;
             this.lvPreDefineEvents.View = System.Windows.Forms.View.Details;
             // 
+            // lvPDNumber
+            // 
+            this.lvPDNumber.Text = "编号";
+            this.lvPDNumber.Width = 36;
+            // 
             // lvPDName
             // 
             this.lvPDName.Text = "名称";
@@ -1090,11 +1085,6 @@ namespace VeegStation
             // lvPDTime
             // 
             this.lvPDTime.Text = "发生时间";
-            // 
-            // lvPDNumber
-            // 
-            this.lvPDNumber.Text = "编号";
-            this.lvPDNumber.Width = 36;
             // 
             // lvPDColor
             // 
@@ -1307,7 +1297,6 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripDropDownButton InformationTSSSBt;
         private System.Windows.Forms.ToolStripMenuItem pationInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem detectionInfoToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem hideingToolStripMenuItem;
         private System.Windows.Forms.Label FilePathL;
         private System.Windows.Forms.TextBox FilePathTextBt;
         private System.Windows.Forms.MenuStrip menuStrip1;
