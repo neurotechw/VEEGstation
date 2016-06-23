@@ -92,6 +92,7 @@ namespace VeegStation
             //硬件配置名称
             //cbConfigList.Text = cbConfigList.Items[0].ToString();
             cbConfigList.Text = config;
+            txtName.Text = "默认导联配置";
 
             //初始化表格
             InitList();
@@ -103,7 +104,7 @@ namespace VeegStation
         /// <param name="p">硬件配置名称</param>
         public void InitList()
         {
-            txtName.Text = "默认导联配置";
+            //txtName.Text = "默认导联配置";
             myLeadLists = controller.CommonDataPool.LeadConfigLists;
             myLeadList = (Hashtable)myLeadLists[cbConfigList.Text];
             //myLeadList = controller.CommonDataPool.GetLeadList(cbConfigList.Text);
@@ -152,6 +153,59 @@ namespace VeegStation
             this.lvLeadList.EndUpdate();  //结束数据处理，UI界面一次性绘制。
             #endregion
         }
+
+        public void InitList(string name)
+        {
+            txtName.Text = name;
+            myLeadLists = controller.CommonDataPool.LeadConfigLists;
+            myLeadList = (Hashtable)myLeadLists[cbConfigList.Text];
+            //myLeadList = controller.CommonDataPool.GetLeadList(cbConfigList.Text);
+
+            DataTable dt = new DataTable();
+            InitDT(dt);
+            ArrayList keys = new ArrayList(myLeadList.Keys);
+            keys.Sort();
+            for (int i = 0; i < keys.Count; i++)
+            {
+                dt.Columns.Add((string)keys[i], typeof(string));
+                ArrayList value = (ArrayList)myLeadList[keys[i]];
+                for (int j = 0; j < value.Count; j++)
+                {
+                    dt.Rows[j][i] = value[j];
+                }
+            }
+
+            #region 数据绑定到listview
+            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度  
+            this.lvLeadList.BeginUpdate();
+
+            //清空listview
+            this.lvLeadList.Items.Clear();
+            this.lvLeadList.Columns.Clear();
+
+            //列
+            this.lvLeadList.Columns.Add("编号", 100, HorizontalAlignment.Left);
+            for (int j = 0; j < keys.Count; j++)
+            {
+                this.lvLeadList.Columns.Add(keys[j].ToString(), 120, HorizontalAlignment.Left);
+            }
+
+            //数据绑定
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                ListViewItem lvi = new ListViewItem();//新增一个ListViewItem
+                lvi.Text = (i + 1).ToString();
+
+                for (int j = 0; j < keys.Count; j++)
+                {
+                    lvi.SubItems.Add(dt.Rows[i][keys[j].ToString()].ToString());
+                }
+                this.lvLeadList.Items.Add(lvi);//将新增列加入ListView
+            }
+            this.lvLeadList.EndUpdate();  //结束数据处理，UI界面一次性绘制。
+            #endregion
+        }
+
 
         /// <summary>
         /// 初始化DataTable
