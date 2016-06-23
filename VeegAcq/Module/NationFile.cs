@@ -350,6 +350,7 @@ namespace VeegStation
                 //BYTE第一位为标志预定义事件编号位，第四第五位为存储点位置位（低位存储）
                 pdList.Add(new PreDefineEvent(myByte[0], (ushort)(myByte[3] | myByte[4] << 8), posInFile - 1, id));   //减1把readbyte那的+1减掉
                 posInFile += 7;
+                id++;
             }
             while (mark >= 0);
 

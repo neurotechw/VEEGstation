@@ -680,6 +680,8 @@ namespace VeegStation
         {
             System.Windows.Forms.ToolStripMenuItem item;
 
+            this.signalToolStripMenuItem.DropDownItems.Clear();
+
             //初始化通道显示数据选项
             foreach (int si in signalNumArray)
             {
@@ -715,10 +717,9 @@ namespace VeegStation
                     if (signalNum < Math.Pow(2, i))
                         break;
                 }
-                i--;
 
                 //分配通道显示数据数组大小
-                if (Math.Pow(2, i) == signalNum)
+                if (Math.Pow(2, i - 1) == signalNum)
                     signalNumArray = new int[i];
                 else
                     signalNumArray = new int[i + 1];
@@ -760,7 +761,7 @@ namespace VeegStation
                 case 0x00:
                     this.hardwareConfigName = "8导脑电";
                     //byteOfPerData = 26;
-                    numberOfPerData = 8;
+                    numberOfPerData =  8;
                     indexOfData = 6;
                     break;
 
@@ -922,7 +923,7 @@ namespace VeegStation
             SeriesCollection col = chartWave.Series;
             double interval = 2000D / signalNum;
             chartWave.SuspendLayout();
-            foreach (int sIdx in Enumerable.Range(0, leadConfigArrayList.Count))
+            foreach (int sIdx in Enumerable.Range(0, chartWave.Series.Count))
             {
                 int a = col[sIdx].Points.Count;
                 col[sIdx].Points.Clear();
@@ -1014,7 +1015,7 @@ namespace VeegStation
                         if (FPi_FPj[0] != "REF")
                             sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
                         if (FPi_FPj[1] != "REF")
-                            sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
+                            sampleValue_Negative = packets[tIdx].EEG[channelNum_Negative - 1];
                         sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
                         sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
@@ -1589,13 +1590,6 @@ namespace VeegStation
             }
         }
 
-        //取消信息下拉菜单的隐藏功能
-        //private void hideingToolStripMenuItem_Click(object sender, EventArgs e)
-        //{
-        //    this.PationInfoPanel.Visible = false;
-        //    this.DetectionInfoPanel.Visible = false;
-        //}
-
         private void Set_PationInfoPanel(PatInfo patientinfo)
         {
             this.PatNameTextBt.Text = patientinfo.Name;
@@ -1992,7 +1986,9 @@ namespace VeegStation
             this.labelPanel.Invalidate();
 
             //通道数目改变
-            signalNum = (leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum;
+            SetSignalNum((leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum);
+            SetSignalNumArray(signalNum);
+            InitSignalNumMenuItems();
 
             //重新显示数据
             ShowData();
@@ -2636,7 +2632,7 @@ namespace VeegStation
                     throw new Exception("删除预定义事件ID不能为0，请设置要删除的预定义事件的ID");
 
                 //判定预定义事件列表最少有一个事件可供删除
-                if (preDefineEventsList.Count() <= 0)
+                if (preDefineEventsList.Count() <= 0 && preDefineEventsListToBeAdd.Count <= 0)
                     return;
 
                 //positionInFileList.Add(preDefineEventsList[index].PosInFile);
@@ -2830,7 +2826,7 @@ namespace VeegStation
                 //根将从Playbackform中读取的内容插入到列表中
                 foreach (PreDefineEvent p in GetSortedPreDefineEventList())
                 {
-                    ListViewItem li = new ListViewItem(p.EventName);
+                    ListViewItem li = new ListViewItem(index.ToString());
 
 
                     //允许更改item的颜色
@@ -2838,8 +2834,8 @@ namespace VeegStation
 
                     //初始化listview的内容项
                     li.Name = p.EventID.ToString();
+                    li.SubItems.Add(p.EventName);
                     li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
-                    li.SubItems.Add(index.ToString());
                     li.SubItems.Add("");
 
                     //序号递增
@@ -2873,13 +2869,13 @@ namespace VeegStation
                 //从playbackform中读取事件列表，然后将事件添加到列表中
                 foreach (CustomEvent p in customEventList)
                 {
-                    ListViewItem li = new ListViewItem(p.EventName);
+                    ListViewItem li = new ListViewItem(index.ToString());
 
                     //允许更改item的颜色
                     li.UseItemStyleForSubItems = false;
 
+                    li.SubItems.Add(p.EventName);
                     li.SubItems.Add(GetEventTime(p.EventPosition).ToLongTimeString());
-                    li.SubItems.Add(index.ToString());
                     li.SubItems.Add("");
                     index++;
                     lvCustomEvents.Items.Add(li);
@@ -3050,7 +3046,7 @@ namespace VeegStation
                 FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryWriter bw = new BinaryWriter(fs);
 
-                //读取每个事件，并把每个事件写入其在文件中的位置
+                ////读取每个事件，并把每个事件写入其在文件中的位置
                 foreach (PreDefineEvent p in preDefineEventsList)
                 {
                     //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
@@ -3071,6 +3067,18 @@ namespace VeegStation
                     bw.Seek(0, SeekOrigin.End);
                     bw.Write(byteBuf);
                 }
+
+                byte[] allBytes = new byte[fs.Length - nfi.NatInfo.CfgOff + 1];
+                fs.Read(allBytes, 0, (int)(fs.Length - nfi.NatInfo.CfgOff + 1));
+
+
+                //positionInFileOfDeletedFileList.Sort();
+                //for (int i = 0; i < positionInFileOfDeletedFileList.Count; i++)
+                //{
+                //    bw.Seek(positionInFileOfDeletedFileList[i] - nfi.NatInfo.CfgOff, SeekOrigin.Begin);
+                //    byte[] writeByte=allBytes.Skip(positionInFileOfDeletedFileList[i]-1).Take(5).ToArray();
+                //    bw.Write(allBytes)
+                //}
 
                 //读取每个删除的事件，并把其位置置为0
                 foreach (int p in positionInFileOfDeletedFileList)
@@ -3247,9 +3255,7 @@ namespace VeegStation
 
         private void 导联设置ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
-            //myLeadConfigForm.Show();
-            myLeadConfigForm.ShowDialog();
+            
         }
 
 		private void boardPanel_Paint(object sender, PaintEventArgs e)
@@ -3472,8 +3478,7 @@ namespace VeegStation
             this.DetectionInfoPanel.Hide(); 
    
             //去除检查属性菜单前的勾  by-xcg
-            this.detectionInfoToolStripMenuItem.Checked = false;
-        }
+            this.detectionInfoToolStripMenuItem.Checked = false;        }
 
         /// <summary>
         /// 检查属性隐藏按钮事件
@@ -3486,7 +3491,14 @@ namespace VeegStation
             this.PationInfoPanel.Hide();
 
             //去除病人属性菜单前的勾  by-xcg
-            this.pationInfoToolStripMenuItem.Checked = false;
+            this.pationInfoToolStripMenuItem.Checked = false;    
+			    }
+
+        private void leadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
+            //myLeadConfigForm.Show();
+            myLeadConfigForm.ShowDialog();
         }
     }
 }
