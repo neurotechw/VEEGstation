@@ -1738,6 +1738,7 @@ namespace VeegStation
                 chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset + 1 - (int)(chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
             }
                 LoadData(CurrentSeconds);
+                hsProgress.Value = CurrentSeconds;
                 ShowData();
                 UpdateBtnEnable();
         }
@@ -1992,6 +1993,7 @@ namespace VeegStation
                 if (Speed <= 4)
                 {
                     btn_accelerate.Enabled = true;
+                    btn_decelerate.Enabled = true;
                     Player.PlaybackRate = Player.PlaybackRate * 2;
 
                     //设置Speed是为了使得脑电数据也要加倍
@@ -2015,6 +2017,7 @@ namespace VeegStation
                 if (Speed <= 4)
                 {
                     btn_accelerate.Enabled = true;
+                    btn_decelerate.Enabled = true;
                     Speed *= 2;
                 }
                 else
