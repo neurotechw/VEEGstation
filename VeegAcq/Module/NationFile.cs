@@ -466,6 +466,9 @@ namespace VeegStation
             } while (mark >= 0);
             #endregion
 
+            fs.Close();
+            fs.Dispose();
+
             return eventProperty;
         }
 
