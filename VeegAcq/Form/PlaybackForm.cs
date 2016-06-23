@@ -202,10 +202,21 @@ namespace VeegStation
 
         #region 事件相关
         /// <summary>
-        /// 事件队列
+        /// 预定义事件队列
         /// -- by lxl
         /// </summary>
         private List<PreDefineEvent> preDefineEventsList = new List<PreDefineEvent>();
+
+        /// <summary>
+        /// 本次添加的预定义事件队列
+        /// -- by lxl
+        /// </summary>
+        private List<PreDefineEvent> preDefineEventsListToBeAdd = new List<PreDefineEvent>();
+
+        /// <summary>
+        /// 自定义事件队列
+        /// -- by lxl
+        /// </summary>
         private List<CustomEvent> customEventList = new List<CustomEvent>();
 
         /// <summary>
@@ -2190,7 +2201,7 @@ namespace VeegStation
             //设置画画所需要的变量
             Pen dotPen = new Pen(Color.Red, 2);            //虚线画笔    
             dotPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
-            SolidBrush strBrush = new SolidBrush(Color.White);
+            SolidBrush strBrush = new SolidBrush(Color.Black);
             Font strFont = new System.Drawing.Font("黑体", 10, FontStyle.Bold);
 
             //画自定义和预定义事件
@@ -2215,15 +2226,18 @@ namespace VeegStation
             //事件该画的位置
             double drawPosition;
 
+            List<PreDefineEvent> drawList = new List<PreDefineEvent>(GetPreDefineEventList());
+            drawList.AddRange(preDefineEventsListToBeAdd);
+
             //画预定义事件                   
-            foreach (PreDefineEvent p in preDefineEventsList)
+            foreach (PreDefineEvent p in drawList)
             {
                 //只画当前页面能显示的事件
                 if (p.EventPosition / sampleRate < currentSeconds)
                     continue;
                 if (p.EventPosition / sampleRate > CurrentSeconds + xMaximum)
                     break;
-                pen.Color = p.EventColor;
+                pen.Color = p.EventColor; 
                 drawPosition = this.chartWave.ChartAreas[0].AxisX.ValueToPixelPosition(Convert.ToDouble(p.EventPosition) / sampleRate - currentSeconds);
                 g.FillRectangle(new SolidBrush(Color.FromArgb(200, p.EventColor)), new Rectangle((int)drawPosition - 40, 5, 80, 15));
                 g.DrawString(p.EventName, strFont, strBrush, new RectangleF((int)drawPosition - 30, 5, 60, 15));
@@ -2544,8 +2558,8 @@ namespace VeegStation
                     if (isAddingPreDefineEvent)
                     {
                         //将事件添加进列表并排序
-                        FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read);
-                        AddPreDefineEvents(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)fs.Length - 1);
+                        FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read); 
+                        AddPreDefineEvents(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)fs.Length);
 
                         //关闭文件，释放文件流
                         fs.Close();
@@ -2598,12 +2612,28 @@ namespace VeegStation
                     {
                         positionInFileOfDeletedFileList.Add(p.PosInFile);
                         preDefineEventsList.Remove(p);
-                        break;
+
+                        //事件删除后更新列表
+                        UpdateEventsListView(flag);
+
+                        this.chartWave.Invalidate();
+                        return;
                     }
                 }
 
-                //事件删除后更新列表
-                UpdateEventsListView(flag);
+                foreach (PreDefineEvent p in preDefineEventsListToBeAdd)
+                {
+                    if (p.EventID == id)
+                    {
+                        preDefineEventsListToBeAdd.Remove(p);
+
+                        //事件删除后更新列表
+                        UpdateEventsListView(flag);
+
+                        this.chartWave.Invalidate();
+                        return;
+                    }
+                }
             }
             else
             {
@@ -2652,7 +2682,8 @@ namespace VeegStation
         private void AddPreDefineEvents(int index,ushort pointPos,int posInFile)
         {
             //将事件添加进列表
-            preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile,preDefineEventsList.Count + 1));
+            //preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile,preDefineEventsList.Count + 1));
+            preDefineEventsListToBeAdd.Add(new PreDefineEvent(index, pointPos, 0, preDefineEventsList.Count + preDefineEventsListToBeAdd.Count + 1));
         }
 
         /// <summary>
@@ -2674,11 +2705,22 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         /// <returns>预定义事件列表</returns>
-        public List<PreDefineEvent> GetSortedPreEventList()
+        public List<PreDefineEvent> GetSortedPreDefineEventList()
         {
             List<PreDefineEvent> returnList = new List<PreDefineEvent>(preDefineEventsList);
+            returnList.AddRange(preDefineEventsListToBeAdd);
             returnList.Sort(new PreDefineEventComparer());
             return returnList;
+        }
+
+        /// <summary>
+        /// 获得未排序的预定义事件列表
+        /// -- by lxl
+        /// </summary>
+        /// <returns></returns>
+        public List<PreDefineEvent> GetPreDefineEventList()
+        {
+            return preDefineEventsList;
         }
 
         /// <summary>
@@ -2751,7 +2793,7 @@ namespace VeegStation
             if (preDefineEventsList != null)
             {
                 //根将从Playbackform中读取的内容插入到列表中
-                foreach (PreDefineEvent p in GetSortedPreEventList())
+                foreach (PreDefineEvent p in GetSortedPreDefineEventList())
                 {
                     ListViewItem li = new ListViewItem(p.EventName);
 
@@ -2973,21 +3015,30 @@ namespace VeegStation
                 FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryWriter bw = new BinaryWriter(fs);
 
-                //读取每个事件，并把每个事件写入其在文件中的位置
-                foreach (PreDefineEvent p in preDefineEventsList)
-                {
-                    //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
-                    byte[] byteBuf = PreDefineEventsToHex(p);
-                    if (byteBuf == null)
-                    {
-                        MessageBox.Show("解析失败:数据转换成BYTE出错");
-                        return 0;
-                    }
+                ////读取每个事件，并把每个事件写入其在文件中的位置
+                //foreach (PreDefineEvent p in preDefineEventsList)
+                //{
+                //    //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
+                //    byte[] byteBuf = PreDefineEventsToHex(p);
+                //    if (byteBuf == null)
+                //    {
+                //        MessageBox.Show("解析失败:数据转换成BYTE出错");
+                //        return 0;
+                //    }
 
-                    bw.Seek(p.PosInFile, SeekOrigin.Begin);
+                //    bw.Seek(p.PosInFile, SeekOrigin.Begin);
+                //    bw.Write(byteBuf);
+                //}
+
+                //读取每个添加的事件，并把事件写入文件末尾
+                foreach (PreDefineEvent p in preDefineEventsListToBeAdd)
+                {
+                    byte[] byteBuf = PreDefineEventsToHex(p);
+                    bw.Seek(0, SeekOrigin.End);
                     bw.Write(byteBuf);
                 }
 
+                //读取每个删除的事件，并把其位置置为0
                 foreach (int p in positionInFileOfDeletedFileList)
                 {
                     bw.Seek(p, SeekOrigin.Begin);
