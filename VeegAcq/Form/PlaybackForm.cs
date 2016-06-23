@@ -1558,22 +1558,43 @@ namespace VeegStation
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_PationInfoPanel(nfi.PatInfo);   //  --by zt
+
             this.PationInfoPanel.Visible = true;
-            this.DetectionInfoPanel.Visible = false;
+
+            //实现病人属性菜单项勾选功能，当显示面板时显示勾选，当去除勾选时隐藏面板
+            this.pationInfoToolStripMenuItem.Checked = !this.pationInfoToolStripMenuItem.Checked;
+            if(this.pationInfoToolStripMenuItem.Checked == false)
+            {
+                this.PationInfoPanel.Hide();
+            }
+
+            //病人属性面板和检查属性面板需要同时存在
+            //this.DetectionInfoPanel.Visible = false;
         }
 
         private void detectionInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_DetectionInfoPanel(nfi.PatInfo);  //  --by zt
-            this.PationInfoPanel.Visible = false;
+
+            //病人属性面板和检查属性面板需要同时存在
+            //this.PationInfoPanel.Visible = false;
+
             this.DetectionInfoPanel.Visible = true;
+
+            //实现检查属性菜单项勾选功能，当显示面板时显示勾选，当去除勾选时隐藏面板
+            this.detectionInfoToolStripMenuItem.Checked = !this.detectionInfoToolStripMenuItem.Checked;
+            if(this.detectionInfoToolStripMenuItem.Checked ==false)
+            {
+                this.DetectionInfoPanel.Hide();
+            }
         }
 
-        private void hideingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.PationInfoPanel.Visible = false;
-            this.DetectionInfoPanel.Visible = false;
-        }
+        //取消信息下拉菜单的隐藏功能
+        //private void hideingToolStripMenuItem_Click(object sender, EventArgs e)
+        //{
+        //    this.PationInfoPanel.Visible = false;
+        //    this.DetectionInfoPanel.Visible = false;
+        //}
 
         private void Set_PationInfoPanel(PatInfo patientinfo)
         {
@@ -3448,7 +3469,10 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.DetectionInfoPanel.Hide();    
+            this.DetectionInfoPanel.Hide(); 
+   
+            //去除检查属性菜单前的勾  by-xcg
+            this.detectionInfoToolStripMenuItem.Checked = false;
         }
 
         /// <summary>
@@ -3460,6 +3484,9 @@ namespace VeegStation
         private void btnHide_Click(object sender, EventArgs e)
         {
             this.PationInfoPanel.Hide();
+
+            //去除病人属性菜单前的勾  by-xcg
+            this.pationInfoToolStripMenuItem.Checked = false;
         }
     }
 }
