@@ -3021,6 +3021,7 @@ namespace VeegStation
                 //打开文件流
                 FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryWriter bw = new BinaryWriter(fs);
+
                 //读取每个事件，并把每个事件写入其在文件中的位置
                 foreach (PreDefineEvent p in preDefineEventsList)
                 {
@@ -3031,7 +3032,6 @@ namespace VeegStation
                         MessageBox.Show("解析失败:数据转换成BYTE出错");
                         return 0;
                     }
-
                     bw.Seek(p.PosInFile, SeekOrigin.Begin);
                     bw.Write(byteBuf);
                 }
