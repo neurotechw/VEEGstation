@@ -1812,6 +1812,8 @@ namespace VeegStation
         /// <param name="height">一厘米多少像素点</param>
         public void CalibrateY(double height)
         {
+            if (height == 0)
+                return;
             //一毫米多少像素点
             pixelPerMM = height / 10D;
 
@@ -1842,6 +1844,8 @@ namespace VeegStation
         /// <param name="width">一厘米多少个像素点</param>
         public void CalibrateX(double width)
         {
+            if (width == 0)
+                return;
             //一毫米多少像素点
             pixelPerMM = width / 10D;
             commonDataPool.PixelPerMM = pixelPerMM;
@@ -3017,21 +3021,20 @@ namespace VeegStation
                 //打开文件流
                 FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryWriter bw = new BinaryWriter(fs);
+                //读取每个事件，并把每个事件写入其在文件中的位置
+                foreach (PreDefineEvent p in preDefineEventsList)
+                {
+                    //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
+                    byte[] byteBuf = PreDefineEventsToHex(p);
+                    if (byteBuf == null)
+                    {
+                        MessageBox.Show("解析失败:数据转换成BYTE出错");
+                        return 0;
+                    }
 
-                ////读取每个事件，并把每个事件写入其在文件中的位置
-                //foreach (PreDefineEvent p in preDefineEventsList)
-                //{
-                //    //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
-                //    byte[] byteBuf = PreDefineEventsToHex(p);
-                //    if (byteBuf == null)
-                //    {
-                //        MessageBox.Show("解析失败:数据转换成BYTE出错");
-                //        return 0;
-                //    }
-
-                //    bw.Seek(p.PosInFile, SeekOrigin.Begin);
-                //    bw.Write(byteBuf);
-                //}
+                    bw.Seek(p.PosInFile, SeekOrigin.Begin);
+                    bw.Write(byteBuf);
+                }
 
                 //读取每个添加的事件，并把事件写入文件末尾
                 foreach (PreDefineEvent p in preDefineEventsListToBeAdd)

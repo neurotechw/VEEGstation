@@ -52,9 +52,19 @@
             0,
             0,
             0});
+            this.valueBox.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.valueBox.Name = "valueBox";
             this.valueBox.Size = new System.Drawing.Size(120, 21);
             this.valueBox.TabIndex = 0;
+            this.valueBox.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.valueBox.ValueChanged += new System.EventHandler(this.valueChanged);
             // 
             // confirmButton
