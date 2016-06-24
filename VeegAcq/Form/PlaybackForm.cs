@@ -2151,7 +2151,7 @@ namespace VeegStation
             if (panelVideo.Visible == true)
             {
                 toolTip1.SetToolTip(btn_hide, "显示");
-        //        panelVideo.Visible = false;
+                panelVideo.Visible = false;
                 video.Show();
                 if (Player.IsPlaying)
                     video.Play();
