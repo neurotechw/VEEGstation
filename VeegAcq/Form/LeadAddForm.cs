@@ -574,7 +574,7 @@ namespace VeegStation
                 this.Close();
 
                 //跳转到导联配置主界面,待定
-                myLeadConfigForm.InitList();
+                myLeadConfigForm.InitList(name);
                 #endregion
             }
             else

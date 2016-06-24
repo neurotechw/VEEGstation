@@ -161,7 +161,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "LeadConfigForm";
-            this.Text = "LeadConfigForm";
+            this.Text = "导联配置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadConfigForm_FormClosing);
             this.gbInfo.ResumeLayout(false);
             this.gbInfo.PerformLayout();
