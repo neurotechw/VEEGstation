@@ -2257,8 +2257,7 @@ namespace VeegStation
             //事件该画的位置
             double drawPosition;
 
-            List<PreDefineEvent> drawList = new List<PreDefineEvent>(GetPreDefineEventList());
-            drawList.AddRange(preDefineEventsListToBeAdd);
+            List<PreDefineEvent> drawList = new List<PreDefineEvent>(GetSortedPreDefineEventList());
 
             //画预定义事件                   
             foreach (PreDefineEvent p in drawList)
@@ -2745,7 +2744,7 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 获得未排序的预定义事件列表
+        /// 获得未排序的、没有刚加入的预定义事件的预定义事件列表
         /// -- by lxl
         /// </summary>
         /// <returns></returns>

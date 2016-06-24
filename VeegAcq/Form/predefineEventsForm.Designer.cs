@@ -48,9 +48,9 @@ namespace VeegStation
             this.eventList.GridLines = true;
             this.eventList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.eventList.HideSelection = false;
-            this.eventList.Location = new System.Drawing.Point(12, 43);
+            this.eventList.Location = new System.Drawing.Point(12, 13);
             this.eventList.Name = "eventList";
-            this.eventList.Size = new System.Drawing.Size(191, 259);
+            this.eventList.Size = new System.Drawing.Size(191, 299);
             this.eventList.TabIndex = 0;
             this.eventList.UseCompatibleStateImageBehavior = false;
             this.eventList.View = System.Windows.Forms.View.Details;
@@ -69,7 +69,7 @@ namespace VeegStation
             // 
             // addEvent
             // 
-            this.addEvent.Location = new System.Drawing.Point(239, 43);
+            this.addEvent.Location = new System.Drawing.Point(239, 13);
             this.addEvent.Name = "addEvent";
             this.addEvent.Size = new System.Drawing.Size(75, 23);
             this.addEvent.TabIndex = 1;
@@ -80,7 +80,7 @@ namespace VeegStation
             // btn_Quit
             // 
             this.btn_Quit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btn_Quit.Location = new System.Drawing.Point(239, 123);
+            this.btn_Quit.Location = new System.Drawing.Point(239, 93);
             this.btn_Quit.Name = "btn_Quit";
             this.btn_Quit.Size = new System.Drawing.Size(75, 23);
             this.btn_Quit.TabIndex = 2;
@@ -90,16 +90,16 @@ namespace VeegStation
             // 
             // nameGroup
             // 
-            this.nameGroup.Location = new System.Drawing.Point(320, 43);
+            this.nameGroup.Location = new System.Drawing.Point(320, 13);
             this.nameGroup.Name = "nameGroup";
-            this.nameGroup.Size = new System.Drawing.Size(84, 193);
+            this.nameGroup.Size = new System.Drawing.Size(84, 299);
             this.nameGroup.TabIndex = 3;
             this.nameGroup.TabStop = false;
             this.nameGroup.Text = "事件名称";
             // 
             // deleteEvent
             // 
-            this.deleteEvent.Location = new System.Drawing.Point(239, 83);
+            this.deleteEvent.Location = new System.Drawing.Point(239, 53);
             this.deleteEvent.Name = "deleteEvent";
             this.deleteEvent.Size = new System.Drawing.Size(75, 23);
             this.deleteEvent.TabIndex = 4;
@@ -112,7 +112,7 @@ namespace VeegStation
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btn_Quit;
-            this.ClientSize = new System.Drawing.Size(419, 306);
+            this.ClientSize = new System.Drawing.Size(419, 316);
             this.ControlBox = false;
             this.Controls.Add(this.deleteEvent);
             this.Controls.Add(this.nameGroup);
