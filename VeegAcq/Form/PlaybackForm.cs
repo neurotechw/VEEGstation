@@ -761,7 +761,7 @@ namespace VeegStation
                 case 0x00:
                     this.hardwareConfigName = "8导脑电";
                     //byteOfPerData = 26;
-                    numberOfPerData = 8;
+                    numberOfPerData =  8;
                     indexOfData = 6;
                     break;
 
@@ -1015,7 +1015,7 @@ namespace VeegStation
                         if (FPi_FPj[0] != "REF")
                             sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
                         if (FPi_FPj[1] != "REF")
-                            sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
+                            sampleValue_Negative = packets[tIdx].EEG[channelNum_Negative - 1];
                         sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
                         sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
@@ -3255,9 +3255,7 @@ namespace VeegStation
 
         private void 导联设置ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
-            //myLeadConfigForm.Show();
-            myLeadConfigForm.ShowDialog();
+            
         }
 
 		private void boardPanel_Paint(object sender, PaintEventArgs e)
@@ -3495,5 +3493,12 @@ namespace VeegStation
             //去除病人属性菜单前的勾  by-xcg
             this.pationInfoToolStripMenuItem.Checked = false;    
 			    }
+
+        private void leadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
+            //myLeadConfigForm.Show();
+            myLeadConfigForm.ShowDialog();
+        }
     }
 }
