@@ -29,9 +29,9 @@ namespace VeegStation
          private void InitializeComponent()
          {
             this.eventList = new System.Windows.Forms.ListView();
+            this.num = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.num = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.addEvent = new System.Windows.Forms.Button();
             this.btn_Quit = new System.Windows.Forms.Button();
             this.nameGroup = new System.Windows.Forms.GroupBox();
@@ -55,6 +55,10 @@ namespace VeegStation
             this.eventList.UseCompatibleStateImageBehavior = false;
             this.eventList.View = System.Windows.Forms.View.Details;
             // 
+            // num
+            // 
+            this.num.Text = "编号";
+            // 
             // name
             // 
             this.name.Text = "事件名称";
@@ -62,10 +66,6 @@ namespace VeegStation
             // time
             // 
             this.time.Text = "发生时间";
-            // 
-            // num
-            // 
-            this.num.Text = "编号";
             // 
             // addEvent
             // 
@@ -112,7 +112,7 @@ namespace VeegStation
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btn_Quit;
-            this.ClientSize = new System.Drawing.Size(436, 405);
+            this.ClientSize = new System.Drawing.Size(419, 306);
             this.ControlBox = false;
             this.Controls.Add(this.deleteEvent);
             this.Controls.Add(this.nameGroup);
