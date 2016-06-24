@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Threading;
 
 // nVLC, strange namespaces :(
 using Declarations;
@@ -82,6 +83,12 @@ namespace VeegStation
         /// --by wsp
         /// </summary>
         private int  isPop=0;
+
+        /// <summary>
+        /// 标示isPop执行一次
+        /// --by wsp
+        /// </summary>
+       private  int  isIdent= 0;
 
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         
@@ -1112,14 +1119,13 @@ namespace VeegStation
                     Debug.WriteLine(Player.Length);
 
                     //初始阶段，不播放视频 
-        //            Player.Play();
-        //            Player.Time = (long)nfi.VideoOffset * 1000;
+                    Player.Play();
+                    Player.Time = (long)nfi.VideoOffset * 1000;
                 }
                 //方便该Form与视频弹出Form进行数据交换
                 video = new VideoForm(this);
-                //video.Show();
-                //video.Hide();
-       //         Player.Pause();
+                Thread.Sleep(100);
+                Player.Pause();              
             }
             else
             {
@@ -1219,8 +1225,9 @@ namespace VeegStation
             //视频同步变化
             Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
 
+            if(isPop==1)
             //videoForm视频同步变化
-            video.Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+            video.PlayerVideo.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
         }
 
         /// <summary>
@@ -1232,7 +1239,10 @@ namespace VeegStation
         {
             Pause();
             if (nfi.HasVideo)
-                video.Pause();
+            {
+                if(isPop==1)
+                video.PauseVideo();
+            }
             PagePrev2();
 
             //点击了上一页，进度条，时间要变化
@@ -1258,7 +1268,10 @@ namespace VeegStation
             //暂停播放
             Pause();
             if (nfi.HasVideo)
-                video.Pause();
+            {
+                if (isPop == 1)
+                    video.PauseVideo();
+            }
             PageNext2();
 
             //点击了下一页，进度条，时间要变化
@@ -1299,11 +1312,14 @@ namespace VeegStation
                 _LastTime = null;            
                 btnPrev.Enabled = true;
                 btnNext.Enabled = false;
-                if (nfi.HasVideo)
+                if (isPop == 1)
                 {
-                    video.Player.Pause();
-                    video.btn_play.Enabled = true;
-                    video.btn_pause.Enabled = false;
+                    if (nfi.HasVideo)
+                    {
+                        video.PlayerVideo.Pause();
+                        video.btn_play.Enabled = true;
+                        video.btn_pause.Enabled = false;
+                    }
                 }
             }
             else
@@ -1326,8 +1342,8 @@ namespace VeegStation
 
                     //保证脑电采集时信号中断情况--by wsp
                     //测试使用
-                   // eventProperty.BeginningTime = new List<DateTime> { DateTime.Parse("2016-05-24  16:10:32"),DateTime.Parse("2016-05-24  16:56:40"), DateTime.Parse("2016-05-24  23:59:40") };
-                  //  eventProperty.RecordTime = new List<TimeSpan> { TimeSpan.Parse("00:00:00"),TimeSpan.Parse("00:00:10"), TimeSpan.Parse("00:00:20") };
+                  //  eventProperty.BeginningTime = new List<DateTime> { DateTime.Parse("2016-05-24  16:10:32"),DateTime.Parse("2016-05-24  16:25:40"), DateTime.Parse("2016-05-24  16:56:40") };
+                  // eventProperty.RecordTime = new List<TimeSpan> { TimeSpan.Parse("00:00:00"),TimeSpan.Parse("00:00:10"), TimeSpan.Parse("00:00:20") };
                     GetAllDvalue();
                     for (int j = 0; j < timeSignal.GetLength(0); j++)
                     {
@@ -1337,6 +1353,12 @@ namespace VeegStation
                                 //TimeSpan dValue = eventProperty.BeginningTime[j] - nfi.StartDateTime;
                                 // getDvalue = dValue.TotalSeconds - timeSignal[j];
                                 getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j];
+                                if (nfi.HasVideo)
+                                {
+                                    Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                                   if(isPop==1)
+                                    video.PlayerVideo.Time = Player.Time;
+                                }
                         }
                         else
                         {
@@ -1400,7 +1422,7 @@ namespace VeegStation
                 } 
                 if (!Player.IsPlaying)
                     Player.Play();         
-                    Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000);
+                    Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000+getDvalue*1000);
             }
             else
             {
@@ -1447,10 +1469,10 @@ namespace VeegStation
                 if (nfi.HasVideo)
                 {
                     if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                        video.Player.Time = (long)nfi.VideoOffset * 1000;
+                        video.PlayerVideo.Time = (long)nfi.VideoOffset * 1000;
                     if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                        video.Player.Time = (long)nfi.VideoOffset * 1000 + CurrentSeconds * 1000;
-                    video.Play();
+                        video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000);
+                    video.PlayVideo();
                     video.btn_pause.Enabled = true;
                     video.btn_play.Enabled = false;
                 }
@@ -1469,7 +1491,7 @@ namespace VeegStation
             {
                 if (nfi.HasVideo)
                 {
-                    video.Pause();
+                    video.PauseVideo();
                     video.btn_play.Enabled = true;
                     video.btn_pause.Enabled = false;
                 }
@@ -1519,7 +1541,7 @@ namespace VeegStation
             if (isPop == 1)
             {
                 if (nfi.HasVideo)
-                    video.Pause();
+                    video.PauseVideo();
             }
             if (CurrentSeconds != hsProgress.Value)
             {
@@ -1540,7 +1562,7 @@ namespace VeegStation
                 {
                     Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
                     if(isPop==1)
-                    video.Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                    video.PlayerVideo.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
                 }
              }
             UpdateBtnEnable();
@@ -1691,7 +1713,7 @@ namespace VeegStation
                 Player.Time = CurrentSeconds * 1000;
                 if (isPop == 1)
                 {
-                    video.Player.Time = CurrentSeconds * 1000;
+                    video.PlayerVideo.Time = CurrentSeconds * 1000;
                     video.btn_play.Enabled = true;
                 }
             }
@@ -1922,6 +1944,20 @@ namespace VeegStation
                 if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i])
                 {
                     getDvalue = GettimeSignalNumber(i) - GetStarTotalSecond() - timeSignal[i];
+                    if (nfi.HasVideo)
+                    {
+                        Player.Play();
+                        Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                        Thread.Sleep(100);
+                        Player.Pause();
+                        if (isPop == 1)
+                        {
+                            video.PlayerVideo.Play();
+                            video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                            Thread.Sleep(100);
+                            video.PlayerVideo.Pause();
+                        }
+                    }
                     break;
                 }
                 else if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i - 1])
@@ -2049,7 +2085,7 @@ namespace VeegStation
                     if (isPop == 1)
                     {
                         //videoForm的倍速要与该Form倍速保持一致
-                        video.Player.PlaybackRate = Player.PlaybackRate;
+                        video.PlayerVideo.PlaybackRate = Player.PlaybackRate;
                         video.btn_accelerate.Enabled = true;
                     }
                 }
@@ -2104,7 +2140,7 @@ namespace VeegStation
                     //videoForm的倍速要与该Form倍速保持一致     
                     if (isPop == 1)
                     {
-                        video.Player.PlaybackRate = Player.PlaybackRate;
+                        video.PlayerVideo.PlaybackRate = Player.PlaybackRate;
                         video.btn_decelerate.Enabled = true;
                         video.btn_accelerate.Enabled = true;
                     }
@@ -2152,16 +2188,28 @@ namespace VeegStation
             {
                 toolTip1.SetToolTip(btn_hide, "显示");
                 panelVideo.Visible = false;
-                video.Show();
-                if (Player.IsPlaying)
-                    video.Play();
+                if (isIdent == 0)
+                {
+                    video.Show();
+                    Thread.Sleep(100);
+                }
+                else
+                    video.Show();
+                if (Player.IsPlaying == true)
+                    video.PlayVideo();
+                else
+                {
+                    video.PauseVideo();
+                }
+                isIdent++;
+                if (isIdent == 1)
                 isPop = 1;
             }
             else
             {
                 toolTip1.SetToolTip(btn_hide, "隐藏");
-                panelVideo.Visible = true;
                 video.Hide();
+                panelVideo.Visible = true;
             }
         }      
 
