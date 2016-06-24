@@ -93,14 +93,24 @@ namespace VeegStation
 
                 //打开该文件
                 Player.Open(Media);
-                Player.Pause();
+                //Player.Time = (long)playBack.nfi.VideoOffset * 1000;
+                //Player.Pause();
              }        
                 //获得picturebox的X,Y值，宽，高
                 x = this.pictureBox_Video.Location.X;
                 y = this.pictureBox_Video.Location.Y;
                 width = this.pictureBox_Video.Width;
                 height = this.pictureBox_Video.Height;
-                btn_pause.Enabled = false;
+                if (playBack.Player.IsPlaying)
+                {
+                    btn_pause.Enabled = true;
+                    btn_play.Enabled = false;
+                }
+                else
+                {
+                    btn_pause.Enabled = false;
+                    btn_play.Enabled = true;
+                }
         }
 
         /// <summary>
@@ -161,9 +171,10 @@ namespace VeegStation
         {
             //这里并不是销毁Form,只是隐藏，否则视频将不与回放Form同步
             this.Hide();
-            playBack.timer.Enabled = false;
-            playBack.Pause();
-            Player.Pause();
+            playBack.panelVideo.Visible = true;
+//            playBack.timer.Enabled = false;
+//            playBack.Pause();
+//            Pause();
         }
 
         /// <summary>

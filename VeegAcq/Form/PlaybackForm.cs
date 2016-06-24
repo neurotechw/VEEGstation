@@ -77,6 +77,12 @@ namespace VeegStation
         /// </summary>
         private double[] timeSignal;
 
+        /// <summary>
+        /// 标示作为video是否弹出
+        /// --by wsp
+        /// </summary>
+        private int  isPop=0;
+
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         
         /// <summary>
@@ -1106,14 +1112,14 @@ namespace VeegStation
                     Debug.WriteLine(Player.Length);
 
                     //初始阶段，不播放视频 
-                    Player.Play();
-                    Player.Time = (long)nfi.VideoOffset * 1000;
+        //            Player.Play();
+        //            Player.Time = (long)nfi.VideoOffset * 1000;
                 }
                 //方便该Form与视频弹出Form进行数据交换
                 video = new VideoForm(this);
-                video.Show();
-                video.Hide();
-                Player.Pause();
+                //video.Show();
+                //video.Hide();
+       //         Player.Pause();
             }
             else
             {
@@ -1436,15 +1442,18 @@ namespace VeegStation
         public void btnPlay_Click(object sender, EventArgs e)
         {
             Play();
-            if (nfi.HasVideo)
+            if (isPop == 1)
             {
-                if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                    video.Player.Time = (long)nfi.VideoOffset * 1000;
-                if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                    video.Player.Time = (long)nfi.VideoOffset * 1000 + CurrentSeconds * 1000;
-                video.Play();
-                video.btn_pause.Enabled = true;
-                video.btn_play.Enabled = false;             
+                if (nfi.HasVideo)
+                {
+                    if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                        video.Player.Time = (long)nfi.VideoOffset * 1000;
+                    if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                        video.Player.Time = (long)nfi.VideoOffset * 1000 + CurrentSeconds * 1000;
+                    video.Play();
+                    video.btn_pause.Enabled = true;
+                    video.btn_play.Enabled = false;
+                }
             }
         }
 
@@ -1456,11 +1465,14 @@ namespace VeegStation
         public void btnPause_Click(object sender, EventArgs e)
         {
             Pause();
-            if (nfi.HasVideo)
+            if (isPop == 1)
             {
-                video.Pause();
-                video.btn_play.Enabled = true;
-                video.btn_pause.Enabled = false;
+                if (nfi.HasVideo)
+                {
+                    video.Pause();
+                    video.btn_play.Enabled = true;
+                    video.btn_pause.Enabled = false;
+                }
             }
         }
 
@@ -1504,8 +1516,11 @@ namespace VeegStation
             Debug.WriteLine(string.Format("Scroll mouse cap changed {0}", e));
             //暂停播放
             Pause();
-            if (nfi.HasVideo)
-                video.Pause();
+            if (isPop == 1)
+            {
+                if (nfi.HasVideo)
+                    video.Pause();
+            }
             if (CurrentSeconds != hsProgress.Value)
             {
                 CurrentSeconds = hsProgress.Value;
@@ -1524,6 +1539,7 @@ namespace VeegStation
                 if (nfi.HasVideo)
                 {
                     Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                    if(isPop==1)
                     video.Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
                 }
              }
@@ -1673,8 +1689,11 @@ namespace VeegStation
             if (nfi.HasVideo)
             {
                 Player.Time = CurrentSeconds * 1000;
-                video.Player.Time = CurrentSeconds * 1000; 
-                video.btn_play.Enabled = true;
+                if (isPop == 1)
+                {
+                    video.Player.Time = CurrentSeconds * 1000;
+                    video.btn_play.Enabled = true;
+                }
             }
         }
 
@@ -2027,17 +2046,23 @@ namespace VeegStation
                     //设置Speed是为了使得脑电数据也要加倍
                     Speed = Player.PlaybackRate;
 
-                    //videoForm的倍速要与该Form倍速保持一致
-                    video.Player.PlaybackRate = Player.PlaybackRate;
-                    video.btn_accelerate.Enabled = true;
+                    if (isPop == 1)
+                    {
+                        //videoForm的倍速要与该Form倍速保持一致
+                        video.Player.PlaybackRate = Player.PlaybackRate;
+                        video.btn_accelerate.Enabled = true;
+                    }
                 }
                 else
                 {
                     //加速到最大后，加速按钮不可用，减速按钮可用
                     btn_accelerate.Enabled = false;
                     btn_decelerate.Enabled = true;
-                    video.btn_accelerate.Enabled = false;
-                    video.btn_decelerate.Enabled = true;
+                    if (isPop == 1)
+                    {
+                        video.btn_accelerate.Enabled = false;
+                        video.btn_decelerate.Enabled = true;
+                    }
                 }
             }
             else
@@ -2076,18 +2101,24 @@ namespace VeegStation
                     //设置Speed是为了使得脑电数据也要减速
                     Speed = Player.PlaybackRate;
 
-                    //videoForm的倍速要与该Form倍速保持一致           
-                    video.Player.PlaybackRate = Player.PlaybackRate;
-                    video.btn_decelerate.Enabled = true;
-                    video.btn_accelerate.Enabled = true;
+                    //videoForm的倍速要与该Form倍速保持一致     
+                    if (isPop == 1)
+                    {
+                        video.Player.PlaybackRate = Player.PlaybackRate;
+                        video.btn_decelerate.Enabled = true;
+                        video.btn_accelerate.Enabled = true;
+                    }
                 }
                 else
                 {
                     //加速到最大后，加速按钮不可用，减速按钮可用
                     btn_decelerate.Enabled = false;
                     btn_accelerate.Enabled = true;
-                    video.btn_decelerate.Enabled = false;
-                    video.btn_accelerate.Enabled = true;
+                    if (isPop == 1)
+                    {
+                        video.btn_decelerate.Enabled = false;
+                        video.btn_accelerate.Enabled = true;
+                    }
                 }
             }
             else
@@ -2122,6 +2153,9 @@ namespace VeegStation
                 toolTip1.SetToolTip(btn_hide, "显示");
                 panelVideo.Visible = false;
                 video.Show();
+                if (Player.IsPlaying)
+                    video.Play();
+                isPop = 1;
             }
             else
             {
@@ -3045,19 +3079,57 @@ namespace VeegStation
                 FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryWriter bw = new BinaryWriter(fs);
 
-                ////读取每个事件，并把每个事件写入其在文件中的位置
-                foreach (PreDefineEvent p in preDefineEventsList)
+                FileInfo fi = new FileInfo(filename);
+
+                //读取从开始到文件末尾的数据
+                byte[] allBytes = new byte[fi.Length];
+                byte[] resultBytes = new byte[allBytes.Length - positionInFileOfDeletedFileList.Count * 8];
+                fs.Seek(0, SeekOrigin.Begin);
+                fs.Read(allBytes, 0, (int)fi.Length);
+
+                //关闭文件流，为后来的删除文件重建做准备
+                fs.Close();
+                fs.Dispose();
+
+                //删除现有文件，为写新文件做准备
+                File.Delete(filename);
+
+                //创建一个新的文件
+                fs = new FileStream(filename, FileMode.CreateNew, FileAccess.ReadWrite);
+                bw = new BinaryWriter(fs);
+
+                //将之前所有文件的BYTE剔除已删除文件后，放入resultByte数组中。
+                int index = 0;
+                for (int i = 0; i < allBytes.Length; i++)
                 {
-                    //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
-                    byte[] byteBuf = PreDefineEventsToHex(p);
-                    if (byteBuf == null)
+                    //标记是否该跳出该循环
+                    bool flag = false;
+
+                    foreach (var p in positionInFileOfDeletedFileList)
                     {
-                        MessageBox.Show("解析失败:数据转换成BYTE出错");
-                        return 0;
+                        if (p == i)
+                        {
+                            i += 7;
+
+                            //现在所遇到的已删除事件加1;
+                            index++;
+
+                            //置flag为true，让外圈跳出当前循环轮次
+                            flag = true;
+                            break;
+                        }
                     }
-                    bw.Seek(p.PosInFile, SeekOrigin.Begin);
-                    bw.Write(byteBuf);
+
+                    //继续循环
+                    if (flag)
+                        continue;
+
+                    //若不跳出，则写入
+                    resultBytes[i - index * 8] = allBytes[i];
                 }
+
+                bw.Seek(0, SeekOrigin.Begin);
+                bw.Write(resultBytes);
 
                 //读取每个添加的事件，并把事件写入文件末尾
                 foreach (PreDefineEvent p in preDefineEventsListToBeAdd)
@@ -3066,25 +3138,7 @@ namespace VeegStation
                     bw.Seek(0, SeekOrigin.End);
                     bw.Write(byteBuf);
                 }
-
-                byte[] allBytes = new byte[fs.Length - nfi.NatInfo.CfgOff + 1];
-                fs.Read(allBytes, 0, (int)(fs.Length - nfi.NatInfo.CfgOff + 1));
-
-
-                //positionInFileOfDeletedFileList.Sort();
-                //for (int i = 0; i < positionInFileOfDeletedFileList.Count; i++)
-                //{
-                //    bw.Seek(positionInFileOfDeletedFileList[i] - nfi.NatInfo.CfgOff, SeekOrigin.Begin);
-                //    byte[] writeByte=allBytes.Skip(positionInFileOfDeletedFileList[i]-1).Take(5).ToArray();
-                //    bw.Write(allBytes)
-                //}
-
-                //读取每个删除的事件，并把其位置置为0
-                foreach (int p in positionInFileOfDeletedFileList)
-                {
-                    bw.Seek(p, SeekOrigin.Begin);
-                    bw.Write(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
-                }
+                    //}
                 bw.Close();
                 fs.Close();
 
@@ -3092,7 +3146,7 @@ namespace VeegStation
                 return 1;
             }
             catch (Exception e)
-            {
+            {   
                 MessageBox.Show("预定义事件写入文件错误" + e.Message);
                 return 0;
             }
@@ -3114,9 +3168,10 @@ namespace VeegStation
                 returnBytes[0] = 0x45;
                 returnBytes[1] = Convert.ToByte(pdEvent.EventNameIndex);
                 returnBytes[2] = returnBytes[3] = 0x00;
-                returnBytes[4] = BitConverter.GetBytes(pdEvent.EventPosition)[0];
-                returnBytes[5] = BitConverter.GetBytes(pdEvent.EventPosition)[1];
-                returnBytes[6] = returnBytes[7] = 0x00;
+                returnBytes[4] = BitConverter.GetBytes(pdEvent.EventPosition)[3];
+                returnBytes[5] = BitConverter.GetBytes(pdEvent.EventPosition)[2];
+                returnBytes[6] = BitConverter.GetBytes(pdEvent.EventPosition)[1];
+                returnBytes[7] = BitConverter.GetBytes(pdEvent.EventPosition)[0];
 
             return returnBytes;
         }
