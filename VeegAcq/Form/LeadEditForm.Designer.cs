@@ -79,6 +79,7 @@
             this.btnC3 = new System.Windows.Forms.Button();
             this.btnFp1 = new System.Windows.Forms.Button();
             this.lbLeadConfigName = new System.Windows.Forms.Label();
+            this.btnC = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -164,6 +165,7 @@
             // panel1
             // 
             this.panel1.BackgroundImage = global::VeegStation.Properties.Resources.leadP;
+            this.panel1.Controls.Add(this.btnC);
             this.panel1.Controls.Add(this.btnRef);
             this.panel1.Controls.Add(this.btnCp3);
             this.panel1.Controls.Add(this.btnCp4);
@@ -669,6 +671,17 @@
             this.lbLeadConfigName.TabIndex = 30;
             this.lbLeadConfigName.Text = "label3";
             // 
+            // btnC
+            // 
+            this.btnC.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnC.Location = new System.Drawing.Point(463, 23);
+            this.btnC.Name = "btnC";
+            this.btnC.Size = new System.Drawing.Size(37, 26);
+            this.btnC.TabIndex = 44;
+            this.btnC.Text = "C";
+            this.btnC.UseVisualStyleBackColor = true;
+            this.btnC.Click += new System.EventHandler(this.btnC_Click);
+            // 
             // LeadEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -748,5 +761,6 @@
         private System.Windows.Forms.Button btnC3;
         private System.Windows.Forms.Button btnFp1;
         private System.Windows.Forms.Label lbLeadConfigName;
+        private System.Windows.Forms.Button btnC;
     }
 }

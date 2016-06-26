@@ -73,6 +73,7 @@ namespace VeegStation
             {
                 case "8导脑电":
                     Hide16Buttons();
+                    HideMultiparameterButtons();
                     //rowsCount = 10;
                     break;
                 case "8导脑电+多参数":
@@ -81,6 +82,7 @@ namespace VeegStation
                     break;
                 case "16导脑电":
                     Hide24Buttons();
+                    HideMultiparameterButtons();
                     //rowsCount = 20;
                     break;
                 case "16导脑电+多参数":
@@ -89,9 +91,11 @@ namespace VeegStation
                     break;
                 case "24导脑电":
                     Hide32Buttons();
+                    HideMultiparameterButtons();
                     //rowsCount = 30;
                     break;
                 case "32导脑电":
+                    HideMultiparameterButtons();
                     //rowsCount = 40;
                     break;
                 case "32导脑电+多参数":
@@ -187,6 +191,8 @@ namespace VeegStation
             this.btnC6.Visible = true;
             this.btnFpz.Visible = true;
             this.btnPoz.Visible = true;
+
+            this.btnC.Visible = true;
         }
 
         /// <summary>
@@ -243,6 +249,14 @@ namespace VeegStation
             this.btnC6.Visible = false;
             this.btnFpz.Visible = false;
             this.btnPoz.Visible = false;
+        }
+
+        /// <summary>
+        /// 隐藏多参数按钮
+        /// </summary>
+        private void HideMultiparameterButtons()
+        {
+            this.btnC.Visible = false;
         }
         #endregion
 
@@ -453,6 +467,11 @@ namespace VeegStation
             SetListViewText(((Button)sender).Text);
         }
 
+        private void btnC_Click(object sender, EventArgs e)
+        {
+            SetListViewText(((Button)sender).Text);
+        }
+
         private void btnClearOne_Click(object sender, EventArgs e)
         {
             SetListViewText("");
@@ -495,11 +514,15 @@ namespace VeegStation
                 #region 不能出现空的导联配置
                 foreach (ListViewItem item in this.lvAddLeadList.Items)
                 {
-                    if ((!item.SubItems[1].Text.Equals("") && item.SubItems[2].Text.Equals("")) || (item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals("")))
+                    if (!(item.SubItems[1].Text.Equals("C") || item.SubItems[2].Text.Equals("C"))) 
                     {
-                        MessageBox.Show("请正确填写导联配置");
-                        return;
+                        if ((!item.SubItems[1].Text.Equals("") && item.SubItems[2].Text.Equals("")) || (item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals("")))
+                        {
+                            MessageBox.Show("请正确填写导联配置");
+                            return;
+                        }
                     }
+                    
                 }
                 #endregion
 
@@ -547,10 +570,18 @@ namespace VeegStation
                 ArrayList newLead = new ArrayList();
                 foreach (ListViewItem item in this.lvAddLeadList.Items)
                 {
-                    if (!item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals(""))
+                    if (!(item.SubItems[1].Text.Equals("C") || item.SubItems[2].Text.Equals("C"))) 
                     {
-                        newLead.Add(item.SubItems[1].Text + "-" + item.SubItems[2].Text);
+                        if (!item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals(""))
+                        {
+                            newLead.Add(item.SubItems[1].Text + "-" + item.SubItems[2].Text);
+                        }
                     }
+                    else 
+                    {
+                        newLead.Add("C");
+                    }
+                    
                 }
                 bool isRepeat;
                 ArrayList sortLead = new ArrayList();
@@ -646,5 +677,7 @@ namespace VeegStation
                 e.Handled = true;
             }
         }
+
+        
     }
 }

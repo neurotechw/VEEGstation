@@ -124,19 +124,19 @@
   <data name="btnPlay.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         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
-        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
+        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
 </value>
   </data>
   <data name="btnPause.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
