@@ -2237,7 +2237,7 @@ namespace VeegStation
             if (panelVideo.Visible == true)
             {
                 toolTip1.SetToolTip(btn_hide, "显示");
-                panelVideo.Visible = false;
+          //      panelVideo.Visible = false;
                 if (isIdent == 0)
                 {
                     video.Show();
@@ -2928,7 +2928,7 @@ namespace VeegStation
         {
             if (nfi.Duration.TotalSeconds <= 0)
             {
-                MessageBox.Show("此处没有数据");
+                MessageBox.Show("该文件没有数据");
                 return;
             }
 
@@ -2949,6 +2949,12 @@ namespace VeegStation
         /// <param name="name">事件名称</param>
         public void StartAddEvents(int colorIndex, string name)
         {
+            if (nfi.Duration.TotalSeconds <= 0)
+            {
+                MessageBox.Show("该文件没有数据");
+                return;
+            }
+
             //设置添加事件过程中所要画的直线的颜色
             addingEventColorIndex = colorIndex;
 
