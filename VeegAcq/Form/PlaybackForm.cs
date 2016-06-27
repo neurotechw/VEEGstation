@@ -2264,7 +2264,10 @@ namespace VeegStation
             if (panelVideo.Visible == true)
             {
                 toolTip1.SetToolTip(btn_hide, "显示");
-          //      panelVideo.Visible = false;
+                panelVideo.Visible = false;
+                //为了防止速度过大时有误差，这里需要先暂停处理--by wsp
+                if (Speed > 1)
+                    Pause();
                 if (isIdent == 0)
                 {
                     video.Show();
