@@ -709,11 +709,11 @@ namespace VeegStation
         /// 根据所设置的最大通道值设置通道显示选项数组
         /// -- by lxl
         /// </summary>
-        /// <param name="signalNum">通道的最大数目</param>
-        private void SetSignalNumArray(int signalNum)
+        /// <param name="maxSignalNum">通道的最大数目</param>
+        private void SetSignalNumArray(int maxSignalNum)
         {
             //屏幕最多显示20路通道，故>=20显示的数目都为20
-            if (signalNum >= 20)
+            if (maxSignalNum >= 20)
             {
                 signalNumArray = new int[] { 1, 2, 4, 8, 16, 20 };
             }
@@ -721,14 +721,14 @@ namespace VeegStation
             {
                 //获得通道数目所在的区间（即大于2^i && 小于2^i+1）
                 int i;
-                for (i = 0; i < signalNum; i++)
+                for (i = 0; i < maxSignalNum; i++)
                 {
-                    if (signalNum < Math.Pow(2, i))
+                    if (maxSignalNum < Math.Pow(2, i))
                         break;
                 }
 
                 //分配通道显示数据数组大小
-                if (Math.Pow(2, i - 1) == signalNum)
+                if (Math.Pow(2, i - 1) == maxSignalNum)
                     signalNumArray = new int[i];
                 else
                     signalNumArray = new int[i + 1];
@@ -738,7 +738,7 @@ namespace VeegStation
                 {
                     signalNumArray[j] = (int)Math.Pow(2, j);
                 }
-                signalNumArray[signalNumArray.Length - 1] = signalNum;
+                signalNumArray[signalNumArray.Length - 1] = maxSignalNum;
             }
         }
 
@@ -2038,8 +2038,8 @@ namespace VeegStation
             this.labelPanel.Invalidate();
 
             //通道数目改变
+            SetSignalNumArray(leadConfigArrayList.Count);
             SetSignalNum((leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum);
-            SetSignalNumArray(signalNum);
             InitSignalNumMenuItems();
 
             //重新显示数据
@@ -2459,9 +2459,9 @@ namespace VeegStation
             this.chartWave.ChartAreas[0].AxisY.MajorGrid.Interval = 2000D / signalNum;
             this.chartWave.ChartAreas[0].AxisY.MajorTickMark.Interval = 2000D / signalNum;
 
-            //保证最上方的currentTopSignal不大于应该有的20
-            if (currentTopSignal + signalNum > 20)
-                currentTopSignal = 20 - signalNum;
+            //保证最上方的currentTopSignal加上当前显示的信道数量不大于显示的最大通道数量
+            if (currentTopSignal + signalNum > leadConfigArrayList.Count)
+                currentTopSignal = leadConfigArrayList.Count - signalNum;
 
             UpdateVScrollVisibleStatus();
 
