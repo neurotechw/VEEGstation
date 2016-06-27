@@ -348,7 +348,7 @@ namespace VeegStation
                 fs.Read(myByte, 0, 7);
 
                 //BYTE第一位为标志预定义事件编号位，第四第五位为存储点位置位（低位存储）
-                pdList.Add(new PreDefineEvent(myByte[0], (myByte[3] | myByte[4] << 8 | myByte[5] << 16 | myByte[6] << 32), posInFile - 1, id));   //减1把readbyte那的+1减掉
+                pdList.Add(new PreDefineEvent(myByte[0], Convert.ToInt32(myByte[3] | myByte[4] << 8 | myByte[5] << 16 | myByte[6] << 32), posInFile - 1, id));   //减1把readbyte那的+1减掉
                 posInFile += 7;
                 id++;
             }
@@ -392,7 +392,7 @@ namespace VeegStation
                 {
                     Array.Copy(entByte, i * 128 + 9, nameInByte, 0, 104);
                     name = Encoding.GetEncoding(936).GetString(nameInByte).Trim('\0');
-                    cList.Add(new CustomEvent(name, (entByte[i * 128 + 9 + 104] | (entByte[i * 128 + 9 + 105] << 8)), entByte[i * 128 + 9 + 108]));
+                    cList.Add(new CustomEvent(name, Convert.ToInt32(entByte[i * 128 + 9 + 104] | entByte[i * 128 + 9 + 105] << 8 | entByte[i * 128 + 9 + 106] << 16 | entByte[i * 128 + 9 + 107] << 32), entByte[i * 128 + 9 + 108]));
                 }
 
                 //将时间列表排序

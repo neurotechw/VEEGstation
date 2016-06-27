@@ -2623,7 +2623,7 @@ namespace VeegStation
                     {
                         //将事件添加进列表并排序
                         FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read); 
-                        AddPreDefineEvents(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)fs.Length);
+                        AddPreDefineEvents(preDefineEventIndex, Convert.ToInt32(mouseValueNow), (int)fs.Length);
 
                         //关闭文件，释放文件流
                         fs.Close();
@@ -2635,7 +2635,7 @@ namespace VeegStation
                     else
                     {
                         //将事件添加进列表并排序
-                        AddCustomEvents(addedEventName, Convert.ToUInt16(mouseValueNow), addingEventColorIndex);
+                        AddCustomEvents(addedEventName, Convert.ToInt32(mouseValueNow), addingEventColorIndex);
 
                         //事件添加后更新对应的列表
                         UpdateEventsListView(false);
@@ -2743,7 +2743,7 @@ namespace VeegStation
         /// <param name="index">预定义事件的索引</param>
         /// <param name="pointPos">预定义事件点的位置</param>
         /// <param name="posInFile">预定义事件在文件中的位置</param>
-        private void AddPreDefineEvents(int index,ushort pointPos,int posInFile)
+        private void AddPreDefineEvents(int index,int pointPos,int posInFile)
         {
             //将事件添加进列表
             //preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile,preDefineEventsList.Count + 1));
@@ -2757,7 +2757,7 @@ namespace VeegStation
         /// <param name="name">自定义事件的名字</param>
         /// <param name="pointPos">自定义事件点的位置</param>
         /// <param name="colorIndex">自定义事件颜色索引</param>
-        private void AddCustomEvents(string name,ushort pointPos,int colorIndex)
+        private void AddCustomEvents(string name,int pointPos,int colorIndex)
         {
             //将事件添加进列表并排序
             customEventList.Add(new CustomEvent(name, pointPos, colorIndex));
@@ -3168,10 +3168,11 @@ namespace VeegStation
                 returnBytes[0] = 0x45;
                 returnBytes[1] = Convert.ToByte(pdEvent.EventNameIndex);
                 returnBytes[2] = returnBytes[3] = 0x00;
-                returnBytes[4] = BitConverter.GetBytes(pdEvent.EventPosition)[3];
-                returnBytes[5] = BitConverter.GetBytes(pdEvent.EventPosition)[2];
-                returnBytes[6] = BitConverter.GetBytes(pdEvent.EventPosition)[1];
-                returnBytes[7] = BitConverter.GetBytes(pdEvent.EventPosition)[0];
+                byte[] bytes = BitConverter.GetBytes(pdEvent.EventPosition);
+                returnBytes[4] = BitConverter.GetBytes(pdEvent.EventPosition)[0];
+                returnBytes[5] = BitConverter.GetBytes(pdEvent.EventPosition)[1];
+                returnBytes[6] = BitConverter.GetBytes(pdEvent.EventPosition)[2];
+                returnBytes[7] = BitConverter.GetBytes(pdEvent.EventPosition)[3];
 
             return returnBytes;
         }
@@ -3256,8 +3257,14 @@ namespace VeegStation
             for (int i = 0; i < cEvent.Count(); i++)
             {
                 Encoding.GetEncoding(936).GetBytes(cEvent[i].EventName, 0, cEvent[i].EventName.Count(), returnBytes, i * 128);
+
+                //存储点的位置
                 returnBytes[i * 128 + 104] = BitConverter.GetBytes(cEvent[i].EventPosition)[0];
                 returnBytes[i * 128 + 105] = BitConverter.GetBytes(cEvent[i].EventPosition)[1];
+                returnBytes[i * 128 + 106] = BitConverter.GetBytes(cEvent[i].EventPosition)[2];
+                returnBytes[i * 128 + 107] = BitConverter.GetBytes(cEvent[i].EventPosition)[3];
+
+                //存储颜色序号
                 returnBytes[i * 128 + 108] = BitConverter.GetBytes(cEvent[i].EventColorIndex)[0];           //int32转换成BYTE数组为4个BYTE，由于只有第一个故取数组下标[0]
 
                 //将时间写入事件文件中
