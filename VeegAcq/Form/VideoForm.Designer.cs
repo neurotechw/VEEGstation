@@ -150,6 +150,7 @@ namespace VeegStation
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "VideoForm";
             this.Text = "VideoForm";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.VideoForm_FormClosed);
             this.Load += new System.EventHandler(this.VideoForm_Load_1);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
