@@ -39,7 +39,7 @@ namespace VeegStation
         /// <param name="pos">事件点所在数据点中的位置</param>
         /// <param name="posInF">事件位于文件中的位置，若是放入添加事件列表中则该值可为任意数</param>
         /// <param name="id">事件的标识ID</param>
-        public PreDefineEvent(int index, UInt16 pos,int posInF,int id)
+        public PreDefineEvent(int index, int pos,int posInF,int id)
         {
             if (preDefineEventColorArray == null || preDefineEventNameArray == null)
             {
@@ -58,7 +58,7 @@ namespace VeegStation
         }
 
         private Color eventColor;
-        private UInt16 eventPosition;
+        private int eventPosition;
         private string eventName;
         private int eventNameIndex;
         private int posInFile;
@@ -103,7 +103,7 @@ namespace VeegStation
         /// 事件所在的点的位置
         /// -- by lxl
         /// </summary>
-        public UInt16 EventPosition
+        public int EventPosition
         {
             get { return eventPosition; }
             set { eventPosition = value; }
@@ -152,7 +152,7 @@ namespace VeegStation
         /// <param name="name">事件名称</param>
         /// <param name="pos">事件所在位置</param>
         /// <param name="i">事件的颜色索引</param>
-        public CustomEvent(string name,UInt16 pos,int i)
+        public CustomEvent(string name,int pos,int i)
         {
             eventName = name; eventPosition = pos; eventColorIndex = i;
         }
@@ -170,7 +170,7 @@ namespace VeegStation
         }
 
         private int eventColorIndex;
-        private UInt16 eventPosition;
+        private int eventPosition;
         private string eventName;
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace VeegStation
         /// 事件所在的点的位置
         /// -- by lxl
         /// </summary>
-        public UInt16 EventPosition
+        public int EventPosition
         {
             get { return eventPosition; }
             set { eventPosition = value; }

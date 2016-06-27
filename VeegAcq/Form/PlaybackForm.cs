@@ -157,6 +157,11 @@ namespace VeegStation
         /// 该数据的硬件配置名称
         /// </summary>
         private string hardwareConfigName;
+
+        /// <summary>
+        /// 硬件配置是否是多参数
+        /// </summary>
+        private bool isMultiparameter;
         #endregion
 
         #region 滤波参数  --by zt
@@ -549,8 +554,6 @@ namespace VeegStation
             //初始化时间基准、灵敏度与通道显示数目的选项,（注意，要放在InitFromConfig()后面）
             InitMenuItems();
 
-
-            
             //解析事件，并将事件添加进事件列表中
             ParseEvent();
 
@@ -772,6 +775,7 @@ namespace VeegStation
             {
                 //8导脑电
                 case 0x00:
+                    this.isMultiparameter = false;
                     this.hardwareConfigName = "8导脑电";
                     //byteOfPerData = 26;
                     numberOfPerData = 8;
@@ -780,6 +784,7 @@ namespace VeegStation
 
                 //8导脑电+多参数
                 case 0x40:
+                    this.isMultiparameter = true;
                     this.hardwareConfigName = "8导脑电+多参数";
                     //byteOfPerData = 48;
                     numberOfPerData = 8;
@@ -788,6 +793,7 @@ namespace VeegStation
 
                 //16导脑电
                 case 0x04:
+                    this.isMultiparameter = false;
                     this.hardwareConfigName = "16导脑电";
                     //byteOfPerData = 46;
                     numberOfPerData = 16;
@@ -796,6 +802,7 @@ namespace VeegStation
 
                 //16导脑电+多参数
                 case 0x44:
+                    this.isMultiparameter = true;
                     this.hardwareConfigName = "16导脑电+多参数";
                     //byteOfPerData = 68;
                     numberOfPerData = 16;
@@ -804,6 +811,7 @@ namespace VeegStation
 
                 //24导脑电
                 case 0x02:
+                    this.isMultiparameter = false;
                     this.hardwareConfigName = "24导脑电";
                     //byteOfPerData = 86;
                     numberOfPerData = 19;
@@ -812,6 +820,7 @@ namespace VeegStation
 
                 //32导脑电
                 case 0x08:
+                    this.isMultiparameter = false;
                     this.hardwareConfigName = "32导脑电";
                     //byteOfPerData = 86;
                     numberOfPerData = 19;
@@ -820,6 +829,7 @@ namespace VeegStation
 
                 //32导脑电+多参数
                 case 0x48:
+                    this.isMultiparameter = true;
                     this.hardwareConfigName = "32导脑电+多参数";
                     //byteOfPerData = 108;
                     numberOfPerData = 19;
@@ -896,9 +906,18 @@ namespace VeegStation
                 //{
                 //    sb.Append(b.ToString("X2"));
                 //}
-                //8导没有心电
-                //double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));//心电数据   --by zt
-                double ekg = 0;//不知道心电数据，暂时为0
+
+                //心电数据
+                double ekg;
+                if (isMultiparameter) 
+                {
+                     ekg = Util.RawToEKGSignal((short)(buf[6] | (buf[7] << 8)));//心电数据,是否要除，有疑问   --by zt
+                }
+                else 
+                {
+                     ekg = 0;//不知道心电数据，暂时为0
+                }
+                
                 List<double> eeg = new List<double>();
 
                 //加载脑电数据
@@ -1006,33 +1025,47 @@ namespace VeegStation
                         //    continue;
                         //}
 
-                        //获取做差的两个电极名称
-                        string[] FPi_FPj = leadConfigArrayList[sIdx].ToString().Split(new char[] { '-' });
-
-                        //查找多差电极对应的通道号
-                        int channelNum_Positive = 1;
-                        int channelNum_Negative = 1;
-
-                        //由通道号对应通道名称的哈希表中读取需要显示的通道号
-                        foreach (DictionaryEntry item in leadSource)
+                        //如果导联编制不为心电
+                        if (!leadConfigArrayList[sIdx].ToString().Equals("C"))     
                         {
-                            if (item.Value.ToString() == FPi_FPj[0])
-                                channelNum_Positive = Convert.ToInt32(item.Key);
-                            if (item.Value.ToString() == FPi_FPj[1])
-                                channelNum_Negative = Convert.ToInt32(item.Key);
-                        }
+                            //获取做差的两个电极名称
+                            string[] FPi_FPj = leadConfigArrayList[sIdx].ToString().Split(new char[] { '-' });
 
-                        //求两个电极电位差
-                        double sampleValue_Positive = 0;
-                        double sampleValue_Negative = 0;
-                        if (FPi_FPj[0] != "REF")
-                            sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
-                        if (FPi_FPj[1] != "REF")
-                            sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
-                        sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
-                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                            //查找多差电极对应的通道号
+                            int channelNum_Positive = 1;
+                            int channelNum_Negative = 1;
+
+                            //由通道号对应通道名称的哈希表中读取需要显示的通道号
+                            foreach (DictionaryEntry item in leadSource)
+                            {
+                                if (item.Value.ToString() == FPi_FPj[0])
+                                    channelNum_Positive = Convert.ToInt32(item.Key);
+                                if (item.Value.ToString() == FPi_FPj[1])
+                                    channelNum_Negative = Convert.ToInt32(item.Key);
+                            }
+
+                            //求两个电极电位差
+                            double sampleValue_Positive = 0;
+                            double sampleValue_Negative = 0;
+                            if (FPi_FPj[0] != "REF")
+                                sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
+                            if (FPi_FPj[1] != "REF")
+                                sampleValue_Negative = packets[tIdx].EEG[channelNum_Negative - 1];
+                            sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
+                            sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                        }
+                        //导联为心电
+                        else   
+                        {
+                            sampleDifferValue[sIdx] = packets[tIdx].EKG;
+
+                            //根据所校准的单位与灵敏度调整Y轴值-- by lxl  //心电的灵敏度是否需要  --by zt
+                            sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              
+                        }
+                        
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
                         col[sIdx].Points.AddXY(tIdx / (double)this.sampleRate, sampleDifferValue[sIdx]);
+                        
                     }
                 }
 
@@ -2339,8 +2372,7 @@ namespace VeegStation
             //事件该画的位置
             double drawPosition;
 
-            List<PreDefineEvent> drawList = new List<PreDefineEvent>(GetPreDefineEventList());
-            drawList.AddRange(preDefineEventsListToBeAdd);
+            List<PreDefineEvent> drawList = new List<PreDefineEvent>(GetSortedPreDefineEventList());
 
             //画预定义事件                   
             foreach (PreDefineEvent p in drawList)
@@ -2672,7 +2704,7 @@ namespace VeegStation
                     {
                         //将事件添加进列表并排序
                         FileStream fs = new FileStream(this.nfi.NedFileName.Split('.')[0] + ".NAT", FileMode.Open, FileAccess.Read); 
-                        AddPreDefineEvents(preDefineEventIndex, Convert.ToUInt16(mouseValueNow), (int)fs.Length);
+                        AddPreDefineEvents(preDefineEventIndex, Convert.ToInt32(mouseValueNow), (int)fs.Length);
 
                         //关闭文件，释放文件流
                         fs.Close();
@@ -2684,7 +2716,7 @@ namespace VeegStation
                     else
                     {
                         //将事件添加进列表并排序
-                        AddCustomEvents(addedEventName, Convert.ToUInt16(mouseValueNow), addingEventColorIndex);
+                        AddCustomEvents(addedEventName, Convert.ToInt32(mouseValueNow), addingEventColorIndex);
 
                         //事件添加后更新对应的列表
                         UpdateEventsListView(false);
@@ -2792,7 +2824,7 @@ namespace VeegStation
         /// <param name="index">预定义事件的索引</param>
         /// <param name="pointPos">预定义事件点的位置</param>
         /// <param name="posInFile">预定义事件在文件中的位置</param>
-        private void AddPreDefineEvents(int index,ushort pointPos,int posInFile)
+        private void AddPreDefineEvents(int index,int pointPos,int posInFile)
         {
             //将事件添加进列表
             //preDefineEventsList.Add(new PreDefineEvent(index, pointPos, posInFile,preDefineEventsList.Count + 1));
@@ -2806,7 +2838,7 @@ namespace VeegStation
         /// <param name="name">自定义事件的名字</param>
         /// <param name="pointPos">自定义事件点的位置</param>
         /// <param name="colorIndex">自定义事件颜色索引</param>
-        private void AddCustomEvents(string name,ushort pointPos,int colorIndex)
+        private void AddCustomEvents(string name,int pointPos,int colorIndex)
         {
             //将事件添加进列表并排序
             customEventList.Add(new CustomEvent(name, pointPos, colorIndex));
@@ -2827,7 +2859,7 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 获得未排序的预定义事件列表
+        /// 获得未排序的、没有刚加入的预定义事件的预定义事件列表
         /// -- by lxl
         /// </summary>
         /// <returns></returns>
@@ -3128,19 +3160,57 @@ namespace VeegStation
                 FileStream fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryWriter bw = new BinaryWriter(fs);
 
-                ////读取每个事件，并把每个事件写入其在文件中的位置
-                foreach (PreDefineEvent p in preDefineEventsList)
+                FileInfo fi = new FileInfo(filename);
+
+                //读取从开始到文件末尾的数据
+                byte[] allBytes = new byte[fi.Length];
+                byte[] resultBytes = new byte[allBytes.Length - positionInFileOfDeletedFileList.Count * 8];
+                fs.Seek(0, SeekOrigin.Begin);
+                fs.Read(allBytes, 0, (int)fi.Length);
+
+                //关闭文件流，为后来的删除文件重建做准备
+                fs.Close();
+                fs.Dispose();
+
+                //删除现有文件，为写新文件做准备
+                File.Delete(filename);
+
+                //创建一个新的文件
+                fs = new FileStream(filename, FileMode.CreateNew, FileAccess.ReadWrite);
+                bw = new BinaryWriter(fs);
+
+                //将之前所有文件的BYTE剔除已删除文件后，放入resultByte数组中。
+                int index = 0;
+                for (int i = 0; i < allBytes.Length; i++)
                 {
-                    //建立一个字节BUFFER，将要数据按格式转换成BYTE放入BUFFER中
-                    byte[] byteBuf = PreDefineEventsToHex(p);
-                    if (byteBuf == null)
+                    //标记是否该跳出该循环
+                    bool flag = false;
+
+                    foreach (var p in positionInFileOfDeletedFileList)
                     {
-                        MessageBox.Show("解析失败:数据转换成BYTE出错");
-                        return 0;
+                        if (p == i)
+                        {
+                            i += 7;
+
+                            //现在所遇到的已删除事件加1;
+                            index++;
+
+                            //置flag为true，让外圈跳出当前循环轮次
+                            flag = true;
+                            break;
+                        }
                     }
-                    bw.Seek(p.PosInFile, SeekOrigin.Begin);
-                    bw.Write(byteBuf);
+
+                    //继续循环
+                    if (flag)
+                        continue;
+
+                    //若不跳出，则写入
+                    resultBytes[i - index * 8] = allBytes[i];
                 }
+
+                bw.Seek(0, SeekOrigin.Begin);
+                bw.Write(resultBytes);
 
                 //读取每个添加的事件，并把事件写入文件末尾
                 foreach (PreDefineEvent p in preDefineEventsListToBeAdd)
@@ -3149,25 +3219,7 @@ namespace VeegStation
                     bw.Seek(0, SeekOrigin.End);
                     bw.Write(byteBuf);
                 }
-
-                byte[] allBytes = new byte[fs.Length - nfi.NatInfo.CfgOff + 1];
-                fs.Read(allBytes, 0, (int)(fs.Length - nfi.NatInfo.CfgOff + 1));
-
-
-                //positionInFileOfDeletedFileList.Sort();
-                //for (int i = 0; i < positionInFileOfDeletedFileList.Count; i++)
-                //{
-                //    bw.Seek(positionInFileOfDeletedFileList[i] - nfi.NatInfo.CfgOff, SeekOrigin.Begin);
-                //    byte[] writeByte=allBytes.Skip(positionInFileOfDeletedFileList[i]-1).Take(5).ToArray();
-                //    bw.Write(allBytes)
-                //}
-
-                //读取每个删除的事件，并把其位置置为0
-                foreach (int p in positionInFileOfDeletedFileList)
-                {
-                    bw.Seek(p, SeekOrigin.Begin);
-                    bw.Write(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
-                }
+                    //}
                 bw.Close();
                 fs.Close();
 
@@ -3175,7 +3227,7 @@ namespace VeegStation
                 return 1;
             }
             catch (Exception e)
-            {
+            {   
                 MessageBox.Show("预定义事件写入文件错误" + e.Message);
                 return 0;
             }
@@ -3197,9 +3249,11 @@ namespace VeegStation
                 returnBytes[0] = 0x45;
                 returnBytes[1] = Convert.ToByte(pdEvent.EventNameIndex);
                 returnBytes[2] = returnBytes[3] = 0x00;
+                byte[] bytes = BitConverter.GetBytes(pdEvent.EventPosition);
                 returnBytes[4] = BitConverter.GetBytes(pdEvent.EventPosition)[0];
                 returnBytes[5] = BitConverter.GetBytes(pdEvent.EventPosition)[1];
-                returnBytes[6] = returnBytes[7] = 0x00;
+                returnBytes[6] = BitConverter.GetBytes(pdEvent.EventPosition)[2];
+                returnBytes[7] = BitConverter.GetBytes(pdEvent.EventPosition)[3];
 
             return returnBytes;
         }
@@ -3284,8 +3338,14 @@ namespace VeegStation
             for (int i = 0; i < cEvent.Count(); i++)
             {
                 Encoding.GetEncoding(936).GetBytes(cEvent[i].EventName, 0, cEvent[i].EventName.Count(), returnBytes, i * 128);
+
+                //存储点的位置
                 returnBytes[i * 128 + 104] = BitConverter.GetBytes(cEvent[i].EventPosition)[0];
                 returnBytes[i * 128 + 105] = BitConverter.GetBytes(cEvent[i].EventPosition)[1];
+                returnBytes[i * 128 + 106] = BitConverter.GetBytes(cEvent[i].EventPosition)[2];
+                returnBytes[i * 128 + 107] = BitConverter.GetBytes(cEvent[i].EventPosition)[3];
+
+                //存储颜色序号
                 returnBytes[i * 128 + 108] = BitConverter.GetBytes(cEvent[i].EventColorIndex)[0];           //int32转换成BYTE数组为4个BYTE，由于只有第一个故取数组下标[0]
 
                 //将时间写入事件文件中
@@ -3335,12 +3395,6 @@ namespace VeegStation
             }
         }
 
-        private void 导联设置ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
-            //myLeadConfigForm.Show();
-            myLeadConfigForm.ShowDialog();
-        }
 
 		private void boardPanel_Paint(object sender, PaintEventArgs e)
         {
@@ -3577,5 +3631,12 @@ namespace VeegStation
             //去除病人属性菜单前的勾  by-xcg
             this.pationInfoToolStripMenuItem.Checked = false;    
 			    }
+
+        private void leadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
+            //myLeadConfigForm.Show();
+            myLeadConfigForm.ShowDialog();
+        }
     }
 }

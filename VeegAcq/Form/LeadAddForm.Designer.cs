@@ -79,6 +79,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtLeadName = new System.Windows.Forms.TextBox();
+            this.btnC = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -577,6 +578,7 @@
             // panel1
             // 
             this.panel1.BackgroundImage = global::VeegStation.Properties.Resources.leadP;
+            this.panel1.Controls.Add(this.btnC);
             this.panel1.Controls.Add(this.btnRef);
             this.panel1.Controls.Add(this.btnCp3);
             this.panel1.Controls.Add(this.btnCp4);
@@ -669,6 +671,17 @@
             this.txtLeadName.TabIndex = 19;
             this.txtLeadName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLeadName_KeyPress);
             // 
+            // btnC
+            // 
+            this.btnC.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnC.Location = new System.Drawing.Point(463, 24);
+            this.btnC.Name = "btnC";
+            this.btnC.Size = new System.Drawing.Size(37, 26);
+            this.btnC.TabIndex = 44;
+            this.btnC.Text = "C";
+            this.btnC.UseVisualStyleBackColor = true;
+            this.btnC.Click += new System.EventHandler(this.btnC_Click);
+            // 
             // LeadAddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -748,5 +761,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtLeadName;
+        private System.Windows.Forms.Button btnC;
     }
 }

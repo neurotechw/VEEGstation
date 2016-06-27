@@ -24,6 +24,15 @@ namespace VeegStation
 
         }
 
+
+        public static double RawToEKGSignal(short Raw)
+        {
+            //return Raw / -7.78125;                            //数值有点不对
+            //加负号，是为了显示与诺诚相对应，但是除以8.8725仅仅与txt中的电极一致，与诺诚测量出来的不一致  --by zt
+            return Raw / 8.8725;
+
+        }
+
         /// <summary>
         /// 从string类型转换到hex  --by zt
         /// </summary>

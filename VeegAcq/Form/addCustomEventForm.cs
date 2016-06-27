@@ -102,6 +102,13 @@ namespace VeegStation
                     return;
                 }
 
+                //对所选择的颜色进行判断
+                if (colorIndex == -1)
+                {
+                    MessageBox.Show("请选择一个颜色");
+                    return;
+                }
+
                 //开始添加事件
                 parentForm.StartAddEvents(colorIndex, nameTextBox.Text);
 
