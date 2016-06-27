@@ -367,7 +367,7 @@ namespace VeegStation
             }
             PlaybackForm play = new PlaybackForm(_eegFiles[lvFiles.SelectedIndices[0]]);
             //--by zt
-            Thread.Sleep(100);
+            Thread.Sleep(200);
             myController = new VeegControl(play);
             play.ReigisterVeegControl(myController);
             play.InitPlaybackFormParas();

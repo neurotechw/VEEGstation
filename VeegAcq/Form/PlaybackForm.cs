@@ -1166,7 +1166,7 @@ namespace VeegStation
                 }
                 //方便该Form与视频弹出Form进行数据交换
                 video = new VideoForm(this);
-                Thread.Sleep(100);
+                Thread.Sleep(200);
                 Player.Pause();              
             }
             else
@@ -2006,13 +2006,13 @@ namespace VeegStation
                     {
                         Player.Play();
                         Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
-                        Thread.Sleep(100);
+                        Thread.Sleep(200);
                         Player.Pause();
                         if (isPop == 1)
                         {
                             video.PlayerVideo.Play();
                             video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
-                            Thread.Sleep(100);
+                            Thread.Sleep(200);
                             video.PlayerVideo.Pause();
                         }
                     }
@@ -2030,13 +2030,13 @@ namespace VeegStation
                     {
                         Player.Play();
                         Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
-                        Thread.Sleep(100);
+                        Thread.Sleep(200);
                         Player.Pause();
                         if (isPop == 1)
                         {
                             video.PlayerVideo.Play();
                             video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
-                            Thread.Sleep(100);
+                            Thread.Sleep(200);
                             video.PlayerVideo.Pause();
                         }
                     }
@@ -2271,7 +2271,7 @@ namespace VeegStation
                 if (isIdent == 0)
                 {
                     video.Show();
-                    Thread.Sleep(100);
+                    Thread.Sleep(200);
                 }
                 else
                     video.Show();
