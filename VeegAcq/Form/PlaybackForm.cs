@@ -72,6 +72,12 @@ namespace VeegStation
         /// </summary>
         private double getDvalue=0.0;
 
+        public double GetDvalue
+        {
+            get { return getDvalue; }
+            set { getDvalue = value; }
+        }
+
         /// <summary>
         /// 中断的时间数组
         /// --by wsp
@@ -1286,8 +1292,8 @@ namespace VeegStation
           
             ////videoForm视频同步变化
             //video.Player.Time = CurrentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
-            if (nfi.HasVideo)
-                TimeChange();
+            //if (nfi.HasVideo)
+            //    TimeChange();
             UpdateBtnEnable();
         }
 
@@ -1315,8 +1321,8 @@ namespace VeegStation
             
             ////videoForm视频同步变化
             //video.Player.Time = CurrentSeconds * 1000 + (long)_nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
-            if (nfi.HasVideo)
-                TimeChange();
+            //if (nfi.HasVideo)
+            //    TimeChange();
             
             //翻页后，更新按钮状态是否可用
             UpdateBtnEnable();
@@ -1591,12 +1597,12 @@ namespace VeegStation
                 LoadData(CurrentSeconds);
                 ShowData();
                 //如果有视频，视频也要同步跟随--by wsp
-                if (nfi.HasVideo)
-                {
-                    Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
-                    if(isPop==1)
-                    video.PlayerVideo.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
-                }
+                //if (nfi.HasVideo)
+                //{
+                //    Player.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                //    if(isPop==1)
+                //    video.PlayerVideo.Time = CurrentSeconds * 1000 + (long)nfi.VideoOffset * 1000 + (long)chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000;
+                //}
              }
             UpdateBtnEnable();
         }
@@ -1996,6 +2002,20 @@ namespace VeegStation
                 else if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i - 1])
                 {
                     getDvalue = GettimeSignalNumber(i - 1) - GetStarTotalSecond() - timeSignal[i-1];
+                    if (nfi.HasVideo)
+                    {
+                        Player.Play();
+                        Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                        Thread.Sleep(100);
+                        Player.Pause();
+                        if (isPop == 1)
+                        {
+                            video.PlayerVideo.Play();
+                            video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                            Thread.Sleep(100);
+                            video.PlayerVideo.Pause();
+                        }
+                    }
                     break;
                 }
             }
@@ -2459,6 +2479,7 @@ namespace VeegStation
             DT_RelativeTime = DateTime.Parse("2016-05-23  00:00:00");
             DT_TotalTime = DateTime.Parse("2016-05-23 00:00:00");
             CurrentOffset = 0;
+            getDvalue = 0;
             if (nfi.HasVideo)
             Player.Time =(long)nfi.VideoOffset*1000;
             DT = nfi.StartDateTime;
