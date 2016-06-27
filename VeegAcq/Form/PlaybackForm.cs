@@ -505,12 +505,9 @@ namespace VeegStation
 
             //根据是否有视频判定面板是否显示--by wsp
             if (this.nfi.HasVideo)
-                isBoardShow = true;
+                setBoardShow(true);
             else
-                isBoardShow = false;
-
-            this.boardToolStripMenuItem.Checked = isBoardShow;
-            this.boardPanel.Visible = isBoardShow;
+                setBoardShow(false);
 
             _Page = 0;
             
@@ -2615,6 +2612,7 @@ namespace VeegStation
             }
         }
 
+        #region 面板显示部分 -- by lxl
         /// <summary>
         /// 面板点击事件
         /// -- by lxl
@@ -2634,9 +2632,24 @@ namespace VeegStation
 
             //修改竖直滚动条的位置
             UpdateVScrollLocation();
-
-            //this.chartWave.Invalidate();
         }
+
+
+
+        /// <summary>
+        /// 设置当前面板是否显示
+        /// </summary>
+        /// <param name="flag"></param>
+        private void setBoardShow(bool flag)
+        {
+            isBoardShow = flag;
+            isChangingBoardShow = true;
+
+            this.boardToolStripMenuItem.Checked = isBoardShow;
+            this.boardPanel.Visible = isBoardShow;
+        }
+
+        #endregion
 
         /// <summary>
         /// 根据事件点的位置得到事件发生的时间
@@ -2700,6 +2713,11 @@ namespace VeegStation
                 //左键才添加事件，右键则不添加事件
                 if (((MouseEventArgs)e).Button == MouseButtons.Left)
                 {
+                    if (mouseValueNow / 128 >= nfi.Duration.TotalSeconds)
+                    {
+                        MessageBox.Show("此处没有数据");
+                        return;
+                    }
                     if (isAddingPreDefineEvent)
                     {
                         //将事件添加进列表并排序
@@ -2887,6 +2905,11 @@ namespace VeegStation
         /// <param name="index">预定义事件的事件编号</param>
         public void StartAddEvents(int index)
         {
+            if (nfi.Duration.TotalSeconds <= 0)
+            {
+                MessageBox.Show("此处没有数据");
+                return;
+            }
 
             //保存添加的预定义事件的编号
             this.preDefineEventIndex = index;
