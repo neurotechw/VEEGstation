@@ -150,6 +150,11 @@ namespace VeegStation
         /// 该数据的硬件配置名称
         /// </summary>
         private string hardwareConfigName;
+
+        /// <summary>
+        /// 硬件配置是否是多参数
+        /// </summary>
+        private bool isMultiparameter;
         #endregion
 
         #region 滤波参数  --by zt
@@ -542,8 +547,6 @@ namespace VeegStation
             //初始化时间基准、灵敏度与通道显示数目的选项,（注意，要放在InitFromConfig()后面）
             InitMenuItems();
 
-
-            
             //解析事件，并将事件添加进事件列表中
             ParseEvent();
 
@@ -765,6 +768,7 @@ namespace VeegStation
             {
                 //8导脑电
                 case 0x00:
+                    this.isMultiparameter = false;
                     this.hardwareConfigName = "8导脑电";
                     //byteOfPerData = 26;
                     numberOfPerData = 8;
@@ -773,6 +777,7 @@ namespace VeegStation
 
                 //8导脑电+多参数
                 case 0x40:
+                    this.isMultiparameter = true;
                     this.hardwareConfigName = "8导脑电+多参数";
                     //byteOfPerData = 48;
                     numberOfPerData = 8;
@@ -781,6 +786,7 @@ namespace VeegStation
 
                 //16导脑电
                 case 0x04:
+                    this.isMultiparameter = false;
                     this.hardwareConfigName = "16导脑电";
                     //byteOfPerData = 46;
                     numberOfPerData = 16;
@@ -789,6 +795,7 @@ namespace VeegStation
 
                 //16导脑电+多参数
                 case 0x44:
+                    this.isMultiparameter = true;
                     this.hardwareConfigName = "16导脑电+多参数";
                     //byteOfPerData = 68;
                     numberOfPerData = 16;
@@ -797,6 +804,7 @@ namespace VeegStation
 
                 //24导脑电
                 case 0x02:
+                    this.isMultiparameter = false;
                     this.hardwareConfigName = "24导脑电";
                     //byteOfPerData = 86;
                     numberOfPerData = 19;
@@ -805,6 +813,7 @@ namespace VeegStation
 
                 //32导脑电
                 case 0x08:
+                    this.isMultiparameter = false;
                     this.hardwareConfigName = "32导脑电";
                     //byteOfPerData = 86;
                     numberOfPerData = 19;
@@ -813,6 +822,7 @@ namespace VeegStation
 
                 //32导脑电+多参数
                 case 0x48:
+                    this.isMultiparameter = true;
                     this.hardwareConfigName = "32导脑电+多参数";
                     //byteOfPerData = 108;
                     numberOfPerData = 19;
@@ -889,9 +899,18 @@ namespace VeegStation
                 //{
                 //    sb.Append(b.ToString("X2"));
                 //}
-                //8导没有心电
-                //double ekg = Util.RawToSignal((short)(buf[6] | (buf[7] << 8)));//心电数据   --by zt
-                double ekg = 0;//不知道心电数据，暂时为0
+
+                //心电数据
+                double ekg;
+                if (isMultiparameter) 
+                {
+                     ekg = Util.RawToEKGSignal((short)(buf[6] | (buf[7] << 8)));//心电数据,是否要除，有疑问   --by zt
+                }
+                else 
+                {
+                     ekg = 0;//不知道心电数据，暂时为0
+                }
+                
                 List<double> eeg = new List<double>();
 
                 //加载脑电数据
@@ -999,33 +1018,47 @@ namespace VeegStation
                         //    continue;
                         //}
 
-                        //获取做差的两个电极名称
-                        string[] FPi_FPj = leadConfigArrayList[sIdx].ToString().Split(new char[] { '-' });
-
-                        //查找多差电极对应的通道号
-                        int channelNum_Positive = 1;
-                        int channelNum_Negative = 1;
-
-                        //由通道号对应通道名称的哈希表中读取需要显示的通道号
-                        foreach (DictionaryEntry item in leadSource)
+                        //如果导联编制不为心电
+                        if (!leadConfigArrayList[sIdx].ToString().Equals("C"))     
                         {
-                            if (item.Value.ToString() == FPi_FPj[0])
-                                channelNum_Positive = Convert.ToInt32(item.Key);
-                            if (item.Value.ToString() == FPi_FPj[1])
-                                channelNum_Negative = Convert.ToInt32(item.Key);
-                        }
+                            //获取做差的两个电极名称
+                            string[] FPi_FPj = leadConfigArrayList[sIdx].ToString().Split(new char[] { '-' });
 
-                        //求两个电极电位差
-                        double sampleValue_Positive = 0;
-                        double sampleValue_Negative = 0;
-                        if (FPi_FPj[0] != "REF")
-                            sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
-                        if (FPi_FPj[1] != "REF")
-                            sampleValue_Negative = packets[tIdx].EEG[channelNum_Positive - 1];
-                        sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
-                        sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                            //查找多差电极对应的通道号
+                            int channelNum_Positive = 1;
+                            int channelNum_Negative = 1;
+
+                            //由通道号对应通道名称的哈希表中读取需要显示的通道号
+                            foreach (DictionaryEntry item in leadSource)
+                            {
+                                if (item.Value.ToString() == FPi_FPj[0])
+                                    channelNum_Positive = Convert.ToInt32(item.Key);
+                                if (item.Value.ToString() == FPi_FPj[1])
+                                    channelNum_Negative = Convert.ToInt32(item.Key);
+                            }
+
+                            //求两个电极电位差
+                            double sampleValue_Positive = 0;
+                            double sampleValue_Negative = 0;
+                            if (FPi_FPj[0] != "REF")
+                                sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
+                            if (FPi_FPj[1] != "REF")
+                                sampleValue_Negative = packets[tIdx].EEG[channelNum_Negative - 1];
+                            sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
+                            sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
+                        }
+                        //导联为心电
+                        else   
+                        {
+                            sampleDifferValue[sIdx] = packets[tIdx].EKG;
+
+                            //根据所校准的单位与灵敏度调整Y轴值-- by lxl  //心电的灵敏度是否需要  --by zt
+                            sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              
+                        }
+                        
                         sampleDifferValue[sIdx] += (2000D - interval * (sIdx - currentTopSignal) - interval / 2);
                         col[sIdx].Points.AddXY(tIdx / (double)this.sampleRate, sampleDifferValue[sIdx]);
+                        
                     }
                 }
 
@@ -3314,12 +3347,6 @@ namespace VeegStation
             }
         }
 
-        private void 导联设置ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
-            //myLeadConfigForm.Show();
-            myLeadConfigForm.ShowDialog();
-        }
 
 		private void boardPanel_Paint(object sender, PaintEventArgs e)
         {
@@ -3556,5 +3583,12 @@ namespace VeegStation
             //去除病人属性菜单前的勾  by-xcg
             this.pationInfoToolStripMenuItem.Checked = false;    
 			    }
+
+        private void leadConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
+            //myLeadConfigForm.Show();
+            myLeadConfigForm.ShowDialog();
+        }
     }
 }
