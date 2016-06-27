@@ -128,7 +128,11 @@ namespace VeegStation
         public void PauseVideo()
         {
             if (PlayerVideo.IsPlaying)
+            {
                 PlayerVideo.Pause();
+                btn_pause.Enabled = false;
+                btn_play.Enabled = true;
+            }
         }
 
         /// <summary>
@@ -296,7 +300,7 @@ namespace VeegStation
 
         private void VideoForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.Hide();
+            playBack.Close();
             playBack.panelVideo.Visible = true;
         }
 

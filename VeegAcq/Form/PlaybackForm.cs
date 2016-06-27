@@ -96,6 +96,12 @@ namespace VeegStation
         /// </summary>
        private  int  isIdent= 0;
 
+       public int IsIdent
+       {
+           get { return isIdent; }
+           set { isIdent = value; }
+       }
+
         private /*const*/ int WINDOW_SECONDS = 10;                                                                                      //不同的时间基准会有不同的window_seconds，所以取消掉const -- by lxl
         
         /// <summary>
@@ -1384,14 +1390,30 @@ namespace VeegStation
                   //  eventProperty.BeginningTime = new List<DateTime> { DateTime.Parse("2016-05-24  16:10:32"),DateTime.Parse("2016-05-24  16:25:40"), DateTime.Parse("2016-05-24  16:56:40") };
                   // eventProperty.RecordTime = new List<TimeSpan> { TimeSpan.Parse("00:00:00"),TimeSpan.Parse("00:00:10"), TimeSpan.Parse("00:00:20") };
                     GetAllDvalue();
-                    for (int j = 0; j < timeSignal.GetLength(0); j++)
+                    if ((int)(CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset) == timeSignal[0])
                     {
-                        if ((int)(CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset) == timeSignal[j])
+                        if (eventProperty.BeginningTime[0].Hour * 3600 + eventProperty.BeginningTime[0].Minute * 60 + eventProperty.BeginningTime[0].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) == 0)
+                        { }
+                        else
                         {
-                                displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
+                            displayStartTime.Text = eventProperty.BeginningTime[0].ToLongTimeString().ToString();
+                            getDvalue = eventProperty.BeginningTime[0].Hour * 3600 + eventProperty.BeginningTime[0].Minute * 60 + eventProperty.BeginningTime[0].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[0];
+                            if (nfi.HasVideo)
+                            {
+                                Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                                if (isPop == 1)
+                                    video.PlayerVideo.Time = Player.Time;
+                            }
+                        }
+                    }
+                    for (int j = 1; j < timeSignal.GetLength(0); j++)
+                    {
+                        if ((int)(CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset) == timeSignal[j]+1)
+                        {
+             //                   displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
                                 //TimeSpan dValue = eventProperty.BeginningTime[j] - nfi.StartDateTime;
                                 // getDvalue = dValue.TotalSeconds - timeSignal[j];
-                                getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j];
+                                getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j]-1;
                                 if (nfi.HasVideo)
                                 {
                                     Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
@@ -1980,9 +2002,9 @@ namespace VeegStation
             GetAllDvalue();
             for (int i = timeSignal.GetLength(0) - 1; i >0 ; i--)
             {
-                if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i])
+                if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i]+1)
                 {
-                    getDvalue = GettimeSignalNumber(i) - GetStarTotalSecond() - timeSignal[i];
+                    getDvalue = GettimeSignalNumber(i) - GetStarTotalSecond() - timeSignal[i]-1;
                     if (nfi.HasVideo)
                     {
                         Player.Play();
@@ -1999,9 +2021,14 @@ namespace VeegStation
                     }
                     break;
                 }
-                else if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i - 1])
+                else if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= timeSignal[i - 1]+1)
                 {
-                    getDvalue = GettimeSignalNumber(i - 1) - GetStarTotalSecond() - timeSignal[i-1];
+                    if (i - 1 == 0)
+                    {
+                        getDvalue = GettimeSignalNumber(i - 1) - GetStarTotalSecond() - timeSignal[i - 1];
+                    }
+                    else
+                    getDvalue = GettimeSignalNumber(i - 1) - GetStarTotalSecond() - timeSignal[i-1]-1;
                     if (nfi.HasVideo)
                     {
                         Player.Play();
