@@ -24,7 +24,7 @@ namespace VeegStation
         /// <summary>
         /// 定义播放器
         /// </summary>
-        public IVideoPlayer Player;
+        public IVideoPlayer PlayerVideo;
 
         /// <summary>
         /// 定义视频media
@@ -39,7 +39,7 @@ namespace VeegStation
         /// <summary>
         /// 定义视频点击放大缩小比例
         /// </summary>
-        double scale=0.5;
+        double scale = 0.5;
 
         /// <summary>
         /// 定义pictureBox的X，Y位置
@@ -60,7 +60,7 @@ namespace VeegStation
             this.ControlBox = false;
         }
 
-         Point m_ptCanvas;
+        Point m_ptCanvas;
         private void VideoForm_Load_1(object sender, EventArgs e)
         {
             //文字浮动
@@ -79,54 +79,54 @@ namespace VeegStation
             IMediaPlayerFactory factory = new MediaPlayerFactory();
 
             //创建播放器
-            Player = factory.CreatePlayer<IVideoPlayer>();
+            PlayerVideo = factory.CreatePlayer<IVideoPlayer>();
 
             //窗口句柄（在picture_Box上播放视频）
-            Player.WindowHandle = pictureBox_Video.Handle;
+            PlayerVideo.WindowHandle = pictureBox_Video.Handle;
 
             //宽高比（4：3，16：9等等）
-            Player.AspectRatio = AspectRatioMode.Mode2; 
+            PlayerVideo.AspectRatio = AspectRatioMode.Mode2;
             if (playBack.nfi.HasVideo)
             {
                 //获得media视频文件
                 Media = factory.CreateMedia<IMediaFromFile>(playBack.nfi.VideoFullName);
 
                 //打开该文件
-                Player.Open(Media);
-                //Player.Time = (long)playBack.nfi.VideoOffset * 1000;
-                //Player.Pause();
-             }        
-                //获得picturebox的X,Y值，宽，高
-                x = this.pictureBox_Video.Location.X;
-                y = this.pictureBox_Video.Location.Y;
-                width = this.pictureBox_Video.Width;
-                height = this.pictureBox_Video.Height;
-                if (playBack.Player.IsPlaying)
-                {
-                    btn_pause.Enabled = true;
-                    btn_play.Enabled = false;
-                }
-                else
-                {
-                    btn_pause.Enabled = false;
-                    btn_play.Enabled = true;
-                }
+                PlayerVideo.Open(Media); 
+                PlayerVideo.Play(); 
+                PlayerVideo.Time = (long)(playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000);
+            }
+            //获得picturebox的X,Y值，宽，高
+            x = this.pictureBox_Video.Location.X;
+            y = this.pictureBox_Video.Location.Y; 
+            width = this.pictureBox_Video.Width;
+            height = this.pictureBox_Video.Height;
+            if (playBack.Player.IsPlaying)
+            {
+                btn_pause.Enabled = true;
+                btn_play.Enabled = false;
+            }
+            else
+            {
+                btn_pause.Enabled = false;
+                btn_play.Enabled = true;
+            }
         }
 
         /// <summary>
         /// 播放函数
         /// </summary>
-        public void Play()
+        public void PlayVideo()
         {
-            Player.Play();
-            Player.Time = (long)(playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000);
+            PlayerVideo.Play();
+            PlayerVideo.Time = (long)(playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000);
         }
 
         //暂停函数
-        public void Pause()
+        public void PauseVideo()
         {
-            if(Player.IsPlaying)
-            Player.Pause();
+            if (PlayerVideo.IsPlaying)
+                PlayerVideo.Pause();
         }
 
         /// <summary>
@@ -142,8 +142,8 @@ namespace VeegStation
             }
             if (!playBack.Player.IsPlaying)
             {
-               Play();
-               playBack.Play();
+                PlayVideo();
+                playBack.Play();
             }
             btn_play.Enabled = false;
             btn_pause.Enabled = true;
@@ -156,7 +156,7 @@ namespace VeegStation
         /// <param name="e"></param>
         private void btn_pause_Click(object sender, EventArgs e)
         {
-            Pause();
+            PauseVideo();
             playBack.Pause();
             btn_pause.Enabled = false;
             btn_play.Enabled = true;
@@ -172,9 +172,6 @@ namespace VeegStation
             //这里并不是销毁Form,只是隐藏，否则视频将不与回放Form同步
             this.Hide();
             playBack.panelVideo.Visible = true;
-//            playBack.timer.Enabled = false;
-//            playBack.Pause();
-//            Pause();
         }
 
         /// <summary>
@@ -189,9 +186,9 @@ namespace VeegStation
             {
                 btn_decelerate.Enabled = true;
                 btn_accelerate.Enabled = true;
-                Player.PlaybackRate = Player.PlaybackRate * 2;
-                playBack.Player.PlaybackRate = Player.PlaybackRate;
-                playBack.Speed = Player.PlaybackRate;
+                PlayerVideo.PlaybackRate = PlayerVideo.PlaybackRate * 2;
+                playBack.Player.PlaybackRate = PlayerVideo.PlaybackRate;
+                playBack.Speed = PlayerVideo.PlaybackRate;
                 playBack.btn_decelerate.Enabled = true;
                 playBack.btn_accelerate.Enabled = true;
             }
@@ -216,7 +213,7 @@ namespace VeegStation
             if (e.Button == MouseButtons.Left)
             {
                 //不能无限制放大，否则视频画面变得非常模糊
-                if (pictureBox_Video.Height <height *2 && pictureBox_Video.Width <width * 2)
+                if (pictureBox_Video.Height < height * 2 && pictureBox_Video.Width < width * 2)
                 {
                     //相似三角形推导出的数学公式
                     Point pt = new Point((int)(scale * (this.pictureBox_Video.Location.X - e.Location.X)), (int)(scale * (this.pictureBox_Video.Location.Y - e.Location.Y)));
@@ -226,12 +223,12 @@ namespace VeegStation
                 }
             }
             if (e.Button == MouseButtons.Right)
-            {            
+            {
                 //鼠标右键点击是回到初始状态，之所以不返回上一个状态是因为Location发生了变化，不能保证回到上一个状态不出现大的误差
-                    Point pt = new Point(x, y);
-                    pictureBox_Video.Location = pt;
-                    pictureBox_Video.Height = height;
-                    pictureBox_Video.Width = width;
+                Point pt = new Point(x, y);
+                pictureBox_Video.Location = pt;
+                pictureBox_Video.Height = height;
+                pictureBox_Video.Width = width;
             }
         }
 
@@ -247,9 +244,9 @@ namespace VeegStation
             {
                 btn_accelerate.Enabled = true;
                 btn_decelerate.Enabled = true;
-                Player.PlaybackRate = Player.PlaybackRate / 2;
-                playBack.Player.PlaybackRate = Player.PlaybackRate;
-                playBack.Speed = Player.PlaybackRate;
+                PlayerVideo.PlaybackRate = PlayerVideo.PlaybackRate / 2;
+                playBack.Player.PlaybackRate = PlayerVideo.PlaybackRate;
+                playBack.Speed = PlayerVideo.PlaybackRate;
                 playBack.btn_accelerate.Enabled = true;
                 playBack.btn_decelerate.Enabled = true;
             }
