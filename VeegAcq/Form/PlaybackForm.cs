@@ -2121,6 +2121,7 @@ namespace VeegStation
             SetSignalNumArray(leadConfigArrayList.Count);
             SetSignalNum((leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum);
             InitSignalNumMenuItems();
+            this.vScroll.Maximum = this.leadConfigArrayList.Count;
 
             //重新显示数据
             ShowData();
