@@ -2265,16 +2265,19 @@ namespace VeegStation
             {
                 toolTip1.SetToolTip(btn_hide, "显示");
                 panelVideo.Visible = false;
-                //为了防止速度过大时有误差，这里需要先暂停处理--by wsp
-                if (Speed > 1)
-                    Pause();
+                //为了防止速度过大时有误差，这里需要先暂停处理--by wsp             
+                if (isPop == 0)
+                {
+                    if (Speed > 1)
+                        Pause();
+                }
                 if (isIdent == 0)
                 {
                     video.Show();
                     Thread.Sleep(200);
                 }
                 else
-                    video.Show();
+                    video.Visible=true;
                 if (Player.IsPlaying == true)
                     video.PlayVideo();
                 else
@@ -2288,7 +2291,7 @@ namespace VeegStation
             else
             {
                 toolTip1.SetToolTip(btn_hide, "隐藏");
-                video.Hide();
+                video.Visible = false;
                 panelVideo.Visible = true;
             }
         }      

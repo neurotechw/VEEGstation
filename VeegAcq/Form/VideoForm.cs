@@ -179,7 +179,7 @@ namespace VeegStation
         private void btn_close_Click(object sender, EventArgs e)
         {
             //这里并不是销毁Form,只是隐藏，否则视频将不与回放Form同步
-            this.Hide();
+            this.Visible = false;
             playBack.panelVideo.Visible = true;
         }
 
@@ -300,7 +300,6 @@ namespace VeegStation
         {
             PlayerVideo.Time = (long)(playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + playBack.GetDvalue * 1000);
         }
-
         private void VideoForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             playBack.Close();
