@@ -92,10 +92,13 @@ namespace VeegStation
                 Media = factory.CreateMedia<IMediaFromFile>(playBack.nfi.VideoFullName);
 
                 //打开该文件
-                PlayerVideo.Open(Media); 
+                PlayerVideo.Open(Media);
+                PlayerVideo.PlaybackRate = playBack.Speed;
                 PlayerVideo.Play(); 
 //                PlayerVideo.Time = (long)(playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000+playBack.GetDvalue*1000);
                 getOffsetTime();
+                btn_accelerate.Enabled = playBack.btn_accelerate.Enabled;
+                btn_decelerate.Enabled = playBack.btn_decelerate.Enabled;
             }
             //获得picturebox的X,Y值，宽，高
             x = this.pictureBox_Video.Location.X;
@@ -128,7 +131,11 @@ namespace VeegStation
         public void PauseVideo()
         {
             if (PlayerVideo.IsPlaying)
+            {
                 PlayerVideo.Pause();
+                btn_pause.Enabled = false;
+                btn_play.Enabled = true;
+            }
         }
 
         /// <summary>
@@ -296,7 +303,7 @@ namespace VeegStation
 
         private void VideoForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.Hide();
+            playBack.Close();
             playBack.panelVideo.Visible = true;
         }
 
