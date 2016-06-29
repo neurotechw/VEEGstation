@@ -239,11 +239,8 @@ namespace VeegStation
                 MessageBox.Show("当前导联编制列表为空，请添加导联编制。");
                 return;
             }
-            if (selectedColumn == 0)
-            {
-                MessageBox.Show("您还没有选中导联编制。");
-                return;
-            }
+            
+            nameOfColumn = txtName.Text;
             if (nameOfColumn.Equals("默认导联配置"))
             {
                 MessageBox.Show("这是系统默认的导联方式，您不能编辑。");
@@ -262,11 +259,8 @@ namespace VeegStation
                 MessageBox.Show("当前导联编制列表为空，您不能删除。");
                 return;
             }
-            if (selectedColumn == 0)
-            {
-                MessageBox.Show("您还没有选中导联编制。");
-                return;
-            }
+            
+            nameOfColumn = txtName.Text;
             if (nameOfColumn.Equals("默认导联配置"))
             {
                 MessageBox.Show("这是系统默认的导联方式，您不能删除。");
@@ -290,6 +284,7 @@ namespace VeegStation
         private void cbConfigList_SelectedIndexChanged(object sender, EventArgs e)
         {
             InitList();
+            this.txtName.Text = "默认导联配置";
         }
 
         private void LeadConfigForm_FormClosing(object sender, FormClosingEventArgs e)
