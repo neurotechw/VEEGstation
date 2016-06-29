@@ -291,6 +291,7 @@ namespace VeegStation
         {
             e.Cancel = true;
             this.controller.myPlaybackForm.InitLeadParameters();
+            this.controller.myPlaybackForm.ShowData();
             this.Hide();
 
         }

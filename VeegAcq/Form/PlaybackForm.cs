@@ -632,6 +632,7 @@ namespace VeegStation
             #endregion
 
             #region 导联参数
+            currentLeadConfigName = "默认导联配置";
             InitLeadParameters();
             #endregion
         }
@@ -772,6 +773,9 @@ namespace VeegStation
             this.leadConfigList = (Hashtable)this.controller.CommonDataPool.GetLeadList(this.hardwareConfigName);
 
             InitLeadItems();
+
+            ////更新数据
+            //ShowData();
         }
 
         /// <summary>
@@ -2065,7 +2069,12 @@ namespace VeegStation
             //清除
             this.leadChooseToolStripMenuItem.DropDownItems.Clear();
             System.Windows.Forms.ToolStripMenuItem item;//= new ToolStripMenuItem();
-            currentLeadConfigName = "默认导联配置";
+            //最最开始时，默认导联配置选中。初始化选项
+            //第二次时，默认选中当前配置。如果删除时，则选中默认配置
+            if (!leadConfigList.ContainsKey(currentLeadConfigName)) 
+            {
+                currentLeadConfigName = "默认导联配置";
+            }
             //初始化导联选择选项
             foreach (string name in leadConfigList.Keys) 
             {
