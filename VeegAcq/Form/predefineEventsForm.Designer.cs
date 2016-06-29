@@ -28,6 +28,7 @@ namespace VeegStation
          /// </summary>
          private void InitializeComponent()
          {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PredefineEventsForm));
             this.eventList = new System.Windows.Forms.ListView();
             this.num = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.name = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -120,6 +121,7 @@ namespace VeegStation
             this.Controls.Add(this.addEvent);
             this.Controls.Add(this.eventList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PredefineEventsForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "预定义事件";

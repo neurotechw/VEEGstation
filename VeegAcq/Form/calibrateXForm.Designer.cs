@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CalibrateXForm));
             this.linePanel = new System.Windows.Forms.Panel();
             this.valueBox = new System.Windows.Forms.NumericUpDown();
             this.confirmButton = new System.Windows.Forms.Button();
@@ -106,6 +107,7 @@
             this.Controls.Add(this.confirmButton);
             this.Controls.Add(this.valueBox);
             this.Controls.Add(this.linePanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CalibrateXForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "X轴校准";

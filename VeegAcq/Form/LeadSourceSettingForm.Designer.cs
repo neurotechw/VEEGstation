@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LeadSourceSettingForm));
             this.label1 = new System.Windows.Forms.Label();
             this.lbConfig = new System.Windows.Forms.Label();
             this.btnDefault = new System.Windows.Forms.Button();
@@ -652,8 +653,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(670, 615);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
             this.Controls.Add(this.lvSourceList);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
@@ -663,6 +662,9 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lbConfig);
             this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "LeadSourceSettingForm";
             this.Text = "导联源设置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadSourceSettingForm_FormClosing);

@@ -148,8 +148,9 @@ namespace VeegStation
             this.ClientSize = new System.Drawing.Size(606, 582);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "VideoForm";
-            this.Text = "VideoForm";
+            this.Text = "œ‘ æ ”∆µ";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.VideoForm_FormClosed);
             this.Load += new System.EventHandler(this.VideoForm_Load_1);
             this.splitContainer1.Panel1.ResumeLayout(false);

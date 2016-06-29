@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LeadConfigForm));
             this.label1 = new System.Windows.Forms.Label();
             this.gbInfo = new System.Windows.Forms.GroupBox();
             this.cbConfigList = new System.Windows.Forms.ComboBox();
@@ -159,6 +160,7 @@
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.gbInfo);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "LeadConfigForm";
             this.Text = "导联配置";

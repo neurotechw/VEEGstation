@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BandFilterForm));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox_lowFrequency = new System.Windows.Forms.TextBox();
@@ -139,7 +140,7 @@
             this.groupBox_bandFilter.TabStop = false;
             this.groupBox_bandFilter.Text = "滤波参数";
             // 
-            // FormBandFilter
+            // BandFilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -148,10 +149,11 @@
             this.Controls.Add(this.checkBox_bandFilter);
             this.Controls.Add(this.button_Cancel);
             this.Controls.Add(this.button_OK);
-            this.Name = "FormBandFilter";
-            this.Text = "带通滤波";
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
+            this.Name = "BandFilterForm";
+            this.Text = "带通滤波";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormBandFilter_FormClosing);
             this.groupBox_bandFilter.ResumeLayout(false);
             this.groupBox_bandFilter.PerformLayout();

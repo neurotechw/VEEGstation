@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LeadAddForm));
             this.btnCp3 = new System.Windows.Forms.Button();
             this.btnCp4 = new System.Windows.Forms.Button();
             this.btnPo4 = new System.Windows.Forms.Button();
@@ -74,12 +75,12 @@
             this.btnExit = new System.Windows.Forms.Button();
             this.btnClearOne = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnC = new System.Windows.Forms.Button();
             this.btnRef = new System.Windows.Forms.Button();
             this.lbConfig = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtLeadName = new System.Windows.Forms.TextBox();
-            this.btnC = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -625,6 +626,17 @@
             this.panel1.Size = new System.Drawing.Size(503, 494);
             this.panel1.TabIndex = 11;
             // 
+            // btnC
+            // 
+            this.btnC.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnC.Location = new System.Drawing.Point(463, 24);
+            this.btnC.Name = "btnC";
+            this.btnC.Size = new System.Drawing.Size(37, 26);
+            this.btnC.TabIndex = 44;
+            this.btnC.Text = "C";
+            this.btnC.UseVisualStyleBackColor = true;
+            this.btnC.Click += new System.EventHandler(this.btnC_Click);
+            // 
             // btnRef
             // 
             this.btnRef.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -671,17 +683,6 @@
             this.txtLeadName.TabIndex = 19;
             this.txtLeadName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLeadName_KeyPress);
             // 
-            // btnC
-            // 
-            this.btnC.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnC.Location = new System.Drawing.Point(463, 24);
-            this.btnC.Name = "btnC";
-            this.btnC.Size = new System.Drawing.Size(37, 26);
-            this.btnC.TabIndex = 44;
-            this.btnC.Text = "C";
-            this.btnC.UseVisualStyleBackColor = true;
-            this.btnC.Click += new System.EventHandler(this.btnC_Click);
-            // 
             // LeadAddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -698,6 +699,7 @@
             this.Controls.Add(this.lbConfig);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "LeadAddForm";
             this.Text = "添加导联";

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LeadEditForm));
             this.lbConfig = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -37,6 +38,7 @@
             this.btnExit = new System.Windows.Forms.Button();
             this.btnClearOne = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnC = new System.Windows.Forms.Button();
             this.btnRef = new System.Windows.Forms.Button();
             this.btnCp3 = new System.Windows.Forms.Button();
             this.btnCp4 = new System.Windows.Forms.Button();
@@ -79,7 +81,6 @@
             this.btnC3 = new System.Windows.Forms.Button();
             this.btnFp1 = new System.Windows.Forms.Button();
             this.lbLeadConfigName = new System.Windows.Forms.Label();
-            this.btnC = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -211,6 +212,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(503, 494);
             this.panel1.TabIndex = 22;
+            // 
+            // btnC
+            // 
+            this.btnC.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnC.Location = new System.Drawing.Point(463, 23);
+            this.btnC.Name = "btnC";
+            this.btnC.Size = new System.Drawing.Size(37, 26);
+            this.btnC.TabIndex = 44;
+            this.btnC.Text = "C";
+            this.btnC.UseVisualStyleBackColor = true;
+            this.btnC.Click += new System.EventHandler(this.btnC_Click);
             // 
             // btnRef
             // 
@@ -671,17 +683,6 @@
             this.lbLeadConfigName.TabIndex = 30;
             this.lbLeadConfigName.Text = "label3";
             // 
-            // btnC
-            // 
-            this.btnC.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnC.Location = new System.Drawing.Point(463, 23);
-            this.btnC.Name = "btnC";
-            this.btnC.Size = new System.Drawing.Size(37, 26);
-            this.btnC.TabIndex = 44;
-            this.btnC.Text = "C";
-            this.btnC.UseVisualStyleBackColor = true;
-            this.btnC.Click += new System.EventHandler(this.btnC_Click);
-            // 
             // LeadEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -698,6 +699,7 @@
             this.Controls.Add(this.btnClearOne);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "LeadEditForm";
             this.Text = "编辑导联";
