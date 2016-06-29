@@ -35,6 +35,7 @@ namespace VeegStation
             this.btn_cancel = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.buttonPanel = new System.Windows.Forms.Panel();
+            this.panelColor = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // label1
@@ -58,7 +59,7 @@ namespace VeegStation
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(33, 65);
+            this.label2.Location = new System.Drawing.Point(33, 82);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(77, 12);
             this.label2.TabIndex = 4;
@@ -95,16 +96,25 @@ namespace VeegStation
             // 
             // buttonPanel
             // 
-            this.buttonPanel.Location = new System.Drawing.Point(18, 15);
+            this.buttonPanel.Location = new System.Drawing.Point(18, 26);
             this.buttonPanel.Name = "buttonPanel";
             this.buttonPanel.Size = new System.Drawing.Size(208, 47);
             this.buttonPanel.TabIndex = 8;
+            // 
+            // panelColor
+            // 
+            this.panelColor.BackColor = System.Drawing.SystemColors.Control;
+            this.panelColor.Location = new System.Drawing.Point(92, 0);
+            this.panelColor.Name = "panelColor";
+            this.panelColor.Size = new System.Drawing.Size(15, 15);
+            this.panelColor.TabIndex = 0;
             // 
             // addCustomEventForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(238, 291);
+            this.Controls.Add(this.panelColor);
             this.Controls.Add(this.buttonPanel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btn_cancel);
@@ -129,5 +139,6 @@ namespace VeegStation
         private System.Windows.Forms.Button btn_cancel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Panel buttonPanel;
+        private System.Windows.Forms.Panel panelColor;
     }
 }
