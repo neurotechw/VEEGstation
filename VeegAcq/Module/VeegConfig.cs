@@ -195,8 +195,8 @@ namespace VeegStation
 
             //32导默认导联源
             Hashtable defaultLeadSource32 = new Hashtable();
-            string[] lead32Names = new string[36] { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6", "AF3", "AF4", "Fc3",
-                                                            "Fc4", "Cp3", "Cp4", "Po3", "Po4", "FT7", "FT8", "Cp7", "Cp8", "Fz", "Cz", "Pz", "Oz", "Sp1", "Sp2", "A1", "A2" };
+            string[] lead32Names = new string[36] { "Fp1", "Fp2", "F3", "F4", "C3", "C4", "P3", "P4", "O1", "O2", "F7", "F8", "T3", "T4", "T5", "T6","Fz", "Cz", "Pz",
+                "AF3", "AF4", "Fc3","Fc4", "Cp3", "Cp4", "Po3", "Po4", "FT7", "FT8", "Cp7", "Cp8",  "Oz", "Sp1", "Sp2", "A1", "A2" };
             for (int i = 0; i < lead32Names.Length; i++)
             {
                 defaultLeadSource32.Add(i + 1, lead32Names[i]);
@@ -247,7 +247,7 @@ namespace VeegStation
             {
                 if (lead8Names[i] != "") 
                 {
-                    defaultLeadConfig8.Add(lead8Names[i] + "-REF");
+                    defaultLeadConfig8.Add(lead8Names[i] + "-Ref");
                 }
             }
 
@@ -265,7 +265,7 @@ namespace VeegStation
             {
                 if (lead8Names[i] != "")
                 {
-                    defaultLeadConfig8P.Add(lead8Names[i] + "-REF");
+                    defaultLeadConfig8P.Add(lead8Names[i] + "-Ref");
                 }
             }
 
@@ -283,7 +283,7 @@ namespace VeegStation
             {
                 if (lead16Names[i] != "")
                 {
-                    defaultLeadConfig16.Add(lead16Names[i] + "-REF");
+                    defaultLeadConfig16.Add(lead16Names[i] + "-Ref");
                 }
             }
 
@@ -301,7 +301,7 @@ namespace VeegStation
             {
                 if (lead16Names[i] != "")
                 {
-                    defaultLeadConfig16P.Add(lead16Names[i] + "-REF");
+                    defaultLeadConfig16P.Add(lead16Names[i] + "-Ref");
                 }
             }
 
@@ -319,7 +319,7 @@ namespace VeegStation
             {
                 if (lead24Names[i] != "")
                 {
-                    defaultLeadConfig24.Add(lead24Names[i] + "-REF");
+                    defaultLeadConfig24.Add(lead24Names[i] + "-Ref");
                 }
             }
 
@@ -337,7 +337,7 @@ namespace VeegStation
             {
                 if (lead32Names[i] != "")
                 {
-                    defaultLeadConfig32.Add(lead32Names[i] + "-REF");
+                    defaultLeadConfig32.Add(lead32Names[i] + "-Ref");
                 }
             }
 
@@ -355,7 +355,7 @@ namespace VeegStation
             {
                 if (lead32Names[i] != "")
                 {
-                    defaultLeadConfig32P.Add(lead32Names[i] + "-REF");
+                    defaultLeadConfig32P.Add(lead32Names[i] + "-Ref");
                 }
             }
 

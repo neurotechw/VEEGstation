@@ -1056,9 +1056,9 @@ namespace VeegStation
                             //求两个电极电位差
                             double sampleValue_Positive = 0;
                             double sampleValue_Negative = 0;
-                            if (FPi_FPj[0] != "REF")
+                            if (!FPi_FPj[0].ToLower().Equals("ref"))
                                 sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
-                            if (FPi_FPj[1] != "REF")
+                            if (!FPi_FPj[1].ToLower().Equals("ref"))
                                 sampleValue_Negative = packets[tIdx].EEG[channelNum_Negative - 1];
                             sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
                             sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
