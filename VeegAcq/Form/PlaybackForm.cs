@@ -3658,7 +3658,7 @@ namespace VeegStation
             addCustomEventForm myAddCustomEventForm = new addCustomEventForm(this, lvCustomEvents.SelectedIndices[0]);
 
             //置状态为编辑事件
-            myAddCustomEventForm.IsEditEvent(int.Parse(this.lvCustomEvents.SelectedItems[0].SubItems[3].Name), this.lvCustomEvents.SelectedItems[0].SubItems[0].Text);
+            myAddCustomEventForm.IsEditEvent(int.Parse(this.lvCustomEvents.SelectedItems[0].SubItems[3].Name), this.lvCustomEvents.SelectedItems[0].SubItems[1].Text);
 
             //添加自定义事件的form弹出，并且为关闭前不允许操作该form
             myAddCustomEventForm.ShowDialog();
@@ -3721,6 +3721,21 @@ namespace VeegStation
             myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
             //myLeadConfigForm.Show();
             myLeadConfigForm.ShowDialog();
+        }
+
+        private void lvPreDefineEvents_Click(object sender, EventArgs e)
+        {
+            this.btnEditCustomEvents.Enabled = false;
+        }
+
+        private void lvCustomEvents_Click(object sender, EventArgs e)
+        {
+            this.btnEditCustomEvents.Enabled = true;
+        }
+
+        private void lvPreDefineEvents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.btnEditCustomEvents.Enabled = false;
         }
     }
 }
