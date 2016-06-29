@@ -204,7 +204,7 @@ namespace VeegStation
             defaultLeadSource = (Hashtable)controller.CommonDataPool.GetLeadSource(text)[0];
             myLeadSource = (Hashtable) controller.CommonDataPool.GetLeadSource(text)[1];
             sizeOfLeadSource = defaultLeadSource.Count;
-          
+
             DrawListView();
         }
 
@@ -260,6 +260,47 @@ namespace VeegStation
                     this.lvSourceList.Items.Add(lvi);
                 }
             }
+            #endregion
+
+            //结束数据处理，UI界面一次性绘制。
+            this.lvSourceList.EndUpdate();
+        }
+
+
+        /// <summary>
+        /// 加载默认导联源 
+        /// </summary>
+        public void DrawDefaultListView()
+        {
+            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
+            this.lvSourceList.BeginUpdate();
+
+            //清空listview
+            this.lvSourceList.Items.Clear();
+
+            //清空列
+            this.lvSourceList.Columns.Clear();
+
+            //添加列名
+            this.lvSourceList.Columns.Add("数据源", 50, HorizontalAlignment.Left);
+            this.lvSourceList.Columns.Add("电极名称", 100, HorizontalAlignment.Left);
+
+            #region 加载DefaultLeadSource中的数据
+
+            //加载defaultLeadSource的数据
+            ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
+
+            //排序key
+            dKeys.Sort();
+            foreach (int key in dKeys)
+            {
+                ListViewItem lvi = new ListViewItem();
+                lvi.Text = key.ToString();
+                lvi.SubItems.Add(defaultLeadSource[key].ToString());
+                this.lvSourceList.Items.Add(lvi);
+            }
+            
+            
             #endregion
 
             //结束数据处理，UI界面一次性绘制。
@@ -491,10 +532,10 @@ namespace VeegStation
         private void btnDefault_Click(object sender, EventArgs e)
         {
             //导联源清除
-            myLeadSource.Clear();
+            //myLeadSource.Clear();
 
-            //添加默认配置
-            DrawListView();
+            //加载默认配置
+            DrawDefaultListView();
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -579,6 +620,7 @@ namespace VeegStation
 
         private void btnExit_Click(object sender, EventArgs e)
         {
+            
             this.Hide();
         }
 
