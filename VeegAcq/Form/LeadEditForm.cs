@@ -505,12 +505,31 @@ namespace VeegStation
 
         private void btnC_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            if (this.lvEditLeadList.SelectedItems.Count != 0)
+            {
+                if (columnIndex == 1)
+                {
+                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = "C";
+                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex + 1].Text = "";
+                }
+            }
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnClearOne_Click(object sender, EventArgs e)
         {
-            SetListViewText("");
+            if (this.lvEditLeadList.SelectedItems.Count != 0)
+            {
+                if (columnIndex != 0)
+                {
+
+                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = "";
+
+                }
+            }
+            //清除选项，主要目的是点清除一项时不清除上次点选的数据
+            this.lvEditLeadList.SelectedItems.Clear();
+            //SetListViewText("");
         }
         #endregion
 
@@ -524,7 +543,10 @@ namespace VeegStation
             {
                 if (columnIndex != 0)
                 {
-                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
+                    if (!(columnIndex == 2 && this.lvEditLeadList.SelectedItems[0].SubItems[1].Text.Equals("C")))
+                    {
+                        this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
+                    }
                 }
             }
             //清除选项，主要目的是点清除一项时不清除上次点选的数据
@@ -580,7 +602,7 @@ namespace VeegStation
             int leadCount = 0;
             foreach (ListViewItem item in this.lvEditLeadList.Items)
             {
-                if (!item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals(""))
+                if (!item.SubItems[1].Text.Equals("") || !item.SubItems[2].Text.Equals(""))
                 {
                     leadCount++;
                 }

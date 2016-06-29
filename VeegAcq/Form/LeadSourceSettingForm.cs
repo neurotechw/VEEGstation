@@ -299,8 +299,6 @@ namespace VeegStation
                 lvi.SubItems.Add(defaultLeadSource[key].ToString());
                 this.lvSourceList.Items.Add(lvi);
             }
-            
-            
             #endregion
 
             //结束数据处理，UI界面一次性绘制。
