@@ -141,14 +141,28 @@ namespace VeegStation
             for (int i = 0; i < currentLead.Count; i++)
             {
                 string oneData = (string)currentLead[i];
-                string[] firstAndSecond = oneData.Split(new char[] { '-' }); ;
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = (i + 1).ToString();
-                for (int j = 0; j < firstAndSecond.Length; j++)
+                //如果不是C
+                if (!oneData.Equals("C")) 
                 {
-                    lvi.SubItems.Add(firstAndSecond[j]);
+                    string[] firstAndSecond = oneData.Split(new char[] { '-' }); ;
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = (i + 1).ToString();
+                    for (int j = 0; j < firstAndSecond.Length; j++)
+                    {
+                        lvi.SubItems.Add(firstAndSecond[j]);
+                    }
+                    this.lvEditLeadList.Items.Add(lvi);
                 }
-                this.lvEditLeadList.Items.Add(lvi);
+                //如果是C
+                else 
+                {
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = (i + 1).ToString();
+                    lvi.SubItems.Add("C");
+                    lvi.SubItems.Add("");
+                    this.lvEditLeadList.Items.Add(lvi);
+                }
+                
 
             }
 
