@@ -141,14 +141,28 @@ namespace VeegStation
             for (int i = 0; i < currentLead.Count; i++)
             {
                 string oneData = (string)currentLead[i];
-                string[] firstAndSecond = oneData.Split(new char[] { '-' }); ;
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = (i + 1).ToString();
-                for (int j = 0; j < firstAndSecond.Length; j++)
+                //如果不是C
+                if (!oneData.Equals("C")) 
                 {
-                    lvi.SubItems.Add(firstAndSecond[j]);
+                    string[] firstAndSecond = oneData.Split(new char[] { '-' }); ;
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = (i + 1).ToString();
+                    for (int j = 0; j < firstAndSecond.Length; j++)
+                    {
+                        lvi.SubItems.Add(firstAndSecond[j]);
+                    }
+                    this.lvEditLeadList.Items.Add(lvi);
                 }
-                this.lvEditLeadList.Items.Add(lvi);
+                //如果是C
+                else 
+                {
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = (i + 1).ToString();
+                    lvi.SubItems.Add("C");
+                    lvi.SubItems.Add("");
+                    this.lvEditLeadList.Items.Add(lvi);
+                }
+                
 
             }
 
@@ -491,12 +505,31 @@ namespace VeegStation
 
         private void btnC_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            if (this.lvEditLeadList.SelectedItems.Count != 0)
+            {
+                if (columnIndex == 1)
+                {
+                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = "C";
+                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex + 1].Text = "";
+                }
+            }
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnClearOne_Click(object sender, EventArgs e)
         {
-            SetListViewText("");
+            if (this.lvEditLeadList.SelectedItems.Count != 0)
+            {
+                if (columnIndex != 0)
+                {
+
+                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = "";
+
+                }
+            }
+            //清除选项，主要目的是点清除一项时不清除上次点选的数据
+            this.lvEditLeadList.SelectedItems.Clear();
+            //SetListViewText("");
         }
         #endregion
 
@@ -510,9 +543,14 @@ namespace VeegStation
             {
                 if (columnIndex != 0)
                 {
-                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
+                    if (!(columnIndex == 2 && this.lvEditLeadList.SelectedItems[0].SubItems[1].Text.Equals("C")))
+                    {
+                        this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
+                    }
                 }
             }
+            //清除选项，主要目的是点清除一项时不清除上次点选的数据
+            this.lvEditLeadList.SelectedItems.Clear();
         }
 
         private void lvEditLeadList_MouseDown(object sender, MouseEventArgs e)
@@ -564,7 +602,7 @@ namespace VeegStation
             int leadCount = 0;
             foreach (ListViewItem item in this.lvEditLeadList.Items)
             {
-                if (!item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals(""))
+                if (!item.SubItems[1].Text.Equals("") || !item.SubItems[2].Text.Equals(""))
                 {
                     leadCount++;
                 }

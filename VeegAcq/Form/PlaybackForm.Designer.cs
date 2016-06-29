@@ -1041,6 +1041,7 @@ namespace VeegStation
             this.lvCustomEvents.TabIndex = 14;
             this.lvCustomEvents.UseCompatibleStateImageBehavior = false;
             this.lvCustomEvents.View = System.Windows.Forms.View.Details;
+            this.lvCustomEvents.Click += new System.EventHandler(this.lvCustomEvents_Click);
             // 
             // lvCENumber
             // 
@@ -1080,6 +1081,8 @@ namespace VeegStation
             this.lvPreDefineEvents.TabIndex = 13;
             this.lvPreDefineEvents.UseCompatibleStateImageBehavior = false;
             this.lvPreDefineEvents.View = System.Windows.Forms.View.Details;
+            this.lvPreDefineEvents.SelectedIndexChanged += new System.EventHandler(this.lvPreDefineEvents_SelectedIndexChanged);
+            this.lvPreDefineEvents.Click += new System.EventHandler(this.lvPreDefineEvents_Click);
             // 
             // lvPDNumber
             // 

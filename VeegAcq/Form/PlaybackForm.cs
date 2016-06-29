@@ -632,6 +632,7 @@ namespace VeegStation
             #endregion
 
             #region 导联参数
+            currentLeadConfigName = "默认导联配置";
             InitLeadParameters();
             #endregion
         }
@@ -772,6 +773,9 @@ namespace VeegStation
             this.leadConfigList = (Hashtable)this.controller.CommonDataPool.GetLeadList(this.hardwareConfigName);
 
             InitLeadItems();
+
+            ////更新数据
+            //ShowData();
         }
 
         /// <summary>
@@ -1056,9 +1060,9 @@ namespace VeegStation
                             //求两个电极电位差
                             double sampleValue_Positive = 0;
                             double sampleValue_Negative = 0;
-                            if (FPi_FPj[0] != "REF")
+                            if (!FPi_FPj[0].ToLower().Equals("ref"))
                                 sampleValue_Positive = packets[tIdx].EEG[channelNum_Positive - 1]; //data[channelNum_Positive - 1][k];
-                            if (FPi_FPj[1] != "REF")
+                            if (!FPi_FPj[1].ToLower().Equals("ref"))
                                 sampleValue_Negative = packets[tIdx].EEG[channelNum_Negative - 1];
                             sampleDifferValue[sIdx] = sampleValue_Positive - sampleValue_Negative;
                             sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;              //根据所校准的单位与灵敏度调整Y轴值-- by lxl
@@ -2065,7 +2069,12 @@ namespace VeegStation
             //清除
             this.leadChooseToolStripMenuItem.DropDownItems.Clear();
             System.Windows.Forms.ToolStripMenuItem item;//= new ToolStripMenuItem();
-            currentLeadConfigName = "默认导联配置";
+            //最最开始时，默认导联配置选中。初始化选项
+            //第二次时，默认选中当前配置。如果删除时，则选中默认配置
+            if (!leadConfigList.ContainsKey(currentLeadConfigName)) 
+            {
+                currentLeadConfigName = "默认导联配置";
+            }
             //初始化导联选择选项
             foreach (string name in leadConfigList.Keys) 
             {
@@ -3660,7 +3669,7 @@ namespace VeegStation
             addCustomEventForm myAddCustomEventForm = new addCustomEventForm(this, lvCustomEvents.SelectedIndices[0]);
 
             //置状态为编辑事件
-            myAddCustomEventForm.IsEditEvent(int.Parse(this.lvCustomEvents.SelectedItems[0].SubItems[3].Name), this.lvCustomEvents.SelectedItems[0].SubItems[0].Text);
+            myAddCustomEventForm.IsEditEvent(int.Parse(this.lvCustomEvents.SelectedItems[0].SubItems[3].Name), this.lvCustomEvents.SelectedItems[0].SubItems[1].Text);
 
             //添加自定义事件的form弹出，并且为关闭前不允许操作该form
             myAddCustomEventForm.ShowDialog();
@@ -3723,6 +3732,21 @@ namespace VeegStation
             myLeadConfigForm.InitLeadConfig(this.hardwareConfigName);
             //myLeadConfigForm.Show();
             myLeadConfigForm.ShowDialog();
+        }
+
+        private void lvPreDefineEvents_Click(object sender, EventArgs e)
+        {
+            this.btnEditCustomEvents.Enabled = false;
+        }
+
+        private void lvCustomEvents_Click(object sender, EventArgs e)
+        {
+            this.btnEditCustomEvents.Enabled = true;
+        }
+
+        private void lvPreDefineEvents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.btnEditCustomEvents.Enabled = false;
         }
     }
 }
