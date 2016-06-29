@@ -276,8 +276,9 @@ namespace VeegStation
             if (this.lvSourceList.SelectedItems.Count != 0)
             {
                 this.lvSourceList.SelectedItems[0].SubItems[1].Text = text;
-                
             }
+            //清除选项，主要目的是点清除一项时不清除上次点选的数据
+            this.lvSourceList.SelectedItems.Clear();
         }
 
         #region 按钮点击

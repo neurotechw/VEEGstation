@@ -513,6 +513,8 @@ namespace VeegStation
                     this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
                 }
             }
+            //清除选项，主要目的是点清除一项时不清除上次点选的数据
+            this.lvEditLeadList.SelectedItems.Clear();
         }
 
         private void lvEditLeadList_MouseDown(object sender, MouseEventArgs e)
