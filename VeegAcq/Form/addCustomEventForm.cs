@@ -184,6 +184,9 @@ namespace VeegStation
 
             //选择颜色之后让输入框变为选中状态
             this.nameTextBox.Select();
+
+            //更改panel的颜色标识当前已选颜色
+            this.panelColor.BackColor = btn.BackColor;
         }
     }
 }
