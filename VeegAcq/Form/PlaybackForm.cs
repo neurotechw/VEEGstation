@@ -2293,7 +2293,7 @@ namespace VeegStation
             {
                 toolTip1.SetToolTip(btn_hide, "隐藏");
               //  this.btn_hide.Image = global::VeegStation.Properties.Resources.
-                this.btn_hide.Image = 显示4.png;
+         //       this.btn_hide.Image = global::VeegStation.Properties.Resources.lead;
                 video.Visible = false;
                 panelVideo.Visible = true;
             }
