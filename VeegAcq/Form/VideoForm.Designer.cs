@@ -31,14 +31,12 @@ namespace VeegStation
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VideoForm));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox_Video = new System.Windows.Forms.PictureBox();
-            this.btn_decelerate = new System.Windows.Forms.Button();
             this.btn_play = new System.Windows.Forms.Button();
-            this.btn_accelerate = new System.Windows.Forms.Button();
             this.btn_pause = new System.Windows.Forms.Button();
             this.btn_close = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -61,9 +59,7 @@ namespace VeegStation
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.btn_decelerate);
             this.splitContainer1.Panel2.Controls.Add(this.btn_play);
-            this.splitContainer1.Panel2.Controls.Add(this.btn_accelerate);
             this.splitContainer1.Panel2.Controls.Add(this.btn_pause);
             this.splitContainer1.Panel2.Controls.Add(this.btn_close);
             this.splitContainer1.Size = new System.Drawing.Size(606, 582);
@@ -91,16 +87,6 @@ namespace VeegStation
             this.pictureBox_Video.TabIndex = 0;
             this.pictureBox_Video.TabStop = false;
             // 
-            // btn_decelerate
-            // 
-            this.btn_decelerate.Image = ((System.Drawing.Image)(resources.GetObject("btn_decelerate.Image")));
-            this.btn_decelerate.Location = new System.Drawing.Point(420, 2);
-            this.btn_decelerate.Name = "btn_decelerate";
-            this.btn_decelerate.Size = new System.Drawing.Size(75, 34);
-            this.btn_decelerate.TabIndex = 7;
-            this.btn_decelerate.UseVisualStyleBackColor = true;
-            this.btn_decelerate.Click += new System.EventHandler(this.btn_decelerate_Click_1);
-            // 
             // btn_play
             // 
             this.btn_play.Image = ((System.Drawing.Image)(resources.GetObject("btn_play.Image")));
@@ -111,20 +97,10 @@ namespace VeegStation
             this.btn_play.UseVisualStyleBackColor = true;
             this.btn_play.Click += new System.EventHandler(this.btn_play_Click);
             // 
-            // btn_accelerate
-            // 
-            this.btn_accelerate.Image = ((System.Drawing.Image)(resources.GetObject("btn_accelerate.Image")));
-            this.btn_accelerate.Location = new System.Drawing.Point(306, 3);
-            this.btn_accelerate.Name = "btn_accelerate";
-            this.btn_accelerate.Size = new System.Drawing.Size(75, 34);
-            this.btn_accelerate.TabIndex = 6;
-            this.btn_accelerate.UseVisualStyleBackColor = true;
-            this.btn_accelerate.Click += new System.EventHandler(this.btn_accelerate_Click);
-            // 
             // btn_pause
             // 
             this.btn_pause.Image = ((System.Drawing.Image)(resources.GetObject("btn_pause.Image")));
-            this.btn_pause.Location = new System.Drawing.Point(107, 3);
+            this.btn_pause.Location = new System.Drawing.Point(242, 6);
             this.btn_pause.Name = "btn_pause";
             this.btn_pause.Size = new System.Drawing.Size(75, 34);
             this.btn_pause.TabIndex = 4;
@@ -134,7 +110,7 @@ namespace VeegStation
             // btn_close
             // 
             this.btn_close.Image = global::VeegStation.Properties.Resources.вўВи2;
-            this.btn_close.Location = new System.Drawing.Point(202, 2);
+            this.btn_close.Location = new System.Drawing.Point(470, 2);
             this.btn_close.Name = "btn_close";
             this.btn_close.Size = new System.Drawing.Size(75, 35);
             this.btn_close.TabIndex = 5;
@@ -169,11 +145,9 @@ namespace VeegStation
         public System.Windows.Forms.Button btn_play;
         private System.Windows.Forms.Button btn_close;
         public System.Windows.Forms.Button btn_pause;
-        public System.Windows.Forms.Button btn_accelerate;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.PictureBox pictureBox_Video;
         private System.Windows.Forms.PictureBox pictureBox1;
-        public System.Windows.Forms.Button btn_decelerate;
         private System.Windows.Forms.ToolTip toolTip1;
     }
 }

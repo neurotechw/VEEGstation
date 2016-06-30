@@ -1178,7 +1178,7 @@ namespace VeegStation
                 }
                 //方便该Form与视频弹出Form进行数据交换
                 video = new VideoForm(this);
-                Thread.Sleep(200);
+                Thread.Sleep(500);
                 Player.Pause();              
             }
             else
