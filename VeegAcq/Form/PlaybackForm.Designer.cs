@@ -625,7 +625,7 @@ namespace VeegStation
             // FilePathL
             // 
             this.FilePathL.AutoSize = true;
-            this.FilePathL.Location = new System.Drawing.Point(13, 245);
+            this.FilePathL.Location = new System.Drawing.Point(13, 257);
             this.FilePathL.Name = "FilePathL";
             this.FilePathL.Size = new System.Drawing.Size(53, 12);
             this.FilePathL.TabIndex = 43;
@@ -634,17 +634,17 @@ namespace VeegStation
             // FilePathTextBt
             // 
             this.FilePathTextBt.Enabled = false;
-            this.FilePathTextBt.Location = new System.Drawing.Point(72, 223);
+            this.FilePathTextBt.Location = new System.Drawing.Point(72, 245);
             this.FilePathTextBt.Multiline = true;
             this.FilePathTextBt.Name = "FilePathTextBt";
             this.FilePathTextBt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.FilePathTextBt.Size = new System.Drawing.Size(190, 56);
+            this.FilePathTextBt.Size = new System.Drawing.Size(190, 34);
             this.FilePathTextBt.TabIndex = 42;
             // 
             // DetectionRemarksL
             // 
             this.DetectionRemarksL.AutoSize = true;
-            this.DetectionRemarksL.Location = new System.Drawing.Point(13, 182);
+            this.DetectionRemarksL.Location = new System.Drawing.Point(13, 193);
             this.DetectionRemarksL.Name = "DetectionRemarksL";
             this.DetectionRemarksL.Size = new System.Drawing.Size(53, 12);
             this.DetectionRemarksL.TabIndex = 39;
@@ -657,7 +657,7 @@ namespace VeegStation
             this.DetectionRemarksTextBt.Multiline = true;
             this.DetectionRemarksTextBt.Name = "DetectionRemarksTextBt";
             this.DetectionRemarksTextBt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.DetectionRemarksTextBt.Size = new System.Drawing.Size(190, 58);
+            this.DetectionRemarksTextBt.Size = new System.Drawing.Size(190, 80);
             this.DetectionRemarksTextBt.TabIndex = 38;
             // 
             // PharmacyL

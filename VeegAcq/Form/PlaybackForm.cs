@@ -1667,6 +1667,7 @@ namespace VeegStation
         }
 
         #region 跟病人有关的信息
+        //控制病人信息面板的显示与隐藏
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_PationInfoPanel(nfi.PatInfo);   //  --by zt
@@ -1684,6 +1685,7 @@ namespace VeegStation
             //this.DetectionInfoPanel.Visible = false;
         }
 
+        //控制检查信息面板的显示与隐藏
         private void detectionInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_DetectionInfoPanel(nfi.PatInfo);  //  --by zt
@@ -1701,25 +1703,80 @@ namespace VeegStation
             }
         }
 
+        //设置病人信息面板显示的内容
         private void Set_PationInfoPanel(PatInfo patientinfo)
         {
+            //设置病人的姓名
             this.PatNameTextBt.Text = patientinfo.Name;
+
+            //设置病人的性别
             this.PatGenderCB.Text = patientinfo.Gender;
+
+            //设置所属病人的ID
             this.PatIDTextBt.Text = patientinfo.ID;
+
+            //设置病人的年龄
             this.PatAgeTextBt.Text = patientinfo.Age;
+
+            //设置病人的左右利的属性
             this.SingleHandAdvanCB.Text = patientinfo.Handedness;
         }
 
+        //设置检查信息面板显示的内容
         private void Set_DetectionInfoPanel(PatInfo patientinfo)
         {
+            //设置检查号
             this.DetectionTextBt.Text = patientinfo.ID;
+
+            //设置病人姓名
             this.RequesterTextBt.Text = patientinfo.Name;
+
+            //设置申请医生
             this.TechnicianTextBt.Text = patientinfo.ResidentDoctor;
+
+            //设置操作医生
             this.PhysicianTextBT.Text = patientinfo.OperateDoctor;
+
+            //设置病人的状态
             this.PationStateTextBt.Text = patientinfo.State;
+
+            //设置病人用药
             this.PharmacyTextBt.Text = patientinfo.Medicine;
-            this.DetectionRemarksTextBt.Text = patientinfo.Diagnosis;
+
+            //设置诊断信息
+            #region 病人的诊断信息
+            string[] mDiagnosis = patientinfo.Diagnosis.Split(' ');
+            int mCount = mDiagnosis.Length;
+            switch (mCount)
+            {
+                case 0: this.DetectionRemarksTextBt.Text= "";
+                    break;
+                case 1: this.DetectionRemarksTextBt.Text = MergeDiagnosisData(mDiagnosis[0],"","");
+                            break;
+                case 2: this.DetectionRemarksTextBt.Text = MergeDiagnosisData(mDiagnosis[0], mDiagnosis[1], "");
+                    break;
+                default: this.DetectionRemarksTextBt.Text = MergeDiagnosisData(mDiagnosis[0], mDiagnosis[1], mDiagnosis[2]);
+                    break;
+            }
+            #endregion
+
             //this.FilePathTextBt.Text = _pationinfo.FilePath;
+        }
+
+        /// <summary>
+        /// 合成病人的临床诊断、脑电图诊断和地形图诊断的信息
+        /// </summary>
+        /// <param name="clinicalDiagnosis"></param>
+        /// <param name="eegDiagnosis"></param>
+        /// <param name="topographicDiagnosis"></param>
+        /// <returns></returns>
+        private string MergeDiagnosisData(string clinicalDiagnosis,string eegDiagnosis,string topographicDiagnosis)
+        {
+            //合成病人的临床诊断、脑电图诊断和地形图诊断的信息
+            string mergeDiagnosisData = "临床诊断：" + clinicalDiagnosis + System.Environment.NewLine + "脑电图诊断：" + eegDiagnosis + System.Environment.NewLine + "地形图诊断：" + topographicDiagnosis;
+            
+            //返回结果
+            return mergeDiagnosisData;
         }
         #endregion
 
