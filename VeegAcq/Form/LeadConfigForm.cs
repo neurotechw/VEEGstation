@@ -60,6 +60,12 @@ namespace VeegStation
         /// 行数
         /// </summary>
         private int rowsCount = 40;
+
+        /// <summary>
+        /// Table
+        /// </summary>
+        private DataTable dt = new DataTable();
+
         #endregion
 
         public LeadConfigForm()
@@ -93,9 +99,80 @@ namespace VeegStation
             //cbConfigList.Text = cbConfigList.Items[0].ToString();
             cbConfigList.Text = config;
             txtName.Text = "默认导联配置";
-
+            this.dataGridViewTest.ReadOnly = true;
+            this.dataGridViewTest.DataSource = dt;
             //初始化表格
-            InitList();
+            //InitList();
+            InitDataView();
+        }
+
+        public void InitDataView() 
+        {
+            myLeadLists = controller.CommonDataPool.LeadConfigLists;
+            myLeadList = (Hashtable)myLeadLists[cbConfigList.Text];
+            //myLeadList = controller.CommonDataPool.GetLeadList(cbConfigList.Text);
+
+            dt.Clear();
+            dt.Columns.Clear();
+            dt.Rows.Clear();
+            InitDT(dt);
+
+            ArrayList keys = new ArrayList(myLeadList.Keys);
+            keys.Sort();
+
+            ////列
+            dt.Columns.Add("编号", typeof(string));
+            for (int k = 0; k < rowsCount; k++)
+            {
+                dt.Rows[k][0] = k+1;
+            }
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                dt.Columns.Add((string)keys[i], typeof(string));
+                ArrayList value = (ArrayList)myLeadList[keys[i]];
+                for (int j = 0; j < value.Count; j++)
+                {
+                    dt.Rows[j][i+1] = value[j];
+                }
+            }
+            
+        }
+
+
+        public void InitDataView(string name)
+        {
+            txtName.Text = name;
+            myLeadLists = controller.CommonDataPool.LeadConfigLists;
+            myLeadList = (Hashtable)myLeadLists[cbConfigList.Text];
+           
+            dt.Clear();
+            dt.Columns.Clear();
+            dt.Rows.Clear();
+            
+            InitDT(dt);
+
+            ArrayList keys = new ArrayList(myLeadList.Keys);
+            keys.Sort();
+
+            //第一列
+            dt.Columns.Add("编号", typeof(string));
+            for (int k = 0; k < rowsCount; k++)
+            {
+                dt.Rows[k][0] = k + 1;
+            }
+
+            //数据列
+            for (int i = 0; i < keys.Count; i++)
+            {
+                dt.Columns.Add((string)keys[i], typeof(string));
+                ArrayList value = (ArrayList)myLeadList[keys[i]];
+                for (int j = 0; j < value.Count; j++)
+                {
+                    dt.Rows[j][i + 1] = value[j];
+                }
+            }
+            
         }
 
         /// <summary>
@@ -270,8 +347,11 @@ namespace VeegStation
             {
                 myLeadList.Remove(nameOfColumn);
                 selectedColumn = 0;
+                //InitList("默认导联配置");
+                InitDataView("默认导联配置");
             }
-            InitList("默认导联配置");
+            
+            
         }
 
         private void lvLeadList_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -283,7 +363,8 @@ namespace VeegStation
 
         private void cbConfigList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            InitList();
+            //InitList();
+            InitDataView();
             this.txtName.Text = "默认导联配置";
         }
 

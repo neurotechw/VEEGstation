@@ -81,7 +81,9 @@
             this.btnC3 = new System.Windows.Forms.Button();
             this.btnFp1 = new System.Windows.Forms.Button();
             this.lbLeadConfigName = new System.Windows.Forms.Label();
+            this.dataGridViewTest = new System.Windows.Forms.DataGridView();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).BeginInit();
             this.SuspendLayout();
             // 
             // lbConfig
@@ -683,11 +685,22 @@
             this.lbLeadConfigName.TabIndex = 30;
             this.lbLeadConfigName.Text = "label3";
             // 
+            // dataGridViewTest
+            // 
+            this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewTest.Location = new System.Drawing.Point(784, 27);
+            this.dataGridViewTest.Name = "dataGridViewTest";
+            this.dataGridViewTest.RowHeadersVisible = false;
+            this.dataGridViewTest.RowTemplate.Height = 23;
+            this.dataGridViewTest.Size = new System.Drawing.Size(271, 548);
+            this.dataGridViewTest.TabIndex = 31;
+            // 
             // LeadEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(734, 621);
+            this.ClientSize = new System.Drawing.Size(1088, 621);
+            this.Controls.Add(this.dataGridViewTest);
             this.Controls.Add(this.lbLeadConfigName);
             this.Controls.Add(this.lbConfig);
             this.Controls.Add(this.label1);
@@ -705,6 +718,7 @@
             this.Text = "编辑导联";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadEditForm_FormClosing);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -764,5 +778,6 @@
         private System.Windows.Forms.Button btnFp1;
         private System.Windows.Forms.Label lbLeadConfigName;
         private System.Windows.Forms.Button btnC;
+        private System.Windows.Forms.DataGridView dataGridViewTest;
     }
 }

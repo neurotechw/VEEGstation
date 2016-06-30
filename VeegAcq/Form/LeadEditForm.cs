@@ -45,6 +45,11 @@ namespace VeegStation
         /// 行数
         /// </summary>
         private int rowsCount;
+
+        /// <summary>
+        /// Table
+        /// </summary>
+        private DataTable dt = new DataTable();
         #endregion
 
         public LeadEditForm(LeadConfigForm leadConfigForm)
@@ -116,8 +121,74 @@ namespace VeegStation
 
             //初始化当前导联
             myLeadList = controller.CommonDataPool.GetLeadList(config);
+
+            this.dataGridViewTest.DataSource = dt;
+            this.dataGridViewTest.ReadOnly = true;
+
             //初始化ListView
-            InitList(nameOfLead);
+            //InitList(nameOfLead);
+            InitDataGridView(nameOfLead);
+        }
+
+        /// <summary>
+        /// 初始化List
+        /// </summary>
+        private void InitDataGridView(string nameOfLead)
+        {
+            currentLead = (ArrayList)myLeadList[nameOfLead];
+
+            dt.Clear();
+            dt.Columns.Clear();
+            dt.Rows.Clear();
+            InitDT(dt);
+
+            dt.Columns.Add("编号", typeof(string));
+            dt.Columns.Add("First", typeof(string));
+            dt.Columns.Add("Second", typeof(string));
+
+            //添加导联配置中数据到列表
+            for (int i = 0; i < currentLead.Count; i++)
+            {
+                string oneData = (string)currentLead[i];
+                //如果不是C
+                if (!oneData.Equals("C"))
+                {
+                    string[] firstAndSecond = oneData.Split(new char[] { '-' }); ;
+                    dt.Rows[i][1] = firstAndSecond[0];
+                    dt.Rows[i][2] = firstAndSecond[1];
+                    
+                }
+                //如果是C
+                else
+                {
+                    dt.Rows[i][1] = "C";
+                    dt.Rows[i][2] = "";
+                }
+
+
+            }
+
+            //添加其余行数据 
+            for (int i = currentLead.Count; i < rowsCount; i++)
+            {
+                dt.Rows[i][1] = "";
+                dt.Rows[i][2] = "";
+            }
+
+            
+        }
+
+        /// <summary>
+        /// 初始化DataTable
+        /// </summary>
+        /// <param name="dt"></param>
+        private void InitDT(DataTable dt)
+        {
+            for (int i = 0; i < rowsCount; i++)
+            {
+                DataRow dr1 = dt.NewRow();
+                dt.Rows.Add(dr1);
+            }
         }
 
         /// <summary>
@@ -300,236 +371,283 @@ namespace VeegStation
         #region 按钮事件
         private void btnRef_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFpz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFp1_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFp2_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnSp1_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnSp2_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnAF3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnAF4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnF7_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnF3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnF4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnF8_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFT7_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFc3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFc4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFT8_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnT3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC5_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC6_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnT4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCp7_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCp3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCp4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCp8_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnT5_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnP3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnPz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnP4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnT6_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnPo3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnPoz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnPo4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnO1_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnOz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnO2_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnA1_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnA2_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC_Click(object sender, EventArgs e)
         {
-            if (this.lvEditLeadList.SelectedItems.Count != 0)
-            {
-                if (columnIndex == 1)
-                {
-                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = "C";
-                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex + 1].Text = "";
-                }
-            }
+            //if (this.lvEditLeadList.SelectedItems.Count != 0)
+            //{
+            //    if (columnIndex == 1)
+            //    {
+            //        this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = "C";
+            //        this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex + 1].Text = "";
+            //    }
+            //}
             //SetListViewText(((Button)sender).Text);
+            if (this.dataGridViewTest.CurrentCell.ColumnIndex == 1)
+            {
+                this.dataGridViewTest.CurrentCell.Value = "C";
+            }
         }
 
         private void btnClearOne_Click(object sender, EventArgs e)
         {
-            if (this.lvEditLeadList.SelectedItems.Count != 0)
-            {
-                if (columnIndex != 0)
-                {
+            //if (this.lvEditLeadList.SelectedItems.Count != 0)
+            //{
+            //    if (columnIndex != 0)
+            //    {
 
-                    this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = "";
+            //        this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = "";
 
-                }
-            }
-            //清除选项，主要目的是点清除一项时不清除上次点选的数据
-            this.lvEditLeadList.SelectedItems.Clear();
-            //SetListViewText("");
+            //    }
+            //}
+            ////清除选项，主要目的是点清除一项时不清除上次点选的数据
+            //this.lvEditLeadList.SelectedItems.Clear();
+            ////SetListViewText("");
+
+            SetDataGridViewText("");
         }
         #endregion
 
@@ -553,6 +671,15 @@ namespace VeegStation
             this.lvEditLeadList.SelectedItems.Clear();
         }
 
+        private void SetDataGridViewText(string text)
+        {
+            if (this.dataGridViewTest.CurrentCell.ColumnIndex != 0)
+            {
+                this.dataGridViewTest.CurrentCell.Value = text;
+            }
+
+        }
+
         private void lvEditLeadList_MouseDown(object sender, MouseEventArgs e)
         {
             int StartX = 0;
@@ -573,6 +700,7 @@ namespace VeegStation
 
         private void btnClear_Click(object sender, EventArgs e)
         {
+            #region listView
             foreach (ListViewItem item in this.lvEditLeadList.Items)
             {
 
@@ -580,67 +708,86 @@ namespace VeegStation
                 {
                     item.SubItems[i].Text = "";
                 }
-            } 
+            }
+            #endregion
+
+            #region dataView
+            for (int i = 0; i < rowsCount; i++)   //添加30行数据  
+            {
+
+                //dt.Rows[i][0] = i + 1;
+                dt.Rows[i][1] = "";
+                dt.Rows[i][2] = "";
+            }
+            #endregion
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            //正确的导联配置
-            foreach (ListViewItem item in this.lvEditLeadList.Items)
+            #region 不能出现空的导联配置
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (!(item.SubItems[1].Text.Equals("C") || item.SubItems[2].Text.Equals("C"))) 
+                if (!(dt.Rows[i][1].Equals("C") || dt.Rows[i][2].Equals("C")))
                 {
-                    if ((!item.SubItems[1].Text.Equals("") && item.SubItems[2].Text.Equals("")) || (item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals("")))
+                    if ((!dt.Rows[i][1].Equals("") && dt.Rows[i][2].Equals("")) || (dt.Rows[i][1].Equals("") && !dt.Rows[i][2].Equals("")))
                     {
                         MessageBox.Show("请正确填写导联配置");
                         return;
                     }
                 }
-                
             }
-            //导联数据不能为空
+            #endregion
+
+            #region 导联不能为空
             int leadCount = 0;
-            foreach (ListViewItem item in this.lvEditLeadList.Items)
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (!item.SubItems[1].Text.Equals("") || !item.SubItems[2].Text.Equals(""))
+
+                if (!dt.Rows[i][1].Equals("") || !dt.Rows[i][2].Equals(""))
                 {
                     leadCount++;
                 }
             }
+
             if (leadCount == 0)
             {
                 MessageBox.Show("请输入至少一条导联数据，请重新选择");
                 return;
             }
-            //判断导联电极是否有重复
-            foreach (ListViewItem item in this.lvEditLeadList.Items)
+            #endregion
+
+            #region 导联电极不能重复
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (!item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals(""))
+                if (!dt.Rows[i][1].Equals("") && !dt.Rows[i][2].Equals(""))
                 {
-                    if (item.SubItems[1].Text == item.SubItems[2].Text)
+                    if (dt.Rows[i][1] == dt.Rows[i][2])
                     {
-                        MessageBox.Show("同一导联中电极不能重复,请重新选择");
+                        MessageBox.Show("同一导联中电极不能重复，请重新选择");
                         return;
                     }
                 }
             }
-            //保存导联配置
-            //判断导联是否有重复
+            #endregion
+
+            #region 导联不能重复
             ArrayList tempLead = new ArrayList();
-            foreach (ListViewItem item in this.lvEditLeadList.Items)
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (!(item.SubItems[1].Text.Equals("C") || item.SubItems[2].Text.Equals("C")))
+                if (!(dt.Rows[i][1].Equals("C") || dt.Rows[i][2].Equals("C")))
                 {
-                    if (!item.SubItems[1].Text.Equals("") && !item.SubItems[2].Text.Equals(""))
+                    if (!dt.Rows[i][1].Equals("") && !dt.Rows[i][2].Equals(""))
                     {
-                        tempLead.Add(item.SubItems[1].Text + "-" + item.SubItems[2].Text);
+                        tempLead.Add(dt.Rows[i][1] + "-" + dt.Rows[i][2]);
                     }
                 }
                 else
                 {
                     tempLead.Add("C");
                 }
+
             }
+
             bool isRepeat;
             ArrayList sortLead = new ArrayList();
 
@@ -654,6 +801,8 @@ namespace VeegStation
                 MessageBox.Show("不能出现重复导联，请重新选择导联");
                 return;
             }
+            #endregion
+
             currentLead.Clear();
             for (int i = 0; i < tempLead.Count; i++)
             {
@@ -661,20 +810,23 @@ namespace VeegStation
             }
             //保存完直接退出
             this.Hide();
-            myLeadConfigForm.InitList();
+            //myLeadConfigForm.InitList();
+            myLeadConfigForm.InitDataView();
         }
 
         private void btnExit_Click(object sender, EventArgs e)
         {
             this.Hide();
-            myLeadConfigForm.InitList();
+            //myLeadConfigForm.InitList();
+            myLeadConfigForm.InitDataView();
         }
 
         private void LeadEditForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
             this.Hide();
-            myLeadConfigForm.InitList();
+            //myLeadConfigForm.InitList();
+            myLeadConfigForm.InitDataView();
         }
 
         /// <summary>

@@ -81,7 +81,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtLeadName = new System.Windows.Forms.TextBox();
+            this.dataGridViewTest = new System.Windows.Forms.DataGridView();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).BeginInit();
             this.SuspendLayout();
             // 
             // btnCp3
@@ -683,11 +685,22 @@
             this.txtLeadName.TabIndex = 19;
             this.txtLeadName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLeadName_KeyPress);
             // 
+            // dataGridViewTest
+            // 
+            this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewTest.Location = new System.Drawing.Point(800, 28);
+            this.dataGridViewTest.Name = "dataGridViewTest";
+            this.dataGridViewTest.RowHeadersVisible = false;
+            this.dataGridViewTest.RowTemplate.Height = 23;
+            this.dataGridViewTest.Size = new System.Drawing.Size(240, 548);
+            this.dataGridViewTest.TabIndex = 20;
+            // 
             // LeadAddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(734, 621);
+            this.ClientSize = new System.Drawing.Size(1042, 621);
+            this.Controls.Add(this.dataGridViewTest);
             this.Controls.Add(this.txtLeadName);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lvAddLeadList);
@@ -705,6 +718,7 @@
             this.Text = "添加导联";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadAddForm_FormClosing);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -764,5 +778,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtLeadName;
         private System.Windows.Forms.Button btnC;
+        private System.Windows.Forms.DataGridView dataGridViewTest;
     }
 }

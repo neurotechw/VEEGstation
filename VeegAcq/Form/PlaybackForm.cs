@@ -986,7 +986,7 @@ namespace VeegStation
                 //}
                 foreach (int sIdx in Enumerable.Range(0, signalNum - 1))
                 {
-                    double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, 10, 100, sampleRate);
+                    double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, lowFrequency, highFrequency, sampleRate);
                     for (int i = 0; i < packets.Count; i++)
                     {
                     packets[i].EEG[sIdx] = NewData[i];
