@@ -338,7 +338,7 @@ namespace VeegStation
 
                 //诊断
                 byte[] diagnosis = Util.getFixedLengthByteArray(patientInfo, fileIndex, FixedLength_Diagnosis);
-                this.diagnosis = Encoding.GetEncoding(936).GetString(diagnosis).Trim();
+                this.diagnosis = Encoding.GetEncoding(936).GetString(diagnosis).TrimEnd();
                 fileIndex += FixedLength_Diagnosis;
 
                 //病史
