@@ -29,17 +29,14 @@ namespace VeegStation
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine2 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlaybackForm));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine1 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnPlay = new System.Windows.Forms.ToolStripButton();
-            this.btnPause = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnPrev = new System.Windows.Forms.ToolStripButton();
-            this.btnNext = new System.Windows.Forms.ToolStripButton();
+            this.speedComBox = new System.Windows.Forms.ToolStripComboBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStriplabel_abtime = new System.Windows.Forms.ToolStripStatusLabel();
             this.displayStartTime = new System.Windows.Forms.ToolStripStatusLabel();
@@ -63,7 +60,6 @@ namespace VeegStation
             this.DetectionInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.Hiding = new System.Windows.Forms.ToolStripMenuItem();
             this.PationInfoPanel = new System.Windows.Forms.Panel();
-            this.btnHide = new System.Windows.Forms.Button();
             this.PatAgeL = new System.Windows.Forms.Label();
             this.PatAgeTextBt = new System.Windows.Forms.TextBox();
             this.SingleHandAdvanCB = new System.Windows.Forms.ComboBox();
@@ -75,7 +71,6 @@ namespace VeegStation
             this.PatIDL = new System.Windows.Forms.Label();
             this.PatIDTextBt = new System.Windows.Forms.TextBox();
             this.DetectionInfoPanel = new System.Windows.Forms.Panel();
-            this.btnClose = new System.Windows.Forms.Button();
             this.FilePathL = new System.Windows.Forms.Label();
             this.FilePathTextBt = new System.Windows.Forms.TextBox();
             this.DetectionRemarksL = new System.Windows.Forms.Label();
@@ -114,9 +109,6 @@ namespace VeegStation
             this.customeEventstoolstripmenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SettingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.leadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btn_accelerate = new System.Windows.Forms.Button();
-            this.btn_decelerate = new System.Windows.Forms.Button();
-            this.btn_hide = new System.Windows.Forms.Button();
             this.boardPanel = new System.Windows.Forms.Panel();
             this.tyPanelEventListView = new System.Windows.Forms.TableLayoutPanel();
             this.lvCustomEvents = new System.Windows.Forms.ListView();
@@ -139,6 +131,15 @@ namespace VeegStation
             this.vScroll = new System.Windows.Forms.VScrollBar();
             this.labelPanel = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btn_hide = new System.Windows.Forms.Button();
+            this.btnPanelPause = new System.Windows.Forms.Button();
+            this.btnPanelPlay = new System.Windows.Forms.Button();
+            this.btnHide = new System.Windows.Forms.Button();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.btnPlay = new System.Windows.Forms.ToolStripButton();
+            this.btnPause = new System.Windows.Forms.ToolStripButton();
+            this.btnPrev = new System.Windows.Forms.ToolStripButton();
+            this.btnNext = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
@@ -157,55 +158,25 @@ namespace VeegStation
             this.btnPause,
             this.toolStripSeparator1,
             this.btnPrev,
-            this.btnNext});
+            this.btnNext,
+            this.speedComBox});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(942, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // btnPlay
-            // 
-            this.btnPlay.Image = ((System.Drawing.Image)(resources.GetObject("btnPlay.Image")));
-            this.btnPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(51, 22);
-            this.btnPlay.Text = "播放";
-            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
-            // 
-            // btnPause
-            // 
-            this.btnPause.Enabled = false;
-            this.btnPause.Image = ((System.Drawing.Image)(resources.GetObject("btnPause.Image")));
-            this.btnPause.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnPause.Name = "btnPause";
-            this.btnPause.Size = new System.Drawing.Size(51, 22);
-            this.btnPause.Text = "暂停";
-            this.btnPause.Click += new System.EventHandler(this.btnPause_Click);
-            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
-            // btnPrev
+            // speedComBox
             // 
-            this.btnPrev.Enabled = false;
-            this.btnPrev.Image = ((System.Drawing.Image)(resources.GetObject("btnPrev.Image")));
-            this.btnPrev.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnPrev.Name = "btnPrev";
-            this.btnPrev.Size = new System.Drawing.Size(63, 22);
-            this.btnPrev.Text = "上一页";
-            this.btnPrev.Click += new System.EventHandler(this.btnPrev_Click);
-            // 
-            // btnNext
-            // 
-            this.btnNext.Image = ((System.Drawing.Image)(resources.GetObject("btnNext.Image")));
-            this.btnNext.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(63, 22);
-            this.btnNext.Text = "下一页";
-            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            this.speedComBox.AutoSize = false;
+            this.speedComBox.Name = "speedComBox";
+            this.speedComBox.Size = new System.Drawing.Size(50, 25);
+            this.speedComBox.SelectedIndexChanged += new System.EventHandler(this.speedComBox_SelectedIndexChanged);
             // 
             // statusStrip1
             // 
@@ -358,50 +329,50 @@ namespace VeegStation
             this.chartWave.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.AxisX.LabelStyle.Enabled = false;
-            chartArea1.AxisX.LabelStyle.Interval = 1D;
-            chartArea1.AxisX.LabelStyle.IntervalOffset = 0D;
-            chartArea1.AxisX.MajorGrid.Interval = 1D;
-            chartArea1.AxisX.MajorGrid.IntervalOffset = 1D;
-            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
-            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea1.AxisX.MajorTickMark.Interval = 1D;
-            chartArea1.AxisX.MajorTickMark.IntervalOffset = 0D;
-            chartArea1.AxisX.Minimum = 0D;
-            stripLine1.BorderColor = System.Drawing.Color.Black;
-            stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            stripLine1.StripWidth = 0.0001D;
-            chartArea1.AxisX.StripLines.Add(stripLine1);
-            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
-            chartArea1.AxisY.IsInterlaced = true;
-            chartArea1.AxisY.LabelStyle.Enabled = false;
-            chartArea1.AxisY.MajorGrid.Interval = 100D;
-            chartArea1.AxisY.MajorGrid.IntervalOffset = 0D;
-            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
-            chartArea1.AxisY.MajorTickMark.Enabled = false;
-            chartArea1.AxisY.MajorTickMark.Interval = 100D;
-            chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
-            chartArea1.AxisY.Maximum = 2000D;
-            chartArea1.AxisY.Minimum = 0D;
-            chartArea1.Name = "mainArea";
-            chartArea1.Position.Auto = false;
-            chartArea1.Position.Height = 94F;
-            chartArea1.Position.Width = 100F;
-            chartArea1.Position.Y = 3F;
-            this.chartWave.ChartAreas.Add(chartArea1);
-            legend1.Enabled = false;
-            legend1.Name = "Legend1";
-            legend1.Position.Auto = false;
-            legend1.Position.Height = 100F;
-            legend1.Position.Width = 100F;
-            this.chartWave.Legends.Add(legend1);
+            chartArea2.AxisX.LabelStyle.Enabled = false;
+            chartArea2.AxisX.LabelStyle.Interval = 1D;
+            chartArea2.AxisX.LabelStyle.IntervalOffset = 0D;
+            chartArea2.AxisX.MajorGrid.Interval = 1D;
+            chartArea2.AxisX.MajorGrid.IntervalOffset = 1D;
+            chartArea2.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
+            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea2.AxisX.MajorTickMark.Interval = 1D;
+            chartArea2.AxisX.MajorTickMark.IntervalOffset = 0D;
+            chartArea2.AxisX.Minimum = 0D;
+            stripLine2.BorderColor = System.Drawing.Color.Black;
+            stripLine2.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            stripLine2.StripWidth = 0.0001D;
+            chartArea2.AxisX.StripLines.Add(stripLine2);
+            chartArea2.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
+            chartArea2.AxisY.IsInterlaced = true;
+            chartArea2.AxisY.LabelStyle.Enabled = false;
+            chartArea2.AxisY.MajorGrid.Interval = 100D;
+            chartArea2.AxisY.MajorGrid.IntervalOffset = 0D;
+            chartArea2.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
+            chartArea2.AxisY.MajorTickMark.Enabled = false;
+            chartArea2.AxisY.MajorTickMark.Interval = 100D;
+            chartArea2.AxisY.MajorTickMark.IntervalOffset = 0D;
+            chartArea2.AxisY.Maximum = 2000D;
+            chartArea2.AxisY.Minimum = 0D;
+            chartArea2.Name = "mainArea";
+            chartArea2.Position.Auto = false;
+            chartArea2.Position.Height = 94F;
+            chartArea2.Position.Width = 100F;
+            chartArea2.Position.Y = 3F;
+            this.chartWave.ChartAreas.Add(chartArea2);
+            legend2.Enabled = false;
+            legend2.Name = "Legend1";
+            legend2.Position.Auto = false;
+            legend2.Position.Height = 100F;
+            legend2.Position.Width = 100F;
+            this.chartWave.Legends.Add(legend2);
             this.chartWave.Location = new System.Drawing.Point(62, 63);
             this.chartWave.Name = "chartWave";
-            series1.ChartArea = "mainArea";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chartWave.Series.Add(series1);
+            series2.ChartArea = "mainArea";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chartWave.Series.Add(series2);
             this.chartWave.Size = new System.Drawing.Size(880, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
@@ -465,16 +436,6 @@ namespace VeegStation
             this.PationInfoPanel.Visible = false;
             this.PationInfoPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PationInfoPanel_MouseDown);
             this.PationInfoPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PationInfoPanel_MouseMove);
-            // 
-            // btnHide
-            // 
-            this.btnHide.Image = ((System.Drawing.Image)(resources.GetObject("btnHide.Image")));
-            this.btnHide.Location = new System.Drawing.Point(256, 5);
-            this.btnHide.Name = "btnHide";
-            this.btnHide.Size = new System.Drawing.Size(22, 23);
-            this.btnHide.TabIndex = 22;
-            this.btnHide.UseVisualStyleBackColor = true;
-            this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
             // 
             // PatAgeL
             // 
@@ -602,16 +563,6 @@ namespace VeegStation
             this.DetectionInfoPanel.Visible = false;
             this.DetectionInfoPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DetectionInfoPanel_MouseDown);
             this.DetectionInfoPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DetectionInfoPanel_MouseMove);
-            // 
-            // btnClose
-            // 
-            this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
-            this.btnClose.Location = new System.Drawing.Point(269, 4);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(23, 23);
-            this.btnClose.TabIndex = 44;
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // FilePathL
             // 
@@ -938,39 +889,6 @@ namespace VeegStation
             this.leadConfigToolStripMenuItem.Text = "导联编制";
             this.leadConfigToolStripMenuItem.Click += new System.EventHandler(this.leadConfigToolStripMenuItem_Click);
             // 
-            // btn_accelerate
-            // 
-            this.btn_accelerate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_accelerate.Image = ((System.Drawing.Image)(resources.GetObject("btn_accelerate.Image")));
-            this.btn_accelerate.Location = new System.Drawing.Point(74, 150);
-            this.btn_accelerate.Name = "btn_accelerate";
-            this.btn_accelerate.Size = new System.Drawing.Size(45, 32);
-            this.btn_accelerate.TabIndex = 10;
-            this.btn_accelerate.UseVisualStyleBackColor = true;
-            this.btn_accelerate.Click += new System.EventHandler(this.btn_accelerate_Click);
-            // 
-            // btn_decelerate
-            // 
-            this.btn_decelerate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_decelerate.Image = ((System.Drawing.Image)(resources.GetObject("btn_decelerate.Image")));
-            this.btn_decelerate.Location = new System.Drawing.Point(20, 150);
-            this.btn_decelerate.Name = "btn_decelerate";
-            this.btn_decelerate.Size = new System.Drawing.Size(49, 32);
-            this.btn_decelerate.TabIndex = 11;
-            this.btn_decelerate.UseVisualStyleBackColor = true;
-            this.btn_decelerate.Click += new System.EventHandler(this.btn_decelerate_Click);
-            // 
-            // btn_hide
-            // 
-            this.btn_hide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_hide.Image = global::VeegStation.Properties.Resources.隐藏2;
-            this.btn_hide.Location = new System.Drawing.Point(126, 150);
-            this.btn_hide.Name = "btn_hide";
-            this.btn_hide.Size = new System.Drawing.Size(54, 32);
-            this.btn_hide.TabIndex = 12;
-            this.btn_hide.UseVisualStyleBackColor = true;
-            this.btn_hide.Click += new System.EventHandler(this.btn_hide_Click);
-            // 
             // boardPanel
             // 
             this.boardPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -979,8 +897,8 @@ namespace VeegStation
             this.boardPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.boardPanel.Controls.Add(this.tyPanelEventListView);
             this.boardPanel.Controls.Add(this.btn_hide);
-            this.boardPanel.Controls.Add(this.btn_decelerate);
-            this.boardPanel.Controls.Add(this.btn_accelerate);
+            this.boardPanel.Controls.Add(this.btnPanelPause);
+            this.boardPanel.Controls.Add(this.btnPanelPlay);
             this.boardPanel.Controls.Add(this.panelVideo);
             this.boardPanel.Location = new System.Drawing.Point(742, 60);
             this.boardPanel.Name = "boardPanel";
@@ -1219,6 +1137,97 @@ namespace VeegStation
             this.labelPanel.TabIndex = 15;
             this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawLabelPanel);
             // 
+            // btn_hide
+            // 
+            this.btn_hide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_hide.Image = global::VeegStation.Properties.Resources.隐藏2;
+            this.btn_hide.Location = new System.Drawing.Point(126, 150);
+            this.btn_hide.Name = "btn_hide";
+            this.btn_hide.Size = new System.Drawing.Size(54, 32);
+            this.btn_hide.TabIndex = 12;
+            this.btn_hide.UseVisualStyleBackColor = true;
+            this.btn_hide.Click += new System.EventHandler(this.btn_hide_Click);
+            // 
+            // btnPanelPause
+            // 
+            this.btnPanelPause.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPanelPause.Image = global::VeegStation.Properties.Resources.pause;
+            this.btnPanelPause.Location = new System.Drawing.Point(71, 150);
+            this.btnPanelPause.Name = "btnPanelPause";
+            this.btnPanelPause.Size = new System.Drawing.Size(49, 32);
+            this.btnPanelPause.TabIndex = 11;
+            this.btnPanelPause.UseVisualStyleBackColor = true;
+            this.btnPanelPause.Click += new System.EventHandler(this.btnPanelPause_Click);
+            // 
+            // btnPanelPlay
+            // 
+            this.btnPanelPlay.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPanelPlay.Image = global::VeegStation.Properties.Resources.play_new;
+            this.btnPanelPlay.Location = new System.Drawing.Point(20, 150);
+            this.btnPanelPlay.Name = "btnPanelPlay";
+            this.btnPanelPlay.Size = new System.Drawing.Size(45, 32);
+            this.btnPanelPlay.TabIndex = 10;
+            this.btnPanelPlay.UseVisualStyleBackColor = true;
+            this.btnPanelPlay.Click += new System.EventHandler(this.btnPanelPlay_Click);
+            // 
+            // btnHide
+            // 
+            this.btnHide.Image = ((System.Drawing.Image)(resources.GetObject("btnHide.Image")));
+            this.btnHide.Location = new System.Drawing.Point(256, 5);
+            this.btnHide.Name = "btnHide";
+            this.btnHide.Size = new System.Drawing.Size(22, 23);
+            this.btnHide.TabIndex = 22;
+            this.btnHide.UseVisualStyleBackColor = true;
+            this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
+            this.btnClose.Location = new System.Drawing.Point(269, 4);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(23, 23);
+            this.btnClose.TabIndex = 44;
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
+            // btnPlay
+            // 
+            this.btnPlay.Image = ((System.Drawing.Image)(resources.GetObject("btnPlay.Image")));
+            this.btnPlay.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPlay.Name = "btnPlay";
+            this.btnPlay.Size = new System.Drawing.Size(51, 22);
+            this.btnPlay.Text = "播放";
+            this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
+            // 
+            // btnPause
+            // 
+            this.btnPause.Enabled = false;
+            this.btnPause.Image = ((System.Drawing.Image)(resources.GetObject("btnPause.Image")));
+            this.btnPause.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPause.Name = "btnPause";
+            this.btnPause.Size = new System.Drawing.Size(51, 22);
+            this.btnPause.Text = "暂停";
+            this.btnPause.Click += new System.EventHandler(this.btnPause_Click);
+            // 
+            // btnPrev
+            // 
+            this.btnPrev.Enabled = false;
+            this.btnPrev.Image = ((System.Drawing.Image)(resources.GetObject("btnPrev.Image")));
+            this.btnPrev.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPrev.Name = "btnPrev";
+            this.btnPrev.Size = new System.Drawing.Size(63, 22);
+            this.btnPrev.Text = "上一页";
+            this.btnPrev.Click += new System.EventHandler(this.btnPrev_Click);
+            // 
+            // btnNext
+            // 
+            this.btnNext.Image = ((System.Drawing.Image)(resources.GetObject("btnNext.Image")));
+            this.btnNext.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(63, 22);
+            this.btnNext.Text = "下一页";
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
+            // 
             // PlaybackForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1322,8 +1331,8 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripStatusLabel displayRecordingTime;
         private System.Windows.Forms.ToolStripStatusLabel toolStriplabel_totaltime;
         private System.Windows.Forms.ToolStripStatusLabel displayTotalTime;
-        public System.Windows.Forms.Button btn_accelerate;
-        public System.Windows.Forms.Button btn_decelerate;
+        public System.Windows.Forms.Button btnPanelPlay;
+        public System.Windows.Forms.Button btnPanelPause;
         private System.Windows.Forms.Button btn_hide;
         private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateYToolStripMenuItem;
@@ -1371,5 +1380,6 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripMenuItem pationInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem detectionInfoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem leadConfigToolStripMenuItem;
+        private System.Windows.Forms.ToolStripComboBox speedComBox;
     }
 }

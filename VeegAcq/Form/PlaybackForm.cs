@@ -310,6 +310,11 @@ namespace VeegStation
         private int[] timeStandardArray = { 6, 10, 15, 30, 60, 100, 200 };
 
         /// <summary>
+        /// 倍速选择范围
+        /// --by wsp
+        /// </summary>
+        private double[] rateSpeed = {0.25,0.5,1,2,3,5,7,9};
+        /// <summary>
         /// 当前选择时间基准,毫米每秒  
         /// -- by lxl
         /// </summary>
@@ -566,6 +571,8 @@ namespace VeegStation
             //解析事件，并将事件添加进事件列表中
             ParseEvent();
 
+            //初始化倍速
+            initItems();
             //解析完事件后在右边列表中显示出事件
             UpdateLVPreDefineEvents();
             UpdateLVCustomEvents();
@@ -1113,8 +1120,9 @@ namespace VeegStation
 
         private void PlaybackForm_Load(object sender, EventArgs e)
         {
-            toolTip1.SetToolTip(btn_accelerate, "加速");
-            toolTip1.SetToolTip(btn_decelerate, "减速");
+            btnPanelPause.Enabled = false;
+            toolTip1.SetToolTip(btnPanelPlay, "加速");
+            toolTip1.SetToolTip(btnPanelPause, "减速");
             toolTip1.SetToolTip(btn_hide, "隐藏");
             if (nfi.Duration.TotalSeconds <= pageWidthInMM / timeStandard)
                 btnNext.Enabled = false;
@@ -1290,7 +1298,6 @@ namespace VeegStation
                 video.PauseVideo();
             }
             PagePrev2();
-
             //点击了上一页，进度条，时间要变化
             Changed();
 
@@ -1411,10 +1418,10 @@ namespace VeegStation
                     {
                         if ((int)(CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset) == timeSignal[j]+1)
                         {
-             //                   displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
+                                displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
                                 //TimeSpan dValue = eventProperty.BeginningTime[j] - nfi.StartDateTime;
                                 // getDvalue = dValue.TotalSeconds - timeSignal[j];
-                                getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j]-1;
+                            getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j]-1;
                                 if (nfi.HasVideo)
                                 {
                                     Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
@@ -1497,6 +1504,8 @@ namespace VeegStation
             }
             btnPlay.Enabled = false;
             btnPause.Enabled = true;
+            btnPanelPlay.Enabled = false;
+            btnPanelPause.Enabled = true;
         }
 
         /// <summary>
@@ -1516,6 +1525,8 @@ namespace VeegStation
             }
             btnPause.Enabled = false;
             btnPlay.Enabled = true;
+            btnPanelPause.Enabled = false;
+            btnPanelPlay.Enabled = true;
         }
 
         /// <summary>
@@ -1530,10 +1541,10 @@ namespace VeegStation
             {
                 if (nfi.HasVideo)
                 {
-                    if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                        video.PlayerVideo.Time = (long)nfi.VideoOffset * 1000;
-                    if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                        video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000);
+                    //if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                    //    video.PlayerVideo.Time = (long)nfi.VideoOffset * 1000;
+                    //if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                    //    video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000);
                     video.PlayVideo();
                     video.btn_pause.Enabled = true;
                     video.btn_play.Enabled = false;
@@ -2046,6 +2057,26 @@ namespace VeegStation
                     }
                     break;
                 }
+                else
+                {
+                    getDvalue = 0;
+                    if (nfi.HasVideo)
+                    {
+                        Player.Play();
+                        Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                        Thread.Sleep(200);
+                        Player.Pause();
+                        if (isPop == 1)
+                        {
+                            video.PlayerVideo.Play();
+                            video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                            Thread.Sleep(200);
+                            video.PlayerVideo.Pause();
+                        }
+                    }
+                    break;
+                }
+
             }
             DT = nfi.StartDateTime;
             DT_RelativeTime = DateTime.Parse("2016-05-23  00:00:00");
@@ -2150,117 +2181,43 @@ namespace VeegStation
 
 
        /// <summary>
-       /// 视频加速
+       /// 视频播放
        /// --by wsp
        /// </summary>
        /// <param name="sender"></param>
        /// <param name="e"></param>
-        private void btn_accelerate_Click(object sender, EventArgs e)
+        private void btnPanelPlay_Click(object sender, EventArgs e)
         {
-            if (nfi.HasVideo)
+            Play();         
+            if (isPop == 1)
             {
-                //倍速过快时，会使得视频花屏，因此对倍速做了限制
-                if (Speed <= 4)
-                {
-                    btn_accelerate.Enabled = true;
-                    btn_decelerate.Enabled = true;
-                    Player.PlaybackRate = Player.PlaybackRate * 2;
-
-                    //设置Speed是为了使得脑电数据也要加倍
-                    Speed = Player.PlaybackRate;
-
-                    if (isPop == 1)
-                    {
-                        //videoForm的倍速要与该Form倍速保持一致
-                        video.PlayerVideo.PlaybackRate = Player.PlaybackRate;
-                        video.btn_accelerate.Enabled = true;
-                    }
-                }
-                else
-                {
-                    //加速到最大后，加速按钮不可用，减速按钮可用
-                    btn_accelerate.Enabled = false;
-                    btn_decelerate.Enabled = true;
-                    if (isPop == 1)
-                    {
-                        video.btn_accelerate.Enabled = false;
-                        video.btn_decelerate.Enabled = true;
-                    }
-                }
-            }
-            else
-            {
-                if (Speed <= 4)
-                {
-                    btn_accelerate.Enabled = true;
-                    btn_decelerate.Enabled = true;
-                    Speed *= 2;
-                }
-                else
-                {
-                    btn_accelerate.Enabled = false;
-                    btn_decelerate.Enabled = true;
+                if (nfi.HasVideo)
+                {               
+                    video.PlayVideo();
+                    video.btn_pause.Enabled = true;
+                    video.btn_play.Enabled = false;
                 }
             }
         }
 
         /// <summary>
-        /// 视频减速
+        /// 视频暂停
         /// --by wsp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btn_decelerate_Click(object sender, EventArgs e)
+        private void btnPanelPause_Click(object sender, EventArgs e)
         {
-            if (nfi.HasVideo)
-            {
-                if (Speed >= 0.5)
-                {
-                    //倍速过慢时，视频也会花屏，因此对最低倍速也做了限制
-                    btn_accelerate.Enabled = true;
-                    btn_decelerate.Enabled = true;
-                    Player.PlaybackRate = Player.PlaybackRate / 2;
-
-                    //设置Speed是为了使得脑电数据也要减速
-                    Speed = Player.PlaybackRate;
-
-                    //videoForm的倍速要与该Form倍速保持一致     
-                    if (isPop == 1)
-                    {
-                        video.PlayerVideo.PlaybackRate = Player.PlaybackRate;
-                        video.btn_decelerate.Enabled = true;
-                        video.btn_accelerate.Enabled = true;
-                    }
-                }
-                else
-                {
-                    //加速到最大后，加速按钮不可用，减速按钮可用
-                    btn_decelerate.Enabled = false;
-                    btn_accelerate.Enabled = true;
-                    if (isPop == 1)
-                    {
-                        video.btn_decelerate.Enabled = false;
-                        video.btn_accelerate.Enabled = true;
-                    }
-                }
-            }
-            else
-            {
-                if (Speed >= 0.5)
-                {
-                    //倍速过慢时，视频也会花屏，因此对最低倍速也做了限制
-                    btn_accelerate.Enabled = true;
-                    btn_decelerate.Enabled = true;
-                    Speed /= 2;
-                }
-                else
-                {
-                    //加速到最大后，加速按钮不可用，减速按钮可用
-                    btn_decelerate.Enabled = false;
-                    btn_accelerate.Enabled = true;
-                }
-
-            }
+              Pause();
+              if (isPop == 1)
+              {
+                  if (nfi.HasVideo)
+                  {
+                      video.PauseVideo();
+                      video.btn_play.Enabled = true;
+                      video.btn_pause.Enabled = false;
+                  }
+              }
         }
 
         /// <summary>
@@ -2288,7 +2245,8 @@ namespace VeegStation
                     Thread.Sleep(200);
                 }
                 else
-                    video.Visible=true;
+                // video.Visible=true;
+                    video.Show();
                 if (Player.IsPlaying == true)
                     video.PlayVideo();
                 else
@@ -2303,7 +2261,8 @@ namespace VeegStation
             {
                 toolTip1.SetToolTip(btn_hide, "隐藏");
                 this.btn_hide.Image = global::VeegStation.Properties.Resources.隐藏2;
-                video.Visible = false;
+               // video.Visible = false;
+                video.Hide();
                 panelVideo.Visible = true;
             }
         }      
@@ -3748,5 +3707,77 @@ namespace VeegStation
         {
             this.btnEditCustomEvents.Enabled = false;
         }
+        int count = 0;
+        private void speedComBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            count++;
+            switch (speedComBox.SelectedIndex)
+            {
+                case 0: Speed = 0.25f;
+                    if(nfi.HasVideo)
+                    this.Player.PlaybackRate = 0.25f; 
+                    if(isPop==1)
+                    video.PlayerVideo.PlaybackRate = 0.25f; 
+                    break;
+                case 1: Speed = 0.5f;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 0.5f; 
+                    if(isPop==1)
+                    video.PlayerVideo.PlaybackRate = 0.5f; 
+                    break;
+                case 2: Speed = 1;
+                    if(count!=1&&nfi.HasVideo)
+                    this.Player.PlaybackRate = 1.0f;
+                    if(isPop==1)
+                    video.PlayerVideo.PlaybackRate = 1; 
+                    break;
+                case 3: Speed = 2;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 2; 
+                    if(isPop==1)
+                    video.PlayerVideo.PlaybackRate = 2; 
+                    break;
+                case 4: Speed = 3;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 3;
+                    if (isPop == 1)
+                    video.PlayerVideo.PlaybackRate = 3;
+                    break;
+                case 5: Speed = 5;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 5;
+                    if (isPop == 1)
+                    video.PlayerVideo.PlaybackRate = 5; 
+                    break;
+                case 6: Speed = 7;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 7;
+                    if (isPop == 1)
+                    video.PlayerVideo.PlaybackRate = 7;
+                    break;
+                case 7: Speed = 9;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 9;
+                    if (isPop == 1)
+                    video.PlayerVideo.PlaybackRate = 9;
+                    break;
+            }
+
+        }
+        public void initItems()
+        {
+            this.speedComBox.Items.Clear();
+            addItems(8);
+            this.speedComBox.Text =Speed+"x";
+        }
+
+        private void addItems(int num)
+        {
+            for (int i = 0; i < num; i++)
+            {
+                this.speedComBox.Items.Add(rateSpeed[i] + "x");
+            }
+        }
+
     }
 }

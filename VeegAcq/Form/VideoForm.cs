@@ -68,7 +68,7 @@ namespace VeegStation
             toolTip1.SetToolTip(btn_pause, "暂停");
             toolTip1.SetToolTip(btn_accelerate, "加速");
             toolTip1.SetToolTip(btn_decelerate, "减速");
-            toolTip1.SetToolTip(btn_close, "关闭");
+            toolTip1.SetToolTip(btn_close, "隐藏");
             m_ptCanvas = this.pictureBox_Video.Location;
             if (playBack.nfi == null)
             {
@@ -97,8 +97,8 @@ namespace VeegStation
                 PlayerVideo.Play(); 
 //                PlayerVideo.Time = (long)(playBack.nfi.VideoOffset * 1000 + playBack.CurrentSeconds * 1000 + playBack.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000+playBack.GetDvalue*1000);
                 getOffsetTime();
-                btn_accelerate.Enabled = playBack.btn_accelerate.Enabled;
-                btn_decelerate.Enabled = playBack.btn_decelerate.Enabled;
+                btn_accelerate.Enabled = playBack.btnPanelPlay.Enabled;
+                btn_decelerate.Enabled = playBack.btnPanelPause.Enabled;
             }
             //获得picturebox的X,Y值，宽，高
             x = this.pictureBox_Video.Location.X;
@@ -198,15 +198,15 @@ namespace VeegStation
                 PlayerVideo.PlaybackRate = PlayerVideo.PlaybackRate * 2;
                 playBack.Player.PlaybackRate = PlayerVideo.PlaybackRate;
                 playBack.Speed = PlayerVideo.PlaybackRate;
-                playBack.btn_decelerate.Enabled = true;
-                playBack.btn_accelerate.Enabled = true;
+                playBack.btnPanelPause.Enabled = true;
+                playBack.btnPanelPlay.Enabled = true;
             }
             else
             {
                 btn_decelerate.Enabled = true;
                 btn_accelerate.Enabled = false;
-                playBack.btn_decelerate.Enabled = true;
-                playBack.btn_accelerate.Enabled = false;
+                playBack.btnPanelPause.Enabled = true;
+                playBack.btnPanelPlay.Enabled = false;
             }
         }
 
@@ -256,15 +256,15 @@ namespace VeegStation
                 PlayerVideo.PlaybackRate = PlayerVideo.PlaybackRate / 2;
                 playBack.Player.PlaybackRate = PlayerVideo.PlaybackRate;
                 playBack.Speed = PlayerVideo.PlaybackRate;
-                playBack.btn_accelerate.Enabled = true;
-                playBack.btn_decelerate.Enabled = true;
+                playBack.btnPanelPlay.Enabled = true;
+                playBack.btnPanelPause.Enabled = true;
             }
             else
             {
                 btn_accelerate.Enabled = true;
                 btn_decelerate.Enabled = false;
-                playBack.btn_accelerate.Enabled = true;
-                playBack.btn_decelerate.Enabled = false;
+                playBack.btnPanelPlay.Enabled = true;
+                playBack.btnPanelPause.Enabled = false;
             }
         }
 
