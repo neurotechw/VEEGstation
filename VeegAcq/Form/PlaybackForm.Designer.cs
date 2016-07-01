@@ -77,8 +77,6 @@ namespace VeegStation
             this.PatIDTextBt = new System.Windows.Forms.TextBox();
             this.DetectionInfoPanel = new System.Windows.Forms.Panel();
             this.btnClose = new System.Windows.Forms.Button();
-            this.FilePathL = new System.Windows.Forms.Label();
-            this.FilePathTextBt = new System.Windows.Forms.TextBox();
             this.DetectionRemarksL = new System.Windows.Forms.Label();
             this.DetectionRemarksTextBt = new System.Windows.Forms.TextBox();
             this.PharmacyL = new System.Windows.Forms.Label();
@@ -591,8 +589,6 @@ namespace VeegStation
             // 
             this.DetectionInfoPanel.BackColor = System.Drawing.SystemColors.ControlLight;
             this.DetectionInfoPanel.Controls.Add(this.btnClose);
-            this.DetectionInfoPanel.Controls.Add(this.FilePathL);
-            this.DetectionInfoPanel.Controls.Add(this.FilePathTextBt);
             this.DetectionInfoPanel.Controls.Add(this.DetectionRemarksL);
             this.DetectionInfoPanel.Controls.Add(this.DetectionRemarksTextBt);
             this.DetectionInfoPanel.Controls.Add(this.PharmacyL);
@@ -609,7 +605,7 @@ namespace VeegStation
             this.DetectionInfoPanel.Controls.Add(this.DetectionTextBt);
             this.DetectionInfoPanel.Location = new System.Drawing.Point(373, 68);
             this.DetectionInfoPanel.Name = "DetectionInfoPanel";
-            this.DetectionInfoPanel.Size = new System.Drawing.Size(295, 297);
+            this.DetectionInfoPanel.Size = new System.Drawing.Size(298, 251);
             this.DetectionInfoPanel.TabIndex = 2;
             this.DetectionInfoPanel.Visible = false;
             this.DetectionInfoPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DetectionInfoPanel_MouseDown);
@@ -624,25 +620,6 @@ namespace VeegStation
             this.btnClose.TabIndex = 44;
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // FilePathL
-            // 
-            this.FilePathL.AutoSize = true;
-            this.FilePathL.Location = new System.Drawing.Point(13, 257);
-            this.FilePathL.Name = "FilePathL";
-            this.FilePathL.Size = new System.Drawing.Size(53, 12);
-            this.FilePathL.TabIndex = 43;
-            this.FilePathL.Text = "文件路径";
-            // 
-            // FilePathTextBt
-            // 
-            this.FilePathTextBt.Enabled = false;
-            this.FilePathTextBt.Location = new System.Drawing.Point(72, 245);
-            this.FilePathTextBt.Multiline = true;
-            this.FilePathTextBt.Name = "FilePathTextBt";
-            this.FilePathTextBt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.FilePathTextBt.Size = new System.Drawing.Size(190, 34);
-            this.FilePathTextBt.TabIndex = 42;
             // 
             // DetectionRemarksL
             // 
@@ -1324,8 +1301,6 @@ namespace VeegStation
         private System.Windows.Forms.Label PatAgeL;
         private System.Windows.Forms.TextBox PatAgeTextBt;
         private System.Windows.Forms.ToolStripButton btnPlay;
-        private System.Windows.Forms.Label FilePathL;
-        private System.Windows.Forms.TextBox FilePathTextBt;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem 格式ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem eventToolStripMenuItem;
