@@ -372,6 +372,7 @@ namespace VeegStation
             play.ReigisterVeegControl(myController);
             play.InitPlaybackFormParas();
             play.ShowDialog();
+            Thread.Sleep(500);
             play.Dispose();
         }
 
