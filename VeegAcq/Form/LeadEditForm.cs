@@ -149,11 +149,13 @@ namespace VeegStation
             //添加导联配置中数据到列表
             for (int i = 0; i < currentLead.Count; i++)
             {
+                dt.Rows[i][0] = i + 1;
                 string oneData = (string)currentLead[i];
                 //如果不是C
                 if (!oneData.Equals("C"))
                 {
-                    string[] firstAndSecond = oneData.Split(new char[] { '-' }); ;
+                    string[] firstAndSecond = oneData.Split(new char[] { '-' });
+                    
                     dt.Rows[i][1] = firstAndSecond[0];
                     dt.Rows[i][2] = firstAndSecond[1];
                     
@@ -171,6 +173,7 @@ namespace VeegStation
             //添加其余行数据 
             for (int i = currentLead.Count; i < rowsCount; i++)
             {
+                dt.Rows[i][0] = i + 1;
                 dt.Rows[i][1] = "";
                 dt.Rows[i][2] = "";
             }

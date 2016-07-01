@@ -376,5 +376,16 @@ namespace VeegStation
             this.Hide();
 
         }
+
+        private void dataGridViewTest_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            selectedColumn = e.ColumnIndex;
+            
+            if (selectedColumn != 0) 
+            {
+                nameOfColumn = this.dataGridViewTest.Columns[selectedColumn].HeaderCell.Value.ToString();
+                txtName.Text = nameOfColumn;
+            }
+        }
     }
 }

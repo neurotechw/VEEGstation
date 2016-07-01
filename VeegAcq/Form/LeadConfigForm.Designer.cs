@@ -159,6 +159,7 @@
             this.dataGridViewTest.RowTemplate.Height = 23;
             this.dataGridViewTest.Size = new System.Drawing.Size(540, 456);
             this.dataGridViewTest.TabIndex = 7;
+            this.dataGridViewTest.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewTest_CellClick);
             // 
             // LeadConfigForm
             // 
