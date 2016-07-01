@@ -36,7 +36,6 @@
             this.btnExit = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
-            this.lvSourceList = new System.Windows.Forms.ListView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnCp3 = new System.Windows.Forms.Button();
             this.btnCp4 = new System.Windows.Forms.Button();
@@ -150,17 +149,6 @@
             this.btnClear.Text = "清除";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // lvSourceList
-            // 
-            this.lvSourceList.FullRowSelect = true;
-            this.lvSourceList.GridLines = true;
-            this.lvSourceList.Location = new System.Drawing.Point(545, 22);
-            this.lvSourceList.Name = "lvSourceList";
-            this.lvSourceList.Size = new System.Drawing.Size(113, 548);
-            this.lvSourceList.TabIndex = 8;
-            this.lvSourceList.UseCompatibleStateImageBehavior = false;
-            this.lvSourceList.View = System.Windows.Forms.View.Details;
             // 
             // panel1
             // 
@@ -653,7 +641,7 @@
             // dataGridViewTest
             // 
             this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewTest.Location = new System.Drawing.Point(703, 22);
+            this.dataGridViewTest.Location = new System.Drawing.Point(546, 22);
             this.dataGridViewTest.Name = "dataGridViewTest";
             this.dataGridViewTest.RowHeadersVisible = false;
             this.dataGridViewTest.RowTemplate.Height = 23;
@@ -664,9 +652,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1039, 615);
+            this.ClientSize = new System.Drawing.Size(817, 615);
             this.Controls.Add(this.dataGridViewTest);
-            this.Controls.Add(this.lvSourceList);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExit);
@@ -708,7 +695,6 @@
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.ListView lvSourceList;
         private System.Windows.Forms.Button btnCp3;
         private System.Windows.Forms.Button btnCp4;
         private System.Windows.Forms.Button btnPo4;

@@ -142,6 +142,12 @@ namespace VeegStation
                 dt.Rows[i][1] = "";
                 dt.Rows[i][2] = "";
             }
+
+            //取消点击列排序功能
+            for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
+            {
+                dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         /// <summary>
@@ -157,38 +163,6 @@ namespace VeegStation
             }
         }
 
-        /// <summary>
-        /// 初始化List
-        /// </summary>
-        private void InitList()
-        {
-            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
-            this.lvAddLeadList.BeginUpdate();
-
-            //清空listview
-            this.lvAddLeadList.Items.Clear();
-
-            //清空列
-            this.lvAddLeadList.Columns.Clear();
-
-            //添加列名称
-            this.lvAddLeadList.Columns.Add("编号", 50, HorizontalAlignment.Left);
-            this.lvAddLeadList.Columns.Add("First", 50, HorizontalAlignment.Left);
-            this.lvAddLeadList.Columns.Add("Second", 50, HorizontalAlignment.Left);
-
-            //初始化ListView
-            for (int i = 0; i < rowsCount; i++)
-            {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = (i + 1).ToString();
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-                this.lvAddLeadList.Items.Add(lvi);
-            }
-
-            //结束数据处理，UI界面一次性绘制
-            this.lvAddLeadList.EndUpdate();   
-        }
 
         #region 根据硬件配置显示按钮
         /// <summary>
@@ -566,6 +540,7 @@ namespace VeegStation
             if (this.dataGridViewTest.CurrentCell.ColumnIndex == 1)
             {
                 this.dataGridViewTest.CurrentCell.Value = "C";
+                dt.Rows[dataGridViewTest.CurrentCell.RowIndex][2] = "";
             }
             //SetListViewText(((Button)sender).Text);
         }
@@ -588,49 +563,28 @@ namespace VeegStation
         }
         #endregion
 
-        /// <summary>
-        /// 设置ListView中每项的值
-        /// </summary>
-        /// <param name="text"></param>
-        private void SetListViewText(string text)
-        {
-            if (this.lvAddLeadList.SelectedItems.Count != 0)
-            {
-                if (columnIndex != 0)
-                {
-                    //如果第一个是C，鼠标又在第二项，则不能改。反之能改
-                    if (!(columnIndex == 2 && this.lvAddLeadList.SelectedItems[0].SubItems[1].Text.Equals("C")))
-                    {
-                        this.lvAddLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
-                    }
-                   
-                }
-            }
-            //清除选项，主要目的是点清除一项时不清除上次点选的数据
-            this.lvAddLeadList.SelectedItems.Clear();
-        }
+        
 
         private void SetDataGridViewText(string text)
         {
-            if (this.dataGridViewTest.CurrentCell.ColumnIndex != 0)
+            columnIndex = this.dataGridViewTest.CurrentCell.ColumnIndex;
+            int rowIndex = this.dataGridViewTest.CurrentCell.RowIndex;
+            if (columnIndex != 0)
             {
-                this.dataGridViewTest.CurrentCell.Value = text;
+                //如果第一个是C，鼠标又在第二项，则不能改。反之能改
+                if (!(columnIndex == 2 && dt.Rows[rowIndex][1].Equals("C")))
+                {
+                    this.dataGridViewTest.CurrentCell.Value = text;
+                    //this.lvAddLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
+                }
+                
             }
 
         }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            #region listView
-            foreach (ListViewItem item in this.lvAddLeadList.Items)
-            {
-
-                for (int i = 1; i < item.SubItems.Count; i++)
-                {
-                    item.SubItems[i].Text = "";
-                }
-            }
-            #endregion 
+            
 
             #region dataView
             for (int i = 0; i < rowsCount; i++)   //添加30行数据  
@@ -770,24 +724,6 @@ namespace VeegStation
             this.Hide();
             //myLeadConfigForm.InitList();
             myLeadConfigForm.InitDataView();
-        }
-
-        private void lvAddLeadList_MouseDown(object sender, MouseEventArgs e)
-        {
-            int StartX = 0;
-
-            //文本框的索引
-            columnIndex = 0;
-
-            //获取列的索引
-            foreach (ColumnHeader Column in this.lvAddLeadList.Columns)
-            {
-                if (e.X >= StartX + Column.Width)
-                {
-                    StartX += Column.Width;
-                    columnIndex += 1;
-                }
-            }
         }
 
         /// <summary>

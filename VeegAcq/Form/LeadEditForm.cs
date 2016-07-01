@@ -13,7 +13,7 @@ namespace VeegStation
     /// <summary>
     /// 导联编辑Form  --by zt
     /// </summary>
-    public partial class LeadEditForm : Form
+    public partial class  LeadEditForm : Form
     {
         #region 变量
         /// <summary>
@@ -192,67 +192,6 @@ namespace VeegStation
                 DataRow dr1 = dt.NewRow();
                 dt.Rows.Add(dr1);
             }
-        }
-
-        /// <summary>
-        /// 初始化List
-        /// </summary>
-        private void InitList(string nameOfLead)
-        {
-            currentLead = (ArrayList)myLeadList[nameOfLead];
-
-            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
-            this.lvEditLeadList.BeginUpdate();    
-            this.lvEditLeadList.Items.Clear();
-
-            //列表头信息
-            this.lvEditLeadList.Columns.Clear();
-            this.lvEditLeadList.Columns.Add("编号", 50, HorizontalAlignment.Left);
-            this.lvEditLeadList.Columns.Add("First", 50, HorizontalAlignment.Left);
-            this.lvEditLeadList.Columns.Add("Second", 50, HorizontalAlignment.Left);
-            
-            //添加导联配置中数据到列表
-            for (int i = 0; i < currentLead.Count; i++)
-            {
-                string oneData = (string)currentLead[i];
-                //如果不是C
-                if (!oneData.Equals("C")) 
-                {
-                    string[] firstAndSecond = oneData.Split(new char[] { '-' }); ;
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.Text = (i + 1).ToString();
-                    for (int j = 0; j < firstAndSecond.Length; j++)
-                    {
-                        lvi.SubItems.Add(firstAndSecond[j]);
-                    }
-                    this.lvEditLeadList.Items.Add(lvi);
-                }
-                //如果是C
-                else 
-                {
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.Text = (i + 1).ToString();
-                    lvi.SubItems.Add("C");
-                    lvi.SubItems.Add("");
-                    this.lvEditLeadList.Items.Add(lvi);
-                }
-                
-
-            }
-
-            //添加其余行数据 
-            for (int i = currentLead.Count; i < rowsCount; i++)    
-            {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = (i + 1).ToString();
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-
-                this.lvEditLeadList.Items.Add(lvi);
-            }
-
-            //结束数据处理，UI界面一次性绘制。
-            this.lvEditLeadList.EndUpdate();    
         }
 
         #region 根据硬件配置显示按钮
@@ -632,6 +571,7 @@ namespace VeegStation
             if (this.dataGridViewTest.CurrentCell.ColumnIndex == 1)
             {
                 this.dataGridViewTest.CurrentCell.Value = "C";
+                dt.Rows[dataGridViewTest.CurrentCell.RowIndex][2] = "";
             }
         }
 
@@ -654,66 +594,28 @@ namespace VeegStation
         }
         #endregion
 
-        /// <summary>
-        /// 设置ListView中每项的值
-        /// </summary>
-        /// <param name="text"></param>
-        private void SetListViewText(string text)
-        {
-            if (this.lvEditLeadList.SelectedItems.Count != 0)
-            {
-                if (columnIndex != 0)
-                {
-                    if (!(columnIndex == 2 && this.lvEditLeadList.SelectedItems[0].SubItems[1].Text.Equals("C")))
-                    {
-                        this.lvEditLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
-                    }
-                }
-            }
-            //清除选项，主要目的是点清除一项时不清除上次点选的数据
-            this.lvEditLeadList.SelectedItems.Clear();
-        }
 
         private void SetDataGridViewText(string text)
         {
-            if (this.dataGridViewTest.CurrentCell.ColumnIndex != 0)
+            columnIndex = this.dataGridViewTest.CurrentCell.ColumnIndex;
+            int rowIndex = this.dataGridViewTest.CurrentCell.RowIndex;
+            if (columnIndex != 0)
             {
-                this.dataGridViewTest.CurrentCell.Value = text;
-            }
-
-        }
-
-        private void lvEditLeadList_MouseDown(object sender, MouseEventArgs e)
-        {
-            int StartX = 0;
-
-            //文本框的索引
-            columnIndex = 0;
-
-            //获取列的索引
-            foreach (ColumnHeader Column in this.lvEditLeadList.Columns)
-            {
-                if (e.X >= StartX + Column.Width)
+                //如果第一个是C，鼠标又在第二项，则不能改。反之能改
+                if (!(columnIndex == 2 && dt.Rows[rowIndex][1].Equals("C")))
                 {
-                    StartX += Column.Width;
-                    columnIndex += 1;
+                    this.dataGridViewTest.CurrentCell.Value = text;
+                    //this.lvAddLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
                 }
+
             }
+
         }
+
+        
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            #region listView
-            foreach (ListViewItem item in this.lvEditLeadList.Items)
-            {
-
-                for (int i = 1; i < item.SubItems.Count; i++)
-                {
-                    item.SubItems[i].Text = "";
-                }
-            }
-            #endregion
-
             #region dataView
             for (int i = 0; i < rowsCount; i++)   //添加30行数据  
             {

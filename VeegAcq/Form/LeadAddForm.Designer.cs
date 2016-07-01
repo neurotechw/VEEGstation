@@ -69,7 +69,6 @@
             this.btnC4 = new System.Windows.Forms.Button();
             this.btnC3 = new System.Windows.Forms.Button();
             this.btnFp1 = new System.Windows.Forms.Button();
-            this.lvAddLeadList = new System.Windows.Forms.ListView();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
@@ -526,18 +525,6 @@
             this.btnFp1.UseVisualStyleBackColor = true;
             this.btnFp1.Click += new System.EventHandler(this.btnFp1_Click);
             // 
-            // lvAddLeadList
-            // 
-            this.lvAddLeadList.FullRowSelect = true;
-            this.lvAddLeadList.GridLines = true;
-            this.lvAddLeadList.Location = new System.Drawing.Point(551, 28);
-            this.lvAddLeadList.Name = "lvAddLeadList";
-            this.lvAddLeadList.Size = new System.Drawing.Size(171, 548);
-            this.lvAddLeadList.TabIndex = 17;
-            this.lvAddLeadList.UseCompatibleStateImageBehavior = false;
-            this.lvAddLeadList.View = System.Windows.Forms.View.Details;
-            this.lvAddLeadList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lvAddLeadList_MouseDown);
-            // 
             // btnClear
             // 
             this.btnClear.Location = new System.Drawing.Point(49, 589);
@@ -688,22 +675,21 @@
             // dataGridViewTest
             // 
             this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewTest.Location = new System.Drawing.Point(800, 28);
+            this.dataGridViewTest.Location = new System.Drawing.Point(552, 28);
             this.dataGridViewTest.Name = "dataGridViewTest";
             this.dataGridViewTest.RowHeadersVisible = false;
             this.dataGridViewTest.RowTemplate.Height = 23;
-            this.dataGridViewTest.Size = new System.Drawing.Size(240, 548);
+            this.dataGridViewTest.Size = new System.Drawing.Size(264, 548);
             this.dataGridViewTest.TabIndex = 20;
             // 
             // LeadAddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1042, 621);
+            this.ClientSize = new System.Drawing.Size(841, 621);
             this.Controls.Add(this.dataGridViewTest);
             this.Controls.Add(this.txtLeadName);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.lvAddLeadList);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExit);
@@ -766,7 +752,6 @@
         private System.Windows.Forms.Button btnC4;
         private System.Windows.Forms.Button btnC3;
         private System.Windows.Forms.Button btnFp1;
-        private System.Windows.Forms.ListView lvAddLeadList;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnExit;

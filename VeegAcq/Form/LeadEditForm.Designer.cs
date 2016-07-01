@@ -32,7 +32,6 @@
             this.lbConfig = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.lvEditLeadList = new System.Windows.Forms.ListView();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
@@ -112,18 +111,6 @@
             this.label2.Size = new System.Drawing.Size(89, 12);
             this.label2.TabIndex = 28;
             this.label2.Text = "当前导联名称：";
-            // 
-            // lvEditLeadList
-            // 
-            this.lvEditLeadList.FullRowSelect = true;
-            this.lvEditLeadList.GridLines = true;
-            this.lvEditLeadList.Location = new System.Drawing.Point(551, 27);
-            this.lvEditLeadList.Name = "lvEditLeadList";
-            this.lvEditLeadList.Size = new System.Drawing.Size(171, 548);
-            this.lvEditLeadList.TabIndex = 27;
-            this.lvEditLeadList.UseCompatibleStateImageBehavior = false;
-            this.lvEditLeadList.View = System.Windows.Forms.View.Details;
-            this.lvEditLeadList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lvEditLeadList_MouseDown);
             // 
             // btnClear
             // 
@@ -688,24 +675,23 @@
             // dataGridViewTest
             // 
             this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewTest.Location = new System.Drawing.Point(784, 27);
+            this.dataGridViewTest.Location = new System.Drawing.Point(571, 38);
             this.dataGridViewTest.Name = "dataGridViewTest";
             this.dataGridViewTest.RowHeadersVisible = false;
             this.dataGridViewTest.RowTemplate.Height = 23;
-            this.dataGridViewTest.Size = new System.Drawing.Size(271, 548);
+            this.dataGridViewTest.Size = new System.Drawing.Size(288, 537);
             this.dataGridViewTest.TabIndex = 31;
             // 
             // LeadEditForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1088, 621);
+            this.ClientSize = new System.Drawing.Size(865, 621);
             this.Controls.Add(this.dataGridViewTest);
             this.Controls.Add(this.lbLeadConfigName);
             this.Controls.Add(this.lbConfig);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.lvEditLeadList);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExit);
@@ -730,7 +716,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnRef;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListView lvEditLeadList;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnExit;

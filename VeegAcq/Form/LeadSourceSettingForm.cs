@@ -260,6 +260,12 @@ namespace VeegStation
                     dt.Rows[i][1] = myLeadSource[lKeys[i]].ToString();
                 }
             }
+
+            //取消点击列排序功能
+            for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
+            {
+                dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         /// <summary>
@@ -288,6 +294,12 @@ namespace VeegStation
                     dt.Rows[i][0] = dKeys[i].ToString();
                     dt.Rows[i][1] = defaultLeadSource[dKeys[i]].ToString();
                 }
+
+                //取消点击列排序功能
+                for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
+                {
+                    dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                }
         }
 
         /// <summary>
@@ -304,117 +316,9 @@ namespace VeegStation
         }
 
         /// <summary>
-        /// 加载当前导联源 
-        /// </summary>
-        public void DrawListView()
-        {
-            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
-            this.lvSourceList.BeginUpdate();
-
-            //清空listview
-            this.lvSourceList.Items.Clear();
-
-            //清空列
-            this.lvSourceList.Columns.Clear();
-
-            //添加列名
-            this.lvSourceList.Columns.Add("数据源", 50, HorizontalAlignment.Left);
-            this.lvSourceList.Columns.Add("电极名称", 100, HorizontalAlignment.Left);
-
-            #region 加载LeadSource中的数据
-
-            //如果自定义导联源有数据，则加载自定义导联源中数据，若自定义导联源无数据，则加载默认导联源中数据。
-            if (myLeadSource.Count == 0)
-            {
-                //加载defaultLeadSource的数据
-                ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
-
-                //排序key
-                dKeys.Sort();
-                foreach (int key in dKeys)
-                {
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.Text = key.ToString();
-                    lvi.SubItems.Add(defaultLeadSource[key].ToString());
-                    this.lvSourceList.Items.Add(lvi);
-                }
-            }
-            else
-            {
-                //加载自定义导联源中数据
-                ArrayList lKeys = new ArrayList(myLeadSource.Keys);
-
-                //排序key
-                lKeys.Sort();
-                foreach (int key in lKeys)
-                {
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.Text = key.ToString();
-                    //lvi.SubItems.Add(key);
-                    lvi.SubItems.Add(myLeadSource[key].ToString());
-                    this.lvSourceList.Items.Add(lvi);
-                }
-            }
-            #endregion
-
-            //结束数据处理，UI界面一次性绘制。
-            this.lvSourceList.EndUpdate();
-        }
-
-
-        /// <summary>
-        /// 加载默认导联源 
-        /// </summary>
-        public void DrawDefaultListView()
-        {
-            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
-            this.lvSourceList.BeginUpdate();
-
-            //清空listview
-            this.lvSourceList.Items.Clear();
-
-            //清空列
-            this.lvSourceList.Columns.Clear();
-
-            //添加列名
-            this.lvSourceList.Columns.Add("数据源", 50, HorizontalAlignment.Left);
-            this.lvSourceList.Columns.Add("电极名称", 100, HorizontalAlignment.Left);
-
-            #region 加载DefaultLeadSource中的数据
-
-            //加载defaultLeadSource的数据
-            ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
-
-            //排序key
-            dKeys.Sort();
-            foreach (int key in dKeys)
-            {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = key.ToString();
-                lvi.SubItems.Add(defaultLeadSource[key].ToString());
-                this.lvSourceList.Items.Add(lvi);
-            }
-            #endregion
-
-            //结束数据处理，UI界面一次性绘制。
-            this.lvSourceList.EndUpdate();
-        }
-
-
-        /// <summary>
-        /// 设置ListView中每项的值即鼠标点击按钮的文本
+        /// 设置datagridview的文本
         /// </summary>
         /// <param name="text"></param>
-        private void SetListViewText(string text)
-        {
-            if (this.lvSourceList.SelectedItems.Count != 0)
-            {
-                this.lvSourceList.SelectedItems[0].SubItems[1].Text = text;
-            }
-            //清除选项，主要目的是点清除一项时不清除上次点选的数据
-            this.lvSourceList.SelectedItems.Clear();
-        }
-
         private void SetDataGridViewText(string text)
         {
             if (this.dataGridViewTest.CurrentCell.ColumnIndex != 0) 
@@ -692,21 +596,7 @@ namespace VeegStation
         
         private void btnClear_Click(object sender, EventArgs e)
         {
-            #region listView
-            this.lvSourceList.BeginUpdate();   //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度  
-            this.lvSourceList.Items.Clear();  //清空listview
-
-            for (int i = 0; i < rowsCount; i++)   //添加30行数据  
-            {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = (i + 1).ToString();
-                lvi.SubItems.Add("");
-                this.lvSourceList.Items.Add(lvi);
-            }
-
-            this.lvSourceList.EndUpdate();  //结束数据处理，UI界面一次性绘制。
-            #endregion
-
+            
             #region dataView
             //dt.Clear();
             //dt.Columns.Clear();
@@ -726,68 +616,7 @@ namespace VeegStation
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            #region listView
-            ////导联源个数不能为0
-            //int leadCount = 0;
-            //foreach (ListViewItem item in this.lvSourceList.Items)
-            //{
-            //    if (!item.SubItems[1].Text.Equals(""))
-            //    {
-            //        leadCount++;
-            //    }
-            //}
-            //if (leadCount == 0)
-            //{
-            //    MessageBox.Show("请至少配置一条导联源");
-            //    return;
-            //}
-            ////判断是否有重复
-            //bool isRepeat = false;
-            //ArrayList sourceArray = new ArrayList();
-
-            //foreach (ListViewItem item in this.lvSourceList.Items)
-            //{
-            //    if (!item.SubItems[1].Text.Equals(""))
-            //    {
-            //        sourceArray.Add(item.SubItems[1].Text);
-            //    }
-
-            //}
-            //isRepeat = IsSourceRepeat(sourceArray);
-            //if (isRepeat)
-            //{
-            //    MessageBox.Show("不能重复选择导联源，请重新选择导联源");
-            //    return;
-            //}
-
-            ////判断当前导联源的size是否为初始size
-            //int count = 0;
-            //foreach (ListViewItem item in this.lvSourceList.Items)
-            //{
-            //    if (!item.SubItems[1].Text.Equals(""))
-            //    {
-            //        count++;
-            //    }
-            //}
-            //if (count != sizeOfLeadSource) 
-            //{
-            //    MessageBox.Show("导联源数目不能改变");
-            //    return;
-            //}
-
-            ////保存自定义的导联源
-            //myLeadSource.Clear();
-            //foreach (ListViewItem item in this.lvSourceList.Items)
-            //{
-            //    if (!item.SubItems[1].Text.Equals(""))
-            //    {
-            //        myLeadSource.Add(Convert.ToInt32(item.SubItems[0].Text), item.SubItems[1].Text);
-            //    }
-
-            //}
-            //this.Hide();
-            #endregion
-
+           
             #region dataView
 
             bool isRepeat = false;
