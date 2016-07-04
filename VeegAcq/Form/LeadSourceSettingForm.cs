@@ -40,6 +40,11 @@ namespace VeegStation
         /// </summary>
         private int sizeOfLeadSource;
 
+        /// <summary>
+        /// Table
+        /// </summary>
+        private DataTable dt = new DataTable();
+
         public LeadSourceSettingForm()
         {
             InitializeComponent();
@@ -188,13 +193,13 @@ namespace VeegStation
                                break;
                 case "24导脑电":
                                Hide32Buttons();
-                               rowsCount = 30;
+                               rowsCount =  26;// 30;
                                break;
                 case "32导脑电":
-                               rowsCount = 40;
+                               rowsCount = 36;// 40;
                                break;
                 case "32导脑电+多参数":
-                               rowsCount = 40;
+                               rowsCount = 36;// 40;
                                break;
                 default:
                                break;
@@ -204,29 +209,24 @@ namespace VeegStation
             defaultLeadSource = (Hashtable)controller.CommonDataPool.GetLeadSource(text)[0];
             myLeadSource = (Hashtable) controller.CommonDataPool.GetLeadSource(text)[1];
             sizeOfLeadSource = defaultLeadSource.Count;
-
-            DrawListView();
+            this.dataGridViewTest.DataSource = dt;
+            this.dataGridViewTest.ReadOnly = true;
+            //DrawListView();
+            DrawDataGridView();
         }
 
         /// <summary>
-        /// 加载当前导联源 
+        /// 加载当前导联源
         /// </summary>
-        public void DrawListView()
+        public void DrawDataGridView()
         {
-            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
-            this.lvSourceList.BeginUpdate();
+            dt.Clear();
+            dt.Columns.Clear();
+            dt.Rows.Clear();
+            InitDT(dt);
 
-            //清空listview
-            this.lvSourceList.Items.Clear();
-
-            //清空列
-            this.lvSourceList.Columns.Clear();
-
-            //添加列名
-            this.lvSourceList.Columns.Add("数据源", 50, HorizontalAlignment.Left);
-            this.lvSourceList.Columns.Add("电极名称", 100, HorizontalAlignment.Left);
-
-            #region 加载LeadSource中的数据
+            dt.Columns.Add("数据源", typeof(string));
+            dt.Columns.Add("电极名称", typeof(string));
 
             //如果自定义导联源有数据，则加载自定义导联源中数据，若自定义导联源无数据，则加载默认导联源中数据。
             if (myLeadSource.Count == 0)
@@ -236,13 +236,14 @@ namespace VeegStation
 
                 //排序key
                 dKeys.Sort();
-                foreach (int key in dKeys)
+
+                //j行i列
+                for (int i = 0; i < dKeys.Count; i++) 
                 {
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.Text = key.ToString();
-                    lvi.SubItems.Add(defaultLeadSource[key].ToString());
-                    this.lvSourceList.Items.Add(lvi);
+                    dt.Rows[i][0] = dKeys[i].ToString();
+                    dt.Rows[i][1] = defaultLeadSource[dKeys[i]].ToString();
                 }
+                
             }
             else
             {
@@ -251,279 +252,334 @@ namespace VeegStation
 
                 //排序key
                 lKeys.Sort();
-                foreach (int key in lKeys)
+
+                //j行i列
+                for (int i = 0; i < lKeys.Count; i++)
                 {
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.Text = key.ToString();
-                    //lvi.SubItems.Add(key);
-                    lvi.SubItems.Add(myLeadSource[key].ToString());
-                    this.lvSourceList.Items.Add(lvi);
+                    dt.Rows[i][0] = lKeys[i].ToString();
+                    dt.Rows[i][1] = myLeadSource[lKeys[i]].ToString();
                 }
             }
-            #endregion
 
-            //结束数据处理，UI界面一次性绘制。
-            this.lvSourceList.EndUpdate();
-        }
-
-
-        /// <summary>
-        /// 加载默认导联源 
-        /// </summary>
-        public void DrawDefaultListView()
-        {
-            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度 
-            this.lvSourceList.BeginUpdate();
-
-            //清空listview
-            this.lvSourceList.Items.Clear();
-
-            //清空列
-            this.lvSourceList.Columns.Clear();
-
-            //添加列名
-            this.lvSourceList.Columns.Add("数据源", 50, HorizontalAlignment.Left);
-            this.lvSourceList.Columns.Add("电极名称", 100, HorizontalAlignment.Left);
-
-            #region 加载DefaultLeadSource中的数据
-
-            //加载defaultLeadSource的数据
-            ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
-
-            //排序key
-            dKeys.Sort();
-            foreach (int key in dKeys)
+            //取消点击列排序功能
+            for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
             {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = key.ToString();
-                lvi.SubItems.Add(defaultLeadSource[key].ToString());
-                this.lvSourceList.Items.Add(lvi);
+                dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-            #endregion
-
-            //结束数据处理，UI界面一次性绘制。
-            this.lvSourceList.EndUpdate();
         }
 
+        /// <summary>
+        /// 加载默认导联源
+        /// </summary>
+        public void DrawDefaultDataGridView()
+        {
+            dt.Clear();
+            dt.Columns.Clear();
+            dt.Rows.Clear();
+            InitDT(dt);
+
+            dt.Columns.Add("数据源", typeof(string));
+            dt.Columns.Add("电极名称", typeof(string));
+
+            
+                //加载defaultLeadSource的数据
+                ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
+
+                //排序key
+                dKeys.Sort();
+
+                //j行i列
+                for (int i = 0; i < dKeys.Count; i++)
+                {
+                    dt.Rows[i][0] = dKeys[i].ToString();
+                    dt.Rows[i][1] = defaultLeadSource[dKeys[i]].ToString();
+                }
+
+                //取消点击列排序功能
+                for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
+                {
+                    dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                }
+        }
 
         /// <summary>
-        /// 设置ListView中每项的值即鼠标点击按钮的文本
+        /// 初始化DataTable
+        /// </summary>
+        /// <param name="dt"></param>
+        private void InitDT(DataTable dt)
+        {
+            for (int i = 0; i < rowsCount; i++)
+            {
+                DataRow dr1 = dt.NewRow();
+                dt.Rows.Add(dr1);
+            }
+        }
+
+        /// <summary>
+        /// 设置datagridview的文本
         /// </summary>
         /// <param name="text"></param>
-        private void SetListViewText(string text)
+        private void SetDataGridViewText(string text)
         {
-            if (this.lvSourceList.SelectedItems.Count != 0)
+            if (this.dataGridViewTest.CurrentCell.ColumnIndex != 0) 
             {
-                this.lvSourceList.SelectedItems[0].SubItems[1].Text = text;
+                this.dataGridViewTest.CurrentCell.Value = text;
             }
-            //清除选项，主要目的是点清除一项时不清除上次点选的数据
-            this.lvSourceList.SelectedItems.Clear();
+            
+            //if (this.lvSourceList.SelectedItems.Count != 0)
+            //{
+            //    this.lvSourceList.SelectedItems[0].SubItems[1].Text = text;
+            //}
+            ////清除选项，主要目的是点清除一项时不清除上次点选的数据
+            //this.lvSourceList.SelectedItems.Clear();
         }
 
         #region 按钮点击
         private void btnFp1_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFpz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFp2_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnSp2_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnSp1_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnF7_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnAF3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnF3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFT7_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFc3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnA1_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnT3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC5_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCp7_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCp3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnT5_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnP3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnPz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnPo3_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnPoz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnO1_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnOz_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnO2_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnPo4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnP4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnT6_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCp8_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnCp4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnC6_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnT4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnA2_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFc4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnFT8_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnF4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnF8_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnAF4_Click(object sender, EventArgs e)
         {
-            SetListViewText(((Button)sender).Text);
+            SetDataGridViewText(((Button)sender).Text);
+            //SetListViewText(((Button)sender).Text);
         }
 
         private void btnClearOne_Click(object sender, EventArgs e)
         {
-            SetListViewText("");
+            SetDataGridViewText("");
+            //SetListViewText("");
+            
         }
         #endregion
 
@@ -533,53 +589,63 @@ namespace VeegStation
             //myLeadSource.Clear();
 
             //加载默认配置
-            DrawDefaultListView();
+            //DrawDefaultListView();
+            DrawDefaultDataGridView();
         }
 
+        
         private void btnClear_Click(object sender, EventArgs e)
         {
-            this.lvSourceList.BeginUpdate();   //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度  
-            this.lvSourceList.Items.Clear();  //清空listview
+            
+            #region dataView
+            //dt.Clear();
+            //dt.Columns.Clear();
+            //InitDT(dt);
+
+            //dt.Columns.Add("数据源", typeof(string));
+            //dt.Columns.Add("电极名称", typeof(string));
 
             for (int i = 0; i < rowsCount; i++)   //添加30行数据  
             {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = (i + 1).ToString();
-                lvi.SubItems.Add("");
-                this.lvSourceList.Items.Add(lvi);
-            }
 
-            this.lvSourceList.EndUpdate();  //结束数据处理，UI界面一次性绘制。
+                //dt.Rows[i][0] = i + 1;
+                dt.Rows[i][1] = "";
+            }
+            #endregion
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            //导联源个数不能为0
+           
+            #region dataView
+
+            bool isRepeat = false;
+            ArrayList sourceArray = new ArrayList();
+            //导联源个数不能为0,也不能改变
             int leadCount = 0;
-            foreach (ListViewItem item in this.lvSourceList.Items)
+
+            for (int i = 0; i < dt.Rows.Count; i++) 
             {
-                if (!item.SubItems[1].Text.Equals(""))
+                if (!dt.Rows[i][1].ToString().Equals("")) 
                 {
                     leadCount++;
+                    sourceArray.Add(dt.Rows[i][1]);
                 }
             }
+            
             if (leadCount == 0)
             {
                 MessageBox.Show("请至少配置一条导联源");
                 return;
             }
-            //判断是否有重复
-            bool isRepeat = false;
-            ArrayList sourceArray = new ArrayList();
 
-            foreach (ListViewItem item in this.lvSourceList.Items)
+            if (leadCount != sizeOfLeadSource)
             {
-                if (!item.SubItems[1].Text.Equals(""))
-                {
-                    sourceArray.Add(item.SubItems[1].Text);
-                }
-
+                MessageBox.Show("导联源数目不能改变");
+                return;
             }
+            
+            //不能重复选择导联源
             isRepeat = IsSourceRepeat(sourceArray);
             if (isRepeat)
             {
@@ -587,32 +653,19 @@ namespace VeegStation
                 return;
             }
 
-            //判断当前导联源的size是否为初始size
-            int count = 0;
-            foreach (ListViewItem item in this.lvSourceList.Items)
-            {
-                if (!item.SubItems[1].Text.Equals(""))
-                {
-                    count++;
-                }
-            }
-            if (count != sizeOfLeadSource) 
-            {
-                MessageBox.Show("导联源数目不能改变");
-                return;
-            }
-
             //保存自定义的导联源
             myLeadSource.Clear();
-            foreach (ListViewItem item in this.lvSourceList.Items)
+            
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (!item.SubItems[1].Text.Equals(""))
+                if (!dt.Rows[i][1].ToString().Equals(""))
                 {
-                    myLeadSource.Add(Convert.ToInt32(item.SubItems[0].Text), item.SubItems[1].Text);
+                    myLeadSource.Add(Convert.ToInt32(dt.Rows[i][0]), dt.Rows[i][1]);
                 }
-
             }
             this.Hide();
+            #endregion
+
 
         }
 

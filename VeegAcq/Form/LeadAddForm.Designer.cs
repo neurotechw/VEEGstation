@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LeadAddForm));
             this.btnCp3 = new System.Windows.Forms.Button();
             this.btnCp4 = new System.Windows.Forms.Button();
             this.btnPo4 = new System.Windows.Forms.Button();
@@ -68,19 +69,20 @@
             this.btnC4 = new System.Windows.Forms.Button();
             this.btnC3 = new System.Windows.Forms.Button();
             this.btnFp1 = new System.Windows.Forms.Button();
-            this.lvAddLeadList = new System.Windows.Forms.ListView();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
             this.btnClearOne = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnC = new System.Windows.Forms.Button();
             this.btnRef = new System.Windows.Forms.Button();
             this.lbConfig = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.txtLeadName = new System.Windows.Forms.TextBox();
-            this.btnC = new System.Windows.Forms.Button();
+            this.dataGridViewTest = new System.Windows.Forms.DataGridView();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).BeginInit();
             this.SuspendLayout();
             // 
             // btnCp3
@@ -523,18 +525,6 @@
             this.btnFp1.UseVisualStyleBackColor = true;
             this.btnFp1.Click += new System.EventHandler(this.btnFp1_Click);
             // 
-            // lvAddLeadList
-            // 
-            this.lvAddLeadList.FullRowSelect = true;
-            this.lvAddLeadList.GridLines = true;
-            this.lvAddLeadList.Location = new System.Drawing.Point(551, 28);
-            this.lvAddLeadList.Name = "lvAddLeadList";
-            this.lvAddLeadList.Size = new System.Drawing.Size(171, 548);
-            this.lvAddLeadList.TabIndex = 17;
-            this.lvAddLeadList.UseCompatibleStateImageBehavior = false;
-            this.lvAddLeadList.View = System.Windows.Forms.View.Details;
-            this.lvAddLeadList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lvAddLeadList_MouseDown);
-            // 
             // btnClear
             // 
             this.btnClear.Location = new System.Drawing.Point(49, 589);
@@ -625,6 +615,17 @@
             this.panel1.Size = new System.Drawing.Size(503, 494);
             this.panel1.TabIndex = 11;
             // 
+            // btnC
+            // 
+            this.btnC.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.btnC.Location = new System.Drawing.Point(463, 24);
+            this.btnC.Name = "btnC";
+            this.btnC.Size = new System.Drawing.Size(37, 26);
+            this.btnC.TabIndex = 44;
+            this.btnC.Text = "C";
+            this.btnC.UseVisualStyleBackColor = true;
+            this.btnC.Click += new System.EventHandler(this.btnC_Click);
+            // 
             // btnRef
             // 
             this.btnRef.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -671,25 +672,24 @@
             this.txtLeadName.TabIndex = 19;
             this.txtLeadName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLeadName_KeyPress);
             // 
-            // btnC
+            // dataGridViewTest
             // 
-            this.btnC.Font = new System.Drawing.Font("Microsoft YaHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.btnC.Location = new System.Drawing.Point(463, 24);
-            this.btnC.Name = "btnC";
-            this.btnC.Size = new System.Drawing.Size(37, 26);
-            this.btnC.TabIndex = 44;
-            this.btnC.Text = "C";
-            this.btnC.UseVisualStyleBackColor = true;
-            this.btnC.Click += new System.EventHandler(this.btnC_Click);
+            this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewTest.Location = new System.Drawing.Point(552, 28);
+            this.dataGridViewTest.Name = "dataGridViewTest";
+            this.dataGridViewTest.RowHeadersVisible = false;
+            this.dataGridViewTest.RowTemplate.Height = 23;
+            this.dataGridViewTest.Size = new System.Drawing.Size(264, 548);
+            this.dataGridViewTest.TabIndex = 20;
             // 
             // LeadAddForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(734, 621);
+            this.ClientSize = new System.Drawing.Size(841, 621);
+            this.Controls.Add(this.dataGridViewTest);
             this.Controls.Add(this.txtLeadName);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.lvAddLeadList);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExit);
@@ -698,11 +698,13 @@
             this.Controls.Add(this.lbConfig);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "LeadAddForm";
             this.Text = "添加导联";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadAddForm_FormClosing);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -750,7 +752,6 @@
         private System.Windows.Forms.Button btnC4;
         private System.Windows.Forms.Button btnC3;
         private System.Windows.Forms.Button btnFp1;
-        private System.Windows.Forms.ListView lvAddLeadList;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnExit;
@@ -762,5 +763,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtLeadName;
         private System.Windows.Forms.Button btnC;
+        private System.Windows.Forms.DataGridView dataGridViewTest;
     }
 }

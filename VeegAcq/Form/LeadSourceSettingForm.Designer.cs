@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LeadSourceSettingForm));
             this.label1 = new System.Windows.Forms.Label();
             this.lbConfig = new System.Windows.Forms.Label();
             this.btnDefault = new System.Windows.Forms.Button();
@@ -35,7 +36,6 @@
             this.btnExit = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
-            this.lvSourceList = new System.Windows.Forms.ListView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnCp3 = new System.Windows.Forms.Button();
             this.btnCp4 = new System.Windows.Forms.Button();
@@ -77,7 +77,9 @@
             this.btnC4 = new System.Windows.Forms.Button();
             this.btnC3 = new System.Windows.Forms.Button();
             this.btnFp1 = new System.Windows.Forms.Button();
+            this.dataGridViewTest = new System.Windows.Forms.DataGridView();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -147,17 +149,6 @@
             this.btnClear.Text = "清除";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // lvSourceList
-            // 
-            this.lvSourceList.FullRowSelect = true;
-            this.lvSourceList.GridLines = true;
-            this.lvSourceList.Location = new System.Drawing.Point(545, 22);
-            this.lvSourceList.Name = "lvSourceList";
-            this.lvSourceList.Size = new System.Drawing.Size(113, 548);
-            this.lvSourceList.TabIndex = 8;
-            this.lvSourceList.UseCompatibleStateImageBehavior = false;
-            this.lvSourceList.View = System.Windows.Forms.View.Details;
             // 
             // panel1
             // 
@@ -647,14 +638,22 @@
             this.btnFp1.UseVisualStyleBackColor = true;
             this.btnFp1.Click += new System.EventHandler(this.btnFp1_Click);
             // 
+            // dataGridViewTest
+            // 
+            this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewTest.Location = new System.Drawing.Point(546, 22);
+            this.dataGridViewTest.Name = "dataGridViewTest";
+            this.dataGridViewTest.RowHeadersVisible = false;
+            this.dataGridViewTest.RowTemplate.Height = 23;
+            this.dataGridViewTest.Size = new System.Drawing.Size(240, 548);
+            this.dataGridViewTest.TabIndex = 9;
+            // 
             // LeadSourceSettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 615);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.Controls.Add(this.lvSourceList);
+            this.ClientSize = new System.Drawing.Size(817, 615);
+            this.Controls.Add(this.dataGridViewTest);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnExit);
@@ -663,10 +662,14 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lbConfig);
             this.Controls.Add(this.label1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "LeadSourceSettingForm";
             this.Text = "导联源设置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadSourceSettingForm_FormClosing);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -692,7 +695,6 @@
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.ListView lvSourceList;
         private System.Windows.Forms.Button btnCp3;
         private System.Windows.Forms.Button btnCp4;
         private System.Windows.Forms.Button btnPo4;
@@ -723,5 +725,6 @@
         private System.Windows.Forms.Button btnFT7;
         private System.Windows.Forms.Button btnC5;
         private System.Windows.Forms.Button btnCz;
+        private System.Windows.Forms.DataGridView dataGridViewTest;
     }
 }

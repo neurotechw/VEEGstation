@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LeadConfigForm));
             this.label1 = new System.Windows.Forms.Label();
             this.gbInfo = new System.Windows.Forms.GroupBox();
             this.cbConfigList = new System.Windows.Forms.ComboBox();
@@ -37,8 +38,9 @@
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnSetting = new System.Windows.Forms.Button();
-            this.lvLeadList = new System.Windows.Forms.ListView();
+            this.dataGridViewTest = new System.Windows.Forms.DataGridView();
             this.gbInfo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -136,35 +138,37 @@
             this.btnSetting.UseVisualStyleBackColor = true;
             this.btnSetting.Click += new System.EventHandler(this.btnSetting_Click);
             // 
-            // lvLeadList
+            // dataGridViewTest
             // 
-            this.lvLeadList.GridLines = true;
-            this.lvLeadList.Location = new System.Drawing.Point(12, 111);
-            this.lvLeadList.Name = "lvLeadList";
-            this.lvLeadList.Size = new System.Drawing.Size(738, 456);
-            this.lvLeadList.TabIndex = 6;
-            this.lvLeadList.UseCompatibleStateImageBehavior = false;
-            this.lvLeadList.View = System.Windows.Forms.View.Details;
-            this.lvLeadList.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvLeadList_ColumnClick);
+            this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewTest.Location = new System.Drawing.Point(12, 111);
+            this.dataGridViewTest.Name = "dataGridViewTest";
+            this.dataGridViewTest.RowHeadersVisible = false;
+            this.dataGridViewTest.RowTemplate.Height = 23;
+            this.dataGridViewTest.Size = new System.Drawing.Size(540, 456);
+            this.dataGridViewTest.TabIndex = 7;
+            this.dataGridViewTest.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewTest_CellClick);
             // 
             // LeadConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(762, 579);
-            this.Controls.Add(this.lvLeadList);
+            this.ClientSize = new System.Drawing.Size(580, 579);
+            this.Controls.Add(this.dataGridViewTest);
             this.Controls.Add(this.btnSetting);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.gbInfo);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "LeadConfigForm";
             this.Text = "导联配置";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LeadConfigForm_FormClosing);
             this.gbInfo.ResumeLayout(false);
             this.gbInfo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewTest)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -180,6 +184,6 @@
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnSetting;
-        private System.Windows.Forms.ListView lvLeadList;
+        private System.Windows.Forms.DataGridView dataGridViewTest;
     }
 }

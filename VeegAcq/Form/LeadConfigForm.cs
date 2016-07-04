@@ -60,6 +60,12 @@ namespace VeegStation
         /// 行数
         /// </summary>
         private int rowsCount = 40;
+
+        /// <summary>
+        /// Table
+        /// </summary>
+        private DataTable dt = new DataTable();
+
         #endregion
 
         public LeadConfigForm()
@@ -93,120 +99,95 @@ namespace VeegStation
             //cbConfigList.Text = cbConfigList.Items[0].ToString();
             cbConfigList.Text = config;
             txtName.Text = "默认导联配置";
-
+            this.dataGridViewTest.ReadOnly = true;
+            this.dataGridViewTest.DataSource = dt;
             //初始化表格
-            InitList();
+            //InitList();
+            InitDataView();
         }
 
-        /// <summary>
-        /// 初始化导联列表
-        /// </summary>
-        /// <param name="p">硬件配置名称</param>
-        public void InitList()
+        public void InitDataView() 
         {
-            //txtName.Text = "默认导联配置";
             myLeadLists = controller.CommonDataPool.LeadConfigLists;
             myLeadList = (Hashtable)myLeadLists[cbConfigList.Text];
             //myLeadList = controller.CommonDataPool.GetLeadList(cbConfigList.Text);
 
-            DataTable dt = new DataTable();
+            dt.Clear();
+            dt.Columns.Clear();
+            dt.Rows.Clear();
             InitDT(dt);
+
             ArrayList keys = new ArrayList(myLeadList.Keys);
             keys.Sort();
+
+            ////列
+            dt.Columns.Add("编号", typeof(string));
+            for (int k = 0; k < rowsCount; k++)
+            {
+                dt.Rows[k][0] = k+1;
+            }
+
             for (int i = 0; i < keys.Count; i++)
             {
                 dt.Columns.Add((string)keys[i], typeof(string));
                 ArrayList value = (ArrayList)myLeadList[keys[i]];
                 for (int j = 0; j < value.Count; j++)
                 {
-                    dt.Rows[j][i] = value[j];
+                    dt.Rows[j][i+1] = value[j];
                 }
             }
 
-            #region 数据绑定到listview
-            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度  
-            this.lvLeadList.BeginUpdate();  
- 
-            //清空listview
-            this.lvLeadList.Items.Clear();  
-            this.lvLeadList.Columns.Clear();
-
-            //列
-            this.lvLeadList.Columns.Add("编号", 100, HorizontalAlignment.Left);
-            for (int j = 0; j < keys.Count; j++)
+            //取消点击列排序功能
+            for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
             {
-                this.lvLeadList.Columns.Add(keys[j].ToString(), 120, HorizontalAlignment.Left);
+                dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
             
-            //数据绑定
-            for (int i = 0; i < dt.Rows.Count; i++) 
-            {
-                ListViewItem lvi = new ListViewItem();//新增一个ListViewItem
-                lvi.Text = (i + 1).ToString();
-               
-                for (int j = 0; j < keys.Count; j++) 
-                {
-                    lvi.SubItems.Add(dt.Rows[i][keys[j].ToString()].ToString());
-                }
-                this.lvLeadList.Items.Add(lvi);//将新增列加入ListView
-            }
-            this.lvLeadList.EndUpdate();  //结束数据处理，UI界面一次性绘制。
-            #endregion
         }
 
-        public void InitList(string name)
+
+        public void InitDataView(string name)
         {
             txtName.Text = name;
             myLeadLists = controller.CommonDataPool.LeadConfigLists;
             myLeadList = (Hashtable)myLeadLists[cbConfigList.Text];
-            //myLeadList = controller.CommonDataPool.GetLeadList(cbConfigList.Text);
-
-            DataTable dt = new DataTable();
+           
+            dt.Clear();
+            dt.Columns.Clear();
+            dt.Rows.Clear();
+            
             InitDT(dt);
+
             ArrayList keys = new ArrayList(myLeadList.Keys);
             keys.Sort();
+
+            //第一列
+            dt.Columns.Add("编号", typeof(string));
+            for (int k = 0; k < rowsCount; k++)
+            {
+                dt.Rows[k][0] = k + 1;
+            }
+
+            //数据列
             for (int i = 0; i < keys.Count; i++)
             {
                 dt.Columns.Add((string)keys[i], typeof(string));
                 ArrayList value = (ArrayList)myLeadList[keys[i]];
                 for (int j = 0; j < value.Count; j++)
                 {
-                    dt.Rows[j][i] = value[j];
+                    dt.Rows[j][i + 1] = value[j];
                 }
             }
 
-            #region 数据绑定到listview
-            //数据更新，UI暂时挂起，直到EndUpdate绘制控件，可以有效避免闪烁并大大提高加载速度  
-            this.lvLeadList.BeginUpdate();
-
-            //清空listview
-            this.lvLeadList.Items.Clear();
-            this.lvLeadList.Columns.Clear();
-
-            //列
-            this.lvLeadList.Columns.Add("编号", 100, HorizontalAlignment.Left);
-            for (int j = 0; j < keys.Count; j++)
+            //取消点击列排序功能
+            for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
             {
-                this.lvLeadList.Columns.Add(keys[j].ToString(), 120, HorizontalAlignment.Left);
+                dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
-
-            //数据绑定
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                ListViewItem lvi = new ListViewItem();//新增一个ListViewItem
-                lvi.Text = (i + 1).ToString();
-
-                for (int j = 0; j < keys.Count; j++)
-                {
-                    lvi.SubItems.Add(dt.Rows[i][keys[j].ToString()].ToString());
-                }
-                this.lvLeadList.Items.Add(lvi);//将新增列加入ListView
-            }
-            this.lvLeadList.EndUpdate();  //结束数据处理，UI界面一次性绘制。
-            #endregion
+            
         }
 
-
+        
         /// <summary>
         /// 初始化DataTable
         /// </summary>
@@ -270,20 +251,18 @@ namespace VeegStation
             {
                 myLeadList.Remove(nameOfColumn);
                 selectedColumn = 0;
+                //InitList("默认导联配置");
+                InitDataView("默认导联配置");
             }
-            InitList("默认导联配置");
+            
+            
         }
 
-        private void lvLeadList_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            selectedColumn = e.Column;
-            nameOfColumn = this.lvLeadList.Columns[e.Column].Text;
-            txtName.Text = nameOfColumn;
-        }
-
+       
         private void cbConfigList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            InitList();
+            //InitList();
+            InitDataView();
             this.txtName.Text = "默认导联配置";
         }
 
@@ -294,6 +273,17 @@ namespace VeegStation
             this.controller.myPlaybackForm.ShowData();
             this.Hide();
 
+        }
+
+        private void dataGridViewTest_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            selectedColumn = e.ColumnIndex;
+            
+            if (selectedColumn != 0) 
+            {
+                nameOfColumn = this.dataGridViewTest.Columns[selectedColumn].HeaderCell.Value.ToString();
+                txtName.Text = nameOfColumn;
+            }
         }
     }
 }

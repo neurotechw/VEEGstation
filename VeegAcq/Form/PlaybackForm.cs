@@ -310,6 +310,11 @@ namespace VeegStation
         private int[] timeStandardArray = { 6, 10, 15, 30, 60, 100, 200 };
 
         /// <summary>
+        /// 倍速选择范围
+        /// --by wsp
+        /// </summary>
+        private double[] rateSpeed = {0.25,0.5,1,2,3,5,7,9};
+        /// <summary>
         /// 当前选择时间基准,毫米每秒  
         /// -- by lxl
         /// </summary>
@@ -566,6 +571,8 @@ namespace VeegStation
             //解析事件，并将事件添加进事件列表中
             ParseEvent();
 
+            //初始化倍速
+            initItems();
             //解析完事件后在右边列表中显示出事件
             UpdateLVPreDefineEvents();
             UpdateLVCustomEvents();
@@ -986,7 +993,7 @@ namespace VeegStation
                 //}
                 foreach (int sIdx in Enumerable.Range(0, signalNum - 1))
                 {
-                    double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, 10, 100, sampleRate);
+                    double[] NewData = freFilter.BandpassFilter(sIdx, ReturnSignalData(sIdx), is50HzFilter, isBandFilter, lowFrequency, highFrequency, sampleRate);
                     for (int i = 0; i < packets.Count; i++)
                     {
                     packets[i].EEG[sIdx] = NewData[i];
@@ -1113,8 +1120,9 @@ namespace VeegStation
 
         private void PlaybackForm_Load(object sender, EventArgs e)
         {
-            toolTip1.SetToolTip(btn_accelerate, "加速");
-            toolTip1.SetToolTip(btn_decelerate, "减速");
+            btnPanelPause.Enabled = false;
+            toolTip1.SetToolTip(btnPanelPlay, "加速");
+            toolTip1.SetToolTip(btnPanelPause, "减速");
             toolTip1.SetToolTip(btn_hide, "隐藏");
             if (nfi.Duration.TotalSeconds <= pageWidthInMM / timeStandard)
                 btnNext.Enabled = false;
@@ -1170,7 +1178,7 @@ namespace VeegStation
                 }
                 //方便该Form与视频弹出Form进行数据交换
                 video = new VideoForm(this);
-                Thread.Sleep(200);
+                Thread.Sleep(500);
                 Player.Pause();              
             }
             else
@@ -1290,7 +1298,6 @@ namespace VeegStation
                 video.PauseVideo();
             }
             PagePrev2();
-
             //点击了上一页，进度条，时间要变化
             Changed();
 
@@ -1411,10 +1418,10 @@ namespace VeegStation
                     {
                         if ((int)(CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset) == timeSignal[j]+1)
                         {
-             //                   displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
+                                displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
                                 //TimeSpan dValue = eventProperty.BeginningTime[j] - nfi.StartDateTime;
                                 // getDvalue = dValue.TotalSeconds - timeSignal[j];
-                                getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j]-1;
+                            getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j]-1;
                                 if (nfi.HasVideo)
                                 {
                                     Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
@@ -1497,6 +1504,8 @@ namespace VeegStation
             }
             btnPlay.Enabled = false;
             btnPause.Enabled = true;
+            btnPanelPlay.Enabled = false;
+            btnPanelPause.Enabled = true;
         }
 
         /// <summary>
@@ -1516,6 +1525,8 @@ namespace VeegStation
             }
             btnPause.Enabled = false;
             btnPlay.Enabled = true;
+            btnPanelPause.Enabled = false;
+            btnPanelPlay.Enabled = true;
         }
 
         /// <summary>
@@ -1530,10 +1541,10 @@ namespace VeegStation
             {
                 if (nfi.HasVideo)
                 {
-                    if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                        video.PlayerVideo.Time = (long)nfi.VideoOffset * 1000;
-                    if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
-                        video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000);
+                    //if (CurrentSeconds == 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                    //    video.PlayerVideo.Time = (long)nfi.VideoOffset * 1000;
+                    //if (CurrentSeconds != 0 && chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset == 0)
+                    //    video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000);
                     video.PlayVideo();
                     video.btn_pause.Enabled = true;
                     video.btn_play.Enabled = false;
@@ -1656,6 +1667,7 @@ namespace VeegStation
         }
 
         #region 跟病人有关的信息
+        //控制病人信息面板的显示与隐藏
         private void pationInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_PationInfoPanel(nfi.PatInfo);   //  --by zt
@@ -1673,6 +1685,7 @@ namespace VeegStation
             //this.DetectionInfoPanel.Visible = false;
         }
 
+        //控制检查信息面板的显示与隐藏
         private void detectionInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Set_DetectionInfoPanel(nfi.PatInfo);  //  --by zt
@@ -1690,25 +1703,80 @@ namespace VeegStation
             }
         }
 
+        //设置病人信息面板显示的内容
         private void Set_PationInfoPanel(PatInfo patientinfo)
         {
+            //设置病人的姓名
             this.PatNameTextBt.Text = patientinfo.Name;
+
+            //设置病人的性别
             this.PatGenderCB.Text = patientinfo.Gender;
+
+            //设置所属病人的ID
             this.PatIDTextBt.Text = patientinfo.ID;
+
+            //设置病人的年龄
             this.PatAgeTextBt.Text = patientinfo.Age;
+
+            //设置病人的左右利的属性
             this.SingleHandAdvanCB.Text = patientinfo.Handedness;
         }
 
+        //设置检查信息面板显示的内容
         private void Set_DetectionInfoPanel(PatInfo patientinfo)
         {
+            //设置检查号
             this.DetectionTextBt.Text = patientinfo.ID;
+
+            //设置病人姓名
             this.RequesterTextBt.Text = patientinfo.Name;
+
+            //设置申请医生
             this.TechnicianTextBt.Text = patientinfo.ResidentDoctor;
+
+            //设置操作医生
             this.PhysicianTextBT.Text = patientinfo.OperateDoctor;
+
+            //设置病人的状态
             this.PationStateTextBt.Text = patientinfo.State;
+
+            //设置病人用药
             this.PharmacyTextBt.Text = patientinfo.Medicine;
-            this.DetectionRemarksTextBt.Text = patientinfo.Diagnosis;
+
+            //设置诊断信息
+            #region 病人的诊断信息
+            string[] mDiagnosis = patientinfo.Diagnosis.Split(' ');
+            int mCount = mDiagnosis.Length;
+            switch (mCount)
+            {
+                case 0: this.DetectionRemarksTextBt.Text= "";
+                    break;
+                case 1: this.DetectionRemarksTextBt.Text = MergeDiagnosisData(mDiagnosis[0],"","");
+                            break;
+                case 2: this.DetectionRemarksTextBt.Text = MergeDiagnosisData(mDiagnosis[0], mDiagnosis[1], "");
+                    break;
+                default: this.DetectionRemarksTextBt.Text = MergeDiagnosisData(mDiagnosis[0], mDiagnosis[1], mDiagnosis[2]);
+                    break;
+            }
+            #endregion
+
             //this.FilePathTextBt.Text = _pationinfo.FilePath;
+        }
+
+        /// <summary>
+        /// 合成病人的临床诊断、脑电图诊断和地形图诊断的信息
+        /// </summary>
+        /// <param name="clinicalDiagnosis"></param>
+        /// <param name="eegDiagnosis"></param>
+        /// <param name="topographicDiagnosis"></param>
+        /// <returns></returns>
+        private string MergeDiagnosisData(string clinicalDiagnosis,string eegDiagnosis,string topographicDiagnosis)
+        {
+            //合成病人的临床诊断、脑电图诊断和地形图诊断的信息
+            string mergeDiagnosisData = "临床诊断：" + clinicalDiagnosis + System.Environment.NewLine + "脑电图诊断：" + eegDiagnosis + System.Environment.NewLine + "地形图诊断：" + topographicDiagnosis;
+            
+            //返回结果
+            return mergeDiagnosisData;
         }
         #endregion
 
@@ -2046,6 +2114,26 @@ namespace VeegStation
                     }
                     break;
                 }
+                else
+                {
+                    getDvalue = 0;
+                    if (nfi.HasVideo)
+                    {
+                        Player.Play();
+                        Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                        Thread.Sleep(200);
+                        Player.Pause();
+                        if (isPop == 1)
+                        {
+                            video.PlayerVideo.Play();
+                            video.PlayerVideo.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
+                            Thread.Sleep(200);
+                            video.PlayerVideo.Pause();
+                        }
+                    }
+                    break;
+                }
+
             }
             DT = nfi.StartDateTime;
             DT_RelativeTime = DateTime.Parse("2016-05-23  00:00:00");
@@ -2164,117 +2252,43 @@ namespace VeegStation
 
 
        /// <summary>
-       /// 视频加速
+       /// 视频播放
        /// --by wsp
        /// </summary>
        /// <param name="sender"></param>
        /// <param name="e"></param>
-        private void btn_accelerate_Click(object sender, EventArgs e)
+        private void btnPanelPlay_Click(object sender, EventArgs e)
         {
-            if (nfi.HasVideo)
+            Play();         
+            if (isPop == 1)
             {
-                //倍速过快时，会使得视频花屏，因此对倍速做了限制
-                if (Speed <= 4)
-                {
-                    btn_accelerate.Enabled = true;
-                    btn_decelerate.Enabled = true;
-                    Player.PlaybackRate = Player.PlaybackRate * 2;
-
-                    //设置Speed是为了使得脑电数据也要加倍
-                    Speed = Player.PlaybackRate;
-
-                    if (isPop == 1)
-                    {
-                        //videoForm的倍速要与该Form倍速保持一致
-                        video.PlayerVideo.PlaybackRate = Player.PlaybackRate;
-                        video.btn_accelerate.Enabled = true;
-                    }
-                }
-                else
-                {
-                    //加速到最大后，加速按钮不可用，减速按钮可用
-                    btn_accelerate.Enabled = false;
-                    btn_decelerate.Enabled = true;
-                    if (isPop == 1)
-                    {
-                        video.btn_accelerate.Enabled = false;
-                        video.btn_decelerate.Enabled = true;
-                    }
-                }
-            }
-            else
-            {
-                if (Speed <= 4)
-                {
-                    btn_accelerate.Enabled = true;
-                    btn_decelerate.Enabled = true;
-                    Speed *= 2;
-                }
-                else
-                {
-                    btn_accelerate.Enabled = false;
-                    btn_decelerate.Enabled = true;
+                if (nfi.HasVideo)
+                {               
+                    video.PlayVideo();
+                    video.btn_pause.Enabled = true;
+                    video.btn_play.Enabled = false;
                 }
             }
         }
 
         /// <summary>
-        /// 视频减速
+        /// 视频暂停
         /// --by wsp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btn_decelerate_Click(object sender, EventArgs e)
+        private void btnPanelPause_Click(object sender, EventArgs e)
         {
-            if (nfi.HasVideo)
-            {
-                if (Speed >= 0.5)
-                {
-                    //倍速过慢时，视频也会花屏，因此对最低倍速也做了限制
-                    btn_accelerate.Enabled = true;
-                    btn_decelerate.Enabled = true;
-                    Player.PlaybackRate = Player.PlaybackRate / 2;
-
-                    //设置Speed是为了使得脑电数据也要减速
-                    Speed = Player.PlaybackRate;
-
-                    //videoForm的倍速要与该Form倍速保持一致     
-                    if (isPop == 1)
-                    {
-                        video.PlayerVideo.PlaybackRate = Player.PlaybackRate;
-                        video.btn_decelerate.Enabled = true;
-                        video.btn_accelerate.Enabled = true;
-                    }
-                }
-                else
-                {
-                    //加速到最大后，加速按钮不可用，减速按钮可用
-                    btn_decelerate.Enabled = false;
-                    btn_accelerate.Enabled = true;
-                    if (isPop == 1)
-                    {
-                        video.btn_decelerate.Enabled = false;
-                        video.btn_accelerate.Enabled = true;
-                    }
-                }
-            }
-            else
-            {
-                if (Speed >= 0.5)
-                {
-                    //倍速过慢时，视频也会花屏，因此对最低倍速也做了限制
-                    btn_accelerate.Enabled = true;
-                    btn_decelerate.Enabled = true;
-                    Speed /= 2;
-                }
-                else
-                {
-                    //加速到最大后，加速按钮不可用，减速按钮可用
-                    btn_decelerate.Enabled = false;
-                    btn_accelerate.Enabled = true;
-                }
-
-            }
+              Pause();
+              if (isPop == 1)
+              {
+                  if (nfi.HasVideo)
+                  {
+                      video.PauseVideo();
+                      video.btn_play.Enabled = true;
+                      video.btn_pause.Enabled = false;
+                  }
+              }
         }
 
         /// <summary>
@@ -2289,6 +2303,7 @@ namespace VeegStation
             {
                 toolTip1.SetToolTip(btn_hide, "显示");
                 panelVideo.Visible = false;
+                this.btn_hide.Image = global::VeegStation.Properties.Resources.显示4;
                 //为了防止速度过大时有误差，这里需要先暂停处理--by wsp             
                 if (isPop == 0)
                 {
@@ -2301,7 +2316,8 @@ namespace VeegStation
                     Thread.Sleep(200);
                 }
                 else
-                    video.Visible=true;
+                // video.Visible=true;
+                    video.Show();
                 if (Player.IsPlaying == true)
                     video.PlayVideo();
                 else
@@ -2315,7 +2331,9 @@ namespace VeegStation
             else
             {
                 toolTip1.SetToolTip(btn_hide, "隐藏");
-                video.Visible = false;
+                this.btn_hide.Image = global::VeegStation.Properties.Resources.隐藏2;
+               // video.Visible = false;
+                video.Hide();
                 panelVideo.Visible = true;
             }
         }      
@@ -3760,5 +3778,77 @@ namespace VeegStation
         {
             this.btnEditCustomEvents.Enabled = false;
         }
+        int count = 0;
+        private void speedComBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            count++;
+            switch (speedComBox.SelectedIndex)
+            {
+                case 0: Speed = 0.25f;
+                    if(nfi.HasVideo)
+                    this.Player.PlaybackRate = 0.25f; 
+                    if(isPop==1)
+                    video.PlayerVideo.PlaybackRate = 0.25f; 
+                    break;
+                case 1: Speed = 0.5f;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 0.5f; 
+                    if(isPop==1)
+                    video.PlayerVideo.PlaybackRate = 0.5f; 
+                    break;
+                case 2: Speed = 1;
+                    if(count!=1&&nfi.HasVideo)
+                    this.Player.PlaybackRate = 1.0f;
+                    if(isPop==1)
+                    video.PlayerVideo.PlaybackRate = 1; 
+                    break;
+                case 3: Speed = 2;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 2; 
+                    if(isPop==1)
+                    video.PlayerVideo.PlaybackRate = 2; 
+                    break;
+                case 4: Speed = 3;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 3;
+                    if (isPop == 1)
+                    video.PlayerVideo.PlaybackRate = 3;
+                    break;
+                case 5: Speed = 5;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 5;
+                    if (isPop == 1)
+                    video.PlayerVideo.PlaybackRate = 5; 
+                    break;
+                case 6: Speed = 7;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 7;
+                    if (isPop == 1)
+                    video.PlayerVideo.PlaybackRate = 7;
+                    break;
+                case 7: Speed = 9;
+                    if (nfi.HasVideo)
+                    this.Player.PlaybackRate = 9;
+                    if (isPop == 1)
+                    video.PlayerVideo.PlaybackRate = 9;
+                    break;
+            }
+
+        }
+        public void initItems()
+        {
+            this.speedComBox.Items.Clear();
+            addItems(8);
+            this.speedComBox.Text =Speed+"x";
+        }
+
+        private void addItems(int num)
+        {
+            for (int i = 0; i < num; i++)
+            {
+                this.speedComBox.Items.Add(rateSpeed[i] + "x");
+            }
+        }
+
     }
 }
