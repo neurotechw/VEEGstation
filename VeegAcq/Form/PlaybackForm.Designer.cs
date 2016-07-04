@@ -30,17 +30,18 @@ namespace VeegStation
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlaybackForm));
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine2 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine1 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnPlay = new System.Windows.Forms.ToolStripButton();
             this.btnPause = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel_playSpeed = new System.Windows.Forms.ToolStripLabel();
+            this.speedComBox = new System.Windows.Forms.ToolStripComboBox();
             this.btnPrev = new System.Windows.Forms.ToolStripButton();
             this.btnNext = new System.Windows.Forms.ToolStripButton();
-            this.speedComBox = new System.Windows.Forms.ToolStripComboBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStriplabel_abtime = new System.Windows.Forms.ToolStripStatusLabel();
             this.displayStartTime = new System.Windows.Forms.ToolStripStatusLabel();
@@ -138,7 +139,6 @@ namespace VeegStation
             this.vScroll = new System.Windows.Forms.VScrollBar();
             this.labelPanel = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripLabel_playSpeed = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
@@ -190,6 +190,20 @@ namespace VeegStation
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
+            // toolStripLabel_playSpeed
+            // 
+            this.toolStripLabel_playSpeed.Name = "toolStripLabel_playSpeed";
+            this.toolStripLabel_playSpeed.Size = new System.Drawing.Size(55, 22);
+            this.toolStripLabel_playSpeed.Text = "播放速率";
+            // 
+            // speedComBox
+            // 
+            this.speedComBox.AutoSize = false;
+            this.speedComBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.speedComBox.Name = "speedComBox";
+            this.speedComBox.Size = new System.Drawing.Size(55, 25);
+            this.speedComBox.SelectedIndexChanged += new System.EventHandler(this.speedComBox_SelectedIndexChanged);
+            // 
             // btnPrev
             // 
             this.btnPrev.Enabled = false;
@@ -208,14 +222,6 @@ namespace VeegStation
             this.btnNext.Size = new System.Drawing.Size(63, 22);
             this.btnNext.Text = "下一页";
             this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
-            // 
-            // speedComBox
-            // 
-            this.speedComBox.AutoSize = false;
-            this.speedComBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.speedComBox.Name = "speedComBox";
-            this.speedComBox.Size = new System.Drawing.Size(55, 25);
-            this.speedComBox.SelectedIndexChanged += new System.EventHandler(this.speedComBox_SelectedIndexChanged);
             // 
             // statusStrip1
             // 
@@ -368,50 +374,50 @@ namespace VeegStation
             this.chartWave.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.AxisX.LabelStyle.Enabled = false;
-            chartArea2.AxisX.LabelStyle.Interval = 1D;
-            chartArea2.AxisX.LabelStyle.IntervalOffset = 0D;
-            chartArea2.AxisX.MajorGrid.Interval = 1D;
-            chartArea2.AxisX.MajorGrid.IntervalOffset = 1D;
-            chartArea2.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
-            chartArea2.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
-            chartArea2.AxisX.MajorTickMark.Interval = 1D;
-            chartArea2.AxisX.MajorTickMark.IntervalOffset = 0D;
-            chartArea2.AxisX.Minimum = 0D;
-            stripLine2.BorderColor = System.Drawing.Color.Black;
-            stripLine2.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            stripLine2.StripWidth = 0.0001D;
-            chartArea2.AxisX.StripLines.Add(stripLine2);
-            chartArea2.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
-            chartArea2.AxisY.IsInterlaced = true;
-            chartArea2.AxisY.LabelStyle.Enabled = false;
-            chartArea2.AxisY.MajorGrid.Interval = 100D;
-            chartArea2.AxisY.MajorGrid.IntervalOffset = 0D;
-            chartArea2.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
-            chartArea2.AxisY.MajorTickMark.Enabled = false;
-            chartArea2.AxisY.MajorTickMark.Interval = 100D;
-            chartArea2.AxisY.MajorTickMark.IntervalOffset = 0D;
-            chartArea2.AxisY.Maximum = 2000D;
-            chartArea2.AxisY.Minimum = 0D;
-            chartArea2.Name = "mainArea";
-            chartArea2.Position.Auto = false;
-            chartArea2.Position.Height = 94F;
-            chartArea2.Position.Width = 100F;
-            chartArea2.Position.Y = 3F;
-            this.chartWave.ChartAreas.Add(chartArea2);
-            legend2.Enabled = false;
-            legend2.Name = "Legend1";
-            legend2.Position.Auto = false;
-            legend2.Position.Height = 100F;
-            legend2.Position.Width = 100F;
-            this.chartWave.Legends.Add(legend2);
+            chartArea1.AxisX.LabelStyle.Enabled = false;
+            chartArea1.AxisX.LabelStyle.Interval = 1D;
+            chartArea1.AxisX.LabelStyle.IntervalOffset = 0D;
+            chartArea1.AxisX.MajorGrid.Interval = 1D;
+            chartArea1.AxisX.MajorGrid.IntervalOffset = 1D;
+            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightSalmon;
+            chartArea1.AxisX.MajorGrid.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Dot;
+            chartArea1.AxisX.MajorTickMark.Interval = 1D;
+            chartArea1.AxisX.MajorTickMark.IntervalOffset = 0D;
+            chartArea1.AxisX.Minimum = 0D;
+            stripLine1.BorderColor = System.Drawing.Color.Black;
+            stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            stripLine1.StripWidth = 0.0001D;
+            chartArea1.AxisX.StripLines.Add(stripLine1);
+            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
+            chartArea1.AxisY.IsInterlaced = true;
+            chartArea1.AxisY.LabelStyle.Enabled = false;
+            chartArea1.AxisY.MajorGrid.Interval = 100D;
+            chartArea1.AxisY.MajorGrid.IntervalOffset = 0D;
+            chartArea1.AxisY.MajorGrid.LineColor = System.Drawing.Color.Transparent;
+            chartArea1.AxisY.MajorTickMark.Enabled = false;
+            chartArea1.AxisY.MajorTickMark.Interval = 100D;
+            chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
+            chartArea1.AxisY.Maximum = 2000D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.Name = "mainArea";
+            chartArea1.Position.Auto = false;
+            chartArea1.Position.Height = 94F;
+            chartArea1.Position.Width = 100F;
+            chartArea1.Position.Y = 3F;
+            this.chartWave.ChartAreas.Add(chartArea1);
+            legend1.Enabled = false;
+            legend1.Name = "Legend1";
+            legend1.Position.Auto = false;
+            legend1.Position.Height = 100F;
+            legend1.Position.Width = 100F;
+            this.chartWave.Legends.Add(legend1);
             this.chartWave.Location = new System.Drawing.Point(62, 63);
             this.chartWave.Name = "chartWave";
-            series2.ChartArea = "mainArea";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chartWave.Series.Add(series2);
+            series1.ChartArea = "mainArea";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chartWave.Series.Add(series1);
             this.chartWave.Size = new System.Drawing.Size(880, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
@@ -956,7 +962,6 @@ namespace VeegStation
             this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tyPanelEventListView.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tyPanelEventListView.Controls.Add(this.lvCustomEvents, 0, 4);
             this.tyPanelEventListView.Controls.Add(this.lvPreDefineEvents, 0, 1);
             this.tyPanelEventListView.Controls.Add(this.btnAddCustomEvents, 0, 5);
@@ -969,12 +974,12 @@ namespace VeegStation
             this.tyPanelEventListView.Location = new System.Drawing.Point(11, 199);
             this.tyPanelEventListView.Name = "tyPanelEventListView";
             this.tyPanelEventListView.RowCount = 6;
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 2F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 44F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 2F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 44F));
-            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tyPanelEventListView.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
             this.tyPanelEventListView.Size = new System.Drawing.Size(186, 297);
             this.tyPanelEventListView.TabIndex = 15;
             // 
@@ -991,9 +996,9 @@ namespace VeegStation
             this.tyPanelEventListView.SetColumnSpan(this.lvCustomEvents, 6);
             this.lvCustomEvents.FullRowSelect = true;
             this.lvCustomEvents.GridLines = true;
-            this.lvCustomEvents.Location = new System.Drawing.Point(3, 154);
+            this.lvCustomEvents.Location = new System.Drawing.Point(3, 163);
             this.lvCustomEvents.Name = "lvCustomEvents";
-            this.lvCustomEvents.Size = new System.Drawing.Size(180, 124);
+            this.lvCustomEvents.Size = new System.Drawing.Size(180, 112);
             this.lvCustomEvents.TabIndex = 14;
             this.lvCustomEvents.UseCompatibleStateImageBehavior = false;
             this.lvCustomEvents.View = System.Windows.Forms.View.Details;
@@ -1031,9 +1036,9 @@ namespace VeegStation
             this.tyPanelEventListView.SetColumnSpan(this.lvPreDefineEvents, 6);
             this.lvPreDefineEvents.FullRowSelect = true;
             this.lvPreDefineEvents.GridLines = true;
-            this.lvPreDefineEvents.Location = new System.Drawing.Point(3, 8);
+            this.lvPreDefineEvents.Location = new System.Drawing.Point(3, 17);
             this.lvPreDefineEvents.Name = "lvPreDefineEvents";
-            this.lvPreDefineEvents.Size = new System.Drawing.Size(180, 124);
+            this.lvPreDefineEvents.Size = new System.Drawing.Size(180, 112);
             this.lvPreDefineEvents.TabIndex = 13;
             this.lvPreDefineEvents.UseCompatibleStateImageBehavior = false;
             this.lvPreDefineEvents.View = System.Windows.Forms.View.Details;
@@ -1065,9 +1070,10 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnAddCustomEvents, 2);
-            this.btnAddCustomEvents.Location = new System.Drawing.Point(3, 284);
+            this.btnAddCustomEvents.Location = new System.Drawing.Point(3, 281);
+            this.btnAddCustomEvents.MinimumSize = new System.Drawing.Size(40, 20);
             this.btnAddCustomEvents.Name = "btnAddCustomEvents";
-            this.btnAddCustomEvents.Size = new System.Drawing.Size(54, 10);
+            this.btnAddCustomEvents.Size = new System.Drawing.Size(54, 20);
             this.btnAddCustomEvents.TabIndex = 17;
             this.btnAddCustomEvents.Text = "增加";
             this.btnAddCustomEvents.UseVisualStyleBackColor = true;
@@ -1079,9 +1085,10 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnDeleteCustomEvents, 2);
-            this.btnDeleteCustomEvents.Location = new System.Drawing.Point(63, 284);
+            this.btnDeleteCustomEvents.Location = new System.Drawing.Point(63, 281);
+            this.btnDeleteCustomEvents.MinimumSize = new System.Drawing.Size(40, 20);
             this.btnDeleteCustomEvents.Name = "btnDeleteCustomEvents";
-            this.btnDeleteCustomEvents.Size = new System.Drawing.Size(54, 10);
+            this.btnDeleteCustomEvents.Size = new System.Drawing.Size(54, 20);
             this.btnDeleteCustomEvents.TabIndex = 18;
             this.btnDeleteCustomEvents.Text = "删除";
             this.btnDeleteCustomEvents.UseVisualStyleBackColor = true;
@@ -1093,9 +1100,10 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnEditPreDefineEvents, 3);
-            this.btnEditPreDefineEvents.Location = new System.Drawing.Point(3, 138);
+            this.btnEditPreDefineEvents.Location = new System.Drawing.Point(3, 135);
+            this.btnEditPreDefineEvents.MinimumSize = new System.Drawing.Size(60, 20);
             this.btnEditPreDefineEvents.Name = "btnEditPreDefineEvents";
-            this.btnEditPreDefineEvents.Size = new System.Drawing.Size(84, 5);
+            this.btnEditPreDefineEvents.Size = new System.Drawing.Size(84, 20);
             this.btnEditPreDefineEvents.TabIndex = 19;
             this.btnEditPreDefineEvents.Text = "添加";
             this.btnEditPreDefineEvents.UseVisualStyleBackColor = true;
@@ -1107,9 +1115,10 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnDeletePredefineEvents, 3);
-            this.btnDeletePredefineEvents.Location = new System.Drawing.Point(93, 138);
+            this.btnDeletePredefineEvents.Location = new System.Drawing.Point(93, 135);
+            this.btnDeletePredefineEvents.MinimumSize = new System.Drawing.Size(60, 20);
             this.btnDeletePredefineEvents.Name = "btnDeletePredefineEvents";
-            this.btnDeletePredefineEvents.Size = new System.Drawing.Size(90, 5);
+            this.btnDeletePredefineEvents.Size = new System.Drawing.Size(90, 20);
             this.btnDeletePredefineEvents.TabIndex = 20;
             this.btnDeletePredefineEvents.Text = "删除";
             this.btnDeletePredefineEvents.UseVisualStyleBackColor = true;
@@ -1121,9 +1130,10 @@ namespace VeegStation
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tyPanelEventListView.SetColumnSpan(this.btnEditCustomEvents, 2);
-            this.btnEditCustomEvents.Location = new System.Drawing.Point(123, 284);
+            this.btnEditCustomEvents.Location = new System.Drawing.Point(123, 281);
+            this.btnEditCustomEvents.MinimumSize = new System.Drawing.Size(40, 20);
             this.btnEditCustomEvents.Name = "btnEditCustomEvents";
-            this.btnEditCustomEvents.Size = new System.Drawing.Size(60, 10);
+            this.btnEditCustomEvents.Size = new System.Drawing.Size(60, 20);
             this.btnEditCustomEvents.TabIndex = 21;
             this.btnEditCustomEvents.Text = "修改";
             this.btnEditCustomEvents.UseVisualStyleBackColor = true;
@@ -1138,7 +1148,7 @@ namespace VeegStation
             this.tyPanelEventListView.SetColumnSpan(this.lblCustomEvent, 6);
             this.lblCustomEvent.Location = new System.Drawing.Point(3, 146);
             this.lblCustomEvent.Name = "lblCustomEvent";
-            this.lblCustomEvent.Size = new System.Drawing.Size(180, 5);
+            this.lblCustomEvent.Size = new System.Drawing.Size(180, 14);
             this.lblCustomEvent.TabIndex = 16;
             this.lblCustomEvent.Text = "自定义事件：";
             // 
@@ -1150,8 +1160,9 @@ namespace VeegStation
             this.lblPreDefineEvent.AutoSize = true;
             this.tyPanelEventListView.SetColumnSpan(this.lblPreDefineEvent, 6);
             this.lblPreDefineEvent.Location = new System.Drawing.Point(3, 0);
+            this.lblPreDefineEvent.MinimumSize = new System.Drawing.Size(0, 20);
             this.lblPreDefineEvent.Name = "lblPreDefineEvent";
-            this.lblPreDefineEvent.Size = new System.Drawing.Size(180, 5);
+            this.lblPreDefineEvent.Size = new System.Drawing.Size(180, 20);
             this.lblPreDefineEvent.TabIndex = 15;
             this.lblPreDefineEvent.Text = "预定义事件：";
             // 
@@ -1207,12 +1218,6 @@ namespace VeegStation
             this.labelPanel.Size = new System.Drawing.Size(62, 494);
             this.labelPanel.TabIndex = 15;
             this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawLabelPanel);
-            // 
-            // toolStripLabel_playSpeed
-            // 
-            this.toolStripLabel_playSpeed.Name = "toolStripLabel_playSpeed";
-            this.toolStripLabel_playSpeed.Size = new System.Drawing.Size(55, 22);
-            this.toolStripLabel_playSpeed.Text = "播放速率";
             // 
             // PlaybackForm
             // 

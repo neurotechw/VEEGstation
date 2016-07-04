@@ -576,8 +576,30 @@ namespace VeegStation
                 {
                     this.dataGridViewTest.CurrentCell.Value = text;
                     //this.lvAddLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
+
+                    MoveCurrentCellToNext();
                 }
-                
+            }
+
+        }
+
+        /// <summary>
+        /// 将当前选中的cell移动到下一个
+        /// -- by lxl
+        /// </summary>
+        private void MoveCurrentCellToNext()
+        {
+            //所选中的cell后移一格 -- by lxl
+            this.dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex].Cells[columnIndex].Selected = false;
+            if (columnIndex == 1)
+            {
+                dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex].Cells[columnIndex + 1].Selected = true;
+                this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex].Cells[columnIndex + 1];
+            }
+            else
+            {
+                dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1].Selected = true;
+                this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1];
             }
 
         }
@@ -756,6 +778,20 @@ namespace VeegStation
             if (!(Char.IsLetterOrDigit(e.KeyChar)) && e.KeyChar != (char)13 && e.KeyChar != (char)8)
             {
                 e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// datagridview的选择CELL更改事件，确保第一列的编号不能选择
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridViewTest_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
+            {
+                this.dataGridViewTest.ClearSelection();
             }
         }
 

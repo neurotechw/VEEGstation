@@ -681,6 +681,7 @@
             this.dataGridViewTest.RowTemplate.Height = 23;
             this.dataGridViewTest.Size = new System.Drawing.Size(264, 548);
             this.dataGridViewTest.TabIndex = 20;
+            this.dataGridViewTest.SelectionChanged += new System.EventHandler(this.dataGridViewTest_SelectionChanged);
             // 
             // LeadAddForm
             // 

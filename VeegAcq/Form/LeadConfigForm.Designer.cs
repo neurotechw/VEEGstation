@@ -140,6 +140,8 @@
             // 
             // dataGridViewTest
             // 
+            this.dataGridViewTest.AllowUserToResizeColumns = false;
+            this.dataGridViewTest.AllowUserToResizeRows = false;
             this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewTest.Location = new System.Drawing.Point(12, 111);
             this.dataGridViewTest.Name = "dataGridViewTest";
@@ -148,6 +150,7 @@
             this.dataGridViewTest.Size = new System.Drawing.Size(540, 456);
             this.dataGridViewTest.TabIndex = 7;
             this.dataGridViewTest.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewTest_CellClick);
+            this.dataGridViewTest.SelectionChanged += new System.EventHandler(this.dataGridViewTest_SelectionChanged);
             // 
             // LeadConfigForm
             // 

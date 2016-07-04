@@ -101,9 +101,31 @@ namespace VeegStation
             txtName.Text = "默认导联配置";
             this.dataGridViewTest.ReadOnly = true;
             this.dataGridViewTest.DataSource = dt;
+
             //初始化表格
             //InitList();
             InitDataView();
+
+            //设置全列选择 -- by lxl
+            setFullColumnSelected();
+        }
+
+        /// <summary>
+        /// 设置datagridview为全列选择
+        /// -- by lxl
+        /// </summary>
+        private void setFullColumnSelected()
+        {
+            //清楚所有默认选择
+            this.dataGridViewTest.ClearSelection();
+            //取消点击列排序功能
+            for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
+            {
+                dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+
+            //设置为全列选择
+            this.dataGridViewTest.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullColumnSelect;
         }
 
         public void InitDataView() 
@@ -142,6 +164,7 @@ namespace VeegStation
             {
                 dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
             
         }
 
@@ -184,6 +207,7 @@ namespace VeegStation
             {
                 dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
             
         }
 
@@ -278,11 +302,28 @@ namespace VeegStation
         private void dataGridViewTest_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             selectedColumn = e.ColumnIndex;
-            
-            if (selectedColumn != 0) 
+
+            if (selectedColumn != 0)
             {
+                //所点击的一列全部选中    -- by lxl
+                this.dataGridViewTest.Columns[selectedColumn].Selected = true;
+
                 nameOfColumn = this.dataGridViewTest.Columns[selectedColumn].HeaderCell.Value.ToString();
                 txtName.Text = nameOfColumn;
+            }
+        }
+
+        /// <summary>
+        /// dataGridViewTest所选项改变事件，为了确保无法选择第一列“编号”
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridViewTest_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
+            {
+                this.dataGridViewTest.ClearSelection();
             }
         }
     }
