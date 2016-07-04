@@ -2091,12 +2091,29 @@ namespace VeegStation
             //当前导联配置
             leadConfigArrayList = (ArrayList)leadConfigList[currentLeadConfigName];
 
-            //
-            signalNum = (leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum;
-            
-            
+            //导联的数据长度改变了需要进行相应关联的变量的修改
+            LeadSignalNumChangedTo(leadConfigArrayList.Count);
 
+        }
 
+        /// <summary>
+        /// 选择的导联改变后，根据导联的个数来设置各个需要匹配的修改
+        /// -- by lxl
+        /// </summary>
+        /// <param name="num"></param>
+        private void LeadSignalNumChangedTo(int num)
+        {
+            //修改通道数组
+            SetSignalNumArray(num);
+
+            //修改当前显示的通道数目（防止大于最大通道数）
+            SetSignalNum((num <= signalNum) ? num : signalNum);
+
+            //重新初始化通道数目的选项
+            InitSignalNumMenuItems();
+
+            //修改右边滚动条的最大值
+            this.vScroll.Maximum = num;
         }
 
         /// <summary>
@@ -2127,10 +2144,7 @@ namespace VeegStation
             this.labelPanel.Invalidate();
 
             //通道数目改变
-            SetSignalNumArray(leadConfigArrayList.Count);
-            SetSignalNum((leadConfigArrayList.Count <= signalNum) ? leadConfigArrayList.Count : signalNum);
-            InitSignalNumMenuItems();
-            this.vScroll.Maximum = this.leadConfigArrayList.Count;
+            LeadSignalNumChangedTo(leadConfigArrayList.Count);
 
             //重新显示数据
             ShowData();
