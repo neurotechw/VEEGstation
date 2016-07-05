@@ -675,6 +675,8 @@
             // dataGridViewTest
             // 
             this.dataGridViewTest.AllowUserToAddRows = false;
+            this.dataGridViewTest.AllowUserToResizeColumns = false;
+            this.dataGridViewTest.AllowUserToResizeRows = false;
             this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewTest.Location = new System.Drawing.Point(552, 28);
             this.dataGridViewTest.Name = "dataGridViewTest";

@@ -542,8 +542,11 @@ namespace VeegStation
             {
                 this.dataGridViewTest.CurrentCell.Value = "C";
                 dt.Rows[dataGridViewTest.CurrentCell.RowIndex][2] = "";
-                dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1].Selected = true;
-                this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1];
+                if (this.dataGridViewTest.CurrentCell.RowIndex < rowsCount)
+                {
+                    dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1].Selected = true;
+                    this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1];
+                }
             }
             //SetListViewText(((Button)sender).Text);
         }
@@ -580,6 +583,7 @@ namespace VeegStation
                     this.dataGridViewTest.CurrentCell.Value = text;
                     //this.lvAddLeadList.SelectedItems[0].SubItems[columnIndex].Text = text;
 
+                    //移动到下一个cell
                     MoveCurrentCellToNext();
                 }
             }
@@ -593,7 +597,6 @@ namespace VeegStation
         private void MoveCurrentCellToNext()
         {
             //所选中的cell后移一格 -- by lxl
-            this.dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex].Cells[columnIndex].Selected = false;
             if (columnIndex == 1)
             {
                 dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex].Cells[columnIndex + 1].Selected = true;
@@ -601,7 +604,7 @@ namespace VeegStation
             }
             else
             {
-                if (this.dataGridViewTest.CurrentCell.RowIndex < rowsCount) 
+                if (this.dataGridViewTest.CurrentCell.RowIndex < rowsCount - 1) 
                 {
                     dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1].Selected = true;
                     this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1];

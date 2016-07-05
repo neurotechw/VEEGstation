@@ -136,6 +136,9 @@ namespace VeegStation
             myLeadList = (Hashtable)myLeadLists[cbConfigList.Text];
             //myLeadList = controller.CommonDataPool.GetLeadList(cbConfigList.Text);
 
+            //因为需要重新添加DT，故意先将其改为RowHeaderSelect，再改回fullColumnSelect
+            this.dataGridViewTest.SelectionMode = DataGridViewSelectionMode.RowHeaderSelect; //-- by lxl
+
             dt.Clear();
             dt.Columns.Clear();
             dt.Rows.Clear();
@@ -167,7 +170,8 @@ namespace VeegStation
                 dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
 
-            
+            //DT加载完后，改回fullColumnSelect
+            this.dataGridViewTest.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;//-- by lxl
             
         }
 

@@ -326,6 +326,12 @@ namespace VeegStation
             if (this.dataGridViewTest.CurrentCell.ColumnIndex != 0) 
             {
                 this.dataGridViewTest.CurrentCell.Value = text;
+
+                if (this.dataGridViewTest.CurrentCell.RowIndex < rowsCount - 1)
+                {
+                    dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[this.dataGridViewTest.CurrentCell.ColumnIndex].Selected = true;
+                    this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[this.dataGridViewTest.CurrentCell.ColumnIndex];
+                }
             }
             
             //if (this.lvSourceList.SelectedItems.Count != 0)
@@ -702,6 +708,23 @@ namespace VeegStation
         {
             e.Cancel = true;
             this.Hide();
+        }
+
+        /// <summary>
+        /// dataGridView所选项更改事件，为了确保第一列无法选择
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridViewTest_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.dataGridViewTest.CurrentCell != null)
+            {
+                if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
+                {
+                    this.dataGridViewTest.ClearSelection();
+                }
+            }
         }
 
     }
