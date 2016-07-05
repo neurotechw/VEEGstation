@@ -125,7 +125,7 @@ namespace VeegStation
             }
 
             //设置为全列选择
-            this.dataGridViewTest.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullColumnSelect;
+            //this.dataGridViewTest.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullColumnSelect;
         }
 
         public void InitDataView() 
@@ -321,9 +321,12 @@ namespace VeegStation
         /// <param name="e"></param>
         private void dataGridViewTest_SelectionChanged(object sender, EventArgs e)
         {
-            if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
+            if (this.dataGridViewTest.CurrentCell != null)
             {
-                this.dataGridViewTest.ClearSelection();
+                if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
+                {
+                    this.dataGridViewTest.ClearSelection();
+                }
             }
         }
     }
