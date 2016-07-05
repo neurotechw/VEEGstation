@@ -791,9 +791,12 @@ namespace VeegStation
         /// <param name="e"></param>
         private void dataGridViewTest_SelectionChanged(object sender, EventArgs e)
         {
-            if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
+            if (this.dataGridViewTest.CurrentCell != null)
             {
-                this.dataGridViewTest.ClearSelection();
+                if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
+                {
+                    this.dataGridViewTest.ClearSelection();
+                }
             }
         }
 
