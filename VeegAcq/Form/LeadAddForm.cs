@@ -541,6 +541,8 @@ namespace VeegStation
             {
                 this.dataGridViewTest.CurrentCell.Value = "C";
                 dt.Rows[dataGridViewTest.CurrentCell.RowIndex][2] = "";
+                dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1].Selected = true;
+                this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1];
             }
             //SetListViewText(((Button)sender).Text);
         }
