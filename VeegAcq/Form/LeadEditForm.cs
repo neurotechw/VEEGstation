@@ -122,6 +122,7 @@ namespace VeegStation
             //初始化当前导联
             myLeadList = controller.CommonDataPool.GetLeadList(config);
 
+            this.dataGridViewTest.AllowUserToAddRows = false;
             this.dataGridViewTest.DataSource = dt;
             this.dataGridViewTest.ReadOnly = true;
 

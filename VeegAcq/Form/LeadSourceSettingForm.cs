@@ -209,6 +209,8 @@ namespace VeegStation
             defaultLeadSource = (Hashtable)controller.CommonDataPool.GetLeadSource(text)[0];
             myLeadSource = (Hashtable) controller.CommonDataPool.GetLeadSource(text)[1];
             sizeOfLeadSource = defaultLeadSource.Count;
+
+            this.dataGridViewTest.AllowUserToAddRows = false;
             this.dataGridViewTest.DataSource = dt;
             this.dataGridViewTest.ReadOnly = true;
             //DrawListView();

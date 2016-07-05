@@ -110,6 +110,7 @@ namespace VeegStation
                     break;
             }
 
+            this.dataGridViewTest.AllowUserToAddRows = false;
             this.dataGridViewTest.DataSource = dt;
             this.dataGridViewTest.ReadOnly = true;
 
@@ -600,8 +601,13 @@ namespace VeegStation
             }
             else
             {
-                dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1].Selected = true;
-                this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1];
+                if (this.dataGridViewTest.CurrentCell.RowIndex < rowsCount) 
+                {
+                    dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1].Selected = true;
+                    this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1];
+                }
+                //dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1].Selected = true;
+                //this.dataGridViewTest.CurrentCell = dataGridViewTest.Rows[this.dataGridViewTest.CurrentCell.RowIndex + 1].Cells[1];
             }
 
         }

@@ -95,26 +95,28 @@ namespace VeegStation
         /// </summary>
         public void InitLeadConfig(string config)
         {
+            this.dataGridViewTest.AllowUserToAddRows = false;
+            this.dataGridViewTest.ReadOnly = true;
+            this.dataGridViewTest.DataSource = dt;
+
             //硬件配置名称
             //cbConfigList.Text = cbConfigList.Items[0].ToString();
             cbConfigList.Text = config;
             txtName.Text = "默认导联配置";
-            this.dataGridViewTest.ReadOnly = true;
-            this.dataGridViewTest.DataSource = dt;
 
             //初始化表格
             //InitList();
             InitDataView();
 
             //设置全列选择 -- by lxl
-            setFullColumnSelected();
+            SetFullColumnSelected();
         }
 
         /// <summary>
         /// 设置datagridview为全列选择
         /// -- by lxl
         /// </summary>
-        private void setFullColumnSelected()
+        private void SetFullColumnSelected()
         {
             //清楚所有默认选择
             this.dataGridViewTest.ClearSelection();
@@ -125,7 +127,7 @@ namespace VeegStation
             }
 
             //设置为全列选择
-            //this.dataGridViewTest.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullColumnSelect;
+            this.dataGridViewTest.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullColumnSelect;
         }
 
         public void InitDataView() 
@@ -166,6 +168,7 @@ namespace VeegStation
             }
 
             
+            
         }
 
 
@@ -201,6 +204,7 @@ namespace VeegStation
                     dt.Rows[j][i + 1] = value[j];
                 }
             }
+
 
             //取消点击列排序功能
             for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
