@@ -151,6 +151,12 @@ namespace VeegStation
         private Hashtable leadConfigList;
 
         /// <summary>
+        /// 导联配置最大可能有的数值
+        /// -- by lxl
+        /// </summary>
+        private const int MAX_LEAD_CONFIG_NUM = 40;
+
+        /// <summary>
         /// 导联源
         /// </summary>
         private Hashtable leadSource;
@@ -1145,7 +1151,7 @@ namespace VeegStation
             displayTotalTime.Text = DT_TotalTime.ToLongTimeString().ToString();
             #endregion
             chartWave.Series.Clear();
-            foreach (int idx in Enumerable.Range(0, leadConfigArrayList.Count))
+            foreach (int idx in Enumerable.Range(0, MAX_LEAD_CONFIG_NUM))
             {
                 Series ser = new Series();
                 ser.ChartType = SeriesChartType.FastLine;
