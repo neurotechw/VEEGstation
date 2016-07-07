@@ -66,6 +66,12 @@ namespace VeegStation
         /// </summary>
         private DataTable dt = new DataTable();
 
+        /// <summary>
+        /// 编号所在列的宽度
+        /// -- by lxl
+        /// </summary>
+        private const int NUM_COLUMN_WIDTH = 40;
+
         #endregion
 
         public LeadConfigForm()
@@ -172,6 +178,9 @@ namespace VeegStation
 
             //DT加载完后，改回fullColumnSelect
             this.dataGridViewTest.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;//-- by lxl
+
+            //设置编号所在列的宽度（将其设置得窄一点）  -- by lxl
+            this.dataGridViewTest.Columns[0].Width = NUM_COLUMN_WIDTH;
             
         }
 
@@ -221,7 +230,8 @@ namespace VeegStation
             //DT加载完后，改回fullColumnSelect
             this.dataGridViewTest.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;//-- by lxl
 
-            
+            //设置编号所在列的宽度（将其设置得窄一点）  -- by lxl
+            this.dataGridViewTest.Columns[0].Width = NUM_COLUMN_WIDTH;
         }
 
         
@@ -318,9 +328,6 @@ namespace VeegStation
 
             if (selectedColumn != 0)
             {
-                //所点击的一列全部选中    -- by lxl
-                this.dataGridViewTest.Columns[selectedColumn].Selected = true;
-
                 nameOfColumn = this.dataGridViewTest.Columns[selectedColumn].HeaderCell.Value.ToString();
                 txtName.Text = nameOfColumn;
             }
@@ -339,6 +346,12 @@ namespace VeegStation
                 if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
                 {
                     this.dataGridViewTest.ClearSelection();
+                }
+                else
+                {
+                    selectedColumn = this.dataGridViewTest.CurrentCell.ColumnIndex;
+                    nameOfColumn = this.dataGridViewTest.Columns[selectedColumn].HeaderCell.Value.ToString();
+                    txtName.Text = nameOfColumn;
                 }
             }
         }

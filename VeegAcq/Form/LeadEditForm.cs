@@ -50,6 +50,12 @@ namespace VeegStation
         /// Table
         /// </summary>
         private DataTable dt = new DataTable();
+
+        /// <summary>
+        /// 编号所在列的宽度
+        /// -- by lxl
+        /// </summary>
+        private const int NUM_COLUMN_WIDTH = 40;
         #endregion
 
         public LeadEditForm(LeadConfigForm leadConfigForm)
@@ -179,6 +185,9 @@ namespace VeegStation
                 dt.Rows[i][2] = "";
             }
 
+
+            //设置编号所在列的宽度（将其设置得窄一点）  -- by lxl
+            this.dataGridViewTest.Columns[0].Width = NUM_COLUMN_WIDTH;
             
         }
 
@@ -790,6 +799,23 @@ namespace VeegStation
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// dataGridViewTest所选项改变事件，为了确保无法选择第一列“编号”
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridViewTest_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.dataGridViewTest.CurrentCell != null)
+            {
+                if (this.dataGridViewTest.CurrentCell.ColumnIndex == 0)
+                {
+                    this.dataGridViewTest.ClearSelection();
+                }
+            }
         }
 
         

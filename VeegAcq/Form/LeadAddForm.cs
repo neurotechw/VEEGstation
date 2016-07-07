@@ -45,6 +45,12 @@ namespace VeegStation
         /// Table
         /// </summary>
         private DataTable dt = new DataTable();
+
+        /// <summary>
+        /// 编号所在列的宽度
+        /// -- by lxl
+        /// </summary>
+        private const int NUM_COLUMN_WIDTH = 40;
         #endregion
 
         public LeadAddForm(LeadConfigForm leadConfigForm)
@@ -149,6 +155,9 @@ namespace VeegStation
             {
                 dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
             }
+
+            //设置编号所在列的宽度（将其设置得窄一点）  -- by lxl
+            this.dataGridViewTest.Columns[0].Width = NUM_COLUMN_WIDTH;
         }
 
         /// <summary>
