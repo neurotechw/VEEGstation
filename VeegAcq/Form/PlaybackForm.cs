@@ -348,13 +348,13 @@ namespace VeegStation
         /// 校准Y轴窗口            
         /// - by lxl
         /// </summary>
-        private CalibrateYForm calibForm;
+        private CalibrateYForm myCalibYForm;
 
         /// <summary>
         /// 校验X轴窗口            
         /// -- by lxl
         /// </summary>
-        private CalibrateXForm calibXForm;
+        private CalibrateXForm myCalibXForm;
 
         /// <summary>
         /// 屏幕的宽度,单位为像素点
@@ -1992,10 +1992,10 @@ namespace VeegStation
         /// <param name="e"></param>
         private void CalibrateYToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (calibForm == null || calibForm.IsDisposed)
-                calibForm = new CalibrateYForm(this, pixelPerMM * 10);
-            this.calibForm.Show();
-            this.calibForm.BringToFront();
+            if (myCalibYForm == null || myCalibYForm.IsDisposed)
+                myCalibYForm = new CalibrateYForm(this, pixelPerMM * 10);
+            this.myCalibYForm.Show();
+            this.myCalibYForm.BringToFront();
         }
 
         /// <summary>
@@ -2026,10 +2026,10 @@ namespace VeegStation
         /// <param name="e"></param>
         private void CalibrateXToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (calibXForm == null || calibXForm.IsDisposed)
-                calibXForm = new CalibrateXForm(this, pixelPerMM * 10);
-            calibXForm.Show();
-            calibXForm.BringToFront();
+            if (myCalibXForm == null || myCalibXForm.IsDisposed)
+                myCalibXForm = new CalibrateXForm(this, pixelPerMM * 10);
+            myCalibXForm.Show();
+            myCalibXForm.BringToFront();
         }
         /// <summary>
         /// X轴校准函数
@@ -3156,6 +3156,7 @@ namespace VeegStation
 
         #endregion
 
+        #region 窗口关闭时要做的事
         /// <summary>
         /// 当回放Form关闭时，弹出视频Form也要关闭
         /// </summary>
@@ -3168,10 +3169,31 @@ namespace VeegStation
             this.SaveDataToCommonDataPool();
             controller.PlaybackQuit();
 
-            //将事件写入文件中，先写在此处测试，没问题后移到controller中
+            //将事件写入文件中，先写在此处测试，没问题后移到controller中 -- by lxl
             SavePreDefineEventsToFile(nfi.NedFileName.Split('.')[0]+".NAT");
             SaveCustomeEventsToFile(nfi.NedFileName.Split('.')[0] + ".ent");
+
+            //关掉所有相关的子form -- by lxl
+            CloseAllForms();
         }
+
+        /// <summary>
+        /// 关闭掉所有的子FORM
+        /// -- by lxl
+        /// </summary>
+        private void CloseAllForms()
+        {
+            if (myCustomEventForm != null && !myCustomEventForm.IsDisposed)
+                myCustomEventForm.Close();
+            if (myPreDefineEventFormEventForm != null && !myPreDefineEventFormEventForm.IsDisposed)
+                myPreDefineEventFormEventForm.Close();
+            if (myCalibXForm != null && !myCalibXForm.IsDisposed)
+                myCalibXForm.Close();
+            if (myCalibYForm != null && !myCalibYForm.IsDisposed)
+                myCalibYForm.Close();
+        }
+
+        #endregion
 
         /// <summary>
         /// 把数据保存在commondatapool中
