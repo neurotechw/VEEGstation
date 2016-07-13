@@ -20,12 +20,20 @@ namespace VeegStation
         /// 初始化Controller
         /// </summary>
         /// <param name="playbackForm">回放Form</param>
-        public VeegControl(PlaybackForm playbackForm) 
+        public VeegControl() 
         {
-            this.myPlaybackForm = playbackForm;
             ModuleInitial(); 
         }
 
+        /// <summary>
+        /// 注册playbackForm
+        /// -- by lxl
+        /// </summary>
+        /// <param name="playbackForm"></param>
+        public void RegisterPlayBackForm(PlaybackForm playbackForm)
+        {
+            this.myPlaybackForm = playbackForm;
+        }
         /// <summary>
         /// 初始化各自模块
         /// </summary>

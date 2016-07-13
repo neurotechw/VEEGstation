@@ -35,6 +35,7 @@ namespace VeegStation
         {
             InitializeComponent();
             LogHelper.WriteLog(typeof(StationForm),  "测试日志是否添加成功");
+            myController = new VeegControl();
         }
 
         private void HelpAbout_Click(object sender, EventArgs e)
@@ -367,7 +368,7 @@ namespace VeegStation
             }
             PlaybackForm play = new PlaybackForm(_eegFiles[lvFiles.SelectedIndices[0]]);
             //--by zt
-            myController = new VeegControl(play);
+            myController.RegisterPlayBackForm(play);
             play.ReigisterVeegControl(myController);
             play.InitPlaybackFormParas();
             play.ShowDialog();
