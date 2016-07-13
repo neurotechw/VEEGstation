@@ -251,13 +251,15 @@ namespace VeegStation
         private void btnSetting_Click(object sender, EventArgs e)
         {
             myLeadSourceSettingForm.InitLeadSetting(cbConfigList.Text);
-            myLeadSourceSettingForm.ShowDialog();
+            myLeadSourceSettingForm.Show();
+            //myLeadSourceSettingForm.ShowDialog();
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
             myLeadAddForm.InitLeadAdd(cbConfigList.Text);
-            myLeadAddForm.ShowDialog();
+            myLeadAddForm.Show();
+            //myLeadAddForm.ShowDialog();
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -277,7 +279,8 @@ namespace VeegStation
 
             //编辑导联界面
             myLeadEditForm.InitEditLead(cbConfigList.Text,nameOfColumn);
-            myLeadEditForm.ShowDialog();
+            myLeadEditForm.Show();
+            //myLeadEditForm.ShowDialog();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
@@ -301,7 +304,6 @@ namespace VeegStation
                 //InitList("默认导联配置");
                 InitDataView("默认导联配置");
             }
-            
             
         }
 

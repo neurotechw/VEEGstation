@@ -647,7 +647,7 @@
             this.dataGridViewTest.Name = "dataGridViewTest";
             this.dataGridViewTest.RowHeadersVisible = false;
             this.dataGridViewTest.RowTemplate.Height = 23;
-            this.dataGridViewTest.Size = new System.Drawing.Size(240, 548);
+            this.dataGridViewTest.Size = new System.Drawing.Size(208, 548);
             this.dataGridViewTest.TabIndex = 9;
             this.dataGridViewTest.SelectionChanged += new System.EventHandler(this.dataGridViewTest_SelectionChanged);
             // 
@@ -655,7 +655,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(817, 615);
+            this.ClientSize = new System.Drawing.Size(782, 610);
             this.Controls.Add(this.dataGridViewTest);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnSave);
