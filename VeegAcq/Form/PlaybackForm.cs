@@ -3167,7 +3167,7 @@ namespace VeegStation
             if(nfi.HasVideo)
                 video.Close();
             this.SaveDataToCommonDataPool();
-            controller.PlaybackQuit();
+            //controller.SaveConfitWhileQuite();
 
             //将事件写入文件中，先写在此处测试，没问题后移到controller中 -- by lxl
             SavePreDefineEventsToFile(nfi.NedFileName.Split('.')[0]+".NAT");

@@ -49,7 +49,7 @@ namespace VeegStation
         /// <summary>
         /// 退出时，保存配置文件
         /// </summary>
-        public void PlaybackQuit() 
+        public void SaveConfitWhileQuite() 
         {
             SaveXmlConfig();
         }

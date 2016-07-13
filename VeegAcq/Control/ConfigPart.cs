@@ -51,6 +51,10 @@ namespace VeegStation
         /// </summary>
         private void ImportXmlData()
         {
+            //获取文件夹路径 -- by lxl
+            commonDataPool.EegDataPath = xmlConfig.EegDataPath;
+            commonDataPool.VideoPath = xmlConfig.VideoBasePath;
+
             #region 导联配置参数  --by zt
             commonDataPool.LeadSources = xmlConfig.LeadSources;
             commonDataPool.LeadConfigLists = xmlConfig.LeadConfigLists;
@@ -82,6 +86,10 @@ namespace VeegStation
             //xmlConfig.currentLeadConfig = commonDataPool.currentLeadConfig;
             //xmlConfig.demarcateCV = commonDataPool.demarcateCV;
             #endregion  
+
+            //保存文件夹路径
+            xmlConfig.EegDataPath = commonDataPool.EegDataPath;
+            xmlConfig.VideoBasePath = commonDataPool.VideoPath;
 
             #region 画图参数
 

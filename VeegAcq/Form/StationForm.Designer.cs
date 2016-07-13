@@ -56,10 +56,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.tbEEGPath = new System.Windows.Forms.TextBox();
+            this.btnBrowseEEGFile = new System.Windows.Forms.Button();
             this.lvVideoFiles = new System.Windows.Forms.ListView();
             this.HasEeg = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.RecordTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.VideoDuration = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tbVideoPath = new System.Windows.Forms.TextBox();
+            this.btnBrowseVideoPath = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.toolStrip1.SuspendLayout();
@@ -329,14 +333,35 @@
             // 
             this.splitContainer1.Panel1.Controls.Add(this.lvFiles);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.splitContainer1.Panel1.Controls.Add(this.tbEEGPath);
+            this.splitContainer1.Panel1.Controls.Add(this.btnBrowseEEGFile);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.lvVideoFiles);
             this.splitContainer1.Panel2.Controls.Add(this.label2);
+            this.splitContainer1.Panel2.Controls.Add(this.tbVideoPath);
+            this.splitContainer1.Panel2.Controls.Add(this.btnBrowseVideoPath);
             this.splitContainer1.Size = new System.Drawing.Size(712, 625);
             this.splitContainer1.SplitterDistance = 422;
             this.splitContainer1.TabIndex = 9;
+            // 
+            // tbEEGPath
+            // 
+            this.tbEEGPath.Location = new System.Drawing.Point(60, 0);
+            this.tbEEGPath.Name = "tbEEGPath";
+            this.tbEEGPath.ReadOnly = true;
+            this.tbEEGPath.Size = new System.Drawing.Size(331, 20);
+            this.tbEEGPath.TabIndex = 7;
+            // 
+            // btnBrowseEEGFile
+            // 
+            this.btnBrowseEEGFile.Location = new System.Drawing.Point(390, 0);
+            this.btnBrowseEEGFile.Name = "btnBrowseEEGFile";
+            this.btnBrowseEEGFile.Size = new System.Drawing.Size(30, 20);
+            this.btnBrowseEEGFile.TabIndex = 8;
+            this.btnBrowseEEGFile.Text = "···";
+            this.btnBrowseEEGFile.Click += new System.EventHandler(this.BtnBrowseEEGFile_Click);
             // 
             // lvVideoFiles
             // 
@@ -378,6 +403,23 @@
             // 
             this.VideoDuration.Text = "时长";
             this.VideoDuration.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // tbVideoPath
+            // 
+            this.tbVideoPath.Location = new System.Drawing.Point(96, 0);
+            this.tbVideoPath.Name = "tbVideoPath";
+            this.tbVideoPath.ReadOnly = true;
+            this.tbVideoPath.Size = new System.Drawing.Size(158, 20);
+            this.tbVideoPath.TabIndex = 10;
+            // 
+            // btnBrowseVideoPath
+            // 
+            this.btnBrowseVideoPath.Location = new System.Drawing.Point(254, 0);
+            this.btnBrowseVideoPath.Name = "btnBrowseVideoPath";
+            this.btnBrowseVideoPath.Size = new System.Drawing.Size(30, 20);
+            this.btnBrowseVideoPath.TabIndex = 11;
+            this.btnBrowseVideoPath.Text="···";
+            this.btnBrowseVideoPath.Click += new System.EventHandler(this.BtnBrowseVideoPath_Click);
             // 
             // label4
             // 
@@ -469,6 +511,10 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ToolStripButton btnRefresh;
+        private System.Windows.Forms.TextBox tbEEGPath;
+        private System.Windows.Forms.Button btnBrowseEEGFile;
+        private System.Windows.Forms.TextBox tbVideoPath;
+        private System.Windows.Forms.Button btnBrowseVideoPath;
     }
 }
 

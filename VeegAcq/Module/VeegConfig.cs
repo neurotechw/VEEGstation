@@ -23,6 +23,29 @@ namespace VeegStation
     {
         #region 定义配置文件中保存的变量
 
+        /// <summary>
+        /// eeg文件所在文件夹路径
+        /// -- by lxl
+        /// </summary>
+        private string eegDataPath;
+
+        /// <summary>
+        /// 视频文件所在文件夹基本路径
+        /// </summary>
+        private string videoBasePath;
+
+        public string VideoBasePath
+        {
+            get { return videoBasePath; }
+            set { videoBasePath = value; }
+        }
+
+        public string EegDataPath
+        {
+            get { return eegDataPath; }
+            set { eegDataPath = value; }
+        }
+
         #region 导联参数
         /// <summary>
         /// 导联源
@@ -89,6 +112,9 @@ namespace VeegStation
 
         public void SetDefaultConfig()
         {
+            eegDataPath = @"D:\EEG\EEGDATA";
+            videoBasePath = @"D:\VEEG\VSEG";
+
             #region 导联参数
             string[] leadSourceNames = new string[7] { "8导脑电", "8导脑电+多参数", "16导脑电", "16导脑电+多参数", "24导脑电", "32导脑电", "32导脑电+多参数" };
             #region 导联源
