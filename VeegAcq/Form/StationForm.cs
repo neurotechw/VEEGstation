@@ -441,7 +441,7 @@ namespace VeegStation
             FolderBrowserDialog openFolder = new FolderBrowserDialog();
 
             //设置对话框的名字 
-            openFolder.Description = "请选择视频路劲路径,\n请保证该路径下存在VSEG与VSOC两个文件夹";
+            openFolder.Description = "请选择视频文件路径";
 
             if (openFolder.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
