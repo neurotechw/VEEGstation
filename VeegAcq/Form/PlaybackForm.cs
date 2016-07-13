@@ -319,7 +319,7 @@ namespace VeegStation
         /// 倍速选择范围
         /// --by wsp
         /// </summary>
-        private double[] rateSpeed = {0.25,0.5,1,2,3,5,7,9};
+        private double[] rateSpeed = { 0.25, 0.5, 1, 2, 3, 5, 7, 9 };
         /// <summary>
         /// 当前选择时间基准,毫米每秒  
         /// -- by lxl

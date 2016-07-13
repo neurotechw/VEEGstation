@@ -142,6 +142,7 @@
             // 
             this.dataGridViewTest.AllowUserToResizeColumns = false;
             this.dataGridViewTest.AllowUserToResizeRows = false;
+            this.dataGridViewTest.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridViewTest.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewTest.Location = new System.Drawing.Point(12, 111);
             this.dataGridViewTest.Name = "dataGridViewTest";

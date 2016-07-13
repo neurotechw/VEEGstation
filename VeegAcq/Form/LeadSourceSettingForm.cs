@@ -49,7 +49,7 @@ namespace VeegStation
         /// 编号所在列的宽度
         /// -- by lxl
         /// </summary>
-        private const int NUM_COLUMN_WIDTH = 60;
+        private const int NUM_COLUMN_WEIGHT = 60;
 
         public LeadSourceSettingForm()
         {
@@ -276,7 +276,7 @@ namespace VeegStation
             }
 
             //设置编号所在列的宽度（将其设置得窄一点）  -- by lxl
-            this.dataGridViewTest.Columns[0].Width = NUM_COLUMN_WIDTH;
+            this.dataGridViewTest.Columns[0].FillWeight = NUM_COLUMN_WEIGHT;
         }
 
         /// <summary>
