@@ -185,6 +185,11 @@ namespace VeegStation
                 dt.Rows[i][2] = "";
             }
 
+            //取消点击列排序功能
+            for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
+            {
+                dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
 
             //设置编号所在列的宽度（将其设置得窄一点）  -- by lxl
             this.dataGridViewTest.Columns[0].FillWeight = NUM_COLUMN_WEIGHT;

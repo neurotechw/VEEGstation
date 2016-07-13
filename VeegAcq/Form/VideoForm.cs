@@ -177,6 +177,8 @@ namespace VeegStation
             //这里并不是销毁Form,只是隐藏，否则视频将不与回放Form同步
             this.Visible = false;
             playBack.panelVideo.Visible = true;
+            playBack.btn_hide.Image = global::VeegStation.Properties.Resources.隐藏2;
+            playBack.toolTip1.SetToolTip(playBack.btn_hide, "隐藏");
         }
 
         /// <summary>

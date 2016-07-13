@@ -1322,7 +1322,7 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripStatusLabel displayTotalTime;
         public System.Windows.Forms.Button btnPanelPlay;
         public System.Windows.Forms.Button btnPanelPause;
-        private System.Windows.Forms.Button btn_hide;
+        public System.Windows.Forms.Button btn_hide;
         private System.Windows.Forms.ToolStripMenuItem calibrateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateYToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem calibrateXToolStripMenuItem;
@@ -1333,7 +1333,7 @@ namespace VeegStation
         private System.Windows.Forms.Panel labelPanel;
         private System.Windows.Forms.ToolStripMenuItem leadChooseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem SettingToolStripMenuItem;
-        private System.Windows.Forms.ToolTip toolTip1;
+        public System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem 滤波ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem Filter50HzToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem BandFilterToolStripMenuItem;

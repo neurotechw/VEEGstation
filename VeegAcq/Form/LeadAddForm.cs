@@ -577,9 +577,7 @@ namespace VeegStation
             //SetListViewText("");
         }
         #endregion
-
         
-
         private void SetDataGridViewText(string text)
         {
             columnIndex = this.dataGridViewTest.CurrentCell.ColumnIndex;
@@ -627,7 +625,6 @@ namespace VeegStation
         private void btnClear_Click(object sender, EventArgs e)
         {
             
-
             #region dataView
             for (int i = 0; i < rowsCount; i++)   //添加30行数据  
             {

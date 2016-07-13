@@ -1127,8 +1127,8 @@ namespace VeegStation
         private void PlaybackForm_Load(object sender, EventArgs e)
         {
             btnPanelPause.Enabled = false;
-            toolTip1.SetToolTip(btnPanelPlay, "加速");
-            toolTip1.SetToolTip(btnPanelPause, "减速");
+            toolTip1.SetToolTip(btnPanelPlay, "播放");
+            toolTip1.SetToolTip(btnPanelPause, "暂停");
             toolTip1.SetToolTip(btn_hide, "隐藏");
             if (nfi.Duration.TotalSeconds <= pageWidthInMM / timeStandard)
                 btnNext.Enabled = false;
@@ -1184,7 +1184,7 @@ namespace VeegStation
                 }
                 //方便该Form与视频弹出Form进行数据交换
                 video = new VideoForm(this);
-                Thread.Sleep(500);
+                Thread.Sleep(1500);
                 Player.Pause();              
             }
             else

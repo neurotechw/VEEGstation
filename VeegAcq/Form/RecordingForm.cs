@@ -48,6 +48,12 @@ namespace VeegStation
             {
                 return;
             }
+            if (!_player.IsPlaying)
+            {
+                MessageBox.Show("摄像机未设置成功");
+                this.Close();
+                return;
+            }
             _start = DateTime.Now;
             _ffmpeg = new Process();
             _ffmpeg.StartInfo.UseShellExecute = false;

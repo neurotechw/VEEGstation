@@ -293,24 +293,27 @@ namespace VeegStation
             dt.Columns.Add("电极名称", typeof(string));
 
             
-                //加载defaultLeadSource的数据
-                ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
+            //加载defaultLeadSource的数据
+            ArrayList dKeys = new ArrayList(defaultLeadSource.Keys);
 
-                //排序key
-                dKeys.Sort();
+            //排序key
+            dKeys.Sort();
 
-                //j行i列
-                for (int i = 0; i < dKeys.Count; i++)
-                {
-                    dt.Rows[i][0] = dKeys[i].ToString();
-                    dt.Rows[i][1] = defaultLeadSource[dKeys[i]].ToString();
-                }
+            //j行i列
+            for (int i = 0; i < dKeys.Count; i++)
+            {
+                dt.Rows[i][0] = dKeys[i].ToString();
+                dt.Rows[i][1] = defaultLeadSource[dKeys[i]].ToString();
+            }
 
-                //取消点击列排序功能
-                for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
-                {
-                    dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-                }
+            //取消点击列排序功能
+            for (int i = 0; i < dataGridViewTest.Columns.Count; i++)
+            {
+                dataGridViewTest.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+
+            //设置编号所在列的宽度（将其设置得窄一点）  -- by lxl
+            this.dataGridViewTest.Columns[0].Width = NUM_COLUMN_WIDTH;
         }
 
         /// <summary>
@@ -343,12 +346,6 @@ namespace VeegStation
                 }
             }
             
-            //if (this.lvSourceList.SelectedItems.Count != 0)
-            //{
-            //    this.lvSourceList.SelectedItems[0].SubItems[1].Text = text;
-            //}
-            ////清除选项，主要目的是点清除一项时不清除上次点选的数据
-            //this.lvSourceList.SelectedItems.Clear();
         }
 
         #region 按钮点击
