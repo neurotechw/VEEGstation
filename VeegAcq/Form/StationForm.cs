@@ -100,7 +100,7 @@ namespace VeegStation
             DirectoryInfo diTop = new DirectoryInfo(DefaultConfig.EegDataPath);
            
             lvFiles.BeginUpdate();
-            lvFiles.Items.Clear();
+            lvFiles.Items.Clear();            
             foreach (var sub in diTop.EnumerateDirectories())
             {
                 //foreach (var file in sub.EnumerateFiles("*.NED"))
