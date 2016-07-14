@@ -351,7 +351,7 @@
             this.tbEEGPath.Location = new System.Drawing.Point(60, 0);
             this.tbEEGPath.Name = "tbEEGPath";
             this.tbEEGPath.ReadOnly = true;
-            this.tbEEGPath.Size = new System.Drawing.Size(331, 20);
+            this.tbEEGPath.Size = new System.Drawing.Size(331, 21);
             this.tbEEGPath.TabIndex = 7;
             // 
             // btnBrowseEEGFile
@@ -409,7 +409,7 @@
             this.tbVideoPath.Location = new System.Drawing.Point(96, 0);
             this.tbVideoPath.Name = "tbVideoPath";
             this.tbVideoPath.ReadOnly = true;
-            this.tbVideoPath.Size = new System.Drawing.Size(158, 20);
+            this.tbVideoPath.Size = new System.Drawing.Size(158, 21);
             this.tbVideoPath.TabIndex = 10;
             // 
             // btnBrowseVideoPath
@@ -418,7 +418,7 @@
             this.btnBrowseVideoPath.Name = "btnBrowseVideoPath";
             this.btnBrowseVideoPath.Size = new System.Drawing.Size(30, 20);
             this.btnBrowseVideoPath.TabIndex = 11;
-            this.btnBrowseVideoPath.Text="···";
+            this.btnBrowseVideoPath.Text = "···";
             this.btnBrowseVideoPath.Click += new System.EventHandler(this.BtnBrowseVideoPath_Click);
             // 
             // label4
@@ -430,6 +430,7 @@
             this.label4.Size = new System.Drawing.Size(55, 15);
             this.label4.TabIndex = 11;
             this.label4.Text = "脑电详情";
+            this.label4.Visible = false;
             // 
             // groupBox1
             // 
