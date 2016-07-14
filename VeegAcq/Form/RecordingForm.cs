@@ -131,6 +131,11 @@ namespace VeegStation
 
         private void RecordingForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (_player.IsPlaying)
+            {
+                MessageBox.Show("文件已成功保存到:" + myController.CommonDataPool.VideoPath + " 中");
+            }
+
             if (_ffmpeg != null)
             {
                 _ffmpeg.StandardInput.WriteLine("q");
@@ -150,7 +155,6 @@ namespace VeegStation
             _player.Stop();
             _player.Dispose();
             _media.Dispose();
-            MessageBox.Show("文件已成功保存到:" + myController.CommonDataPool.VideoPath + " 中");
         }
 
         private void timerShowNow_Tick(object sender, EventArgs e)
