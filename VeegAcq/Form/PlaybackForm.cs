@@ -1315,6 +1315,13 @@ namespace VeegStation
             //if (nfi.HasVideo)
             //    TimeChange();
             UpdateBtnEnable();
+
+            //若处于自动播放状态，则停止
+            if (timerAutoPageNext.Enabled)
+            {
+                timerAutoPageNext.Stop();
+                btnPlayAutomatic.Text = "自动播放";
+            }
         }
 
         /// <summary>
@@ -1346,6 +1353,13 @@ namespace VeegStation
             
             //翻页后，更新按钮状态是否可用
             UpdateBtnEnable();
+
+            //若处于自动播放状态，则停止
+            if (timerAutoPageNext.Enabled)
+            {
+                timerAutoPageNext.Stop();
+                btnPlayAutomatic.Text = "自动播放";
+            }
         }
 
         #region  Time时间--by wsp
@@ -1512,6 +1526,7 @@ namespace VeegStation
             btnPause.Enabled = true;
             btnPanelPlay.Enabled = false;
             btnPanelPause.Enabled = true;
+            this.btnPlayAutomatic.Enabled = false;
         }
 
         /// <summary>
@@ -1533,6 +1548,7 @@ namespace VeegStation
             btnPlay.Enabled = true;
             btnPanelPause.Enabled = false;
             btnPanelPlay.Enabled = true;
+            this.btnPlayAutomatic.Enabled = true;
         }
 
         /// <summary>
@@ -1542,6 +1558,14 @@ namespace VeegStation
         /// <param name="e"></param>
         public void btnPlay_Click(object sender, EventArgs e)
         {
+            //若处于自动播放状态，则停止
+            if (timerAutoPageNext.Enabled)
+            {
+                timerAutoPageNext.Stop();
+                btnPlayAutomatic.Text = "自动播放";
+            }
+
+
             Play();
             if (isPop == 1)
             {
@@ -2810,6 +2834,7 @@ namespace VeegStation
         /// <param name="e"></param>
         private void Chartwave_Click(object sender, EventArgs e)
         {
+            this.chartWave.Select();
             if (isAddingEvent)
             {
                 //左键才添加事件，右键则不添加事件
@@ -3878,5 +3903,145 @@ namespace VeegStation
             }
         }
 
+        /// <summary>
+        /// 图表的按键事件，用于实现各种快捷键操作
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChartWave_KeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch(e.KeyCode)
+            {
+                case Keys.Up: MoveCurrentSelectedSensitivityMenuItem(false); break;
+                case Keys.Down: MoveCurrentSelectedSensitivityMenuItem(true); break;
+                case Keys.Left: this.btnPrev.PerformClick(); break;
+                case Keys.Right: this.btnNext.PerformClick(); break;
+                case Keys.PageUp: MoveCurrentSelectedTimeStandardMenuItem(false); break;
+                case Keys.PageDown: MoveCurrentSelectedTimeStandardMenuItem(true); break;
+            }
+            this.chartWave.Select();
+        }
+
+        /// <summary>
+        /// 移动当前选择的灵敏度
+        /// -- by lxl
+        /// </summary>
+        /// <param name="foward">true为所选项后移，false为前移</param>
+        private void MoveCurrentSelectedSensitivityMenuItem(bool foward)
+        {
+            //获取当前灵敏度的索引
+            int indexOfSensitivityArray;
+            for (indexOfSensitivityArray = 0; indexOfSensitivityArray < sensitivityArray.Length; indexOfSensitivityArray++)
+            {
+                if (sensitivityArray[indexOfSensitivityArray] == sensitivity)
+                    break;
+            }
+
+            //根据所选前移或者后移来让修改灵敏度索引
+            if (foward && indexOfSensitivityArray < sensitivityArray.Length - 1)
+            {
+                indexOfSensitivityArray++;
+                //执行最终灵敏度的点击事件
+                this.sensitivityToolStripMenuItem.DropDownItems[indexOfSensitivityArray].PerformClick();
+            }
+            if (!foward && indexOfSensitivityArray > 0)
+            {
+                indexOfSensitivityArray--;
+                //执行最终灵敏度的点击事件
+                this.sensitivityToolStripMenuItem.DropDownItems[indexOfSensitivityArray].PerformClick();
+            }
+        }
+
+        /// <summary>
+        /// 移动当前选择的时间基准
+        /// -- by lxl
+        /// </summary>
+        /// <param name="foward">true为所选项后移，false为前移</param>
+        private void MoveCurrentSelectedTimeStandardMenuItem(bool foward)
+        {
+            //获取当前灵敏度的索引
+            int indexOfTimeStandardArray;
+            for (indexOfTimeStandardArray = 0; indexOfTimeStandardArray < timeStandardArray.Length; indexOfTimeStandardArray++)
+            {
+                if (timeStandardArray[indexOfTimeStandardArray] == timeStandard)
+                    break;
+            }
+
+            //根据所选前移或者后移来让修改灵敏度索引
+            if (foward && indexOfTimeStandardArray < timeStandardArray.Length - 1)
+            {
+                indexOfTimeStandardArray++;
+                //执行最终的时间基准点击事件
+                this.timeStandartToolStripMenuItem.DropDownItems[indexOfTimeStandardArray].PerformClick();
+            }
+            if (!foward && indexOfTimeStandardArray > 0)
+            {
+                indexOfTimeStandardArray--;
+                //执行最终的时间基准点击事件
+                this.timeStandartToolStripMenuItem.DropDownItems[indexOfTimeStandardArray].PerformClick();
+            }
+
+        }
+
+        /// <summary>
+        /// 重载窗口的按键处理事件，不让其处理上下左右等需要设置为快捷键的事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (this.chartWave.Focused)
+            {
+                if (keyData == Keys.Up || keyData == Keys.Down || keyData == Keys.Left || keyData == Keys.Right || keyData == Keys.PageDown || keyData == Keys.PageUp)
+                    return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        /// <summary>
+        /// 自动播放按钮事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnPlayAutomatic_Click(object sender, EventArgs e)
+        {
+            if (!timerAutoPageNext.Enabled)
+            {
+                (sender as ToolStripButton).Text = "停止自动播放";
+                timerAutoPageNext.Start();
+            }
+            else
+            {
+                (sender as ToolStripButton).Text = "自动播放";
+                timerAutoPageNext.Stop();
+            }
+        }
+
+        /// <summary>
+        /// 自动播放timer事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timerAutoPageNext_Tick(object sender, EventArgs e)
+        {
+            Pause();
+            if (nfi.HasVideo)
+            {
+                if (isPop == 1)
+                    video.PauseVideo();
+            }
+            PageNext2();
+
+            //点击了下一页，进度条，时间要变化
+            Changed();
+
+            //翻页后，更新按钮状态是否可用
+            UpdateBtnEnable();
+        }
     }
 }
