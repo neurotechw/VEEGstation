@@ -11,6 +11,7 @@ namespace VeegStation
     /// </summary>
     public class NationFile
     {
+        VeegControl myController;
         #region 声明域和属性
         /// <summary>
         /// 基本信息
@@ -204,8 +205,9 @@ namespace VeegStation
         }
         #endregion
 
-        public NationFile()
+        public NationFile(VeegControl ctrl)
         {
+            myController = ctrl;
             //_NatInfo = new NatInfo();
             //_PatInfo = new PatInfo();
             //_EEGFmt = new EEGFmt();
@@ -518,6 +520,10 @@ namespace VeegStation
         /// </summary>
         public void CheckHasVideo() 
         {
+            if (!Directory.Exists(DefaultConfig.AssociatedVideoPath))
+            {
+                Directory.CreateDirectory(DefaultConfig.AssociatedVideoPath);
+            }
             DirectoryInfo diTop = new DirectoryInfo(DefaultConfig.AssociatedVideoPath);
             var files = diTop.EnumerateFiles("*.MP4");
             this.HasVideo = false;

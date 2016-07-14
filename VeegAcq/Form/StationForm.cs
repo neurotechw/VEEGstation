@@ -35,6 +35,9 @@ namespace VeegStation
         {
             InitializeComponent();
             LogHelper.WriteLog(typeof(StationForm),  "测试日志是否添加成功");
+            myController = new VeegControl();
+            this.tbEEGPath.Text=myController.CommonDataPool.EegDataPath;
+            this.tbVideoPath.Text = myController.CommonDataPool.VideoPath;
         }
 
         private void HelpAbout_Click(object sender, EventArgs e)
@@ -80,6 +83,8 @@ namespace VeegStation
                 _media.Dispose();
             }
             catch { }
+
+            myController.SaveConfitWhileQuite();
         }
 
         private void timerVideo_Tick(object sender, EventArgs e)
@@ -96,8 +101,13 @@ namespace VeegStation
 
         private void LoadEegDataList()
         {
+            if (!Directory.Exists(myController.CommonDataPool.EegDataPath))
+            {
+                MessageBox.Show("文件夹:" + myController.CommonDataPool.EegDataPath + " 不存在，请重新选择保存脑电数据的病例库文件夹");
+                return;
+            }
             _eegFiles.Clear();
-            DirectoryInfo diTop = new DirectoryInfo(DefaultConfig.EegDataPath);
+            DirectoryInfo diTop = new DirectoryInfo(myController.CommonDataPool.EegDataPath);
            
             lvFiles.BeginUpdate();
             lvFiles.Items.Clear();            
@@ -119,7 +129,7 @@ namespace VeegStation
                 {
                     try
                     {
-                        NationFile nationFile = new NationFile();
+                        NationFile nationFile = new NationFile(this.myController);
                         nationFile.ReadNationFile(file.FullName);
                         nationFile.CheckHasVideo();
                         _eegFiles.Add(nationFile);
@@ -145,6 +155,21 @@ namespace VeegStation
             //    lvi.SubItems.Add(dt);
             //    lvFiles.Items.Add(lvi);
             //}
+
+            foreach (var file in diTop.EnumerateFiles("*.NAT"))
+            {
+                try
+                {
+                    NationFile nationFile = new NationFile(this.myController);
+                    nationFile.ReadNationFile(file.FullName);
+                    nationFile.CheckHasVideo();
+                    _eegFiles.Add(nationFile);
+                }
+                catch
+                {
+                }
+            }
+
             foreach (NationFile nfi in _eegFiles)
             {
                 string dt = nfi.StartDateTime.ToString("s").Replace('T', ' ');
@@ -165,8 +190,14 @@ namespace VeegStation
 
         private void LoadVideoList()
         {
+            if (!Directory.Exists(myController.CommonDataPool.VideoPath))
+            {
+                MessageBox.Show("文件夹:" + myController.CommonDataPool.VideoPath + " 不存在，请重新选择保存视频的文件夹");
+                return;
+            }
             _videoFiles.Clear();
-            DirectoryInfo diTop = new DirectoryInfo(DefaultConfig.VideoSegmentPath);
+            //DirectoryInfo diTop = new DirectoryInfo(DefaultConfig.VideoSegmentPath);
+            DirectoryInfo diTop = new DirectoryInfo(myController.CommonDataPool.VideoPath);
             var files = diTop.EnumerateFiles("*.MP4");
             foreach (var file in files)
             {
@@ -285,7 +316,7 @@ namespace VeegStation
 
         private void btnRecord_Click(object sender, EventArgs e)
         {
-            RecordingForm rec = new RecordingForm();
+            RecordingForm rec = new RecordingForm(this.myController);
             rec.ShowDialog();
             rec.Dispose();
             RefreshFiles();
@@ -299,6 +330,11 @@ namespace VeegStation
         private void toolButtonAssociate_Click(object sender, EventArgs e)
         {
             _player.Stop();
+
+            if (!Directory.Exists(DefaultConfig.AssociatedVideoPath))
+            {
+                Directory.CreateDirectory(DefaultConfig.AssociatedVideoPath);
+            }
             
             int idxFile = lvFiles.SelectedIndices[0];
             int idxVideo = lvVideoFiles.SelectedIndices[0];
@@ -332,6 +368,7 @@ namespace VeegStation
                 {
                     File.Move(vfi.FileFullName, DefaultConfig.AssociatedVideoPath + @"\" + nfi.PatInfo.ID + "_" + ((int)(nfi.StartDateTime - vfi.StartTime).TotalMilliseconds).ToString() + ".MP4");
                     RefreshFiles();
+                    MessageBox.Show("视频文件已成功关联，并移动到：" + DefaultConfig.AssociatedVideoPath + " 中");
                 }
             //}
             ////xcg
@@ -367,12 +404,71 @@ namespace VeegStation
             }
             PlaybackForm play = new PlaybackForm(_eegFiles[lvFiles.SelectedIndices[0]]);
             //--by zt
-            myController = new VeegControl(play);
+            myController.RegisterPlayBackForm(play);
             play.ReigisterVeegControl(myController);
             play.InitPlaybackFormParas();
             play.ShowDialog();
             Thread.Sleep(500);
             play.Dispose();
+        }
+
+        /// <summary>
+        /// 浏览文件夹路径按钮点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnBrowseEEGFile_Click(object sender, EventArgs e)
+        {
+            /// <summary>
+            /// 声明文件浏览对话框 
+            /// </summary>
+            FolderBrowserDialog openFolder = new FolderBrowserDialog();
+
+            //设置对话框的名字 
+            openFolder.Description = "请选择文件路径";
+
+            //文件浏览对话框成功打开
+            if (openFolder.ShowDialog() == DialogResult.OK)
+            {
+                //保存所选择的路径
+                myController.CommonDataPool.EegDataPath = openFolder.SelectedPath;
+
+                //设置显示脑电数据文件夹的路径的TextBox的值
+                this.tbEEGPath.Text = openFolder.SelectedPath;
+
+                //重新加载数据
+                LoadEegDataList();
+            }
+        }
+
+        /// <summary>
+        /// 浏览视频文件夹路径点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnBrowseVideoPath_Click(object sender, EventArgs e)
+        {
+            /// <summary>
+            /// 声明文件浏览对话框 
+            /// </summary>
+            FolderBrowserDialog openFolder = new FolderBrowserDialog();
+
+            //设置对话框的名字 
+            openFolder.Description = "请选择视频文件路径";
+
+            if (openFolder.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                //保存所选择的路径
+                myController.CommonDataPool.VideoPath = openFolder.SelectedPath;
+
+                //设置显示脑电视频文件夹的路径的TextBox的值
+                this.tbVideoPath.Text = openFolder.SelectedPath;
+
+                //重新加载数据
+                LoadVideoList();
+            }
         }
 
         private void My_DrawItem(object sender, DrawListViewItemEventArgs e)

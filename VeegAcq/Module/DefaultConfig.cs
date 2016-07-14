@@ -15,7 +15,7 @@ namespace VeegStation
 
         //public static string CameraIP { get { return _CameraIP; } }
         public static string[] PlayerOptions { get { return _PlayerOptions; } }
-        public static string EegDataPath { get { return _EegDataPath; } }
+        public static string EegDataPath { get { return _EegDataPath; } set { _EegDataPath = value; } }
         public static string VideoSegmentPath { get { return _VideoBasePath + @"\VSEG"; } }
         public static string AssociatedVideoPath { get { return _VideoBasePath + @"\VSOC"; } }
     }

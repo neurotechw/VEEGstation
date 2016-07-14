@@ -20,6 +20,7 @@ namespace VeegStation
 {
     public partial class RecordingForm : Form
     {
+        private VeegControl myController;
         private IVideoPlayer _player;
         private IMedia _media;
         private Process _ffmpeg;
@@ -29,8 +30,9 @@ namespace VeegStation
         //记录系统配置文件中摄像机的IP
         private string cameraIP;
 
-        public RecordingForm()
+        public RecordingForm(VeegControl ctrl)
         {
+            this.myController = ctrl;
             InitializeComponent();
             //xcg
             // 获取系统配置文件中摄像机的IP
@@ -54,6 +56,10 @@ namespace VeegStation
                 this.Close();
                 return;
             }
+            if (!System.IO.Directory.Exists(myController.CommonDataPool.VideoPath))
+            {
+                System.IO.Directory.CreateDirectory(myController.CommonDataPool.VideoPath);
+            }
             _start = DateTime.Now;
             _ffmpeg = new Process();
             _ffmpeg.StartInfo.UseShellExecute = false;
@@ -66,7 +72,7 @@ namespace VeegStation
                 //+ DefaultConfig.VideoSegmentPath + "\\" + _start.ToString("yyyyMMddHHmmss") + ".mp4";
             //xcg
             _ffmpeg.StartInfo.Arguments = "-i \"rtsp://admin:admin@" + cameraIP + ":554/cam/realmonitor?channel=1&subtype=1\" "
-            + DefaultConfig.VideoSegmentPath + "\\" + _start.ToString("yyyyMMddHHmmss") + ".mp4";
+            + myController.CommonDataPool.VideoPath + "\\" + _start.ToString("yyyyMMddHHmmss") + ".mp4";
             _ffmpeg.Start();
             _ffmpeg.ErrorDataReceived += ffmpeg_ErrorDataReceived;
             _ffmpeg.OutputDataReceived += ffmpeg_OutputDataReceived;
@@ -144,6 +150,7 @@ namespace VeegStation
             _player.Stop();
             _player.Dispose();
             _media.Dispose();
+            MessageBox.Show("文件已成功保存到:" + myController.CommonDataPool.VideoPath + " 中");
         }
 
         private void timerShowNow_Tick(object sender, EventArgs e)

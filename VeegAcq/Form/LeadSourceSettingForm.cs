@@ -313,7 +313,7 @@ namespace VeegStation
             }
 
             //设置编号所在列的宽度（将其设置得窄一点）  -- by lxl
-            this.dataGridViewTest.Columns[0].FillWeight = NUM_COLUMN_WEIGHT;
+            this.dataGridViewTest.Columns[0].FillWeight = NUM_COLUMN_WEIGHT;    
         }
 
         /// <summary>

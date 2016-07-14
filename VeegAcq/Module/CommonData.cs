@@ -52,6 +52,30 @@ namespace VeegStation
         /// </summary>
         private int sensitivity;
 
+        /// <summary>
+        /// EEG文件所在文件夹路径
+        /// -- by lxl
+        /// </summary>
+        private string eegDataPath;
+
+        /// <summary>
+        /// 视频文件所在文件夹基础路径
+        /// -- by lxl
+        /// </summary>
+        private string videoPath;
+
+        public string VideoPath
+        {
+            get { return videoPath; }
+            set { videoPath = value; }
+        }
+
+        public string EegDataPath
+        {
+            get { return eegDataPath; }
+            set { eegDataPath = value; }
+        }
+
         public int Sensitivity
         {
             get { return sensitivity; }
