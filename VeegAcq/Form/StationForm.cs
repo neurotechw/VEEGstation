@@ -177,7 +177,7 @@ namespace VeegStation
         {
             if (!Directory.Exists(myController.CommonDataPool.VideoPath))
             {
-                MessageBox.Show("文件夹:" + myController.CommonDataPool.VideoPath + " 不存在，请重新选择");
+                MessageBox.Show("文件夹:" + myController.CommonDataPool.VideoPath + " 不存在，请重新选择保存视频的文件夹");
                 return;
             }
             _videoFiles.Clear();

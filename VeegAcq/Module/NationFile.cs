@@ -520,6 +520,10 @@ namespace VeegStation
         /// </summary>
         public void CheckHasVideo() 
         {
+            if (!Directory.Exists(DefaultConfig.AssociatedVideoPath))
+            {
+                Directory.CreateDirectory(DefaultConfig.AssociatedVideoPath);
+            }
             DirectoryInfo diTop = new DirectoryInfo(DefaultConfig.AssociatedVideoPath);
             var files = diTop.EnumerateFiles("*.MP4");
             this.HasVideo = false;
