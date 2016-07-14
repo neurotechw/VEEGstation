@@ -155,6 +155,21 @@ namespace VeegStation
             //    lvi.SubItems.Add(dt);
             //    lvFiles.Items.Add(lvi);
             //}
+
+            foreach (var file in diTop.EnumerateFiles("*.NAT"))
+            {
+                try
+                {
+                    NationFile nationFile = new NationFile(this.myController);
+                    nationFile.ReadNationFile(file.FullName);
+                    nationFile.CheckHasVideo();
+                    _eegFiles.Add(nationFile);
+                }
+                catch
+                {
+                }
+            }
+
             foreach (NationFile nfi in _eegFiles)
             {
                 string dt = nfi.StartDateTime.ToString("s").Replace('T', ' ');
