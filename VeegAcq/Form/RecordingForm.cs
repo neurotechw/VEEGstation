@@ -104,6 +104,7 @@ namespace VeegStation
             _media = factory.CreateMedia<IMedia>("rtsp://admin:admin@" + cameraIP + ":554/cam/realmonitor?channel=1&subtype=1", DefaultConfig.PlayerOptions);
             _player = factory.CreatePlayer<IVideoPlayer>();
             _player.AspectRatio = AspectRatioMode.Mode2;
+            _player.WindowHandle = panelPreview.Handle;
             _player.Open(_media);
             _player.Play();
 
