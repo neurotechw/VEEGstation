@@ -32,6 +32,8 @@ namespace VeegStation
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlaybackForm));
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.StripLine stripLine1 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
+            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine2 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
+            System.Windows.Forms.DataVisualization.Charting.StripLine stripLine3 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.btnAutoPlay = new System.Windows.Forms.ToolStrip();
@@ -42,6 +44,7 @@ namespace VeegStation
             this.speedComBox = new System.Windows.Forms.ToolStripComboBox();
             this.btnPrev = new System.Windows.Forms.ToolStripButton();
             this.btnNext = new System.Windows.Forms.ToolStripButton();
+            this.btnPlayAutomatic = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStriplabel_abtime = new System.Windows.Forms.ToolStripStatusLabel();
             this.displayStartTime = new System.Windows.Forms.ToolStripStatusLabel();
@@ -57,6 +60,10 @@ namespace VeegStation
             this.toolStripStatusLabel_trap = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_lbBandFilter = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel_bandFilter = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_lblYDiff = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_YDiff = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_lblXDiff = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel_XDiff = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelVideo = new System.Windows.Forms.Panel();
             this.chartWave = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.timer = new System.Windows.Forms.Timer(this.components);
@@ -114,6 +121,9 @@ namespace VeegStation
             this.customeEventstoolstripmenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SettingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.leadConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeasureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MeasureStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ChangeMeasureLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.boardPanel = new System.Windows.Forms.Panel();
             this.tyPanelEventListView = new System.Windows.Forms.TableLayoutPanel();
             this.lvCustomEvents = new System.Windows.Forms.ListView();
@@ -140,7 +150,6 @@ namespace VeegStation
             this.labelPanel = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.timerAutoPageNext = new System.Windows.Forms.Timer(this.components);
-            this.btnPlayAutomatic = new System.Windows.Forms.ToolStripButton();
             this.btnAutoPlay.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
@@ -226,6 +235,15 @@ namespace VeegStation
             this.btnNext.Text = "下一页";
             this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
+            // btnPlayAutomatic
+            // 
+            this.btnPlayAutomatic.Image = ((System.Drawing.Image)(resources.GetObject("btnPlayAutomatic.Image")));
+            this.btnPlayAutomatic.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPlayAutomatic.Name = "btnPlayAutomatic";
+            this.btnPlayAutomatic.Size = new System.Drawing.Size(75, 22);
+            this.btnPlayAutomatic.Text = "自动翻页";
+            this.btnPlayAutomatic.Click += new System.EventHandler(this.btnPlayAutomatic_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -242,7 +260,11 @@ namespace VeegStation
             this.toolStripStatusLabel_lbTrap,
             this.toolStripStatusLabel_trap,
             this.toolStripStatusLabel_lbBandFilter,
-            this.toolStripStatusLabel_bandFilter});
+            this.toolStripStatusLabel_bandFilter,
+            this.toolStripStatusLabel_lblYDiff,
+            this.toolStripStatusLabel_YDiff,
+            this.toolStripStatusLabel_lblXDiff,
+            this.toolStripStatusLabel_XDiff});
             this.statusStrip1.Location = new System.Drawing.Point(0, 556);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(942, 26);
@@ -361,6 +383,38 @@ namespace VeegStation
             this.toolStripStatusLabel_bandFilter.Size = new System.Drawing.Size(44, 21);
             this.toolStripStatusLabel_bandFilter.Text = "None";
             // 
+            // toolStripStatusLabel_lblYDiff
+            // 
+            this.toolStripStatusLabel_lblYDiff.Name = "toolStripStatusLabel_lblYDiff";
+            this.toolStripStatusLabel_lblYDiff.Size = new System.Drawing.Size(51, 21);
+            this.toolStripStatusLabel_lblYDiff.Text = "Y轴差值";
+            // 
+            // toolStripStatusLabel_YDiff
+            // 
+            this.toolStripStatusLabel_YDiff.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.toolStripStatusLabel_YDiff.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
+            this.toolStripStatusLabel_YDiff.Name = "toolStripStatusLabel_YDiff";
+            this.toolStripStatusLabel_YDiff.Size = new System.Drawing.Size(36, 21);
+            this.toolStripStatusLabel_YDiff.Text = "###";
+            // 
+            // toolStripStatusLabel_lblXDiff
+            // 
+            this.toolStripStatusLabel_lblXDiff.Name = "toolStripStatusLabel_lblXDiff";
+            this.toolStripStatusLabel_lblXDiff.Size = new System.Drawing.Size(52, 21);
+            this.toolStripStatusLabel_lblXDiff.Text = "X轴差值";
+            // 
+            // toolStripStatusLabel_XDiff
+            // 
+            this.toolStripStatusLabel_XDiff.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.toolStripStatusLabel_XDiff.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
+            this.toolStripStatusLabel_XDiff.Name = "toolStripStatusLabel_XDiff";
+            this.toolStripStatusLabel_XDiff.Size = new System.Drawing.Size(36, 21);
+            this.toolStripStatusLabel_XDiff.Text = "###";
+            // 
             // panelVideo
             // 
             this.panelVideo.AccessibleRole = System.Windows.Forms.AccessibleRole.Cursor;
@@ -389,8 +443,11 @@ namespace VeegStation
             chartArea1.AxisX.Minimum = 0D;
             stripLine1.BorderColor = System.Drawing.Color.Black;
             stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
-            stripLine1.StripWidth = 0.0001D;
+            stripLine1.IntervalOffset = -1D;
+            stripLine2.BorderColor = System.Drawing.Color.Green;
+            stripLine2.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             chartArea1.AxisX.StripLines.Add(stripLine1);
+            chartArea1.AxisX.StripLines.Add(stripLine2);
             chartArea1.AxisY.InterlacedColor = System.Drawing.Color.WhiteSmoke;
             chartArea1.AxisY.IsInterlaced = true;
             chartArea1.AxisY.LabelStyle.Enabled = false;
@@ -402,7 +459,17 @@ namespace VeegStation
             chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
             chartArea1.AxisY.Maximum = 2000D;
             chartArea1.AxisY.Minimum = 0D;
+            stripLine3.BorderColor = System.Drawing.Color.Green;
+            stripLine3.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
+            stripLine3.IntervalOffset = -1D;
+            chartArea1.AxisY.StripLines.Add(stripLine3);
+            chartArea1.CursorX.Interval = 0.001D;
+            chartArea1.CursorX.IsUserEnabled = true;
+            chartArea1.CursorX.LineColor = System.Drawing.Color.Black;
+            chartArea1.CursorX.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             chartArea1.CursorY.IsUserEnabled = true;
+            chartArea1.CursorY.LineColor = System.Drawing.Color.Black;
+            chartArea1.CursorY.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             chartArea1.Name = "mainArea";
             chartArea1.Position.Auto = false;
             chartArea1.Position.Height = 94F;
@@ -425,6 +492,7 @@ namespace VeegStation
             this.chartWave.Size = new System.Drawing.Size(880, 494);
             this.chartWave.TabIndex = 3;
             this.chartWave.Text = "chart1";
+            this.chartWave.CursorPositionChanging += new System.EventHandler<System.Windows.Forms.DataVisualization.Charting.CursorEventArgs>(this.CursorPositionChanging);
             this.chartWave.ClientSizeChanged += new System.EventHandler(this.ChartSizeChanged);
             this.chartWave.Click += new System.EventHandler(this.Chartwave_Click);
             this.chartWave.Paint += new System.Windows.Forms.PaintEventHandler(this.ChartPaint);
@@ -768,7 +836,8 @@ namespace VeegStation
             this.calibrateToolStripMenuItem,
             this.interfaceToolStripMenuItem,
             this.eventToolStripMenuItem,
-            this.SettingToolStripMenuItem});
+            this.SettingToolStripMenuItem,
+            this.MeasureToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(942, 24);
@@ -934,9 +1003,34 @@ namespace VeegStation
             // leadConfigToolStripMenuItem
             // 
             this.leadConfigToolStripMenuItem.Name = "leadConfigToolStripMenuItem";
-            this.leadConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.leadConfigToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.leadConfigToolStripMenuItem.Text = "导联编制";
             this.leadConfigToolStripMenuItem.Click += new System.EventHandler(this.leadConfigToolStripMenuItem_Click);
+            // 
+            // MeasureToolStripMenuItem
+            // 
+            this.MeasureToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MeasureStartToolStripMenuItem,
+            this.ChangeMeasureLineToolStripMenuItem});
+            this.MeasureToolStripMenuItem.Name = "MeasureToolStripMenuItem";
+            this.MeasureToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.M)));
+            this.MeasureToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
+            this.MeasureToolStripMenuItem.Text = "测量(M)";
+            // 
+            // MeasureStartToolStripMenuItem
+            // 
+            this.MeasureStartToolStripMenuItem.Name = "MeasureStartToolStripMenuItem";
+            this.MeasureStartToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.MeasureStartToolStripMenuItem.Text = "开始测量";
+            this.MeasureStartToolStripMenuItem.Click += new System.EventHandler(this.MeasureStartToolStripMenuItem_Click);
+            // 
+            // ChangeMeasureLineToolStripMenuItem
+            // 
+            this.ChangeMeasureLineToolStripMenuItem.Enabled = false;
+            this.ChangeMeasureLineToolStripMenuItem.Name = "ChangeMeasureLineToolStripMenuItem";
+            this.ChangeMeasureLineToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.ChangeMeasureLineToolStripMenuItem.Text = "换线";
+            this.ChangeMeasureLineToolStripMenuItem.Click += new System.EventHandler(this.ChangeMeasureLineToolStripMenuItem_Click);
             // 
             // boardPanel
             // 
@@ -1007,6 +1101,7 @@ namespace VeegStation
             this.lvCustomEvents.TabIndex = 14;
             this.lvCustomEvents.UseCompatibleStateImageBehavior = false;
             this.lvCustomEvents.View = System.Windows.Forms.View.Details;
+            this.lvCustomEvents.SelectedIndexChanged += new System.EventHandler(this.lvCustomEvents_SelectedIndexChanged);
             this.lvCustomEvents.Click += new System.EventHandler(this.lvCustomEvents_Click);
             // 
             // lvCENumber
@@ -1226,17 +1321,8 @@ namespace VeegStation
             // 
             // timerAutoPageNext
             // 
-            this.timerAutoPageNext.Interval = 3000;
+            this.timerAutoPageNext.Interval = 2000;
             this.timerAutoPageNext.Tick += new System.EventHandler(this.timerAutoPageNext_Tick);
-            // 
-            // btnPlayAutomatic
-            // 
-            this.btnPlayAutomatic.Image = ((System.Drawing.Image)(resources.GetObject("btnPlayAutomatic.Image")));
-            this.btnPlayAutomatic.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnPlayAutomatic.Name = "btnPlayAutomatic";
-            this.btnPlayAutomatic.Size = new System.Drawing.Size(75, 22);
-            this.btnPlayAutomatic.Text = "自动播放";
-            this.btnPlayAutomatic.Click += new System.EventHandler(this.btnPlayAutomatic_Click);
             // 
             // PlaybackForm
             // 
@@ -1392,5 +1478,12 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripLabel toolStripLabel_playSpeed;
         private System.Windows.Forms.Timer timerAutoPageNext;
         private System.Windows.Forms.ToolStripButton btnPlayAutomatic;
+        private System.Windows.Forms.ToolStripMenuItem MeasureToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem MeasureStartToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ChangeMeasureLineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_lblYDiff;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_YDiff;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_lblXDiff;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel_XDiff;
     }
 }

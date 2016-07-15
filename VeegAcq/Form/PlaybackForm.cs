@@ -467,6 +467,12 @@ namespace VeegStation
         /// -- by lxl
         /// </summary>
         private int addingEventColorIndex;
+
+        /// <summary>
+        /// 标记是否正在测量
+        /// -- by lxl
+        /// </summary>
+        private bool isMeasure = false;
         #endregion
 
         #region 访问器
@@ -3827,10 +3833,6 @@ namespace VeegStation
             this.btnEditCustomEvents.Enabled = true;
         }
 
-        private void lvPreDefineEvents_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            this.btnEditCustomEvents.Enabled = false;
-        }
         int count = 0;
         private void speedComBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -3903,6 +3905,7 @@ namespace VeegStation
             }
         }
 
+        #region 快捷键模块 -- by lxl
         /// <summary>
         /// 图表的按键事件，用于实现各种快捷键操作
         /// -- by lxl
@@ -4000,7 +4003,10 @@ namespace VeegStation
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+        #endregion
 
+
+        #region 自动播放模块 -- by lxl
         /// <summary>
         /// 自动播放按钮事件
         /// -- by lxl
@@ -4011,12 +4017,12 @@ namespace VeegStation
         {
             if (!timerAutoPageNext.Enabled)
             {
-                (sender as ToolStripButton).Text = "停止自动播放";
+                (sender as ToolStripButton).Text = "停止自动翻页";
                 timerAutoPageNext.Start();
             }
             else
             {
-                (sender as ToolStripButton).Text = "自动播放";
+                (sender as ToolStripButton).Text = "自动翻页";
                 timerAutoPageNext.Stop();
             }
         }
@@ -4042,6 +4048,220 @@ namespace VeegStation
 
             //翻页后，更新按钮状态是否可用
             UpdateBtnEnable();
+
+            //若播到最后了，则停止自动播放
+            if (CurrentSeconds >= totalSeconds - hsProgress.LargeChange + 1)
+            {
+                this.btnPlayAutomatic.PerformClick();
+            }
+        }
+
+        #endregion
+
+        #region 测量模块 -- by lxl
+        /// <summary>
+        /// 开启或者关闭测量
+        /// </summary>
+        /// <param name="start">true为开启测量，false为关闭</param>
+        private void StartOrStopMeasure(bool start)
+        {
+            isMeasure = start;
+            UpdateMeasureLineLocation();
+        }
+
+        /// <summary>
+        /// cursor值改变事件
+        /// by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void CursorPositionChanging(object sender, CursorEventArgs e)
+        {
+            //若在测量，则需要计算并显示测量线的差值
+            if (isMeasure)
+            {
+                if (e.Axis == this.chartWave.ChartAreas[0].AxisX)
+                    this.chartWave.ChartAreas[0].CursorX.Position = e.NewPosition;
+                else
+                    this.chartWave.ChartAreas[0].CursorY.Position = e.NewPosition;
+
+                UpdateMeasureText();
+            }
+        }
+        
+        /// <summary>
+        /// 更新测量线的位置
+        /// -- by lxl
+        /// </summary>
+        private void UpdateMeasureLineLocation()
+        {
+            if (!isMeasure)
+            {
+                //若在测量过程中有换线，则需要将可操作线换回红色的线
+                if (chartWave.ChartAreas[0].CursorX.LineColor == Color.Green)
+                    ChangeMeasureLine();
+                //位置在图标外，消失
+                chartWave.ChartAreas[0].AxisX.StripLines[1].IntervalOffset = -1;
+                chartWave.ChartAreas[0].AxisY.StripLines[0].IntervalOffset = -1;
+
+                this.ChangeMeasureLineToolStripMenuItem.Enabled = false;
+            }
+            else
+            {
+                chartWave.ChartAreas[0].AxisX.StripLines[1].IntervalOffset = Convert.ToDouble(xMaximum) / 2D;
+                chartWave.ChartAreas[0].AxisY.StripLines[0].IntervalOffset = Convert.ToDouble(chartWave.ChartAreas[0].AxisY.Maximum) / 2D;
+
+                this.ChangeMeasureLineToolStripMenuItem.Enabled = true;
+            }
+            UpdateMeasureText();
+        }
+
+        /// <summary>
+        /// 设置测量时所显示的X轴与Y轴差值
+        ///  -- by lxl
+        /// </summary>
+        public void UpdateMeasureText()
+        {
+            if (isMeasure)
+            {
+                //计算与现实X轴与Y轴测量线的差值
+                double xvalue = chartWave.ChartAreas[0].CursorX.Position - chartWave.ChartAreas[0].AxisX.StripLines[1].IntervalOffset;
+                double yvalue = chartWave.ChartAreas[0].CursorY.Position - chartWave.ChartAreas[0].AxisY.StripLines[0].IntervalOffset;
+
+                //sampleDifferValue[sIdx] = sampleDifferValue[sIdx] * 1000 / sensitivity / mmPerYGrid;
+
+                yvalue = yvalue / 1000 * sensitivity * mmPerYGrid;
+
+                this.toolStripStatusLabel_XDiff.Text = Math.Abs(xvalue).ToString("0.00")+'s';
+                this.toolStripStatusLabel_YDiff.Text = Math.Abs(yvalue).ToString("0.00")+"uv";
+            }
+            else
+            {
+                this.toolStripStatusLabel_XDiff.Text = "###";
+                this.toolStripStatusLabel_YDiff.Text = "###";
+            }
+        }
+
+        /// <summary>
+        /// 开始测量按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MeasureStartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.MeasureStartToolStripMenuItem.Checked = !this.MeasureStartToolStripMenuItem.Checked;
+            StartOrStopMeasure(this.MeasureStartToolStripMenuItem.Checked);
+        }
+
+        /// <summary>
+        /// 更改测量操作线
+        ///  -- by lxl
+        /// </summary>
+        private void ChangeMeasureLine()
+        {
+            //将可动的测量线（cursorX与cursorY）与固定的测量线（X与Y轴的stripline）交换位置，颜色
+            double xtemp = chartWave.ChartAreas[0].AxisX.StripLines[1].IntervalOffset;
+            double ytemp = chartWave.ChartAreas[0].AxisY.StripLines[0].IntervalOffset;
+            chartWave.ChartAreas[0].AxisX.StripLines[1].IntervalOffset = chartWave.ChartAreas[0].CursorX.Position;
+            chartWave.ChartAreas[0].AxisY.StripLines[0].IntervalOffset = chartWave.ChartAreas[0].CursorY.Position;
+            chartWave.ChartAreas[0].CursorX.Position = xtemp;
+            chartWave.ChartAreas[0].CursorY.Position = ytemp;
+            Color tempColor = chartWave.ChartAreas[0].AxisX.StripLines[1].BorderColor;
+            chartWave.ChartAreas[0].AxisY.StripLines[0].BorderColor = chartWave.ChartAreas[0].CursorY.LineColor;
+            chartWave.ChartAreas[0].AxisX.StripLines[1].BorderColor = chartWave.ChartAreas[0].CursorY.LineColor;
+            chartWave.ChartAreas[0].CursorY.LineColor = tempColor;
+            chartWave.ChartAreas[0].CursorX.LineColor = tempColor;
+        }
+
+        /// <summary>
+        /// 换线按钮点击事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ChangeMeasureLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeMeasureLine();
+        }
+        #endregion
+
+        /// <summary>
+        /// 右边面板中自定义事件列表所选项改变事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lvCustomEvents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+            if (this.lvCustomEvents.SelectedIndices.Count > 0)
+            {
+                int index = this.lvCustomEvents.SelectedIndices[0];
+                int sec = customEventList[index].EventPosition / sampleRate;
+                JumpToSeconds(sec - 1, customEventList[index].EventPosition);
+            }
+        }
+
+        /// <summary>
+        /// 右边面板中预定义事件列表所选项改变事件
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void lvPreDefineEvents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.btnEditCustomEvents.Enabled = false;
+            if (this.lvPreDefineEvents.SelectedIndices.Count > 0)
+            {
+                int index = this.lvPreDefineEvents.SelectedIndices[0];
+                int sec = GetSortedPreDefineEventList()[index].EventPosition / sampleRate;
+                JumpToSeconds(sec - 1, GetSortedPreDefineEventList()[index].EventPosition);
+            }
+        }
+
+        /// <summary>
+        /// 跳到具体的某秒
+        /// -- by lxl
+        /// </summary>
+        /// <param name="sec">跳转到的秒数</param>
+        /// <param name="pointPos">所选事件的点的位置</param>
+        private void JumpToSeconds(int sec,double pointPos)
+        {
+            if (sec < 0)
+                sec = 0;
+            this.hsProgress.Value = sec;
+            //暂停播放
+            Pause();
+            if (isPop == 1)
+            {
+                if (nfi.HasVideo)
+                    video.PauseVideo();
+            }
+            if (CurrentSeconds != hsProgress.Value)
+            {
+                CurrentSeconds = hsProgress.Value;
+               
+                //为保证拖动进度条之后，竖线位置保持不变--by wsp
+                if (CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset < nfi.Duration.TotalSeconds)
+                {
+
+                    chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = pointPos / sampleRate - sec;
+                    CurrentOffset = CurrentSeconds + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset;
+                   // chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = nfi.Duration.TotalSeconds - CurrentSeconds;
+                }
+
+                else
+                {
+                    CurrentOffset = nfi.Duration.TotalSeconds;
+                    chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = nfi.Duration.TotalSeconds - CurrentSeconds;
+                    //chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset = pointPos / sampleRate - sec;
+                }
+                Changed();
+                LoadData(CurrentSeconds);
+                ShowData();
+            }
+            UpdateBtnEnable();
+
         }
     }
 }
