@@ -2877,6 +2877,10 @@ namespace VeegStation
                 //添加完数据后将isAddingEvent变成false
                 isAddingEvent = !isAddingEvent;
                 this.chartWave.Invalidate();
+
+                //激活由于添加事件过程中禁用的CURSOR
+                this.chartWave.ChartAreas[0].CursorX.IsUserEnabled = true;
+                this.chartWave.ChartAreas[0].CursorY.IsUserEnabled = true;
             }
         }
 
@@ -3052,6 +3056,10 @@ namespace VeegStation
 
             //设置当前开始添加事件
             isAddingEvent = true;
+
+            //防止cursor跟着所添加的事件跑
+            this.chartWave.ChartAreas[0].CursorX.IsUserEnabled = false;
+            this.chartWave.ChartAreas[0].CursorY.IsUserEnabled = false;
         }
         /// <summary>
         /// 开始添加自定义事件
@@ -3078,6 +3086,10 @@ namespace VeegStation
 
             //根据现在是在添加什么事件来确定事件名称
             addedEventName = name;
+
+            //防止cursor跟着所添加的事件跑
+            this.chartWave.ChartAreas[0].CursorX.IsUserEnabled = false;
+            this.chartWave.ChartAreas[0].CursorY.IsUserEnabled = false;
         }
 
         #region 事件listView -- by lxl
