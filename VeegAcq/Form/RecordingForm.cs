@@ -133,7 +133,7 @@ namespace VeegStation
         {
             if (_player.IsPlaying)
             {
-                MessageBox.Show("文件已成功保存到:" + myController.CommonDataPool.VideoPath + " 中");
+                MessageBox.Show("文件已成功保存到:" + myController.CommonDataPool.VideoPath + " 中,文件名为:" + _start.ToString("yyyyMMddHHmmss"));
             }
 
             if (_ffmpeg != null)

@@ -34,7 +34,7 @@ namespace VeegStation
             System.Windows.Forms.DataVisualization.Charting.StripLine stripLine1 = new System.Windows.Forms.DataVisualization.Charting.StripLine();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnAutoPlay = new System.Windows.Forms.ToolStrip();
             this.btnPlay = new System.Windows.Forms.ToolStripButton();
             this.btnPause = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -96,7 +96,7 @@ namespace VeegStation
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.pationInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.detectionInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.格式ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ParamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sensitivityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timeStandartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.signalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -139,7 +139,9 @@ namespace VeegStation
             this.vScroll = new System.Windows.Forms.VScrollBar();
             this.labelPanel = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStrip1.SuspendLayout();
+            this.timerAutoPageNext = new System.Windows.Forms.Timer(this.components);
+            this.btnPlayAutomatic = new System.Windows.Forms.ToolStripButton();
+            this.btnAutoPlay.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).BeginInit();
             this.PationInfoPanel.SuspendLayout();
@@ -149,22 +151,23 @@ namespace VeegStation
             this.tyPanelEventListView.SuspendLayout();
             this.SuspendLayout();
             // 
-            // toolStrip1
+            // btnAutoPlay
             // 
-            this.toolStrip1.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnAutoPlay.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnAutoPlay.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnPlay,
             this.btnPause,
             this.toolStripSeparator1,
             this.toolStripLabel_playSpeed,
             this.speedComBox,
             this.btnPrev,
-            this.btnNext});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(942, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "播放速率";
+            this.btnNext,
+            this.btnPlayAutomatic});
+            this.btnAutoPlay.Location = new System.Drawing.Point(0, 24);
+            this.btnAutoPlay.Name = "btnAutoPlay";
+            this.btnAutoPlay.Size = new System.Drawing.Size(942, 25);
+            this.btnAutoPlay.TabIndex = 0;
+            this.btnAutoPlay.Text = "播放速率";
             // 
             // btnPlay
             // 
@@ -399,6 +402,7 @@ namespace VeegStation
             chartArea1.AxisY.MajorTickMark.IntervalOffset = 0D;
             chartArea1.AxisY.Maximum = 2000D;
             chartArea1.AxisY.Minimum = 0D;
+            chartArea1.CursorY.IsUserEnabled = true;
             chartArea1.Name = "mainArea";
             chartArea1.Position.Auto = false;
             chartArea1.Position.Height = 94F;
@@ -425,6 +429,7 @@ namespace VeegStation
             this.chartWave.Click += new System.EventHandler(this.Chartwave_Click);
             this.chartWave.Paint += new System.Windows.Forms.PaintEventHandler(this.ChartPaint);
             this.chartWave.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveOnChart);
+            this.chartWave.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.ChartWave_KeyDown);
             // 
             // timer
             // 
@@ -759,7 +764,7 @@ namespace VeegStation
             this.menuStrip1.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1,
-            this.格式ToolStripMenuItem,
+            this.ParamToolStripMenuItem,
             this.calibrateToolStripMenuItem,
             this.interfaceToolStripMenuItem,
             this.eventToolStripMenuItem,
@@ -794,18 +799,18 @@ namespace VeegStation
             this.detectionInfoToolStripMenuItem.Text = "检查属性";
             this.detectionInfoToolStripMenuItem.Click += new System.EventHandler(this.detectionInfoToolStripMenuItem_Click);
             // 
-            // 格式ToolStripMenuItem
+            // ParamToolStripMenuItem
             // 
-            this.格式ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ParamToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sensitivityToolStripMenuItem,
             this.timeStandartToolStripMenuItem,
             this.signalToolStripMenuItem,
             this.leadChooseToolStripMenuItem,
             this.滤波ToolStripMenuItem});
-            this.格式ToolStripMenuItem.Name = "格式ToolStripMenuItem";
-            this.格式ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.R)));
-            this.格式ToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
-            this.格式ToolStripMenuItem.Text = "格式(R)";
+            this.ParamToolStripMenuItem.Name = "ParamToolStripMenuItem";
+            this.ParamToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.R)));
+            this.ParamToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
+            this.ParamToolStripMenuItem.Text = "格式(R)";
             // 
             // sensitivityToolStripMenuItem
             // 
@@ -929,7 +934,7 @@ namespace VeegStation
             // leadConfigToolStripMenuItem
             // 
             this.leadConfigToolStripMenuItem.Name = "leadConfigToolStripMenuItem";
-            this.leadConfigToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.leadConfigToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.leadConfigToolStripMenuItem.Text = "导联编制";
             this.leadConfigToolStripMenuItem.Click += new System.EventHandler(this.leadConfigToolStripMenuItem_Click);
             // 
@@ -1219,6 +1224,20 @@ namespace VeegStation
             this.labelPanel.TabIndex = 15;
             this.labelPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.DrawLabelPanel);
             // 
+            // timerAutoPageNext
+            // 
+            this.timerAutoPageNext.Interval = 3000;
+            this.timerAutoPageNext.Tick += new System.EventHandler(this.timerAutoPageNext_Tick);
+            // 
+            // btnPlayAutomatic
+            // 
+            this.btnPlayAutomatic.Image = ((System.Drawing.Image)(resources.GetObject("btnPlayAutomatic.Image")));
+            this.btnPlayAutomatic.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPlayAutomatic.Name = "btnPlayAutomatic";
+            this.btnPlayAutomatic.Size = new System.Drawing.Size(75, 22);
+            this.btnPlayAutomatic.Text = "自动播放";
+            this.btnPlayAutomatic.Click += new System.EventHandler(this.btnPlayAutomatic_Click);
+            // 
             // PlaybackForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1232,7 +1251,7 @@ namespace VeegStation
             this.Controls.Add(this.chartWave);
             this.Controls.Add(this.labelPanel);
             this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.btnAutoPlay);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
@@ -1243,8 +1262,8 @@ namespace VeegStation
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.PlaybackForm_FormClosed);
             this.Load += new System.EventHandler(this.PlaybackForm_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.FormPaint);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.btnAutoPlay.ResumeLayout(false);
+            this.btnAutoPlay.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartWave)).EndInit();
@@ -1264,7 +1283,7 @@ namespace VeegStation
 
         #endregion
 
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip btnAutoPlay;
         private System.Windows.Forms.StatusStrip statusStrip1;
         public System.Windows.Forms.Panel panelVideo;
         public System.Windows.Forms.DataVisualization.Charting.Chart chartWave;
@@ -1307,7 +1326,7 @@ namespace VeegStation
         private System.Windows.Forms.TextBox PatAgeTextBt;
         private System.Windows.Forms.ToolStripButton btnPlay;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem 格式ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ParamToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem eventToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sensitivityToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem timeStandartToolStripMenuItem;
@@ -1371,5 +1390,7 @@ namespace VeegStation
         private System.Windows.Forms.ToolStripMenuItem leadConfigToolStripMenuItem;
         private System.Windows.Forms.ToolStripComboBox speedComBox;
         private System.Windows.Forms.ToolStripLabel toolStripLabel_playSpeed;
+        private System.Windows.Forms.Timer timerAutoPageNext;
+        private System.Windows.Forms.ToolStripButton btnPlayAutomatic;
     }
 }
