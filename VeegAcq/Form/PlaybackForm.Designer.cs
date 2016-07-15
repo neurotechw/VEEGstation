@@ -854,21 +854,21 @@ namespace VeegStation
             this.pationInfoToolStripMenuItem,
             this.detectionInfoToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.E)));
+            this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F)));
             this.toolStripMenuItem1.Size = new System.Drawing.Size(57, 20);
-            this.toolStripMenuItem1.Text = "文件(F)";
+            this.toolStripMenuItem1.Text = "文件(&F)";
             // 
             // pationInfoToolStripMenuItem
             // 
             this.pationInfoToolStripMenuItem.Name = "pationInfoToolStripMenuItem";
-            this.pationInfoToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.pationInfoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.pationInfoToolStripMenuItem.Text = "病人属性";
             this.pationInfoToolStripMenuItem.Click += new System.EventHandler(this.pationInfoToolStripMenuItem_Click);
             // 
             // detectionInfoToolStripMenuItem
             // 
             this.detectionInfoToolStripMenuItem.Name = "detectionInfoToolStripMenuItem";
-            this.detectionInfoToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.detectionInfoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.detectionInfoToolStripMenuItem.Text = "检查属性";
             this.detectionInfoToolStripMenuItem.Click += new System.EventHandler(this.detectionInfoToolStripMenuItem_Click);
             // 
@@ -883,30 +883,30 @@ namespace VeegStation
             this.ParamToolStripMenuItem.Name = "ParamToolStripMenuItem";
             this.ParamToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.R)));
             this.ParamToolStripMenuItem.Size = new System.Drawing.Size(58, 20);
-            this.ParamToolStripMenuItem.Text = "格式(R)";
+            this.ParamToolStripMenuItem.Text = "格式(&R)";
             // 
             // sensitivityToolStripMenuItem
             // 
             this.sensitivityToolStripMenuItem.Name = "sensitivityToolStripMenuItem";
-            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.sensitivityToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.sensitivityToolStripMenuItem.Text = "灵敏度";
             // 
             // timeStandartToolStripMenuItem
             // 
             this.timeStandartToolStripMenuItem.Name = "timeStandartToolStripMenuItem";
-            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.timeStandartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.timeStandartToolStripMenuItem.Text = "时间基准";
             // 
             // signalToolStripMenuItem
             // 
             this.signalToolStripMenuItem.Name = "signalToolStripMenuItem";
-            this.signalToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.signalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.signalToolStripMenuItem.Text = "显示通道";
             // 
             // leadChooseToolStripMenuItem
             // 
             this.leadChooseToolStripMenuItem.Name = "leadChooseToolStripMenuItem";
-            this.leadChooseToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.leadChooseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.leadChooseToolStripMenuItem.Text = "导联选择";
             // 
             // 滤波ToolStripMenuItem
@@ -915,7 +915,7 @@ namespace VeegStation
             this.Filter50HzToolStripMenuItem,
             this.BandFilterToolStripMenuItem});
             this.滤波ToolStripMenuItem.Name = "滤波ToolStripMenuItem";
-            this.滤波ToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.滤波ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.滤波ToolStripMenuItem.Text = "滤波";
             // 
             // Filter50HzToolStripMenuItem
@@ -940,7 +940,7 @@ namespace VeegStation
             this.calibrateToolStripMenuItem.Name = "calibrateToolStripMenuItem";
             this.calibrateToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.C)));
             this.calibrateToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
-            this.calibrateToolStripMenuItem.Text = "校准(C)";
+            this.calibrateToolStripMenuItem.Text = "校准(&C)";
             // 
             // calibrateYToolStripMenuItem
             // 
@@ -963,7 +963,7 @@ namespace VeegStation
             this.interfaceToolStripMenuItem.Name = "interfaceToolStripMenuItem";
             this.interfaceToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.I)));
             this.interfaceToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
-            this.interfaceToolStripMenuItem.Text = "界面(I)";
+            this.interfaceToolStripMenuItem.Text = "界面(&I)";
             // 
             // boardToolStripMenuItem
             // 
@@ -980,7 +980,7 @@ namespace VeegStation
             this.eventToolStripMenuItem.Name = "eventToolStripMenuItem";
             this.eventToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.E)));
             this.eventToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
-            this.eventToolStripMenuItem.Text = "事件(E)";
+            this.eventToolStripMenuItem.Text = "事件(&E)";
             // 
             // predefineEventstoolstripmenuItem
             // 
@@ -1002,7 +1002,7 @@ namespace VeegStation
             this.leadConfigToolStripMenuItem});
             this.SettingToolStripMenuItem.Name = "SettingToolStripMenuItem";
             this.SettingToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
-            this.SettingToolStripMenuItem.Text = "设置(S)";
+            this.SettingToolStripMenuItem.Text = "设置(&S)";
             // 
             // leadConfigToolStripMenuItem
             // 
@@ -1019,7 +1019,7 @@ namespace VeegStation
             this.MeasureToolStripMenuItem.Name = "MeasureToolStripMenuItem";
             this.MeasureToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.M)));
             this.MeasureToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
-            this.MeasureToolStripMenuItem.Text = "测量(M)";
+            this.MeasureToolStripMenuItem.Text = "测量(&M)";
             // 
             // MeasureStartToolStripMenuItem
             // 
