@@ -1447,7 +1447,7 @@ namespace VeegStation
                                 displayStartTime.Text = eventProperty.BeginningTime[j].ToLongTimeString().ToString();
                                 //TimeSpan dValue = eventProperty.BeginningTime[j] - nfi.StartDateTime;
                                 // getDvalue = dValue.TotalSeconds - timeSignal[j];
-                            getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j]-1;
+                                getDvalue = eventProperty.BeginningTime[j].Hour * 3600 + eventProperty.BeginningTime[j].Minute * 60 + eventProperty.BeginningTime[j].Second - (nfi.StartDateTime.Hour * 3600 + nfi.StartDateTime.Minute * 60 + nfi.StartDateTime.Second) - timeSignal[j]-1;
                                 if (nfi.HasVideo)
                                 {
                                     Player.Time = (long)(nfi.VideoOffset * 1000 + CurrentSeconds * 1000 + chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset * 1000 + getDvalue * 1000);
@@ -1460,10 +1460,10 @@ namespace VeegStation
                             if (GetStarTotalSecond() + CurrentSeconds + getDvalue + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset >= 86400)
                             {
                                 getDvalue = -(GetStarTotalSecond() + CurrentSeconds + this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
-                            }
-                            AllShowTime(GetStarTotalSecond(), CurrentSeconds + getDvalue, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
+                            }                       
                         }
-                    }           
+                    }
+                    AllShowTime(GetStarTotalSecond(), CurrentSeconds + getDvalue, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
                     ShowTime(CurrentSeconds, this.chartWave.ChartAreas[0].AxisX.StripLines[0].IntervalOffset);
                 }
             }
