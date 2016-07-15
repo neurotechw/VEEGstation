@@ -126,7 +126,7 @@ namespace VeegStation
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "addCustomEventForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "添加自定义事件";
+            this.Text = "自定义事件";
             this.ResumeLayout(false);
             this.PerformLayout();
 
