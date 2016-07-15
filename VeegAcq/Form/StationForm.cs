@@ -34,9 +34,9 @@ namespace VeegStation
         public StationForm()
         {
             InitializeComponent();
-            LogHelper.WriteLog(typeof(StationForm),  "测试日志是否添加成功");
+            LogHelper.WriteLog(typeof(StationForm), "测试日志是否添加成功");
             myController = new VeegControl();
-            this.tbEEGPath.Text=myController.CommonDataPool.EegDataPath;
+            this.tbEEGPath.Text = myController.CommonDataPool.EegDataPath;
             this.tbVideoPath.Text = myController.CommonDataPool.VideoPath;
         }
 
@@ -63,7 +63,7 @@ namespace VeegStation
                 }
 
                 chartWave.Series.Add(s);
-            }      
+            }
             timerVideo.Enabled = true;
             UpdateAssoctionButton();
 
@@ -91,7 +91,7 @@ namespace VeegStation
         {
             if (_player != null && _player.IsPlaying)
             {
-              
+
             }
             else
             {
@@ -108,9 +108,9 @@ namespace VeegStation
             }
             _eegFiles.Clear();
             DirectoryInfo diTop = new DirectoryInfo(myController.CommonDataPool.EegDataPath);
-           
+
             lvFiles.BeginUpdate();
-            lvFiles.Items.Clear();            
+            lvFiles.Items.Clear();
             foreach (var sub in diTop.EnumerateDirectories())
             {
                 //foreach (var file in sub.EnumerateFiles("*.NED"))
@@ -178,7 +178,7 @@ namespace VeegStation
                 lvi.SubItems.Add(nfi.PatInfo.ID);
                 lvi.SubItems.Add(nfi.PatInfo.Name);
                 TimeSpan ts = nfi.Duration;
-                string tsText = (ts.Days * 24 + ts.Hours).ToString() + ts.ToString(@"\:mm\:ss");    
+                string tsText = (ts.Days * 24 + ts.Hours).ToString() + ts.ToString(@"\:mm\:ss");
                 lvi.SubItems.Add(tsText);
                 lvi.SubItems.Add(dt);
                 lvFiles.Items.Add(lvi);
@@ -228,7 +228,7 @@ namespace VeegStation
 
         private void lvVideoFiles_Leave(object sender, EventArgs e)
         {
-       
+
         }
 
         private void lvVideoFiles_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
@@ -255,18 +255,19 @@ namespace VeegStation
 
         void PlayPreviewFile(string FileName)
         {
-            try {
+            try
+            {
                 _player.Stop();
                 _player.Dispose();
             }
-            catch {}
+            catch { }
             try
             {
                 _media.Dispose();
             }
             catch { }
 
-            IMediaPlayerFactory factory = new MediaPlayerFactory();          
+            IMediaPlayerFactory factory = new MediaPlayerFactory();
             _media = factory.CreateMedia<IMediaFromFile>(FileName);
             _player = factory.CreatePlayer<IVideoPlayer>();
             _player.WindowHandle = picturePreview.Handle;
@@ -291,27 +292,27 @@ namespace VeegStation
             _media.Dispose();
 
             VideoFileInfo vfi = _videoFiles[sel];
-            IMediaPlayerFactory factory = new MediaPlayerFactory();           
+            IMediaPlayerFactory factory = new MediaPlayerFactory();
             _media = factory.CreateMedia<IMediaFromFile>(vfi.FileFullName);
             _player = factory.CreatePlayer<IVideoPlayer>();
             _player.WindowHandle = picturePreview.Handle;
-            _player.AspectRatio = AspectRatioMode.Mode2;       
+            _player.AspectRatio = AspectRatioMode.Mode2;
             _player.Open(_media);
             _player.Events.MediaEnded += new EventHandler(OnMediaEnded);
             _player.Events.PlayerStopped += new EventHandler(OnPlayerStopped);
             _player.Play();
-        }      
+        }
 
         private void UpdateAssoctionButton()
         {
-            if (lvFiles.SelectedItems.Count == 1 && lvVideoFiles.SelectedItems.Count == 1 && !_eegFiles[lvFiles.SelectedIndices[0]].HasVideo)
-            {
-                btnAssociate.Enabled = true;
-            }
-            else
-            {
-                btnAssociate.Enabled = false;
-            }
+            //if (lvFiles.SelectedItems.Count == 1 && lvVideoFiles.SelectedItems.Count == 1 && !_eegFiles[lvFiles.SelectedIndices[0]].HasVideo)
+            //{
+            //    btnAssociate.Enabled = true;
+            //}
+            //else
+            //{
+            //    btnAssociate.Enabled = false;
+            //}
         }
 
         private void btnRecord_Click(object sender, EventArgs e)
@@ -329,53 +330,57 @@ namespace VeegStation
 
         private void toolButtonAssociate_Click(object sender, EventArgs e)
         {
-            _player.Stop();
+            #region 需要修改
+            //_player.Stop();
 
-            if (!Directory.Exists(DefaultConfig.AssociatedVideoPath))
-            {
-                Directory.CreateDirectory(DefaultConfig.AssociatedVideoPath);
-            }
-            
-            int idxFile = lvFiles.SelectedIndices[0];
-            int idxVideo = lvVideoFiles.SelectedIndices[0];
-            NationFile nfi = _eegFiles[idxFile];
-            VideoFileInfo vfi = _videoFiles[idxVideo];
-            //xcg
-            //string vfidate = vfi.StartTime.ToString("yyyy:MM:dd");
-            //string nfidate = nfi.StartDateTime.ToString("yyyy:MM:dd");
-            //if (string.Equals(vfidate,nfidate))
+            //if (!Directory.Exists(DefaultConfig.AssociatedVideoPath))
             //{
-                bool videoStartLate = vfi.StartTime > nfi.StartDateTime;
-                bool videoStopBefore = (vfi.StartTime + vfi.Duration) < (nfi.StartDateTime + nfi.Duration);
-                List<string> msg = new List<string>();
-                 if (videoStartLate)
-                {
-                     msg.Add("视频开始时间晚于脑电开始时间");
-                 }
-                if (videoStopBefore)
-                {
-                    msg.Add("视频结束时间早于脑电结束时间");
-                }
-                if (videoStartLate || videoStopBefore)
-                {
-                    MessageBox.Show(string.Join("\n", msg), "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                if (MessageBox.Show(
-                        string.Format("要关联脑电[{0}:{1}]和视频[{2}]吗？", nfi.PatInfo.ID, nfi.PatInfo.Name, vfi.StartTime.ToString("s").Replace('T', ' ')),
-                        "关联视频", MessageBoxButtons.YesNo)
-                         == System.Windows.Forms.DialogResult.Yes)
-                {
-                    File.Move(vfi.FileFullName, DefaultConfig.AssociatedVideoPath + @"\" + nfi.PatInfo.ID + "_" + ((int)(nfi.StartDateTime - vfi.StartTime).TotalMilliseconds).ToString() + ".MP4");
-                    RefreshFiles();
-                    MessageBox.Show("视频文件已成功关联，并移动到：" + DefaultConfig.AssociatedVideoPath + " 中");
-                }
+            //    Directory.CreateDirectory(DefaultConfig.AssociatedVideoPath);
             //}
+
+            //int idxFile = lvFiles.SelectedIndices[0];
+            //int idxVideo = lvVideoFiles.SelectedIndices[0];
+            //NationFile nfi = _eegFiles[idxFile];
+            //VideoFileInfo vfi = _videoFiles[idxVideo];
             ////xcg
-            //else
+            ////string vfidate = vfi.StartTime.ToString("yyyy:MM:dd");
+            ////string nfidate = nfi.StartDateTime.ToString("yyyy:MM:dd");
+            ////if (string.Equals(vfidate,nfidate))
+            ////{
+            //bool videoStartLate = vfi.StartTime > nfi.StartDateTime;
+            //bool videoStopBefore = (vfi.StartTime + vfi.Duration) < (nfi.StartDateTime + nfi.Duration);
+            //List<string> msg = new List<string>();
+            //if (videoStartLate)
             //{
-            //    MessageBox.Show("视频和脑电数据的记录日期不一样，无法进行关联！","错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    msg.Add("视频开始时间晚于脑电开始时间");
             //}
+            //if (videoStopBefore)
+            //{
+            //    msg.Add("视频结束时间早于脑电结束时间");
+            //}
+            //if (videoStartLate || videoStopBefore)
+            //{
+            //    MessageBox.Show(string.Join("\n", msg), "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    return;
+            //}
+            //if (MessageBox.Show(
+            //        string.Format("要关联脑电[{0}:{1}]和视频[{2}]吗？", nfi.PatInfo.ID, nfi.PatInfo.Name, vfi.StartTime.ToString("s").Replace('T', ' ')),
+            //        "关联视频", MessageBoxButtons.YesNo)
+            //         == System.Windows.Forms.DialogResult.Yes)
+            //{
+            //    File.Move(vfi.FileFullName, DefaultConfig.AssociatedVideoPath + @"\" + nfi.PatInfo.ID + "_" + ((int)(nfi.StartDateTime - vfi.StartTime).TotalMilliseconds).ToString() + ".MP4");
+            //    RefreshFiles();
+            //    MessageBox.Show("视频文件已成功关联，并移动到：" + DefaultConfig.AssociatedVideoPath + " 中");
+            //}
+            //}
+            //////xcg
+            ////else
+            ////{
+            ////    MessageBox.Show("视频和脑电数据的记录日期不一样，无法进行关联！","错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            ////}
+            #endregion
+            AutoAssociateNatAndVideo();
+            //RefreshFiles();
         }
 
         private void RefreshFiles()
@@ -492,7 +497,7 @@ namespace VeegStation
             ListView lv = (ListView)sender;
             if (!lv.Focused)
             {
-                const int TEXT_OFFSET = 1; 
+                const int TEXT_OFFSET = 1;
                 Rectangle rowBounds = e.SubItem.Bounds;
                 Rectangle labelBounds = e.Item.GetBounds(ItemBoundsPortion.Label);
                 int leftMargin = labelBounds.Left - TEXT_OFFSET;
@@ -524,5 +529,44 @@ namespace VeegStation
             e.DrawDefault = true;
         }
 
+        /// <summary>
+        //点击视频关联按钮，视频和脑电数据自动关联  by--xcg
+        /// </summary>
+        private void AutoAssociateNatAndVideo()
+        {
+            int mNatAssociateVideoCount = 0;
+            if (_eegFiles.Count == 0 || _videoFiles.Count == 0)
+            {
+                MessageBox.Show("没有脑电数据或者视频，不能进行关联操作！");
+                return;
+            }
+            foreach (NationFile mNationFile in _eegFiles)
+            {
+                foreach (VideoFileInfo mVideoFileInfo in _videoFiles)
+                {
+                    bool videoStartBefore = mVideoFileInfo.StartTime <mNationFile.StartDateTime;
+                    bool videoStopLate = (mVideoFileInfo.StartTime + mVideoFileInfo.Duration) > (mNationFile.StartDateTime + mNationFile.Duration);
+                    if (videoStartBefore && videoStopLate)
+                    {
+                        string sourceFileName = mVideoFileInfo.FileFullName;
+                        string destFileName = DefaultConfig.AssociatedVideoPath + @"\" + mNationFile.PatInfo.ID + "_" + ((int)(mNationFile.StartDateTime - mVideoFileInfo.StartTime).TotalMilliseconds).ToString() + ".MP4";
+                        if (!File.Exists(destFileName))
+                        {
+                            mNatAssociateVideoCount++;
+                            File.Move(sourceFileName, destFileName);
+                        }
+                    }
+                }
+            }
+
+            if (mNatAssociateVideoCount == 0)
+            {
+                MessageBox.Show("视频与脑电数据没有可以关联的！");
+            }
+            else
+            {
+                RefreshFiles();
+            }
+        }
     }
 }
