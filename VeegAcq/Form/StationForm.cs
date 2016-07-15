@@ -380,7 +380,7 @@ namespace VeegStation
             ////}
             #endregion
             AutoAssociateNatAndVideo();
-            RefreshFiles();
+            //RefreshFiles();
         }
 
         private void RefreshFiles()
@@ -529,34 +529,43 @@ namespace VeegStation
             e.DrawDefault = true;
         }
 
+        /// <summary>
+        //点击视频关联按钮，视频和脑电数据自动关联  by--xcg
+        /// </summary>
         private void AutoAssociateNatAndVideo()
         {
             int mNatAssociateVideoCount = 0;
             if (_eegFiles.Count == 0 || _videoFiles.Count == 0)
             {
                 MessageBox.Show("没有脑电数据或者视频，不能进行关联操作！");
+                return;
             }
             foreach (NationFile mNationFile in _eegFiles)
             {
                 foreach (VideoFileInfo mVideoFileInfo in _videoFiles)
                 {
-                    bool videoStartLate = mVideoFileInfo.StartTime > mNationFile.StartDateTime;
-                    bool videoStopBefore = (mVideoFileInfo.StartTime + mVideoFileInfo.Duration) < (mNationFile.StartDateTime + mNationFile.Duration);
-                    if (!videoStartLate && !videoStopBefore)
+                    bool videoStartBefore = mVideoFileInfo.StartTime <mNationFile.StartDateTime;
+                    bool videoStopLate = (mVideoFileInfo.StartTime + mVideoFileInfo.Duration) > (mNationFile.StartDateTime + mNationFile.Duration);
+                    if (videoStartBefore && videoStopLate)
                     {
-                        mNatAssociateVideoCount++;
                         string sourceFileName = mVideoFileInfo.FileFullName;
                         string destFileName = DefaultConfig.AssociatedVideoPath + @"\" + mNationFile.PatInfo.ID + "_" + ((int)(mNationFile.StartDateTime - mVideoFileInfo.StartTime).TotalMilliseconds).ToString() + ".MP4";
                         if (!File.Exists(destFileName))
                         {
+                            mNatAssociateVideoCount++;
                             File.Move(sourceFileName, destFileName);
                         }
                     }
                 }
             }
+
             if (mNatAssociateVideoCount == 0)
             {
-                MessageBox.Show("视频与脑电数据关联没有可以关联的！");
+                MessageBox.Show("视频与脑电数据没有可以关联的！");
+            }
+            else
+            {
+                RefreshFiles();
             }
         }
     }
