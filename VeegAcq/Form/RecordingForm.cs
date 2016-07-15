@@ -37,6 +37,7 @@ namespace VeegStation
             //xcg
             // 获取系统配置文件中摄像机的IP
             cameraIP = Properties.Settings.Default.CameraIP;
+            
         }
 
         private void buttonStop_Click(object sender, EventArgs e)
@@ -60,6 +61,7 @@ namespace VeegStation
             {
                 System.IO.Directory.CreateDirectory(myController.CommonDataPool.VideoPath);
             }
+            buttonStart.Enabled = false;
             _start = DateTime.Now;
             _ffmpeg = new Process();
             _ffmpeg.StartInfo.UseShellExecute = false;
@@ -98,6 +100,7 @@ namespace VeegStation
 
         private void RecordingForm_Load(object sender, EventArgs e)
         {
+            this.buttonStart.Enabled = true;
             IMediaPlayerFactory factory = new MediaPlayerFactory();
             //_media = factory.CreateMedia<IMedia>("rtsp://admin:admin@" + DefaultConfig.CameraIP + ":554/cam/realmonitor?channel=1&subtype=1", DefaultConfig.PlayerOptions);
             //xcg
