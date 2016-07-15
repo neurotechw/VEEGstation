@@ -159,6 +159,7 @@ namespace VeegStation
             //this.btn_color.BackColor =  clr;
             //this.buttonPanel.Controls.Find(clrIndex.ToString(), false)[0].Enabled = false;
             colorButton[clrIndex].Enabled = false;
+            this.panelColor.BackColor = colorButton[clrIndex].BackColor;
             this.colorIndex = clrIndex;
             this.nameTextBox.Text = text;
         }
