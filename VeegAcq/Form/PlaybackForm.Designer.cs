@@ -445,6 +445,7 @@ namespace VeegStation
             stripLine1.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             stripLine1.IntervalOffset = -1D;
             stripLine2.BorderColor = System.Drawing.Color.Green;
+            stripLine2.BorderWidth = 2;
             stripLine2.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             chartArea1.AxisX.StripLines.Add(stripLine1);
             chartArea1.AxisX.StripLines.Add(stripLine2);
@@ -460,14 +461,17 @@ namespace VeegStation
             chartArea1.AxisY.Maximum = 2000D;
             chartArea1.AxisY.Minimum = 0D;
             stripLine3.BorderColor = System.Drawing.Color.Green;
+            stripLine3.BorderWidth = 2;
             stripLine3.BorderDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             stripLine3.IntervalOffset = -1D;
             chartArea1.AxisY.StripLines.Add(stripLine3);
             chartArea1.CursorX.Interval = 0.001D;
             chartArea1.CursorX.IsUserEnabled = true;
+            chartArea1.CursorX.LineWidth = 2;
             chartArea1.CursorX.LineColor = System.Drawing.Color.Black;
             chartArea1.CursorX.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             chartArea1.CursorY.IsUserEnabled = true;
+            chartArea1.CursorY.LineWidth = 2;
             chartArea1.CursorY.LineColor = System.Drawing.Color.Black;
             chartArea1.CursorY.LineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.DashDot;
             chartArea1.Name = "mainArea";
